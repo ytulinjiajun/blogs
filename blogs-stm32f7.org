@@ -1,0 +1,120 @@
+* My-blog-of-stm32f7
+** DONE [#D] theme:stm32f7开发基础准备工作					 :@Blog:@Stm32f7:
+   - State "DONE"       from "TODO"       [2017-09-04 一 23:01]
+*** MDK开发环境搭建
+--下载MDK软件：http://www.keil.com/download/product/
+--下载STM32Fxx的芯片支持包：http://www.keil.com/dd2/pack
+--注册MDK：默认情况下，MDK是试用版，只能编译不超过32K的代码，超过之后就需要注册才能使用，
+注册的教程：http://www.openedv.com/thread-69384-1-1.html
+--使用SWD来烧录程序时：晶振25MHZ，添加STM32F7xx 1MB Flash以及STM32F7xx 1MB Flash(TCM)
+*** 创建HAL库函数版的模板
+--下载HAL函数库包：http://www.st.com/content/st_com/en/products/ecosystems/stm32-open-development-environment/stm32cube.html?querycriteria=productId=SC2004
+--全局宏定义：USE_HAL_DRIVER,STM32F767xx
+--配置：stm32f7xx_hal_conf.h下面的HSE_VALUE为25
+--修改：stm32f7xx_hal.c下面的HAL_Init函数中的NVIC_PRIORITYGROUP_4为NVIC_PRIORITYGROUP_2
+*** 搭建环境中遇到的
+--烧录程序时出现一个错误：
+contents mismatch at:080000000H (flash=FFH Required=60H)!
+......
+Too many errors to display!
+Error:Flash Download failed - "Cortex-M7"
+
+--原因：
+	处理器总是从内存读取指令，程序要运行，也要被加载到内存才能被处理器所访问到，在
+stm32中内存分外扩内存和内部内存，内部内存又分别在不同的物理地址处，比如内部CCM内存
+就在物理地址空间为02000000的地方开始，而内部通用内存从0x08000000开始，stm32f7好像
+还有静态内存，它们分布在不同的地址空间，访问它们的总线也有所差异，比如内部ccm内存就
+只能供AHB总线上给CPU访问
+	MDK提供了启动项的设置，即，告知硬件应当从哪个地址空间的内存处开始加载程序，在
+target->read/only memory areas和read/write memory areas选项卡中配置了该地址，
+需要将该地址配置正确了，就能解决问题！
+
+--解决方案如下：
+(1)复选框勾选：IROM1和IRAM1,切记不能勾选IROM2(IRAM2可以勾选)
+(2)单选框Startup勾选IROM1
+Blog creation time:[2017-08-08 二 14:16]
+** DONE [#D] theme:频率的含义								 :@Blog:@Stm32f7:
+	- State "DONE"       from "TODO"       [2017-09-04 一 23:01]
+	频率，物理定义为：单位时间内完成周期性变化的次数，标准单位是HZ，也常用秒分之一(s^-1)
+来描述频率,通俗理解，stm32f767的主频为216MHZ,即，晶振每秒钟完成了216M次周期性的振动，
+相当于每个周期振动花费的时间是1/216M秒，即(1/216)us
+Blog creation time:[2017-08-09 三 16:18]
+** DONE [#D] theme:关于串口接收数据过程中丢包或覆盖缓冲区的思考 :@Blog:@Stm32f7:
+	- State "DONE"       from "TODO"       [2017-09-04 一 23:01]
+	stm32f767的串口接收比起f4的来说，有点不一样，硬件的实现上，数据由字节构成，字节由
+bit位构成，bit位的表征高低两种状态，在波特率的控制下形成连续有序的波，有序是说高电平和
+低电平的持续时间是相同的，这些波就是数据，收发双方约定好以后，数据得以传输，高低电平的
+波依次作用于输入移位寄存器，通常的每11个高低电平（3个控制位电平+8个数据电平构）成一个
+字节，移位寄存器收到这11个高低电平之后，硬件电路将那8个bit位的电平解析出来，投递到接收
+数据缓冲区，cpu检测到接收数据缓冲区有数据了，就引发中断，调用中断处理函数，在中断处理
+函数中，又调用hal库提供了一个串口接收中断处理函数HAL_UART_IRQHandler,该函数在处理
+过程中根据用户事先提供(HAL_UART_Receive_IT)的一个外部buffer指针，将从串口接收数据缓冲区中读取到的1个字节存进
+该指针指向的地址空间，然后又根据用户事先提供的那个外部buffer的大小，来判断是否该关闭中断
+去回调函数HAL_UART_RxCpltCallback中处理接收到的存储在用户事先提供的那个外部中的数据，
+显然，如果用户事先提供的那个外部buffer的大小为1的话，那接下来就关闭中断，然后去回调
+函数中处理这一个字节的数据去了，如果不是1，那就不会去处理这一个字节的数据，而是等待下一个
+字节到来，引发中断，接收它，再判断是否可以去回调函数中处理数据了，就这样进行下去
+	问题有三：第一，假设外部电路一次性给MUC的串口发送过来100字节数据，而我在函数
+HAL_UART_Receive_IT中提供的用户外部缓冲区的大小为10字节，即，接收到10字节后就关中断，
+转而处理这10个字节，那么剩下的90字节如何处置(中断关闭了，剩下的数据该何去何从，覆盖，
+还是错过而丢失，还是系统很牛掰的设计让它暂时活了下来)？
+	第二，假设外部电路一次性给MUC的串口发送过来100字节数据
+
+Blog creation time:[2017-08-10 四 15:52]
+** WAITTING [#D] theme:SD卡底层驱动函数失败			:@Blog:@Stm32f7:
+	- State "WAITTING"   from "TODO"       [2017-08-16 三 21:24] \\
+	  等待正点原子更新sdmmc实验（更新hal库）
+	  移植STMCube_FW_F7_V1.7.0的HAL下面sdmmc例程时，出现错误，该hal库比起
+STMCube_FW_F7_V1.4.0来说，stm32f7xx_hal_sd.c从V1.1.1升级到了V1.2.2,所以hal库中sd的函数
+甚至是一些结构体都发生了一些较大的改变，导致本次测试失败的根源在于SD_ReadDisk函数下的
+HAL_SD_ReadBlock函数出现一个问题，调用SD_ReadDisk函数时，其第二个参数扇区地址blockaddr
+只有在传入0时方能正确读出sd卡扇区的值，填写非0则输出全0，该问题折腾之后没有解决，特记录下来
+后期再想办法
+	目前的解决方案是，将hal库回退回v1.4.0
+
+Blog creation time:[2017-08-16 三 21:22]
+** DONE [#D] theme:定制MDK									 :@Blog:@Stm32f7:
+	- State "DONE"       from "TODO"       [2017-09-04 一 22:56]
+1.编码：GB2312
+2.number:(255,205,155) 
+3.operator:(239,248,188)
+4.comment:(175,237,179)
+5.keyword:(253,91,176)
+6.string:(128,128,255)
+7.identifier:白，黑
+8.matching braces background(0,255,255)
+9.user keyword:(149,149,255)
+
+all editors:
+caret line:(0,255,0)
+text selection:(0,255,0)
+
+2.字体：SimSun-ExtB--12号--加粗
+3.identifier:前景色：白色；背景色：黑色
+4.keyword:(253,91,176)
+5.comment:(227,242,140)
+6.
+Blog creation time:[2017-08-18 五 08:58]
+** DONE [#D] theme:专题1：linux开发stm32之宏观概述			 :@Blog:@Stm32f7:
+   - State "DONE"       from "TODO"       [2017-09-04 一 22:57]
+*** 开发环境介绍
+>>kali:
+	其前身是 BackTrack（基于ubuntu），是一个基于 Debian 的 Linux 发行版，
+支持ARM架构可用于树莓派和三星的ARMChromebook，设计用于数字取证和渗透测试和黑客攻防
+	
+>>emacs:“编辑器”，用于编写stm32的代码
+
+>>git:版本控制软件，用于管理代码
+
+>>arm-none-embi-gcc:支持Cortex-M的编译器
+
+>>stlink:用于支持代码的烧写，硬件的调试
+
+>>minicom:linux下的串口调试助手
+
+>>Makefile:组织源代码，统一管理
+
+>>HAL库:ST提供的用于帮助用户快速开发的一个函数库
+	
+
+Blog creation time:[2017-08-28 一 08:27]

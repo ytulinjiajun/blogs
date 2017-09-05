@@ -1,0 +1,739 @@
+* My-blog-of-makefile
+** DONE [#D] theme:专题2:linux开发stm32之Makefile			:@Blog:@Makefile:
+   - State "DONE"       from "TODO"       [2017-09-04 一 23:00]
+*** 声明
+>>规则 = 目标： 依赖
+         <回车>命令
+备注：研究makefile实际就是研究：规则，目标，依赖，命令四者之间的关系
+
+>>$@:目标文件集；$<依赖文件集，这两个变量都是最常用的自动化变量，有它两的地方，基本上
+都少不了有模式匹配：%
+
+>>Makefile 中的第一个目标会被作为其默认目标,默认目标的特性是，总是会被执行，即使它是
+一个伪目标（大家都知道，伪目标只能外部调用，但是如果伪目标放在Makefile中的第一个位置，
+成了默认目标，那么它就会被自动执行）
+
+>>理论上，一个Makefile只会有一个终极目标，该目标会依据依赖关系派生出其他目标，但是，有
+all的情况是个特例
+
+>>伪目标的特性：伪目标做为标签，在被执行之后不会生成文件，结合Makefile 中的第一个
+目标的特性：总是会被执行。结合这两个特性，能够产生一个十分不错且常规的
+功能：一口气生成多个目标
+*** 目录搜索：VPATH和vpath：
+>>工程由文件组成，文件有不同种类(源代码.c,汇编.S,头文件.h,目标文件.o,二进制
+文件.hex),文件还被组织在不同的目录中，这些不同目录中不同种类的文件正是构成Makefile
+规则中的基本操作对象
+
+>>Makefile中的规则在执行过程中，会根据依赖文件和目标文件的时间戳的新旧关系来决定是否
+要执行当前目标下的命令，然而，这里有一个问题，Makefilez自己是不能知道依赖文件和目标文件
+的路径的，需要用户告诉它，它才能自动去推导
+
+>>使用VPATH和vpath正是这么一个告诉Makefile目标文件和依赖文件路径的操作，注意我的措辞，
+VPATH和vpath指明的是“目标文件”和“依赖文件”的搜索路径，所以，“命令”中，需要单独使用-I
+来指明头文件路径
+
+>>VPATH是一个特殊变量，作为变量，它自然可以有值，VPATH的赋值方式为：VPATH = dir1 dir2 ...
+即，VPATH的值是目录，指明该变量的值以后，Makefile在执行时，会首先在该Makefile文件所在的
+当前目录下搜索涉及的目标文件和依赖文件，如果找不到，就会到VPATH所指明的dir1下面搜索，如果
+找不到，就到dir2目录下找如果始终没找到，就会报错！
+
+>>vpath是一个关键字，它的用法是：vpath %.c dir1 dir2,其工作的步骤是，首先在该Makefile
+文件所在的当前目录下搜索符合模式%.c的文件，如果找不到，就会到vpath所指明的dir1下面搜索，
+如果找不到，就到dir2目录下找如果始终没找到，就会报错！
+*** 伪目标
+>>伪目标不是一个文件，而是一个标签，所以伪目标在被执行之后不会生成文件
+
+>>伪目标的取名不能和文件名重名
+
+>>请使用一个特殊的标记“.PHONY”来显式地指明一个目标是“伪目标”
+
+>>伪目标只能通过外部显示的调用
+
+>>伪目标一般没有依赖文件，但是也可以为伪目标指明依赖文件，比较特殊且常用的一个具有
+依赖文件的伪目标是all,它有着大作用！
+
+>>伪目标的三大运用：
+(1)一口气生成多个目标
+.PHONY: all
+all: prog1 prog2 prog3
+
+prog1: prog1.o utils.o
+	cc -o prog1 prog1.o utils.o
+prog2: prog2.o
+	cc -o prog2 prog2.o
+prog3: prog3.o sort.o utils.o
+	cc -o prog3 prog3.o sort.o utils.o
+原理：
+--伪目标是一个标签而不是一个文件，一般只能由外部调用
+--Makefile的第一个目标(默认目标)一定会被执行
+--一般情况下，一个Makefile只会有一个终极目标，该目标会依据依赖关系派生出其他目标，所以，
+可以称该终极目标为Makefile的“入口”，即，一个Makefile一般有一个“入口”
+--过程：伪目标all放在了Makefile的第一个目标出，必然被执行，然而执行的结果却不产生目标文件
+所以，其依赖项必然会被决议（prog1 prog2 prog3均被当做“入口”），也就达到了一口气生成多个
+目标的目的
+
+(2)install:
+
+(3)清楚目标，以便重新编译
+.PHONY: clean
+clean:
+	rm -f *.o
+备注：既然我们生成了许多文件编译文件,那也应该提供一个清除它们的“目标”以备完整地重编译而用
+
+(4)让伪目标带有依赖文件的妙用：
+.PHONY: cleanall 
+cleanall: cleanobj cleandiff
+	rm program
+.PHONY: cleanobj 
+cleanobj:
+	rm *.o
+.PHONY: cleandiff
+cleandiff:
+	rm *.diff
+--前面说过，伪目标一般是不带依赖文件的，但是有时候带上依赖文件却时有大作用
+--从第一个例子得出结论，目标可以成为依赖，所以，伪目标也可以成为依赖
+原理：伪目标不能生成文件，外部调用cleanall时，会引起决议，伪目标后面带的依赖文件均会被
+作为入口，并发执行这些“入口”，所以，调用cleanall的结果是执行rm program，然后是rm *.o  
+最后是rm *.diff
+*** 自动变量
+>>$@:在具有模式规则(%.c)的条件下，表示规符合匹配要求的目标文件集合；而在普通情况下，
+表示目标文件集合
+
+>>$<:在具有模式规则(%.c)的条件下，表示符合匹配要求的依赖文件集合；而在普通情况下，
+表示依赖文件集合中的第一个依赖文件
+
+>>$^:只在普通情况下使用，表示规则中所有的依赖文件的集合，以空格分隔，如果在依赖
+文件中有多个重复的,那个这个变量会去除重复的依赖文件,只保留一份
+
+>>$+:只在普通情况下使用，同$^作用相同,区别在于，如果在依赖文件中有多个重复的,
+它不去除重复的依赖目标
+
+>>$?:只在普通情况下使用，表示规则中所有比目标文件新的依赖文件的集合，以空格分隔。
+当你希望只对更新过的依赖文件进行操作时,“$?”在显式规则中很有用
+
+>>$*:在模式匹配中，$*表示%及其之前的部分，例如，目标的模式匹配为a.%.b,且目标是
+dir/a.foo.b,那么$*就是dir/a.foo,这个变量对于构造有关联的文件名是比较有用，
+如果目标中没有模式的定义,那么“$*”也就不能被推导出
+*** 模型推导
+**** 基础版本：
+edit: main.o kbd.o command.o display.o insert.o search.o files.o utils.o
+	cc -o edit main.o kbd.o command.o display.o insert.o search.o files.o utils.o
+main.o : main.c defs.h
+	cc -c main.c
+kbd.o : kbd.c defs.h command.h
+	cc -c kbd.c
+command.o : command.c defs.h command.h
+	cc -c command.c
+display.o : display.c defs.h buffer.h
+	cc -c display.c
+insert.o : insert.c defs.h buffer.h
+	cc -c insert.c
+search.o : search.c defs.h buffer.h
+	cc -c search.c
+files.o : files.c defs.h buffer.h command.h
+	cc -c files.c
+utils.o : utils.c defs.h
+	cc -c utils.c
+clean :
+	rm edit $(objects)
+**** 改良版一：使用变量
+objects = main.o kbd.o command.o display.o \
+insert.o search.o files.o utils.o
+
+edit: $(objects)
+	cc -o edit $(objects)
+main.o : main.c defs.h
+	cc -c main.c
+kbd.o : kbd.c defs.h command.h
+	cc -c kbd.c
+command.o : command.c defs.h command.h
+	cc -c command.c
+display.o : display.c defs.h buffer.h
+	cc -c display.c
+insert.o : insert.c defs.h buffer.h
+	cc -c insert.c
+search.o : search.c defs.h buffer.h
+	cc -c search.c
+files.o : files.c defs.h buffer.h command.h
+	cc -c files.c
+utils.o : utils.c defs.h
+	cc -c utils.c
+clean :
+	rm edit $(objects)
+**** 改良版二：自动推导
+GNU 的 make 很强大,它可以自动推导文件以及文件依赖关系后面的命令，只要 make 看到
+一个.o 文件,它就会自动的把.c 文件加在依赖关系中,如果 make 找到一个 whatever.o,
+那么 whatever.c,就会是 whatever.o 的依赖文件。并且 cc -c whatever.c也会被推导
+出来,于是,我们的 makefile 再也不用写得这么复杂。我们的新 makefile 又出炉了
+
+objects = main.o kbd.o command.o display.o \
+insert.o search.o files.o utils.o
+
+edit: $(objects)
+	cc -o edit $(objects)
+main.o: defs.h
+kbd.o: defs.h command.h
+command.o: defs.h command.h
+display.o: defs.h buffer.h
+insert.o: defs.h buffer.h
+search.o: defs.h buffer.h
+files.o: defs.h buffer.h command.h
+utils.o: defs.h
+.PHONY : clean
+clean:
+	rm edit $(objects)
+备注：这里的自动推导实际上是利用了make的隐式规则，make 和我们约定好了：
+第一：只要 make 看到一个.o 文件,它就会自动的把.c 文件加在依赖关系中
+第二：用 C 编译器“cc”编译.c：$(CC) –c $(CPPFLAGS) $(CFLAGS)
+总结：隐式规则使得我们可以做出以上简化而实际效果是同基础范式一样的
+**** 改良版三：使用多目标规则
+objects = main.o kbd.o command.o display.o \
+insert.o search.o files.o utils.o
+
+edit: $(objects)
+	cc -o edit $(objects)
+$(objects): defs.h
+kbd.o command.o files.o: command.h
+display.o insert.o search.o files.o: buffer.h
+.PHONY: clean
+clean:
+	rm edit $(objects)
+备注：该模式的与静态模式有莫大的渊源，应当弄清楚二者的区别与联系
+**** 改良版三(终极版)：使用静态模式
+objects = foo.o bar.o
+all: $(objects)
+$(objects): %.o: %.c
+	$(CC) -c $(CFLAGS) $< -o $@
+
+通俗理解：从$(objects)中匹配出%.o的文件，然后%.o和%.c互相匹配，从而构造出符合匹配模型
+的规则，上面的例子按照其含义可推导如下：
+foo.o bar.o： foo.c bar.c
+	$(CC) -c $(CFLAGS) $< -o $@
+其中：-c和-o同时出现的情况，表示-c(编译)为-o所指出的文件名而不是按照默认方式
+上面的规则继续分解：
+foo.o: foo.c
+	 $(CC) -c $(CFLAGS) foo.c -o foo.o
+bar.o: bar.c
+	 $(CC) -c $(CFLAGS) bar.c -o bar.o
+
+特别地：
+%.o: %.c
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
+表示将所有的%.c挨个取出来编译(-c),编译后的目标命名(-o)为%.o
+**** 简化终极版：自动生成依赖性
+在Makefile中,我们的依赖关系可能会需要包含一系列的头文件，但是,如果是一个比较大型
+的工程,你必需清楚哪些 C 文件包含了哪些头文件,并且,你在加入或删除头文件时,也需要小心地修改 
+Makefile,这是一个很没有维护性的工作。为了避免这种繁重而又容易出错的事情,我们可以使用 
+C/C++ 编译的一个功能。大多数的 C/C++编译器都支持一个“-M”的选项,即自动找寻源文件中包含
+的头文件,并生成一个依赖关系
+*** 多目标以及多目标规则
+>>一个规则中可以有多个目标,规则所定义的命令对所有的目标有效，多目标规则意味着所有的目标
+具有相同的依赖文件
+例如：test1.o test2.o test3.o: command.h
+分析：根据模型推导中改良版二所述，该规则描述了但command.h的时间戳比test1.o test2.o 
+test3.o中任意目标的时间戳新时，就会触发隐式命令$(CC) –c $(CPPFLAGS) $(CFLAGS) $@
+所以，该语句的真实身份应该如下：
+test1.o test2.o test3.o: test1.c test2.c test3.c command.h
+	$(CC) –c $(CPPFLAGS) $(CFLAGS) $@
+
+>>一个具有多目标的规则相当于多个规则
+分析：以上面的例子而言，该句的意思相当于：（应该是下面两种中的一种，具体是哪种，需要测试）
+test1.o: test1.c test2.c test3.c command.h
+	$(CC) –c $(CPPFLAGS) $(CFLAGS) test1.c -Ixx
+test2.o: test1.c test2.c test3.c command.h
+	$(CC) –c $(CPPFLAGS) $(CFLAGS) test2.c -Ixx
+test3.o: test1.c test2.c test3.c command.h
+	$(CC) –c $(CPPFLAGS) $(CFLAGS) test3.c -Ixx
+---------------------
+test1.o: test1.c command.h
+	$(CC) –c $(CPPFLAGS) $(CFLAGS) test1.c -Ixx
+test2.o: test2.c command.h
+	$(CC) –c $(CPPFLAGS) $(CFLAGS) test2.c -Ixx
+test3.o: test3.c command.h
+	$(CC) –c $(CPPFLAGS) $(CFLAGS) test3.c -Ixx
+
+其中：-Ixx是command.h的路径
+备注：所有依赖文件将会被合并成此目标一个依赖文件列表,当其中任何一个依赖文件比目标新时，
+命令都会被执行，所以，对于test1.o test2.o test3.o: command.h不难得出结论：
+当依赖列表(test1.c test2.c test3.c command.h)中任意一个文件的时间戳比目标列表
+(test1.o test2.o test3.o)中的某个，某两个，某三个新时，那么，test1.o test2.o test3.o
+各自对应的命令就会得到执行
+
+>>规则的命令对不同的目标的执行效果不同,因为在规则的命令中可能使用了自动环变量“$@”，
+而且多目标规则确实也少不了$@,但是，多目标的规则并不能做到根据目标文件自动改变依赖文件(像
+上边例子中使用自动化变量“$@”改变规则的命令一样)。需要实现这个目的是,要用到make的静态模式
+通俗理解：多目标规则依托自动变量$@，能够根据目标，自动改变命令，但是，不能根据目标，自动
+改变依赖，后者的实现可通过静态模式
+
+>>一个仅仅描述依赖关系的述规则可用来给出一个或做多个目标文件的依赖文件:
+分析：Makefile 中通常存在一个变量,就像以前我们提到的“objects”,它定义为所有的
+需要编译生成的.o 文件的列表。当这些.o 文件在其源文件及其所包含的头文件“config.h”
+发生变化之后能够自动的被重建,我们可以使用多目标的方式来书写 Makefile:
+objects = foo.o bar.o
+foo.o: defs.h
+bar.o: defs.h test.h
+$(objects): config.h
+这样做的好处是:我们可以在源文件增加或者删除了包含的头文件以后不用修改已经存
+在的Makefile的规则,只需要增加或者删除某一个.o文件依赖的头文件（如bar.o: defs.h test.h）
+中的test.h,当然，头文件的依赖描述也可以使用自动生成依赖性章节所描述的方法产生！
+
+>>多目标，很简单也很方便，对于一个大的工程来说,这样做的好处是显而易见的，在一个大的工程中,
+对于一个单独目录下的.o文件的依赖规则建议使用此方式。（我感觉，还有更好的方案？？）
+规则中头文件的依赖描述规则也可以使用gcc自动产生。可参考 4.14 自动产生依赖 一节
+*** 静态模式
+>>静态模式的规则:存在多个目标,并且不同的目标可以根据目标文件的名字来自动构造出依赖文件
+
+>>例子：
+objects = foo.o bar.o
+all: $(objects)
+$(objects): %.o: %.c
+	$(CC) -c $(CFLAGS) $< -o $@
+通俗理解：从$(objects)中匹配出%.o的文件，然后%.o和%.c互相匹配，从而构造出符合匹配模型
+的规则，上面的例子按照其含义可推导如下：
+foo.o bar.o： foo.c bar.c
+	$(CC) -c $(CFLAGS) $< -o $@
+其中：-c和-o同时出现的情况，表示-c(编译)为-o所指出的文件名而不是按照默认方式
+上面的规则继续分解：
+foo.o: foo.c
+	 $(CC) -c $(CFLAGS) foo.c -o foo.o
+bar.o: bar.c
+	 $(CC) -c $(CFLAGS) bar.c -o bar.o
+
+静态模式规则比多目标规则更通用,它不需要多个
+目标具有相同的依赖。但是静态模式规则中的依赖文件必须是相类似的而不是完全相同
+的
+*** 自动生成依赖性
+>>目的：在Makefile中,我们的依赖关系可能会需要包含一系列的头文件，但是,如果是一个比较大型
+的工程,你必需清楚哪些 C 文件包含了哪些头文件,并且,你在加入或删除头文件时,也需要小心地修改 
+Makefile,这是一个很没有维护性的工作。为了避免这种繁重而又容易出错的事情,我们可以使用 
+C/C++ 编译的一个功能。大多数的 C/C++编译器都支持一个“-M”的选项,即自动找寻源文件中包含
+的头文件,并生成一个依赖关系
+
+>>基本使用：gcc -M main.c,其输出结果是：
+main.o: main.c def.h 
+备注：GNU 的 C/C++ 编译器,你得用“-MM”参数,不然,“-M”参数会把一些标准库的头文件也包含进来
+
+>>如此一来，由编译器自动生成的依赖关系,这样一来,你就不必再手动书写若干文件的依赖关系,
+而由编译器自动生成了
+
+>>那么，编译器的这个功能如何与我们的 Makefile 联系在一起呢？GNU 组织建议,为每一个源文件
+产生一个描述其依赖关系的makefile文件,即，编译器为每一个NAME.c的源文件都生成一个
+NAME.d的Makefile文件作为中间文件，NAME.d中描述了文件NAME.o所要依赖的所有文件
+备注：每一个源文件(xxx.c xxx.S)都对应一个中间文件(xxx.d xxx.d)
+
+>>这样做的目的是：采用这种方式,只有源文件在修改之后才会重新使用命令生成新的依赖关系描述
+文件NAME.o,通俗理解:xxx.c的内容发生改变后(去掉yy.h)，使用make命令编译，如果Makefile
+中有下面的语句，那么，xxx.d中会重新生成新的依赖(xxx.o: xxx.c),即，去掉yy.h
+
+>>规则：该模式规则用来自动生成每一个NAME.c文件对应的NAME.d 文件:
+%.d: %.c
+	$(CC) -M $(CPPFLAGS) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+含义：指定所有的.d 文件依赖于同名的.c 文件
+理解：第一行，使用 c 编译器自动生成依赖文件($<)的头文件的依赖关系,并输出成为一个临时文件,
+“$$$$”表示当前进程号，注意，如果$(CC)为 GNU 的 c 编译工具，-M产生的依赖头文件除了用户
+定义的头文件之外还有系统头文件，如果不想包含系统头文件，使用-MM。所以，第一行执行完毕后，
+应当产生了NAME.c的临时Makefile文件，NAME.d，并且里面有依赖关系：NAME.o: NAME.c xxx.h 
+注意，这个依赖关系存在于NAME.d这个Makefile文件下
+
+第二行，处理NAME.d中的NAME.o: NAME.c xxx.h，生成多规则目标的形式：
+NAME.o NAME.d: NAME.c xxx.h,这样就将NAME.d 加入到了规则的目标中,根据多规则目标的知识，
+当NAME.c xxx.h的时间戳比NAME.o NAME.d新时，命令会被重新执行，NAME.o NAME.d都会被重新
+生成
+
+第三行，删除临时文件NAME.d
+
+>>使用上例的规则就可以建立一个描述目标文件依赖关系的.d文件。我们可以在Makefile中使用
+include指示符将描述将这个文件包含进来。在执行make时,Makefile所包含的所有.d文件就会被
+自动创建或者更新,具体过程可参考 3.7 makefile文件的重建一节
+*** 隐式规则	
+Blog creation time:[2017-08-29 二 08:00]
+** DONE [#D] theme:makefile中vpath，规则中依赖部分.h，规则中recipe的命令中-I参数三者关系的认识 :@Blog:@Makefile:
+	- State "DONE"       from "TODO"       [2017-09-04 一 23:00]
+	今天分析Makefile过程中，研究了关于头文件依赖问题，有以下认识：
+--vpath是一个关键字，定义了一组规则的依赖部分查找的路径，比如：
+vpath %.c CORE/src USER/src
+vpath %.h CORE/inc USER/inc
+	我们不禁会问，这个vpath给出的路径究竟有什么用，正如其定义的意义所言，用于规则的依赖文件
+的查找，当编译器分析到一组规则时，总会拿依赖文件和目标文件的时间戳做比较，来决定是否执行
+recip命令，比较的前提自然是先找到依赖文件：
+（1）首先会在当前路径下查找，找不到的话
+（2）到vpath指定的路径下查找找不到的话
+（3）分析Makefile中其他规则是否有生成该依赖，都没有的话就会报错
+显然，这个vpath的用途自然在于编译源文件的规则中，因为其他规则如链接，都会走（3）的路线
+
+--规则中依赖文件中.h又该怎样理解呢，它和vpath有什么关系？
+	既然它在该规则中依赖文件的位置，说明该规则的目标受到它的制约，这种制约一般是该规则的
+目标（源文件）中引入了该头文件，所以该头文件发生变化，该目标会重新编译生成。既然说了该.h
+文件是依赖文件，那么，也就可以通过vpath的%.h路径来寻找，所以，在Makefile中如果定义了
+vpath %.h，那么在规则的依赖中.h相关的只用写出它的文件名加.h后缀即可，不用标明全路径，
+该规则会根据vpath去%.h路径下查找：%o: %c main.h
+	注意，有了vpath,我们的依赖中，只用使用%.c来表示依赖文件即可（比如/USER/src/main.c）,
+因为程序会到vpath路径下匹配所有.c结尾的文件放到此处。但是，注意了，亲测，%.h,不可以这么干，
+好像理论上可以，这么干的朋友应该是这么思考的：“每个.c文件的头文件依赖多个.h,要时刻关注
+这个.c文件和其依赖的.h文件，并在适当时候在Makefile中做出增减，这是很烦人的事情，不如让
+每个.c都依赖与所有的.h吧，于是写出了%.o: %.c %.h"这样的语法”，这中做法是非常不高效的，
+我猜测，现在的编译器不允许这么干了， 一种好的方法是自动生成依赖关系技术（利用-MM）,详情见
+Makefile中文手册
+
+--规则中，命令部分的-I又干了什么，这里说的规则自然就是编译生成目标的那条规则啦，-I的
+作用的在gcc -c的时候告诉编译器如果.c中出现了#include <xxx.h>,应该去-I指出的路径下
+查找。注意了-I指出的头文件路径和vpath以及依赖处的.h是没有太大关系的
+
+结论：
+	一个Makefile中，应该使用自动依赖生成技术来解决头文件的依赖关系，所以呢，vpath中
+%.h应该是没有什么必要了
+Blog creation time:[2017-08-31 四 15:36]
+** DONE [#D] theme:gcc										:@Blog:@Makefile:
+	- State "DONE"       from "TODO"       [2017-09-05 二 09:29]
+*** gcc
+**** 基本操作
+--预处理：
+gcc -E test.c -o test.i
+
+--编译：
+gcc -S test.i -o test.s
+
+--汇编(compilation)
+gcc -c test.s -o test.o
+
+--链接：
+gcc test.o -o test
+
+--运行：
+./test
+
+--变形一：适合在单独使用gcc时使用，因为一步到位，简单
+gcc test.c -o test
+
+--变形二：适合在Makefile中使用，因为符合Makefile中依赖的处理方案
+gcc -c test.c -o test.o
+gcc test.o -o test
+
+总结：
+>> 口头语：gcc “谁” ， -o "什么"
+
+>> “谁”，代表输入，“什么”，代表输出
+
+>> -o一律理解为：输出(output)即可 
+
+>> 实际干活时，基本上都使用变形式，基本式一般在调试过程中使用
+
+>> 以变形一为例子：参数一般加在test.c的前面和后面，前面一般加的参数有：-E(预处理), -S(编译)， -c(汇编)，这三个参数的加入直接决定 -o(输出)的文件类型，
+此时必须严格对应四个基础式；test.c后面加的参数一般有-O,-Wall,-g,-I,-l,-L,-Shared等
+**** 隐含规则
+--“N.o”自动由“N.c” 生成,执行命令为“$(CC) -c $(CPPFLAGS) $(CFLAGS)”
+
+--“N.o”自动由“N.cc”或者“N.C” 生成,执行命令为“$(CXX) -c $(CPPFLAGS) $(CFLAGS)”
+建议使用“.cc”作为C++源文件的后缀,而不是“.C
+
+--“N.s”是不需要预处理的汇编源文件,“N.S”是需要预处理的汇编源文件，汇编器为“as”，
+“N.o” 可自动由“N.s”生成,执行命令是:“$(AS) $(ASFLAGS)”，“ N.s ” 可 由 “ N.S ” 生 成 , 
+C 预 编 译 器 “ cpp ”, 执 行 命 令 是 :“ $(CPP) $(CPPFLAGS)”
+
+备注：这意味着，我们可以在Makefile中定义一下CPPFLAGS和CFLAGS这两个变量，在书写
+关于生成机器码（*.o）的目标文件时，可以省略掉依赖文件中的*.c以及命令，因为隐含规则
+会自动被使用
+**** 模式规则
+--Makefile中自己定义了一些隐含规则，但是有时候这些隐含规则不够我们使用，所以我们需要自己定义
+一些隐含的规则，称用户自己定义的隐含规则为模式规则
+
+--模式规则的基本要求：模式规则的目标有且仅有一个%，用于匹配任意非空的字符串
+
+--定义一个自己的隐含规则：
+%.o : %.c
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $^ -o $@
+备注：如此，便定义了一个用户的隐含规则，make会把该规则加入到自己的隐含规则里面，该规则
+表示把任意一个%.c的文件都使用该规则描述的命令编译成%.o文件
+
+--任意模式匹配规则：
+% ： %.c
+	touch $@
+备注：该规则表示将任意一个目标都更新一下
+任意模式匹配规则可以匹配任意一个target,但是，这种理解起来需要注意一点，比如:foo:foo.o bar.o,
+由于默认隐含规则中指明foo.o是依赖于foo.c的，但是套用%：%.c得出的结果是foo.o:foo.o.c,这个就有问题，
+在makefile中，有两种机制来解决这种问题的，第一种机制：先使用默认的隐含规则来寻找，找不到才会使用这种任意模式规则，
+由于foo.o的默认隐含规则就匹配到foo.c了，所以，就不会再去理会用户自己定义的隐含规则：任意模式匹配规则，来解析
+出foo.o.c这样的依赖；第二种机制：用户使用双冒号来定义任意模式规则而不是单冒号，称为terminal规则，如：
+% :: %.c
+	touch $@
+其中：双冒号对依赖进行了限制，只有依赖确实存在时，才会使用这种规则，比如，foo:foo.o,使用foo.o来套用这种
+规则后是foo.o :: foo.o.c,双冒号规定了会对依赖文件的存在性进行检查，由于foo.o.c在当前目录下是找不到的，
+所以，foo.o是不可以套用该规则的
+
+--取消隐含规则
+有时候，我们会觉得makefile自带的隐含规则用不到，多余，或者对真实的情况造成麻烦，就需要取消这些隐含规则，
+取消的方法就是重新定义来覆盖掉默认的隐含规则，其原理是，当用户自定义的目标和依赖同默认的隐含规则的相同时，
+默认的隐含规则就会被覆盖
+例如：使用%.o:%.s就可以将所有.s文件汇编成机器码.o的默认规则给取消掉
+**** 指令(编译+连接+运行)
+情景一:
+--test目录下:src inc两个目录 
+--src目录下:hello thanks两个目录
+--hello目录下:hello.c
+--thanks目录下:thanks.c
+--inc目录下:thanks.h
+备注:hello.c文件中调用到thanks.c文件提供的一个函数thank_you(),所以thanks.h被hello.c文件和thank.c文件所依赖
+
+编译:(在test目录下执行下面指令)
+--gcc -c ./src/hello/hello.c ./src/thanks/thanks.c -Wall -O -I ./inc ./src/
+-->-c:编译
+-->-Wall:编译过程信息
+-->-O:优化
+-->-I:指定头文件路径:./inc
+-->./src:编译后产生的目标文件放置到哪
+语义:在test目录下执行gcc命令,编译./src/hello这个路径下面的hello.c以及./src/thanks这个路径下面的thanks.c,要求实时显示
+编译产生的信息,同时做一个-O1的优化,由于thanks.h被hello.c文件和thank.c文件所依赖,所以将thank.h的路径./inc告知gcc,以便能找到路径
+备注：有一个比较奇怪的写法：gcc -c test.c -o xxx.o 其含义同gcc -c test.c是一样的，只不过gcc -c test.c编译的结果默认是test.o,而
+在gcc -c test.c后面加上-o xxx.o则表示希望编译的结果是xxx.o而不是test.o 
+
+
+链接:
+--gcc -o  test test.o test1.o test2.o
+-->-o:链接
+-->test:链接之后生成的可执行文件
+-->*.o:被链接的目标文件
+
+运行: ./test   -->  thank you very! hello world!
+**** 静态库和动态库
+***** 函数库:
+	有若干源文件(.c),每个源文件里面都提供了一些独立的工具函数,比如一个好的算法策略,一个常用的数学函数公式的实现(标准偏差)等,
+如果这些源文件需要经常被使用,或者这些工具函数已经比较成熟了,那么可以考虑将它们编译成一个函数库并统一命名,然后提供出这个函数库中
+所有工具函数的函数原型如:void *malloc(size_t size),同时附上使用说明,以后如果使用到该函数库中的某一个函数时,只用在该函数库的说明文档
+中找到该函数,然后参照使用说明,在编译时,将函数库与用户程序建立起联系,即可使用该函数
+***** 静态库策略:
+--策略概述:
+-->制作出静态链接库文件
+-->编译用户源代码,生成用户的目标文件
+-->链接用户目标文件为可执行文件期间,将静态库.a链接进来,生成最终的可执行文件,其链接方式是:整个静态库被连接到了用户代码里面成了用户代码的一部分
+特点:整个函数库被链接到用户代码中,所以生成的可执行文件比较大,但是执行速度快(不过如今CPU的运算速度高速发展,这点速度的提升已经没有太大的追求价值,而文件的
+大小可能在嵌入式领域那种内存宝贵的情况下就比较看中,这也是静态连接没有动态连接火爆的原因吧)
+备注:当同时运行许多运用程序并且他们都使用来自同一个函数库的函数时,内存中就会有同一个函数的多份副本,而且在程序文件自身中也会有很多份副本,这样将会消耗很多宝贵的内存
+
+--细节:
+-->在.c文件中的工具函数实现应该是独立的,不可再引用其他函数库(没有头文件)
+-->函数库是在链接阶段(gcc -o main main.o -lstatic -L ./mylib)而不是编译阶段,被整合到用户的代码里面的
+-->静态函数库发生改变时,整个程序必须重新编译
+-->extern int a 和include "xxx.h"都是用来应付编译器的编译阶段,在编译源文件时,extern关键字告知编译器,a在其他文件定义了,虽然你现在找不到a,但是
+我跟你保证a是存在的,现在你不要因为找不到a而报错,接着编译即可;到了连接阶段,所有源文件都已经编译成了目标文件,这时所有文件的内容都可见了,编译器就会
+在所有的目标文件中查找有没有a,如果找到了a,那好,说明在编译阶段extern没有骗编译器,如果没有找到,那就报错;显然,include也有这样的功能,其目的就是解决编译器
+在编译阶段因为暂时找不到某个编译对象而终止编译的情况,连接阶段就是真正考究编译正确性的时刻
+--在Windows下,静态链接库文件以.lib为后缀,在Linux下,以.a为后缀,即archive
+
+--静态库操作命令:arr
+-->arr -cr libxxx.a yyy1.o yyy2.o:创建库libxxx.a并插入yyy1.o yyy2.o模块到该库(c,创建,r,c插入,注意,单独使用c是不会创建libxxx.a的,报错没有执行的操作,r就是一个操作)
+-->arr -pv libxxx.a yyy.o:打印出静态库libxxx.a中的yyy.o的内容(p,打印,v标识各个模块)
+-->arr -tv libxxx.a:显示库中的模块清单,只显示库名
+-->arr -rv libxxx.a yyy1.o yyy2.o:在静态库libxxx.a中所有模块的最后插入模块yyy1.o,yyy2.o,如果静态库libxxx.a不存在则创建,并插入模块yyy1.o,yyy2.o,如果存在静态库,并且静态库
+里面存在待插入的模块,则替换同名模块(r,插入,v显示操作信息:a - xx或者d - xx,即增加还是删除)
+-->arr -qv libxxx.a yyy4.o:在静态库libxxx.a的结尾处快速追加模块yyy4.o,而不去检查是否需要替换
+-->arr -dv libxxx.a yyy2.o:从静态库libxxx.a中删除模块yyy2.o(d,删除模块,v提示删除信息d - yyy2.o)
+-->arr -s libxxx.a:写入符号表索引到库libxxx.a中 
+备注:arr还有几个指令可以指定插入模块的位置,不过没有测试过,就不列举出来了,有需要时再man ar即可
+
+总结:创建静态库常规的指令:arr -crs libxxx.a ${objects}
+***** 动态库策略:
+--策略概述:
+-->制作出动态链接库文件
+-->编译用户源代码,生成用户的目标文件
+-->链接用户目标文件为可执行文件期间,将动态库.so链接进来,生成最终的可执行文件,其链接的方式是:动态链接库的名字以及库内部的所有函数名字被连接到用户代码里面
+成为用户代码的一部分,而动态库内部函数的实现代码不会被连接进入用户代码,即,用户代码只是引用了动态库,链接的结果形成可执行文件,当可执行文件被执行时,通过该执行文件
+内部在链接阶段加入的动态库名以及函数名,找到具体的动态库(.so)下面的具体的函数并调用,如果有必要的话才会将动态库加载到内存中去
+
+特点:动态库策略在制作的动态库文件体积比较小,同时动态库策略使用的是一种共享的原则,不会在内存中产生库的多份拷贝,另外,动态库的一个好处是动态库的更新可以独立于依赖
+它的运用程序,这句话有相当的份量,动态库在连接阶段只是将库名和所有函数原型封装到可执行文件中了,在以后调用可执行文件时会实时去动态库里面找具体的实现,这不就意味着,
+只要我们不改变动态库的名字和函数原型,我们可以随意更改构成动态库的源代码(比如用一个更好的算法来替换某一个函数中一般的算法),该完以后,重新生成一遍动态库,替换掉老的,
+那么当以前依赖该动态库的一些运用程序(比如test),当执行./test时,还是可以依据动态库名和函数原型去动态库(.so)找具体的实现,只不过现在的实现用了一个更加牛叉的算法来改善
+了程序的性能而已,所以,针对那些个依赖该动态库的运用来说,是感受不到影响的,当然了,你如果针对动态库的某个函数不是做优化,而是直接改变其功能(比如将gui运用程序所调用的动态库的
+某个描述颜色的函数的颜色值改变了),那么依赖该动态库的运用如果调用到该函数,则其主题颜色自然就发生改变,还有就是,以后也可以往该动态库中加入函数,由于是新加入的函数,以前依赖
+该动态库的运用程序肯定没有用到自然也不会受到影响,新加入的函数能可以用于从这一版本的动态库发布后开发其他的运用;显然,删除动态库内的函数就一定得谨慎了,因为如果你删除的
+这个函数如果恰好被某个运用程序调用过,那么,以后最新版本发布的动态库,如果那个运用进行了更新,那么基本上他的这个运用是不能运行了.
+
+总结:综上所述,动态库也叫共享库,该共享库的制作者(发布者)可以修改,添加该共享库的函数的实现,但是删除共享库中的某一函数需要慎重,除非你决定在这一版本中,或者以后将不再
+维护和支持该功能,明白你要做的事情之后才能进行删除,并且在产品发布的时候并告知用户不再支持某一项功能,基于这一个原因,为了避免程序更新而导致不能使用,当Linux启动运用程序时,
+会考虑运用程序需要的函数版本,以防止动态库的新版本导致某些旧的运用程序无法使用
+
+细节:
+--可以使用ldd命令查看动态库的使用情况:ldd main 
+--在Windows下,态链接库文件以.dll为后缀,即Dynamic Link Library,在Linux下以.so为后缀
+--LD_LIBRARRY_PATH:该环境变量指示动态连接器可以装载动态库的路径
+--静态库策略以空间换时间,动态库策略是以时间换空间
+**** 制作静态链接库文件libstatic.a
+--环境:
+-->工作目录:test,该目录下有一个库目录libstatic,以及两个文件main.c,libstatic.h
+-->libstatic目录下面有add.c,sub.c,mul.c,div.c,Makefile四个文件
+
+--目的:
+-->将libstatic目录下的.c文件生成静态库libstatic.a,在main.c中调用静态库中的工具函数
+-->libstatic.h下面给出了静态库libstatic.a中的所有工具函数的原型
+
+--实现步骤:
+-->在4个文件内里面分别编写add.c,sub.c,mul.c,div.c文件:
+float add(int a,int b)
+{
+	return (a+b);
+}
+float sub(int a,int b)
+{
+	return (a-b);
+}
+float mul(int a,int b)
+{
+	return (a*b);
+}
+float div(int a,int b)
+{
+	return (a/b);
+}
+
+-->编写库函数的头文件libstatic.h:
+## libstatic.h
+#ifndef _LIBSTATIC_H 
+#define _LIBSTATIC_H
+float add(int a,int b);
+float sub(int a,int b);
+float mul(int a,int b);
+float div(int a,int b);
+#endif
+
+-->编写Makefile文件
+objects = add.o sub.o mul.o div.o
+
+libstatic.a : ${objects}
+	ar -rcs libstatic.a ${objects}    将目标文件(.o)归档入库libstatic.a
+备注:
+--ar:静态库操作命令,参见上面的介绍
+--libstatic.a:linux中默认规定静态库文件需要以lib开头,以.a结尾;
+--${objects}:有很多.c文件,每个.c文件里面都是一些组成库libstatic.a的独立的工具函数,这些.c文件编译后会生成.o文件,${objects}就是这些.o文件的集合
+这种书写方式在makefile文件中称之为宏,定义的格式是:macro = xx xx xx,其中xx可以是命令如gcc,也可以是选项参数如-Wall,也可以是路径./inc;使用的格式是:$(macro)或者${macro}
+
+add.o : add.c
+	gcc -c add.c
+
+sub.o : sub.c
+	gcc -c sub.c
+
+mul.o : mul.c
+	gcc -c mul.c
+
+div.o : div.c
+	gcc -c div.c
+
+clean:
+	rm libstatic.a $(objects)
+
+-->生成静态库:make -f Makefile 
+
+-->使用静态函数库libstatic.a
+## main.c
+#include <stdio.h>
+#include "libstatic.h"
+
+int main()
+{
+	int a,b;
+	a = 10;
+	b = 3;
+
+	printf("a+b = %f\n",add(a,b));
+	printf("a-b = %f\n",sub(a,b));
+	printf("a*b = %f\n",mul(a,b));
+	printf("a/b = %f\n",div(a,b));
+	return 0;
+}
+
+-->编译mani.c:gcc -c main.c -I ./
+
+-->链接:gcc -o main main.o -lstatic -L ./libstatic 
+-l:指明静态库的名字,全名应当是libstatic.a,但是由于lib和.a是linux默认识别的,所以只用写static即可,比如在使用到数学库的场合,加入-lm即可,表示加入libm.a这个静态数学库
+-L:指明静态库的路径,GCC在链接时,默认只会链接/usr/lib下面的C函数库,如果没有该参数的话,linux就会到/usr/lib里面查找-l指定的静态库,如果找不到就报错/usr/bin/ld:cancont find -lstatic
+备注:如果自己做了一个静态库libxxx.a,或者要使用第三方提供的静态库libxxx.a,只用将该静态库添加到/usr/lib目录下,链接时加上-lxxx即可,不用再指明路径
+
+-->运行:./main 
+
+**** 制作动态链接库文件libdynamic.so
+--环境:
+-->工作目录:test,该目录下有一个库目录libdynamic,以及两个文件main.c,libdynamic.h
+-->libdynamic目录下面有add.c,sub.c,mul.c,div.c,Makefile四个文件
+
+--目的:
+-->将libdynamic目录下的.c文件生成动态库libdynamic.so,在main.c中调用动态库中的工具函数
+-->libdynamic.h下面给出了动态库libdynamic.so中的所有工具函数的原型
+
+--实现步骤:
+-->在4个文件内里面分别编写add.c,sub.c,mul.c,div.c文件: 见静态库制作
+
+-->编写库函数的头文件libstatic.h:见静态库制作
+
+-->编写Makefile文件:
+objects = add.o sub.o mul.o div.o
+
+libdynamic.so: ${objects}
+	gcc -fPIC -shared -o libdynamic.so ${objects}
+备注:
+--fPIC:编译为位置独立的代码,即编译后的库可以存放在内存的任何位置
+--shared:指定生成动态链接库
+
+add.o : add.c
+	gcc -c add.c
+
+sub.o : sub.c
+	gcc -c sub.c
+
+mul.o : mul.c
+	gcc -c mul.c
+
+div.o : div.c
+	gcc -c div.c
+
+clean:
+	rm libdynamic.so $(objects)
+
+-->编写库函数的头文件libdynamic.h:见静态函数制作
+
+-->使用动态函数库:libdynamic.so
+## main.c
+#include <stdio.h>
+#include "libdynamic.h"
+
+int main()
+{
+	int a,b;
+	a = 10;
+	b = 3;
+
+	printf("a+b = %f\n",add(a,b));
+	printf("a-b = %f\n",sub(a,b));
+	printf("a*b = %f\n",mul(a,b));
+	printf("a/b = %f\n",div(a,b));
+	return 0;
+}
+-->编译mani.c:gcc -c main.c -I ./
+
+-->链接:gcc -o main main.o -L ./libdynamic -ldynamic 
+
+-->环境变量的处理:
+方案一:将动态链接库拷贝到/usr/lib和/lib目录下,执行./main即可
+方案二:在~/.profile下面添加:export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$MY_PATH (其中,MY_PATH为你所生成的libdynamic.so所在的目录的路径),执行. .profile 
+方案三:在/etc/profile下面添加:export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$MY_PATH (其中,MY_PATH为你所生成的libdynamic.so所在的目录的路径),执行 . /etc/profile
+方案四:在/etc/ld.so.conf.d目录下新建一个文件my.conf,打开该文件,并在里面添加你之前制作的动态库libdynamic.so所在目录的路径,保存退出,执行sudo ldconfig即可运行
+
+备注:方案一,方案三,方案四是全局有效的,方案二只针对当前用户有效,其中方案一的做法将自己的库和系统的库混合在一起,我不太喜欢,个人认为方案四是一种比较优雅的方案
+对于linux来说,负责装载共享库并解析用户程序函数引用情况的程序是动态装载器ld.so,该装载器会在/etc/ld.so.conf.d/下面的文件中索引共享库的额外位置(/usr/lib是标准位置),
+所以只用将你的动态库的路径写入到/etc/ld.so.conf.d/下面的某一文件中(通常是新建一个自己的文件mylib.conf),并调用sudo ldconfig,动态装载器ld.so就能找到你的动态库了,
+可以使用运行工具ldd来查看一个运用程序所需要的共享库,如ldd test
+
+-->运行: ./main
+
+Blog creation time:[2017-09-05 二 08:36]
+** DONE [#D] theme:makefile语法规则							:@Blog:@Makefile:
+	- State "DONE"       from "TODO"       [2017-09-05 二 09:30]
+用户自定义的隐含规则称模式规则，这些规则建议放到一个叫做BIN/rule.mk的Makefile文件中去，
+其他makefile使用include包含进来，应该是include而不是make -C rule.mk,所以，rule.mk
+就相当于各个makefile文件公共文件，有点公共函数的意思，被调用 
+
+重新认识一下makefile中模式规则的原理以及如何被使用，模式规则就是用户定义出来，告诉
+make,遇到符合自己定义的模式规则模型的，就套用该模型，并调用其下面的命令
+
+Blog creation time:[2017-09-05 二 08:38]

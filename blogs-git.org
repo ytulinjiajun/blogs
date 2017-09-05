@@ -1,0 +1,187 @@
+* My-blog-of-git
+** DONE [#D] theme:我的工具网站									 :@Blog:@Git:
+	- State "DONE"       from "TODO"       [2017-09-05 二 09:28]
+--git 官方网站：http://git-scm.com
+--廖雪锋：http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000
+Blog creation time:[2017-09-05 二 08:01]
+** DONE [#D] theme:我的快捷键习惯								 :@Blog:@Git:
+	- State "DONE"       from "TODO"       [2017-09-05 二 09:28]
+--sta = status
+--ci = commit
+--ps = push origin
+--co = checkout
+--br = branch
+--mg = merge --no-ff
+--throw = reset HEAD
+--cl = clone
+--rmt =  remote add origin
+--lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+Blog creation time:[2017-09-05 二 08:02]
+** DONE [#D] theme:安装git										 :@Blog:@Git:
+	- State "DONE"       from "TODO"       [2017-09-05 二 09:28]
+--fedora:dnf install git
+--ubuntu:sudo apt install git
+Blog creation time:[2017-09-05 二 08:03]
+** DONE [#D] theme:配置git										 :@Blog:@Git:
+	- State "DONE"       from "TODO"       [2017-09-05 二 09:28]
+1.设置 git 的user . name 和 user . email:
+    git config --global user.name "linjiajun" ;
+    git config --global  user.email "ytulinjiajun@163.com" ;
+备注：这两个配置项会出现在git的配置文件中，当提交一个版本时，会从配置文件中取出这个信息，
+若不配置这两个选项，则版本信息中会出现错误的提交者信息;
+
+2.生成SSH秘钥：
+生成：ssh-keygen -t rsa -C "ytulinjiajun@163.com"
+其中：-t  用于指定加密类型，常见的有RSA和DSA加密方式，默认是DSA;
+-C 作为批注
+三次回车，按默认路径.ssh以及不需要密码安装即可
+
+3.在GitHub上添加密钥：
+Account Setting -> SSH Key -> Add SSH Key ;
+复制~/.ssh/ssh-ras 的内容到 key 区域
+
+4.验证SSH配置是否成功：
+ssh -T git@github.com
+Hi username! You've successfully authenticated ,but GitHub does not # provide shell access 
+
+5.创建一个本地版本库：
+git init
+
+6.关联远程库：
+git rmt git@github.com:ytulinjiajun/GitHub-Lin.git
+
+6.从github克隆一个版本库验证SSH配置是否成功：
+
+git clone git@github.com:ytulinjiajun/GitHub-Lin.git@github
+
+7.配置别名：
+方法一：使用命令
+git config --global alias.sta status
+方法二：修改配置文件
+配置文件路径：～/.gitconfig
+[alias]
+	sta = status
+	ci = commit
+	rmt = remote add origin
+	ps = push origin 
+	co = checkout
+	br = branch
+	mg = merge --no-ff 
+	unstage = reset HEAD
+	rmt =  remote add origin 
+	cl =  clone 
+	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+Blog creation time:[2017-09-05 二 08:04]
+** DONE [#D] theme:创建版本库									 :@Blog:@Git:
+	- State "DONE"       from "TODO"       [2017-09-05 二 09:28]
+--在指定位置新建一个目录：mkdir git-learn
+--进入该目录：cd git-learn
+--执行：git init
+备注：也可以不进入该目录，直接输入：git init git-learn
+
+--执行ls -al 可以发现：.git,这就是我们创建的版本库
+--称git-learn为工作区，.git为版本库
+Blog creation time:[2017-09-05 二 08:05]
+** DONE [#D] theme:操作版本库									 :@Blog:@Git:
+	- State "DONE"       from "TODO"       [2017-09-05 二 09:28]
+1.原则
+--正确使用版本控制系统的方法是，一次提交只完成一件事
+--只有git commit才会产生版本，这意味着可以多次使用add文件到暂存区，提交版本时
+  只会commit最新版？
+--使用git push只会将本地众多版本中HEAD指向的版本推送到服务器？这意味着可以多
+  次commit文件到本地版本库
+
+2.查询操作
+--查询当前git的版本：git --version
+--查看某个版本号下面的文件内容：
+--查询版本库的分支数：
+--查询该仓库对应的远程仓库：
+--查询日志：
+
+3.基本操作
+3-1 git status：
+--包含三块信息：当前位于哪个分支、文件发生了哪些行为、目前可以执行哪些指令处理问题
+-当前位于哪个分支：默认 on branch master
+-文件发生了哪些行为：
+1.Nothing to commit(working directory clean):干净的工作区
+2.Untracked files:工作区内未被git管理的文件
+3.Change not staged for commit:工作区内已经被git管理的文件发生了某些行为
+4.Change to be commited:暂存区内有待提交的文件
+-目前可以执行哪些指令处理问题：
+1.Untracked files：可以add到暂存区给git管理，也可以放到.gitignore中告诉git不用管理它
+2.
+
+3-2 git add： 
+--该操作的结果是：将工作区内的发生的行为同步到暂存区（unstage）
+--注意：
+
+4.未解决的疑惑
+--在本地执行commit后，git status操作给出下面提示：
+Your branch is based on 'origin/master', but the upstream is gone.
+  (use "git branch --unset-upstream" to fixup)
+Blog creation time:[2017-09-05 二 08:06]
+** DONE [#D] theme:分支管理										 :@Blog:@Git:
+	- State "DONE"       from "TODO"       [2017-09-05 二 09:28]
+1.查看分支
+--git br 
+2.创建分支：
+--git br slaver
+3.切换分支：
+--git co slaver
+4.合并分支：
+--git mg slaver
+5.删除分支：
+--git br -d slaver
+Blog creation time:[2017-09-05 二 08:06]
+** DONE [#D] theme:开发模型										 :@Blog:@Git:
+	- State "DONE"       from "TODO"       [2017-09-05 二 09:28]
+1. 单人工作模型
+2. 团队工作模型
+2-1 金字塔版本控制模型：发布Linux
+--最终版本库；  ---> Fedora 25发行版
+--有一个权威贡献者的版本库（linus）
+--有几个核心贡献者的版本库（Kernel、Samba、KDE、Gnome）
+--有若干开发者（37人）的版本库（10个人负责开发Kernel、6个人负责开发Samba、
+  12个人负责开发KDE、9个人负责开发Gnome）
+
+特点：
+--每个贡献者的版本库都是平等的；
+--用于版本控制的模型；
+
+2-2金字塔版开发模型：开发Samba
+2-2-1服务器端，主分支master;   ---> Samba 3.4.1
+1.不允许在master分支上干活，所以该分支不属于某一个成员，应当找一个牛来管理
+（合并分支）master分支以及slaver分支，这个人一般是核心开发者中最牛的那一个人；
+2.只有slaver分支对它有写权限，即，只有slaver分支才能向它合并代码；
+3.所有分支对它都有读权限；
+4.这个分支是非常稳定的，可以作为产品的。
+
+2-2-2服务器端，开发分支（slaver）
+1.这个开发分支用于干活，但是该分支也不属于某一个成员，应当找一个牛来管理（合并分支）
+  master分支以及slaver分支，这个人一般是核心开发者中最牛的那一个人；
+2.只有核心开发分支（A、B、C、D）才对它有写权限，即，只有核心开发者才能向
+  slaver分支合并代码；
+3.只有核心开发分支（A、B、C、D）才对它有读权限
+4.这个分支是不稳定的，找来管理它的牛在充分测试后时不时把它作为版本合并
+  到master分支上即可。
+
+2-2-3服务器端，核心开发者的开发分支（A、B、C、D）
+1.这四个分支的所有者可以在属于自己的分支上干活，并且时不时向slaver分支合并代码
+  并且，接受
+2.向slaver合并代码，
+  
+--有若干开发者（37人）的开发分支（其中10个人只能）
+
+特点：
+-每个开发者的版本库都是平等的；
+--用于版本开发的模型；
+
+个人也必须有一个master分支和slaver分支，其中，slaver分支用于自己干活，master
+分支主要用于三个方面：向上级分支推送代码，接受别人代码的合并，接受自己在slaver分支
+上的代码的合并
+Blog creation time:[2017-09-05 二 08:07]
+** DONE [#D] theme:场景分析										 :@Blog:@Git:
+	- State "DONE"       from "TODO"       [2017-09-05 二 09:28]
+*** 场景分析
+场景一：工作备份
+Blog creation time:[2017-09-05 二 08:08]
