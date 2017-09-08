@@ -1,4 +1,4 @@
-* My-blog-of-emacs
+* blogs-emacs-active
 ** DONE [#D] theme:博客开张了！ 									  :@Blog:@Emacs：
    - State "DONE"       from ""           [2017-08-04 五 16:19]
      今天注定难忘的一天，因为在折腾了一个周之后，终于成功的用上了emacs的gtd功能，有点
@@ -393,7 +393,7 @@ Blog creation time:[2017-09-05 二 08:46]
 2.制作 Linux
 
 Blog creation time:[2017-09-05 二 09:23]
-** DONE [#C] case:研究emacs中gtd工具中如何创建和使用周期性任务		 :@Emacs:
+** DONE [#C] case:研究emacs中gtd工具中如何创建和使用周期性任务 :@Blog:@Emacs:
 #   DEADLINE: <2018-01-01 一 12:00> SCHEDULED: <2017-08-04 五 08:30>
    - State "DONE"       from "ABORT"      [2017-08-07 一 08:58] \\
 	 找到解决方案：
@@ -403,69 +403,69 @@ Blog creation time:[2017-09-05 二 09:23]
 	 暂时用不到！
    - State "TODO"       from "NEXT"       [2017-08-03 四 20:53]
 Next creation time:[2017-08-03 四 20:38]
-** DONE [#C] case:研究如何将agenda打印出来							 :@Emacs:
+** DONE [#C] case:研究如何将agenda打印出来					   :@Blog:@Emacs:
    - State "DONE"       from "TODO"       [2017-08-06 日 20:31]
    - State "TODO"       from "NEXT"       [2017-08-04 五 13:37]
 Next creation time:[2017-08-04 五 08:06]
-** DONE [#C] case:如何修改一个todo任务的时间戳						 :@Emacs:
+** DONE [#C] case:如何修改一个todo任务的时间戳				   :@Blog:@Emacs:
 
    - State "DONE"       from "TODO"       [2017-08-06 日 20:34]
    - State "TODO"       from "NEXT"       [2017-08-04 五 13:37]
 Next creation time:[2017-08-04 五 08:48]
-** DONE [#C] case:配置番茄时间工作法								 :@Emacs:
+** DONE [#C] case:配置番茄时间工作法						   :@Blog:@Emacs:
    - State "DONE"       from "TODO"       [2017-08-06 日 20:31]
    - State "TODO"       from "NEXT"       [2017-08-04 五 13:37]
 Next creation time:[2017-08-04 五 10:35]
-** DONE [#C] case:添加inbox.org										 :@Emacs:
+** DONE [#C] case:添加inbox.org								   :@Blog:@Emacs:
    SCHEDULED: <2017-08-05 六 11:20>
    - State "DONE"       from "TODO"       [2017-08-06 日 09:16]
 Task creation time:[2017-08-05 六 11:13]
-** DONE [#C] case:删除done.org,abort.org,waiting.org,添加work.org,project.org :@Emacs:
+** DONE [#C] case:删除done.org,abort.org,waiting.org,添加work.org,project.org :@Blog:@Emacs:
    SCHEDULED: <2017-08-05 六 11:25>
    - State "DONE"       from "TODO"       [2017-08-06 日 09:17]
 Task creation time:[2017-08-05 六 11:14]
-** DONE [#C] case:对定制的gtd工具进行严格测试						 :@Emacs:
+** DONE [#C] case:对定制的gtd工具进行严格测试				   :@Blog:@Emacs:
    SCHEDULED: <2017-08-04 五 08:00>
    - State "DONE"       from "TODO"       [2017-08-04 五 15:54]
    - State "TODO"       from "NEXT"       [2017-08-03 四 22:40]
 Next creation time:[2017-08-03 四 22:36]
-** DONE [#C] case:为工作，工程等对象分别建立各自包含待规划，待完成，已经完成，等待别人完成，丢弃的组 :@Emacs:
+** DONE [#C] case:为工作，工程等对象分别建立各自包含待规划，待完成，已经完成，等待别人完成，丢弃的组 :@Blog:@Emacs:
 
    - State "DONE"       from "TODO"       [2017-08-04 五 15:55]
    - State "TODO"       from "NEXT"       [2017-08-03 四 22:49]
 Next creation time:[2017-08-03 四 22:47]
-** DONE [#C] case:更改gtd模板，使得在next和link时不用人工输入tags	 :@Emacs:
+** DONE [#C] case:更改gtd模板，使得在next和link时不用人工输入tags :@Blog:@Emacs:
    - State "DONE"       from "TODO"       [2017-08-04 五 08:15]
    - State "TODO"       from "NEXT"       [2017-08-04 五 08:02]
 Next creation time:[2017-08-04 五 07:46]
-** DONE [#C] case:将emacs的tab缩进由8变为4							 :@Emacs:
+** DONE [#C] case:将emacs的tab缩进由8变为4					   :@Blog:@Emacs:
    - State "DONE"       from "TODO"       [2017-08-03 四 21:05]
    - State "TODO"       from "NEXT"       [2017-08-03 四 20:51]
 Next creation time:[2017-08-03 四 20:43]
-** DONE [#C] case:研究如何自动根据任务状态移动到不同的文件中去		 :@Emacs:
+** DONE [#C] case:研究如何自动根据任务状态移动到不同的文件中去 :@Blog:@Emacs:
    - State "DONE"       from "TODO"       [2017-08-03 四 22:30]
    - State "TODO"       from "NEXT"       [2017-08-03 四 21:32]
 Next creation time:[2017-08-03 四 21:11]
 
-** DONE [#C] case:研究如何删除一个TODO任务							 :@Emacs:
+** DONE [#C] case:研究如何删除一个TODO任务					   :@Blog:@Emacs:
    - State "DONE"       from "TODO"       [2017-08-04 五 09:17] \\
 	 使用C-c k就能将该条目从源文件中移除！
    - State "TODO"       from "NEXT"       [2017-08-03 四 22:41]
 Next creation time:[2017-08-03 四 22:35]
-** DONE [#C] case:让C-c C-a全屏显示									 :@Emacs:
+** DONE [#C] case:让C-c C-a全屏显示							   :@Blog:@Emacs:
    - State "DONE"       from "ABORT"      [2017-08-04 五 09:19]
    - State "ABORT"      from "ABORT"      [2017-08-04 五 08:53] \\
 	 该任务与之后的任务重复！
 Task creation time:[2017-08-04 五 08:16]
-** DONE [#C] case:更改link的存储文件为gtd.org						 :@Emacs:
+** DONE [#C] case:更改link的存储文件为gtd.org				   :@Blog:@Emacs:
    - State "DONE"       from "TODO"       [2017-08-04 五 09:23]
    - State "TODO"       from "NEXT"       [2017-08-04 五 07:58]
 Next creation time:[2017-08-04 五 07:48]
-** DONE [#C] case:将～/my-agenda改为隐藏目录						 :@Emacs:
+** DONE [#C] case:将～/my-agenda改为隐藏目录				   :@Blog:@Emacs:
    - State "DONE"       from "TODO"       [2017-08-04 五 10:08]
    - State "TODO"       from "NEXT"       [2017-08-04 五 09:56]
 Next creation time:[2017-08-04 五 09:53]
-** DONE [#C] case:研究lisp语法										 :@Emacs:
+** DONE [#C] case:研究lisp语法								   :@Blog:@Emacs:
    
 	- State "DONE"       from "TODO"       [2017-08-07 一 15:39]
     https://learnxinyminutes.com/docs/elisp/

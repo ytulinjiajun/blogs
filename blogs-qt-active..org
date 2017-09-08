@@ -1,4 +1,4 @@
-* My-blog-of-Qt
+* blogs-qt-active
 ** DONE [#D] theme:qt相关网址									  :@Blog:@Qt:
 	- State "DONE"       from "TODO"       [2017-09-05 二 09:30]
 --软件下载:https://download.qt.io/official_releases/qt/

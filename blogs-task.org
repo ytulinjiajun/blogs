@@ -1,0 +1,12 @@
+* My-Blog-Task
+** TODO [#C] Theme:Kali下面装goldendict词典的安装和添加词典文件 :@Blog:@Linux:
+    SCHEDULED:<2017-09-07 四>
+    Link position:
+Case creation time:[2017-09-07 四 08:53]
+** TODO [#C] Theme:解决GTD博客文件越来越大引发速度缓慢的问题 :@Blog:@Emacs:
+    SCHEDULED:<2017-09-07 四>
+	思路：为每个gtd管理的org文件做一个xxx-arch-part1.org,用于存储历史记录，该文件可以被gtd工具查询到，
+当然了，以后如果文件越来越大，连读的速度都受到影响，那么，可以有xxx-arch-part2.org，依次下去，
+而xxx-active.org文件则专门用于读写，它的文件是很小的，经常和用户打交道，读写速度也非常快。还有，xxx-active.org
+下面的内容应该经常使用C-w归档到xxx-arch-partx.org下面去
+Case creation time:[2017-09-07 四 16:22]

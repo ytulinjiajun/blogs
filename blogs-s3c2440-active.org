@@ -1,0 +1,45 @@
+* blogs-s3c2440-active
+** WAITTING Theme:学前知识								 :@Blog:@S3c2440:
+    SCHEDULED:<2017-09-06 三>
+--硬件：JZ2440V2
+
+--linux下JLINK驱动
+http://www.segger.com/cms/jlink-software.html
+
+
+
+Blog creation time:[2017-09-06 三 20:52]
+** WAITTING Theme:Linux环境下使用J-Link 			 :@Blog:@S3c2440:
+    SCHEDULED:<2017-09-07 四>
+一、准备工作：
+1.物理机操作系统：kali
+2.开发板：s3c2440
+3.调试，下载程序工具J-Link
+
+--下载J-Link
+https://www.segger.com/downloads/jlink/
+
+--安装：su root  dpkg -i JLink_Linux_V618d_x86_64.deb
+
+--查看安装后的执行文件路径：/opt/SEGGER/JLink
+
+--查看USB接口：lsusb
+
+--根据/opt/SEGGER/JLink/Doc中的操作手册进行使用
+
+--J-Link只支持Nor Flash,不支持Nand Flash,所以需要对硬件做出以下配置：
+>> 将开发板设置为Nor启动
+>> 用
+
+二、J-Link基本命令
+--启动J-Link: JLinkExe
+
+--退出J-Link: exit
+
+--配置设备信息：
+>> 选择目标接口： si 0   (0:JTAG  1:SWD)
+>> 设置传输速率： speed 4000 (4000KHz)
+>> 选择设备：  
+
+Blog creation time:[2017-09-07 四 09:46]
+

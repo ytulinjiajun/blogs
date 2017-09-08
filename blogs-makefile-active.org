@@ -1,4 +1,4 @@
-* My-blog-of-makefile
+* blogs-makefile-active
 ** DONE [#D] theme:专题2:linux开发stm32之Makefile			:@Blog:@Makefile:
    - State "DONE"       from "TODO"       [2017-09-04 一 23:00]
 *** 声明
@@ -387,8 +387,7 @@ Makefile中文手册
 Blog creation time:[2017-08-31 四 15:36]
 ** DONE [#D] theme:gcc										:@Blog:@Makefile:
 	- State "DONE"       from "TODO"       [2017-09-05 二 09:29]
-*** gcc
-**** 基本操作
+*** 基本操作
 --预处理：
 gcc -E test.c -o test.i
 
@@ -422,7 +421,7 @@ gcc test.o -o test
 
 >> 以变形一为例子：参数一般加在test.c的前面和后面，前面一般加的参数有：-E(预处理), -S(编译)， -c(汇编)，这三个参数的加入直接决定 -o(输出)的文件类型，
 此时必须严格对应四个基础式；test.c后面加的参数一般有-O,-Wall,-g,-I,-l,-L,-Shared等
-**** 隐含规则
+*** 隐含规则
 --“N.o”自动由“N.c” 生成,执行命令为“$(CC) -c $(CPPFLAGS) $(CFLAGS)”
 
 --“N.o”自动由“N.cc”或者“N.C” 生成,执行命令为“$(CXX) -c $(CPPFLAGS) $(CFLAGS)”
@@ -435,7 +434,7 @@ C 预 编 译 器 “ cpp ”, 执 行 命 令 是 :“ $(CPP) $(CPPFLAGS)”
 备注：这意味着，我们可以在Makefile中定义一下CPPFLAGS和CFLAGS这两个变量，在书写
 关于生成机器码（*.o）的目标文件时，可以省略掉依赖文件中的*.c以及命令，因为隐含规则
 会自动被使用
-**** 模式规则
+*** 模式规则
 --Makefile中自己定义了一些隐含规则，但是有时候这些隐含规则不够我们使用，所以我们需要自己定义
 一些隐含的规则，称用户自己定义的隐含规则为模式规则
 
@@ -467,7 +466,7 @@ C 预 编 译 器 “ cpp ”, 执 行 命 令 是 :“ $(CPP) $(CPPFLAGS)”
 取消的方法就是重新定义来覆盖掉默认的隐含规则，其原理是，当用户自定义的目标和依赖同默认的隐含规则的相同时，
 默认的隐含规则就会被覆盖
 例如：使用%.o:%.s就可以将所有.s文件汇编成机器码.o的默认规则给取消掉
-**** 指令(编译+连接+运行)
+*** 指令(编译+连接+运行)
 情景一:
 --test目录下:src inc两个目录 
 --src目录下:hello thanks两个目录
@@ -496,13 +495,13 @@ C 预 编 译 器 “ cpp ”, 执 行 命 令 是 :“ $(CPP) $(CPPFLAGS)”
 -->*.o:被链接的目标文件
 
 运行: ./test   -->  thank you very! hello world!
-**** 静态库和动态库
-***** 函数库:
+*** 静态库和动态库
+**** 函数库:
 	有若干源文件(.c),每个源文件里面都提供了一些独立的工具函数,比如一个好的算法策略,一个常用的数学函数公式的实现(标准偏差)等,
 如果这些源文件需要经常被使用,或者这些工具函数已经比较成熟了,那么可以考虑将它们编译成一个函数库并统一命名,然后提供出这个函数库中
 所有工具函数的函数原型如:void *malloc(size_t size),同时附上使用说明,以后如果使用到该函数库中的某一个函数时,只用在该函数库的说明文档
 中找到该函数,然后参照使用说明,在编译时,将函数库与用户程序建立起联系,即可使用该函数
-***** 静态库策略:
+**** 静态库策略:
 --策略概述:
 -->制作出静态链接库文件
 -->编译用户源代码,生成用户的目标文件
@@ -533,7 +532,7 @@ C 预 编 译 器 “ cpp ”, 执 行 命 令 是 :“ $(CPP) $(CPPFLAGS)”
 备注:arr还有几个指令可以指定插入模块的位置,不过没有测试过,就不列举出来了,有需要时再man ar即可
 
 总结:创建静态库常规的指令:arr -crs libxxx.a ${objects}
-***** 动态库策略:
+**** 动态库策略:
 --策略概述:
 -->制作出动态链接库文件
 -->编译用户源代码,生成用户的目标文件
@@ -559,7 +558,7 @@ C 预 编 译 器 “ cpp ”, 执 行 命 令 是 :“ $(CPP) $(CPPFLAGS)”
 --在Windows下,态链接库文件以.dll为后缀,即Dynamic Link Library,在Linux下以.so为后缀
 --LD_LIBRARRY_PATH:该环境变量指示动态连接器可以装载动态库的路径
 --静态库策略以空间换时间,动态库策略是以时间换空间
-**** 制作静态链接库文件libstatic.a
+*** 制作静态链接库文件libstatic.a
 --环境:
 -->工作目录:test,该目录下有一个库目录libstatic,以及两个文件main.c,libstatic.h
 -->libstatic目录下面有add.c,sub.c,mul.c,div.c,Makefile四个文件
@@ -652,7 +651,7 @@ int main()
 
 -->运行:./main 
 
-**** 制作动态链接库文件libdynamic.so
+*** 制作动态链接库文件libdynamic.so
 --环境:
 -->工作目录:test,该目录下有一个库目录libdynamic,以及两个文件main.c,libdynamic.h
 -->libdynamic目录下面有add.c,sub.c,mul.c,div.c,Makefile四个文件
@@ -737,3 +736,304 @@ Blog creation time:[2017-09-05 二 08:36]
 make,遇到符合自己定义的模式规则模型的，就套用该模型，并调用其下面的命令
 
 Blog creation time:[2017-09-05 二 08:38]
+** DONE [#D] theme:linux-kernel 的makefile架构解析			:@Blog:@Makefile:
+	- State "DONE"       from "TODO"       [2017-09-04 一 22:40]
+**** 基本框架：
+-- 内核makefile.txt中将makefile分为5部分：Kernel Makefile、ARCH Makefile、KBuild Makefile、.config文件以及scripts/Makefile.*
+
+--kbuild将所有与编译过程相关的共用规则和变量都提取到scripts 目录下的Makefile.build中,具体的子目录下的 Makefile 文件则可以编写的非常简单与直接
+
+--用 obj-* 连接的Objects 在指明的文件夹中被用作模块或者综合进built-in.o，也有可能被列出的objects 将会被包含进一个库,lib.a
+
+--所有用lib-y 列出的objects 在那个文件夹中被综合进单独的一个库
+
+--列在obj-y 且 附加列在lib-y 中的Objects 将不会被包含在库中
+
+--对于被连接在lib-m 中，连续的objects 将会被包含在lib.a 中
+
+--kbuild makefile 可能列出文件用作built-in ，并且作为库的一部分。因此，同一个文件夹可能包含一个built-in.o 和lib.a 文件  
+
+--lib-y 的使用方法通常被限制在lib/ 和arc/*/lib 中
+**** Makefile
+--路径：位于linux kernel源码的顶层目录，该Makefile也就是顶层Makefile
+
+--顶层的Makefile也叫做Kernel Makefile
+
+--顶层Makefile文件负责产生两个主要的程序：vmlinux (内核image)和模块
+
+--主要用于指定编译Linux Kernel 目标文件（vmlinux ）和模块（module ）路径
+
+--顶层Makefile文件根据内核配置，通过递归编译内核代码树子目录建立这两个文件。
+
+--顶层Makefile文件文本一个名为 arch/$(ARCH)/Makefile的机器体系Makefile文件。
+
+--机器体系Makefile文件为顶层Makefile文件提供与机器相关的信息。
+
+--根据.config文件决定了内核根目录下那些文件、子目录被编译进内核
+**** ARCH/$(ARCH)/Makefile 
+--系统对应平台的Makefile
+
+--Makefile 会包含这个文件来指定平台相关信息
+
+--根据.config文件，决定了ARCH/$(ARCH) 目录下 那些文件、子目录被编译进内核
+**** scripts/Makefile.build: 
+--被顶层Makefile所调用
+
+--与各级子目录的Makefile合起来构成一个完整的Makefile文件，定义built-in.o、.lib以及目标文件.o的生成规则
+
+--这个Makefile文件生成了子目录的.lib、built-in.o以及目标文件.o
+
+**** scripts/Kbuild.include:
+--被Makefile.build所调用
+
+--定义了一些函数，如if_changed、if_changed_rule、echo-cmd
+**** scripts/Makefile.clean
+--被顶层Makefile所调用
+
+--用来删除目标文件等
+**** scripts/Makefile.lib
+--被Makefile.build所调用
+--主要是对一些变量的处理，比如说在obj-y前边加上obj目录
+**** .config
+--位于linux内核的根目录下
+
+--产生自来自配置过程
+
+--被顶层的Makefile包含
+
+--配置过程产生.config文件
+
+--.config又产生auto.conf以及autoconf.h文件
+**** KBuild Makefile
+--从Linux 内核2.6 开始，Linux 内核的编译采用Kbuild 系统 
+
+--大多的Kbuild 文件的名字都是Makefile 。为了与其他Makefile 文件相区别，你也可以指定Kbuild Makefile 的名字为 Kbuild
+
+--如果“Makefile ”和“Kbuild ”文件同时存在，则Kbuild 系统会使用“Kbuild ”文件,linux内核中,Kbuild Makefile 就是各个子目录的Makefile 
+
+--Kbuild 系统使用Kbuild Makefile 来编译内核或模块
+
+--每个子目录下都有一个KBuild Makefile，作用就是 指定当前目录下的文件，哪些被编译进当前目录的built-in.o、那些被编译成模块、那些不编译
+
+--当顶层 Makefile 被解析完成后，Kbuild 会读取相关的Kbuild Makefile 进行内核或模块的编译
+
+--Kbuild Makefile 有特定的语法指定哪些编译进内核中、哪些编译为模块、及对应的源文件是什么
+
+--Kbuild Makefile 的一个最主要功能就是指定编译什么，这个功能是通过下面两个对象指定的obj-? 和xxx-objs  
+例1：
+     obj-y += foo.o 
+     obj-m += abc.o 
+实际：obj-$(CONFIG_DM9000) += dm9000.o，CONFIG_DM9000 是y 还是m取决于配置过程
+
+例2：
+	如果内核模块是通过几个源文件编译而成的，此时Kbuild需要知道编译模块时是基于哪些目标文件的,因此需要设置一个$(<module_name>-objs)变量来告诉编译器
+    obj-$(CONFIG_ISDN) += isdn.o
+    isdn-objs := isdn_net_lib.o isdn_v110.o isdn_common.o
+由于obj-$(CONFIG_ISDN)是由isdn_net_lib.o isdn_v110.o isdn_common.o这三个目标文件编译而成的，所以，需要定义isdn-objs
+
+**** scripts/kconfig/Makefile
+--顶层Makefile调用： include scripts/kconfig/Makefile ，用于指定目标
+
+--顶层Makefile调用： include scripts/kconfig/Makefile ，生成auto.conf autoconf.h auto.conf.cmd
+**** .config文件
+.config文件在进行内核编译时（make uImage）生成了include/config/auto.conf和include/linux/autoconf.h
+Linux的内核配置，就是为了生成.config文件。因为在编译时需要用.config文件生成其他相关配置文件。我们的配置项大多是例如CONFIG_XXXDRIVER，这里的XXXDRIVER指的是各种驱动。我们需要告诉内核，这些驱动是编译进内核，还是编译成模块。通过查找CONFIG_XXXDRIVER，我们可以发现，它出现在四个地方：
+
+　　1>C源代码
+
+　　2>子目录Makefile:drivers/XXX/Makefile
+
+　　3>include/config/auto.conf
+
+　　4>include/linux/autoconf.h
+里首先说明：.config文件在进行内核编译时（make uImage）生成了include/config/auto.conf和include/linux/autoconf.h。
+通过查看C源代码我们发现CONFIG_XXXDRIVER是一个宏定义，等于一个常量。在include/linux/autoconf.h中宏定义CONFIG_XXXDRIVER为一个常量，可能是0或1。
+那么现在有一个问题，就是CONFIG_XXXDRIVER到底被编译进内核还是编译成一个模块呢？这在C语言中是无法进行区分的，这种区分体现在哪里呢？这种区分体现在子目录的Makefile文件中。
+在子目录的Makefile中，若有 obj -y += XXX.o则表示XXX.c被编译进内核；obj -m +=XXX.o则表示XXX被编译成模块，为XXX.ko。include/config/auto.conf文件则是对CONFIG_XXXDRIVER进行赋值，
+为y时表示编译进内核，为m时表示编译成独立模块
+
+--在Linux内核里，每个子目录都有一个makefile，它被称作Kbuilt-makefile，它将当前目录的文件编译成built-in.o、以及库文件、模块文件。
+然后顶层Makefile里指定这些built-in.o的路径，将它们连接在一起
+
+--通过内核配置操作产生.config文件，顶层Makefile文件读取该文件的配置。
+
+Blog creation time:[2017-09-04 一 15:17]
+
+*** 入口：
+1.顶层Makefile---- 指定目标-----include scripts/kconfig/Makefile
+如在终端中执行配置命令make nitrogen6x_defconfig
+%config: scripts_basic outputmakefile FORCE
+    $(Q)mkdir -p include/linux include/config
+    $(Q)$(MAKE)$(build)=scripts/kconfig $@
+
+2.auto.conf autoconf.h auto.conf.cmd的生成----指定目标-----include scripts/kconfig/Makefile
+include/config/%.conf:$(KCONFIG_CONFIG)include/config/auto.conf.cmd
+    $(Q)$(MAKE)-f$(srctree)/Makefile silentoldconfig
+
+将在顶层Makefile中递归到上述1中的%config规则，所以，其最终还会包含scripts/kconfig/Makefile
+
+3. 目标编译和链接----不指定目标-----include 各个build目标下的Makefile
+$(vmlinux-dirs): prepare scripts
+        $(Q)$(MAKE) $(build)=$@
+
+4. 模块----模块建构中单独讨论
+$(module-dirs):crmodverdir$(objtree)/Module.symvers
+    $(Q)$(MAKE)$(build)=$(patsubst _module_%,%,$@)
+
+modules:$(module-dirs)
+    @$(kecho)'  Building modules, stage 2.';
+    $(Q)$(MAKE)-f$(srctree)/scripts/Makefile.modpost
+
+5. 单目标----不指定目标
+%.o:%.c prepare scripts FORCE
+    $(Q)$(MAKE)$(build)=$(build-dir)$(target-dir)$(notdir $@)
+
+6. 子目录递归----不指定目标-----include递归的子目录下Makefile
+scripts/Makefile.build
+$(subdir-ym):
+    $(Q)$(MAKE)$(build)=$@
+*** 暂存
+--
+
+*** 基本流程
+--在scripts/Kbuild.include中有一条规则：build := -f $(srctree)/scripts/Makefile.build obj
+
+--在scripts/Makefile.build中：
+
+*** 内核makefile源码分析
+**** 顶层makefile
+***** make参数信息:MAKEFLAGS
+MAKEFLAGS += -rR --include-dir=$(CURDIR)
+****** 分析
+(1) MAKEFLAGS：
+--该变量是一个系统级别的环境变量，包含了 make 的参数信息;
+--这个变量不管你是否export,其总是要传递到下层 Makefile 中;
+--如果我们在命令行使用make执行“总控 Makefile”时有 make参数,或是在上层 Makefile 中定义了这个变量,
+那么MAKEFILES 变量将会是这些参数,并会传递到下层 Makefile 中
+--但是 make 命令中的有几个参数并不往下传递,它们是“-C”,“-f”,“-h”“-o”和“-W”
+
+(2) -r：
+--取消所有内嵌的隐含规则
+--但是，仍然可以在Makefile中使用模式规则来定义你自己的隐含规则
+--同时，还会取消所有支持后追规则的隐含后缀列表
+--但是，可以在Makefile中使用“.SUFFIXES”定义我们自己的后缀规则
+
+(3) -R:
+--取消 make 内嵌的隐含变量
+--不过我们可以在 Makefile 中明确定义某些变量
+
+(4) --include-dir=$(CURDIR)
+--该参数指定包含makefile文件的搜索目录(也就是下面的filename的路径)
+--include filename: filename 是 shell 所支持的文件名(可以使用通配符),一般是makefile文件，在自动依赖关系技术中，也用来包含.d文件
+--如果filename的内容是空的，那么相当于什么事也没有做，继续执行当前Makefile之后的内容（不报错）
+--在Makefile中出现“include”另外一个文件时，首先在当前目录下搜索，找不到的话将会在include-dir指定的目录下搜索，
+找不到的话去/usr/gnu/include,或者/usr/local/include, /usr/include这几个目录下找，
+还是找不到的话make将会提示一个包含文件未找到的告警提示,但是不会立刻退出，而是继续处理Makefile的后续内容，
+当完成读取整个Makefile后,make将试图使用规则来创建通过指示符“include”指定的但未找到的文件
+--在搜索include-dir指定的目录时，按照指定顺序进行
+--include”指示符告诉 make 暂停读取当前的 Makefile,而转去读取“include”指定的一个或者多个文件，完成以后再继续当前 Makefile 的读取
+--指示符“include”和文件名之间、多个文件之间使用空格隔开，行尾的空白字符在处理时被忽略
+
+(5) CURDIR
+--此变量代表 make 的工作目录
+--当使用“-C”选项进入一个子目录后,此变量将被重新赋值
+--总之,如果在Makefile 中没有对此变量进行显式的赋值操作,那么它代表 make 的工作目录
+--我们也可以在 Makefile 为这个变量赋一个新的值,此时这变量将不再代表 make 的工作目录
+
+总结：该语句为存储make参数的专用系统环境变量MAKEFLAGS，追加了三个参数，不论用户传递任何参数进来，这三个参数都将作为MAKEFLAGS
+里面默许的，这三个参数宏观上取消了内嵌的隐含规则和隐含变量，使得编译器不能干涉用户的配置，然后指出Makefile文件的搜索路径，这一点
+在make -C $(subdir)时尤其重要，有了--include-dir=$(CURDIR)，用户不用再考虑编译器怎样寻找子目录下的Makefile文件的问题
+***** 从命令行传递参数
+ifeq ("$(origin V)", "command line")
+  KBUILD_VERBOSE = $(V)
+endif
+****** 分析
+(1) V:一个来源尚不明确的变量
+
+(2) $(origin V): 函数，返回这个变量的来源，变量有以下几种来源：
+--undefined： 没定义
+--default： V是内嵌变量，比如CC,MAKE之类的变量就是内嵌变量，不过一般情况下我们会取消隐含变量
+--environment： 变量V是一个系统环境变量,并且make没有使用命令行选项“-e”(Makefile中不存在同名的变量定义,此变量没有被替代)
+--environment override： 变量V是一个系统环境变量,并且make使用了命令行选项“-e”(Makefile中存在一个同名的变量定义,使用“make -e”时
+环境变量值替代了文件中的变量定义)
+--file: 变量V在某一个的makefile文件中定义
+--command line：变量V在命令行中定义，比如：make V=1
+--override: 变量V在某一个在makefile文件中定义并使用“override”指示符声明
+--automatic： 变量V是一个自动化变量
+
+(3) ifeq ("$(origin V)", "command line")
+           xxx
+    endif
+--此关键字用来判断参数是否相等,如果相等，则执行xxx
+--通常我们会使用它来判断一个变量的值是否为空(不是任何字符)
+--参数值可能是通过引用变量或者函数得到的,因而在展开过程中可能造成参数值中包含空字符(空格等)，
+一般在这种情况时我们使用make的“strip”函数来去除空字符
+***** 从MAKEFLAGS中找出
+ifneq ($(findstring s,$(filter-out --%,$(MAKEFLAGS))),)
+  quiet=silent_
+  tools_silent=s
+endif
+****** 分析
+--首先过滤掉MAKEFLAGS中所有以--打头的单词(夹在两个空格之间的串称为一个单词，比如--include-dir就是一个单词)
+--在剩下的集合中再去查找含有字符s的单词，找到则返回字符s，找不到则返回空字符。(make -s时，-s中有s，所以返回s)
+--该语句的意思是，过滤掉MAKEFLAGS中以--打头的参数之后，查找MAKEFLAGS中有没有-s参数
+--选项-s解析
+1）该选项是--silent和--quiet的组合，其作用是：取消命令执行过程的打印，同时还禁止所有规则的命令的回显
+2）说到执行过程的打印，就得聊一下-w参数，见下面
+3）说到规则命令的回显，就得聊一下make执行命令之前所做的那些事
+
+make在执行规则的命令之前会做什么？
+1）会把要执行的命令行输出到标准输出设备，我们称之为“回显”，注意回显的是规则中的命令的原型
+2）如果规则的命令行以字符“@”开始,则 make 在执行这个命令时就不会回显这个将要被执行的命令
+3）使用了-s参数，相当于在规则的所有命令前面加上了@
+备注：如果使用make的命令行参数“-n”或“--just-print”,那么make执行时只显示所要执行的命令,但不会真正的去执行这些命令，
+这个选项对于我们调试Makefile非常有用,使用这个选项我们可以《按执行顺序》打印出Makefile中所有需要执行的所有命令
+
+聊一聊-w:
+1）该选项可以让 make 在开始编译一个目录之前和完成此目录的编译之后给出相应的提示信息，如
+在目录“/u/gnu/make”目录下执行“make -w”会有：make: Entering directory `/u/gnu/make'以及make: Leaving directory `/u/gnu/make'的提示
+2）通常,选项“-w”会被自动打开。在主控Makefile中当如果使用“-C”参数来为make指定一个目录或者使用“cd”进入一个目录时,“-w”选项会被自动打开
+3）那么，可以使用 -s 选项来禁止所有关于目录信息的打印
+
+** DONE [#D] theme:GNU Make中文手册阅读笔记					:@Blog:@Makefile:
+	- State "DONE"       from "TODO"       [2017-09-04 一 22:40]
+>> Linux下面的可执行文件的ELF格式
+
+>> 链接器的工作对象是.o文件，使用ld工具，最终生成elf可执行文件
+
+>> 一个简单的Makefile可能只包含规则，但是通常还会包含规则之外的许多东西
+
+>> Makefile的五大要点：规则，目标，依赖，命令，规则的触发
+
+>>规则的触发：规则的触发决定着该规则是否能得到执行
+	规则触发的基本原则就是任意规则中，依赖的时间戳比目标的时间戳新时，该规则一定被触发，在
+Makefile中有很多规则，一个规则的依赖一般都是(伪目标除外)另一个规则的目标，单就某一规则而言，它被触发可以
+理解为两种情况，第一：该规则依赖的时间戳比目标的时间戳新；第二：该规则的依赖是其他规则的目标，那该规则有被
+触发的“潜质”
+	Makefile中第一条规则（默认规则）一定会被触发执行，无论其是目标文件，还是伪目标
+	伪目标（非默认）必须通过外部调用才能触发
+小结：Makefile中规则能否被执行的依据是规则是否能被触发，即，不是所有只要写在Makefile中的规则都能被执行的，
+那得看其是否有被触发的条件（当然，只要写在Makefile中的变量都会被执行）
+
+>> makefile程序的入口：如同C语言的入口是main函数，在run时，程序从main开始执行，makefile文件中的程序也
+有入口，当在终端下执行make命令时，系统会在当前目录下查找名字为Makefile的文件，然后从入口处开始解析规则，满足
+规则触发条件的规则，其下面的命令会得到执行，那么，Makefile中的入口是什么呢？应该是该Makefile中，从上到下，
+第一个出现的规则，也称其做默认规则，第一个规则无论如何都会被make执行，即使它是一个伪目标
+	所以，一个Makefile中第一个出现的规则是至关重要的，一般情况下，该规则中的目标应当是终极目标，其他规则的目标
+均是从该规则的依赖文件中繁衍出去，一般而言，我们习惯用一个伪目标all来作为第一规则
+
+>>伪目标：只是一个标识，一般没有依赖，一般被外部调用，伪目标规则被执行时，不会生成目标文件
+
+>>可以将一个较长行使用反斜线(\)来分解为多行,但需要注意:反斜线之后不能有空格
+
+>>规则的目标如果是文件：在执行make时，依照规则的触发条件，该文件会被重新生成
+
+>>规则的命令，所完成的工作主要是如何根据依赖文件来更新目标文件，当然了，一些规则是可以没有命令行的，如利用隐式规则，
+还有，伪目标规则的命令的作用并非如此
+
+>>make会将所有出现在第一条规则之后，所有以TAB开始的行当做命令行来处理
+
+>> %.o: %.c 我们称这样的写法为“匹配”，既然是匹配，两个%自然要告知一个(niutou.o和mazui.c凑到一起是牛头不对马嘴)，
+如果告知了%.o中的%是stm32f7xx,立即就知道%.c应当匹配到stm32f7xx.c,这才对嘛，既然%.c是依赖，那么，就可以根据
+vpath到当前目录下找具体的stm32f7xx.c这个文件了，所以呢，目标%.o一般是需要明确在Makefile中使用变量告知的
+Blog creation time:[2017-09-02 六 10:12]
