@@ -1,0 +1,19 @@
+* blogs-linux-active
+** DONE Theme:curl命令										   :@Blog:@Linux:
+    SCHEDULED:<2017-09-11 一>
+	- State "DONE"       from "WAITTING"   [2017-09-11 一 15:30]
+--curl命令是一个利用URL规则在命令行下工作的文件传输工具
+
+--支持文件的上传和下载，所以是综合传输工具，但按传统，习惯称curl为下载工具
+
+--作为一款强力工具，curl支持包括HTTP、HTTPS、ftp等众多协议，还支持POST、cookies、认证、
+从指定偏移处下载部分文件、用户代理字符串、限速、文件大小、进度条等特征
+做网页处理流程和数据检索自动化，curl可以祝一臂之力。
+
+
+安装：
+Ubuntu下，只需一条命令即可安装curl：
+--sudo apt-get install curl libcurl3 libcurl3-dev php5-curl
+
+
+Blog creation time:[2017-09-11 一 15:24]

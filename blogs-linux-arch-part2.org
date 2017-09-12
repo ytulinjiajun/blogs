@@ -26,103 +26,219 @@
 #信息，就可以得到FTP服务器的资料，这种方法的前提是FTP必须是21号端口；第二种，被动式
 
 #被动式：被动式的连接是指由FTP客户端向服务器端发起索要数据的请求
-*** 
-1.检查是否安装vsftpd:dpkg -s vsftpd
-3.安装：apt install vsftpd
-4.开启sshd服务：systemctl start vsftpd
-5.修改配置文件/etc/vsftpd.conf 
---ubuntun16.04默认关闭了ftp的一些权限，需要开启才能使用ftp文件的读写操作
---允许匿名用户登录：anonymous_enable=YES
---允许本地用户登录：local_enable=YES
---开启全局上传：write_enable=YES
---允许匿名用户上传文件：anon_upload_enable=YES
---允许匿名用户新建文件夹：anon_mkdir_write_enable=YES
-6.重启vsftpd服务使得配置文件生效：systemctl restart vsftpd
+*** 我的配置
+#########################################################################################
+#备注：下面一切的配置可以使用man 5 vsftpd.config来查询技术细节
+#模块说明：全局配置，匿名配置，本地配置，SSL配置，日志相关
+#########################################################################################
+##########################################全局配置########################################
+#########################################################################################
+#YES:vsftpd将会运行在stand alone模式，监听ipv4套接字
+#默认：NO
+#备注：同listen_ipv6是互相排斥的
+listen=YES
+#----------------------------------------------------------------------------------------
+#YES:同listen,不过，该参数是监听ipv6套接字
+#默认：NO
+#备注：同listen是互相排斥的
+listen_ipv6=NO
+#----------------------------------------------------------------------------------------
+#系统默认：21
+#备注:FTP连接的命令通道（适合stand alone，对super daemon无效）
+listen_port=21
+#----------------------------------------------------------------------------------------
+#YES:允许从端口获得数据连接
+#默认：YES
+port_enable=YES
+#----------------------------------------------------------------------------------------
+#YES:主动式Activite连接，FTP服务器向FTP客户端发送数据ftp-data所使用的端口号
+#系统默认：NO
+connect_from_port_20=YES
+ftp_data_port=20
+#----------------------------------------------------------------------------------------
+#YES:支持被动式连接，一定要设置为YES
+#系统默认：YES
+pasv_enable=YES
+#----------------------------------------------------------------------------------------
+#YES:更改文件系统的FPT命令都是被允许的
+#默认：NO
+#备注：控制是否允许执行更改文件系统的FTP命令，若要允许用户上传数据就得启动该值
+write_enable=YES
+#----------------------------------------------------------------------------------------
+#YES:允许下载请求
+#系统默认：YES
+download_enable=YES
+#----------------------------------------------------------------------------------------
+#NO:所有的目录命令将会没有执行权限
+#系统默认：YES
+dirlist_enable=NO
+#----------------------------------------------------------------------------------------
+#YES:开启tcp_wrappers支持
+#默认：NO
+tcp_wrappers=YES
+#----------------------------------------------------------------------------------------
+#YES:显示目录清单时使用本地时间而不是GMT时间,vsftpd默认使用格林尼治时间，比中国晚8小时
+#默认：NO
+use_localtime=YES
+#----------------------------------------------------------------------------------------
+#YES:在目录列表中,所有用户以及用户组的信息都会显示为ftp
+#默认：NO
+hide_ids=NO
+#----------------------------------------------------------------------------------------
+#YES:以.开始的文件或目录都会被显示出来
+#系统默认：NO
+force_dot_files=YES
+#----------------------------------------------------------------------------------------
+#备注：login时显示欢迎信息,如果设置了banner_file则此设置无效
+ftpd_banner=welcome to FTP
+#----------------------------------------------------------------------------------------
+#备注：指定某个纯文本作为用户登录vsftpd服务器时，所显示的欢迎字段
+#banner_file=/etc/banner
+#----------------------------------------------------------------------------------------
+#YES:vsftpd将会尝试在系统进程列表中显示会话状态信息
+#系统默认：NO
+setproctitle_enable=YES
+#----------------------------------------------------------------------------------------
+#YES:FTP服务器的用户在进入一个新目录时，会显示该目录所要注意的内容
+#系统默认：NO
+#备注：显示的默认文件是.message,也可以使用message_file来设置
+dirmessage_enable=YES
+message_file=.message
+#----------------------------------------------------------------------------------------
+#YES:显示文件所有者而不是UID
+#默认：NO
+#备注：当使用者登入后使用ls -al 之类的指令查询该文件时，预设会出现拥有者的UID，而不是该档案拥有者的名
+text_userdb_names=YES
+#----------------------------------------------------------------------------------------
+#系统默认：/var/run/vsftpd/empty
+#备注：该选项指定一个空目录的名字，ftp用户不应该在里面写入数据，在vsftpd不能请求到文件系统时，用户会进入该目录中
+secure_chroot_dir=/var/run/vsftpd/empty
+#----------------------------------------------------------------------------------------
+#系统默认：无　  
+#备注：当vsftpd工作在standalone模式时，所有本地通讯接口的默认的监听地址会被该地址覆盖
+#listen_address=192.168.0.2　　 #绑定到某个IP,其它IP不能访问
+#----------------------------------------------------------------------------------------
+#系统默认：60
+#备注：主动式连接(active)下，FTP服务器主动发出的ftp-data连接信号,在60s内得不到客户端的响应，则强制断线
+connect_timeout=60
+#----------------------------------------------------------------------------------------
+#系统默认：60
+#备注：被动式连接(passive)下，FTP服务器被动等待FTP客户端回应，超过60s内得不到客户端的响应，则强制断线
+accept_timeout=60
+#----------------------------------------------------------------------------------------
+#系统默认：300
+#备注：不论是主动式还是被动式，在FTP服务器与客户端的ftp-data连接已经成功建立后，由于线路问题，120s内还是无法顺利完成数据传送，则该连接会被vsftp强制剔除
+data_connection_timeout=120
+#----------------------------------------------------------------------------------------
+#系统默认：300
+#备注：如果用户在5分钟内没有命令操作，则强制脱机，避免占着茅坑不拉屎
+idle_session_timeout=300
+#----------------------------------------------------------------------------------------
+#系统默认：0(无限制)
+#备注：如果vsftp是以stand alone方式启动，该设置项可以设置同一时间最多可以有多少FTP客户端同时连接上vsftpd
+max_clients=200
+#----------------------------------------------------------------------------------------
+#系统默认：0(无限制)
+#备注：如果vsftp是以stand alone方式启动，该设置项表示可以从同相同源的网络地址处连接的最大客户端的数量
+max_per_ip=4
+#----------------------------------------------------------------------------------------
+#系统默认：0（任意）
+#备注：pasv模式的数据连接，被分配的最小端口号；将客户端的数据连接端口限定在50000—60000之间，防止被入侵者捣鬼。设置为0，表示随机选择大于1024的端口
+pasv_min_port=50000
+#----------------------------------------------------------------------------------------
+#系统默认：0（任意）
+#备注：pasv模式的数据连接，被分配的最大端口号
+pasv_max_port=60000
+#----------------------------------------------------------------------------------------
+#系统默认：0(无限制)
+#备注：本地用户传输率限制在50KB/s,0表示不受限制
+local_max_rate=50000
+#----------------------------------------------------------------------------------------
+#系统默认：0(无限制)
+#备注：匿名用户传输率限制在30KB/s，0表示不受限制
+anon_max_rate=30000
+#----------------------------------------------------------------------------------------
+#系统默认：0666
+#备注：上传文件的默认权限
+file_open_mode=0666
+#-----------------------------------------------------------------------------------------
+#YES:在下载过程中，数据以ascii的模式进行传输
+#系统默认：NO
+ascii_download_enable=NO
+#-----------------------------------------------------------------------------------------
+#YES:在上传过程中，数据以ascii的模式进行传输
+#系统默认：NO
+ascii_upload_enable=NO
+#-----------------------------------------------------------------------------------------
+#YES:每个FTP连接都会拥有一个process负责，可以提高效率，但是，除非系统的配置较高，否则容易耗尽系统资源
+#系统默认：NO
+one_process_model=NO
 
-7.添加允许登录的用户：
-userlist_deny=no
-userlist_enable=yes　　　　　　　　　　
-userlist_file=/etc/allowed_users　　＃允许登录的用户
-seccomp_sandbox=no
-
-vim /etc/allowed_users 
-# /etc/ftpusers: list of users disallowed FTP access. See ftpusers(5).
-root
-daemon
-bin
-sys
-sync
-games
-man
-lp
-mail
-news
-uucp
-nobody
-Blog creation time:[2017-09-05 二 09:06]
-** /etc/vsftpd.conf
-#################匿名权限控制###############
-anonymous_enable=YES　　 #是否启用匿名用户
-no_anon_password=YES 　　#匿名用户login时不询问口令
-
-下面这四个主要语句控制这文件和文件夹的上传、下载、创建、删除和重命名。
-anon_upload_enable=（yes/no)；  #控制匿名用户对文件（非目录）上传权限。
-anon_world_readable_only=（yes/no）； #控制匿名用户对文件的下载权限
-anon_mkdir_write_enable=（yes/no）； #控制匿名用户对文件夹的创建权限
-anon_other_write_enable=（yes/no）； #控制匿名用户对文件和文件夹的删除和重命名
-注：匿名用户下载是使用的是nobody这个用户，所以相应的O这个位置要有R权限才能被下载。若想让匿名用户能上传和删除权限，必需设置
-
-write_enable=YES #全局设置，是否容许写入（无论是匿名用户还是本地用户，若要启用上传权限的话，就要开启他）
-
-anon_root=(none) #匿名用户主目录
-anon_max_rate＝（0） #匿名用户速度限制
-anon_umask＝（077） #匿名用户上传文件时有掩码(若想让匿名用户上传的文件能直接被匿名下载，就这设置这里为073)
-chown_uploads=YES #所有匿名上传的文件的所属用户将会被更改成chown_username
-chown_username=whoever #匿名上传文件所属用户名
-
-#################本地用户权限控制###############
-write_enable=YES #可以上传(全局控制) 删除，重命名
-local_umask=022  #本地用户上传文件的umask
-userlist_enable=YES #限制了这里的用户不能访问
-local_root  #设置一个本地用户登录后进入到的目录
-user_config_dir  #设置用户的单独配置文件，用哪个帐户登陆就用哪个帐户命名
-download_enable  #限制用户的下载权限
-chown_uploads=YES #所有匿名上传的文件的所属用户将会被更改成chown_username
-chown_username=whoever #匿名上传文件所属用户名
-chroot_list_enable=YES　#如果启动这项功能，则所有列在chroot_list_file之中的使用者不能更改根目录
-chroot_list_file=/etc/vsftpd/chroot_list #指定限制的用户文件
-user_config_dir= #后面跟存放配置文件的目录。用来实现不同用户不同权限。
-   #在vsftpd.conf文件中加入这一句，
-   #在相应的目录里面，为每个用户创建自己的配置文件，用来实现不同的权限
-
-可以通过以下三条配置文件来控制用户切换目录。
-chroot_list_enable=YES/NO   #设置是否启用chroot_list_file配置项指定的用户列表文件。
-      #如果启动这项功能，则所有列在chroot_list_file之中的使用者不能更改根目录 .默认值为yes。
-chroot_list_file=/etc/vsftpd/chroot_list #指出被锁定在自家目录中的用户的列表文件。
-chroot_list_enable=YES
-通过与chroot_local_user=YES/NO搭配能实现以下几种效果：
-1、当chroot_list_enable=YES，chroot_local_user=YES时，在/etc/vsftpd.chroot_list文件中列出的用户，可以切换到其他目录；未在文件中列出的用户，不能切换到其他目录。
-2、当chroot_list_enable=YES，chroot_local_user=NO时，在/etc/vsftpd.chroot_list文件中列出的用户，不能切换到其他目录；未在文件中列出的用户，可以切换到其他目录。
-3、当chroot_list_enable=NO，chroot_local_user=YES时，所有的用户均不能切换到其他目录。
-4、当chroot_list_enable=NO，chroot_local_user=NO时，所有的用户均可以切换到其他目录。
-
-下面是个实例，希望对大家有用：
-1、只能上传。不能下载、删除、重命名。
-cmds_allowed＝FEAT,REST,CWD,LIST,MDTM,MKD,NLST,PASS,PASV,PORT,PWD,QUIT,RMD,SIZE,STOR,TYPE,USER,ACCT,APPE,CDUP,HELP,MODE,NOOP,REIN,STAT,STOU,STRU,SYST
-对于参数的详细的解释
-cmds_allowed=ABOR,ACCT,APPE,CWD,CDUP,DELE,HELP,LIST,MODE,MDTM,MKD,NOOP,NLST,PASS,PASV,PORT,PWD,QUIT,REIN,RETR,RMD,RNFR,RNTO,SITE,SIZE,STOR,STAT,STOU,STRU,SYST,TYPE,USER
-CWD - change working directory 更改目录
-DELE - delete a remote file 删除文件
-LIST - list remote files 列目录
-MKD - make a remote directory 新建文件夹
-NLST - name list of remote directory
-PWD - print working directory 显示当前工作目录
-RETR - retrieve a remote file 下载文件
-RMD - remove a remote directory 删除目录
-RNFR - rename from 重命名
-RNTO - rename to 重命名
-STOR - store a file on the remote host 上传文件
-
+#-----------------------------------------------------------------------------------------
+#YES:任何上传失败的文件都会被删除
+#系统默认：NO
+delete_failed_uploads=YES
+#-----------------------------------------------------------------------------------------
+#YES:在pasv_address选项中使用hostname
+#系统默认：NO
+pasv_addr_resolve=NO
+# pasv_address=(none)　　  #使vsftpd在pasv命令回复时跳转到指定的IP地址.(服务器联接跳转?)
+#-----------------------------------------------------------------------------------------
+#YES:所有的上传进程都会对上传的文件附加写锁;所有的下载进程对下载的文件共享读锁
+#系统默认：YES
+lock_upload_files=YES
+#-----------------------------------------------------------------------------------------
+#YES:关闭安全检查
+#系统默认：NO
+pasv_promiscuous=NO
+#-----------------------------------------------------------------------------------------
+#系统默认：vsftpd　　  
+#备注：PAM service vsftpd将要使用的名字
+pam_service_name=vsftpd
+#-----------------------------------------------------------------------------------------
+#系统默认：nobody　  
+#备注：当服务器运行于最底层时使用的用户名，nobody的权限相当的低，就算被入侵，入侵者也只能获得nobody的权限
+nopriv_user=nobody
+#-----------------------------------------------------------------------------------------
+#YES:允许使用ls -R命令
+#系统默认：NO
+#备注：最好不要允许使用ls -R,因为会占用大量的资源
+ls_recurse_enable=NO
+#----------------------------------------------------------------------------------------
+#YES:使能以后，所有非匿名用户在登录之后都被归类为gust login
+#默认：NO
+#备注：一个gust login，会被重新映射到在guest_username中设置的身份
+guest_enable=NO
+#----------------------------------------------------------------------------------------
+#前提：只有在guest_enable=YES时才会生效
+#默认：ftp
+#备注：指定访客的身份
+guest_username=ftp
+#----------------------------------------------------------------------------------------
+#YES:虚拟用户使用与本地用户相同的权限
+#NO:虚拟用户使用与匿名用户相同的权限
+#默认：NO
+virtual_use_local_privs=NO
+#-----------------------------------------------------------------------------------------
+#系统默认：无  
+#备注：指定一个由逗号分离的FTP命令列表，在列表内的命令是被允许的，之外的命令将被拒绝
+#cmds_allowed=ABOR,ACCT,APPE,CWD,CDUP,DELE,HELP,LIST,MODE,MDTM,MKD,NOOP,NLST,PASS,PASV,PORT,PWD,QUIT,REIN,RETR,RMD,RNFR,RNTO,SITE,SIZE,STOR,STAT,STOU,STRU,SYST,TYPE,USER
+#-----------------------------------------------------------------------------------------
+#系统默认：无  
+#备注：指定一个由逗号分离的FTP命令列表，在列表内的命令是被禁止的
+#备注2：如果一个命令既出现在cmds_allowed里面，又出现在cmds_denied里面，那么，cmds_denied优先，即该命令是被禁止的
+#cmds_denied=DELE
+#CWD - change working directory 更改目录
+#DELE - delete a remote file 删除文件
+#LIST - list remote files 列目录
+#MKD - make a remote directory 新建文件夹
+#NLST - name list of remote directory
+#PWD - print working directory 显示当前工作目录
+#RETR - retrieve a remote file 下载文件
+#RMD - remove a remote directory 删除目录
+#RNFR - rename from 重命名
+#RNTO - rename to 重命名
+#STOR - store a file on the remote host 上传文件
 # ABOR - abort a file transfer 取消文件传输
 # CWD - change working directory 更改目录
 # DELE - delete a remote file 删除文件
@@ -156,331 +272,231 @@ STOR - store a file on the remote host 上传文件
 # STOU - store a file uniquely
 # STRU - set file transfer structure
 # SYST - return system type
-2、只能下载。不能上传、删除、重命名。write_enable=NO
-3、只能上传、删除、重命名。不能下载。download_enable＝NO
-4、只能下载、删除、重命名。不能上传。
-cmds_allowed=FEAT,REST,CWD,LIST,MDTM,MKD,NLST,PASS,PASV,PORT,PWD,QUIT,RMD,RNFR,RNTO,RETR,DELE,SIZE,TYPE,USER,ACCT,APPE,CDUP,HELP,MODE,NOOP,REIN,STAT,STOU,STRU,SYST
 
-###################虚拟用户设置###################
-虚拟用户使用PAM认证方式。
-pam_service_name=vsftpd  #设置PAM使用的名称，默认值为/etc/pam.d/vsftpd。
-check_shell=YES   #（注意：仅在没有pam验证版本时有用,是否检查用户有一个有效的shell来登录 )
-guest_enable= YES/NO  #启用虚拟用户。默认值为NO。
-guest_username=ftp  #这里用来映射虚拟用户。默认值为ftp。
-virtual_use_local_privs=YES/NO #当该参数激活（YES）时，虚拟用户使用与本地用户相同的权限。
-    #当此参数关闭（NO）时，虚拟用户使用与匿名用户相同的权限。默认情况下此参数是关闭的（NO）。
 
-###################访问控制设置###################
-两种控制方式：一种控制主机访问，另一种控制用户访问。
-1、控制主机访问：
-tcp_wrappers=YES/NO
-设置vsftpd是否与tcp wrapper相结合来进行主机的访问控制。默认值为YES。如果启用，则vsftpd服务器会检查/etc/hosts.allow 和/etc/hosts.deny 中的设置，来决定请求连接的主机，是否允许访问该FTP服务器。这两个文件可以起到简易的防火墙功能。
-比如：若要仅允许192.168.10.1—192.168.10.254的用户可以连接FTP服务器，
-则在
-/etc/hosts.allow
-/etc/hosts.deny
-文件中添加以下内容：
 
-其格式如下：
-限制的服务：ip(网段)
-vsftpd:192.168.1.
-vsftpd:192.168.1.12
-vsftpd:192.168.1.0/255.255.255.0这里不能写成192.168.1.0/24
-2、控制用户访问：
-vsftpd.ftpusers  #用于保存不允许进行FTP登录的本地用户帐号。就是vsftp用户的黑名单
-vsftpd.user_list
-（1）设置禁止vsftpd.user_list文件中的用户登录：要在主配置文件vsftpd.conf中修改如下两项，
-userlist_enable=yes
-userlist_deny=yes
-说明：配置完以后，除了vsftpd.ftpusers文件和vsftpd.user_list文件中记录的ftp用户不能登录vsftp服务以外，其他的ftp用户都可以登录。
-（2）设置只允许vsftpd.user_list文件中的用户登录;同样的道理要把主配置文件vsftpd.conf 中的语句修改如下两项： 
-userlist_enable=yes
-userlist_deny=no
- 说明：配置完以后，只允许vsftpd.user_list文件中记录的ftp用户能登录vsftp服务，其他的ftp用户都不可以登录。
- 
-###################超时设置##################
-idle_session_timeout=600 #空闲连接超时
-data_connection_timeout=120 #数据传输超时
-ACCEPT_TIMEOUT=60  #PAVS请求超时
-connect_timeout=60  #PROT模式连接超时
 
-################服务器功能选项###############
-xferlog_enable=YES　　  #开启日记功能
-xferlog_std_format=YES　　 #使用标准格式
-log_ftp_protocol=NO　　  #当xferlog_std_format关闭且本选项开启时,记录所有ftp请求和回复,当调试比较有用.
-pasv_enable=YES　　  #允许使用pasv模式
-pasv_promiscuous+NO　　  #关闭安全检查,小心呀.
-port_enable=YES　　  #允许使用port模式
-prot_promiscuous　　  #关闭安全检查
-tcp_wrappers=YES　　  #开启tcp_wrappers支持
-pam_service_name=vsftpd　　 #定义PAM 所使用的名称，预设为vsftpd。
-nopriv_user=nobody　　  #当服务器运行于最底层时使用的用户名
-pasv_address=(none)　　  #使vsftpd在pasv命令回复时跳转到指定的IP地址.(服务器联接跳转?)
- 
-#################服务器性能选项############## 
-ls_recurse_enable=YES  #是否能使用ls -R命令以防止浪费大量的服务器资源
-one_process_model  #是否使用单进程模式
-listen=YES   绑定到listen_port指定的端口,既然都绑定了也就是每时都开着的,就是那个什么standalone模式
-text_userdb_names=NO　　 #当使用者登入后使用ls -al 之类的指令查询该档案的管理权时，预设会出现拥有者的UID，而不是该档案拥有者的名     #称。若是希望出现拥有者的名称，则将此功能开启。
-use_localtime=NO　　  #显示目录清单时是用本地时间还是GMT时间,可以通过mdtm命令来达到一样的效果
-#use_sendfile=YES　　  #测试平台优化
- 
-################信息类设置################
-ftpd_banner=welcome to FTP .　　#login时显示欢迎信息.如果设置了banner_file则此设置无效
-dirmessage_enable=YES　　 #允许为目录配置显示信息,显示每个目录下面的message_file文件的内容
-setproctitle_enable=YES　　 #显示会话状态信息,关!
-
-############## 文件定义 ##################
-chroot_list_file=/etc/vsftpd/vsftpd.chroot_list  #定义不能更改用户主目录的文件
-userlist_file=/etc/vsftpd/vsftpd.user_list  #定义限制/允许用户登录的文件
-banner_file=/etc/vsftpd/banner    #定义登录信息文件的位置
-banned_email_file=/etc/vsftpd.banned_emails  #禁止使用的匿名用户登陆时作为密码的电子邮件地址
-xferlog_file=/var/log/vsftpd.log   #日志文件位置
-message_file=.message     #目录信息文件
-
-############## 目录定义 #################
-user_config_dir=/etc/vsftpd/userconf　　#定义用户配置文件的目录
-local_root=webdisk    #此项设置每个用户登陆后其根目录为/home/username/webdisk
-   　　  #定义本地用户登陆的根目录,注意定义根目录可以是相对路径也可以是绝对路径.相对路径是针对用户家目录      #来说的.
-anon_root=/var/ftp　　   #匿名用户登陆后的根目录
- 
-#############用户连接选项#################
-
-max_clients=100　　  #可接受的最大client数目
-max_per_ip=5　　  #每个ip的最大client数目
-connect_from_port_20=YES　　 #使用标准的20端口来连接ftp
-listen_address=192.168.0.2　　 #绑定到某个IP,其它IP不能访问
-listen_port=2121　　  #绑定到某个端口
-ftp_data_port=2020　　  #数据传输端口
-pasv_max_port=0　　  #pasv连接模式时可以使用port 范围的上界，0 表示任意。默认值为0。
-pasv_min_port=0　　  #pasv连接模式时可以使用port 范围的下界，0 表示任意。默认值为0。
-
-##############数据传输选项#################
-anon_max_rate=51200  #匿名用户的传输比率(b/s)
-local_max_rate=5120000  #本地用户的传输比率(b/s)
-
-##############安全选项#################
-Idle_session_timeout=600 #（用户会话空闲后10分钟）
-Data_connection_timeout=120 #（将数据连接空闲2分钟断）
-Accept_timeout=60  #（将客户端空闲1分钟后断）
-Connect_timeout=60  #（中断1分钟后又重新连接）
-Local_max_rate=50000  #（本地用户传输率50K）
-Anon_max_rate=30000  # （匿名用户传输率30K）
-Pasv_min_port=50000  # （将客户端的数据连接端口改在
-Pasv_max_port=60000  #50000—60000之间）
-Max_clients=200   #（FTP的最大连接数）
-Max_per_ip=4   #（每IP的最大连接数）
-Listen_port=5555  #（从5555端口进行数据连接）
- 
-以上如果有什么不全或错误的地方，请大家与我联系，我及时改进，谢谢
-
-【案例1】建立基于虚拟用户的FTP服务器，并根据以下要求配置FTP服务器。
-（1）配置FTP匿名用户的主目录为/var/ftp/anon。下载带宽限制为100kB/s
-（2）建立一个名为abc，口令为xyz的FTP账户。下载带宽限制为500kB/s。
-（3）设置FTP服务器同时登录到FTP服务器的最大链接数为100；每个IP最大链接数为3；用户空闲时间超过限值为5分钟。
-mkdir /var/fpt/anon
-useradd abc
-passwd abc
-vim /etc/vsftpd/vsftpd.conf
-主要内容如下
+#########################################################################################
+##########################################匿名配置########################################
+#########################################################################################
+#YES:匿名登录被允许
+#NO:匿名登录被允许
+#系统默认：NO
+#备注：只有该配置项为YES,匿名相关的所有配置才会有效
 anonymous_enable=YES
-anon_root=/var/ftp/anon
-anon_max_rate=100
-# Uncomment this to allow local users to log in.
+#----------------------------------------------------------------------------------------
+#系统默认：无
+#备注：匿名用户登陆后的所处的目录
+anon_root=/var/ftp
+#---------------------------------------------------------------------------------------------
+#YES:匿名用户登录时会略过密码检查的步骤，直接进入vsftpd服务器;
+#NO:匿名用户登录时，vsftpd会向其询问登录密码
+#系统默认：NO
+no_anon_password=NO
+#---------------------------------------------------------------------------------------------
+#YES:匿名用户在登录时，除非提供email_password_file中指定的密码，否则不允许登录
+#系统默认：NO
+secure_email_list_enable=YES
+email_password_file=/etc/vsftpd.email_passwords
+#---------------------------------------------------------------------------------------------
+#YES:将banned_email_file中指定的匿名用户登录时使用的密码(Email地址)封杀
+#系统默认：NO
+#备注：匿名用户登录系统时，会要求输入密码，密码就是该用户的Email地址，如果你很讨厌这些Email地址，可以将
+#	  这些个Email地址列在banned_email_file指定的文件中，就能取消其登录的权限
+deny_email_enable=NO
+banned_email_file=/etc/vsftpd.banned_emails
+#----------------------------------------------------------------------------------------
+#系统默认：077
+#备注：配置匿名用户上传文件的默认权限，-rw-------
+#备注2：若想让匿名用户上传的文件能直接被匿名下载，就这设置这里为073，-rw----r--
+anon_umask=077
+#----------------------------------------------------------------------------------------
+#YES:匿名用户只被允许下载只读文件
+#系统默认：YES
+#备注：匿名用户一般就允许有该权限即可
+anon_world_readable_only=YES
+#----------------------------------------------------------------------------------------
+#前提：(1)writer_enable=YES;
+#	  (2)该匿名用户在文件上传的目的地中有写权限。
+#YES:匿名用户具有上传文件的权限
+#系统默认：NO
+#备注：给配置项也限制虚拟用户的上传操作，默认情况下，虚拟用户也就是匿名用户
+anon_upload_enable=NO
+#-------------------------------------------------------------------------------------------
+#YES:所有匿名上传的文件的所属用户将会被更改成chown_username
+#系统默认：NO
+chown_uploads=YES
+chown_username=ljj
+#----------------------------------------------------------------------------------------
+#YES:允许匿名用户除了上传和创建目录之外，还能执行写操作，诸如删除，重命名等
+#系统默认：NO
+#备注：这一般是不被允许的，如果要设置为YES,那么开放给匿名用户写入的目录需要调整权限，让vsftpd的PID拥有者才可以写入
+anon_other_write_enable=NO
+#----------------------------------------------------------------------------------------------
+#前提：(1)writer_enable=YES;
+#	  (2)该匿名用户在父目录中有写权限。
+#YES:该匿名用户将被允许创建新目录
+#系统默认：NO
+anon_mkdir_write_enable=NO
+
+
+
+
+##############################################################################################
+##########################################本地配置#############################################
+##############################################################################################
+#(1)避免使用FTP登录的本地用户在Linux系统中离开该用户自己的家目录，而进入/etc 、/usr/local等
+#   目录下随意浏览， 需要将用户登录后的活动范围限制在自己的家目录下面，且FTP登录后就位于自己的家目录下面
+#(2)通过与下面三个配置的搭配，能实现以下几种效果：
+#	1、当chroot_list_enable=YES，chroot_local_user=YES时，在/etc/vsftpd.chroot_list文件中列出的用户，
+#	   可以切换到其他目录；未在文件中列出的用户，不能切换到其他目录；
+#	2、当chroot_list_enable=YES，chroot_local_user=NO时，在/etc/vsftpd.chroot_list文件中列出的用户，
+#	   不能切换到其他目录；未在文件中列出的用户，可以切换到其他目录；
+#	3、当chroot_list_enable=NO，chroot_local_user=YES时，所有的用户均不能切换到其他目录；
+#	4、当chroot_list_enable=NO，chroot_local_user=NO时，所有的用户均可以切换到其他目录；
+#备注：最安全的方案应该的第一个，默认限制所有用户的活动范围，个别特殊的再进行特殊配置
+#---------------------------------------------------------------------------------------------
+#YES:允许本地用户登录
+#系统默认：NO
+#备注：对于任何非匿名登录，该配置必须使能
 local_enable=YES
-local_max_rate=500
-max_clients=100
-max_per_ip=3
-connect_timeout=300
-以上是本地的LOCAL用户
-下面是用虚拟用户来实现
-vim /etc/vsftpd/vuser
-内容如下
-tom
-123
-生成数据库文件
-db_load -T -t hash -f /etc/vsftpd/vuser /etc/vsftpd/vuser.db
-chmod 600 /etc/vsftpd/vuser.db
-vim /etc/pam.d/vsftpd
 
-注释掉原来的内容
-然后加入
-auth        required    pam_userdb.so   db=/etc/vsftpd/vuser
-account     required    pam_userdb.so   db=/etc/vsftpd/vuser
-最后编辑VSFTPD.CONF加入下面两句
-guest_enable=YES
-guest_username=abc
- 
-大家可以自行测试。
-到此，案例一完成
-
-【案例2】
-1、新建一分区，10G空间，ext3 文件系统，挂在到 /ftp下，作为 ftp服务器数据存放地方。
-2、四个部门：dep1，dep2， dep3， dep4，分别对应目录 /ftp/dep1，/ftp/dep2，/ftp/dep3，/ftp/dep4。另外设定一个公共目录 /ftp/public。
-3、五个用户：admin，user1，user2，user3，user4。其中：user 1/2/3/4分别对应部门dep 1/2/3/4，他们只能访问自己所属部门的目录和public目录。如：user1只能访问dep1和public目录，不能访问其它目录。admin为管理员用户，可以访问 ftp 服务器上的任何目录。
-4、用户访问权限限制：user1/2/3/4在所能访问的目录，具有上传文件、下载文件的功能，但是不能够删除文件、更改文件权限等功能。admin管理员用户对所有目录具有文件上传、下载、删除、权限更改等功能。
-5、对每个部门定制一个 quota，设置该账户的文件配额为1000个；磁盘配额为2G。
-6、匿名用户不能访问。
-
-第一、增加一块硬盘，然后分区，把分区挂载情况写入/etc/fstab
-# fdisk /dev/hdb
-# mkfs.ext3 /dev/hdb1
-# mkidr /ftp
-# mount /dev/hdb1 /ftp -o usrquota,grpquota
-# vim /etc/fstab
-加入下面一句
-/dev/hdb1               /ftp                    ext3    defaults,usrquota,grpquota      0 0
-
-第二、建立用户组和用户和相应的文件夹并更改权限，达到题目要求
-# groupadd dep1
-# groupadd dep2
-# groupadd dep3
-# groupadd dep4
-# groupadd **e
-# usradd  -G dep1,**e user1
-# usradd  -G dep2,**e user2
-# usradd  -G dep3,**e user3
-# usradd  -G dep4,**e user4
-# usradd  -G dep1,dep2,dep3,dep4,**e admin
-# passwd user1
-# passwd user2
-# passwd user3
-# passwd user4
-# passwd admin
-# mkdir /ftp/dep1
-# mkdir /ftp/dep2
-# mkdir /ftp/dep3
-# mkdir /ftp/dep4
-# mkdir /ftp/public
-# chmod uesr1:dep1 /ftp/dep1
-# chmod uesr2:dep2 /ftp/dep2
-# chmod uesr3:dep3 /ftp/dep3
-# chmod uesr4:dep4 /ftp/dep4
-# chmod admin:**e /ftp/public
-# chmod 770 /ftp/dep1
-# chmod 770 /ftp/dep2
-# chmod 770 /ftp/dep3
-# chmod 770 /ftp/dep4
-# chmod 770 /ftp/pubic
-
-最终结果如下
--rw------- 1 root  root      8192 Jul 26 11:46 aquota.group
--rw------- 1 root  root      7168 Jul 26 11:46 aquota.user
-drwxrwx--- 2 user1 dep1      4096 Jul 25 20:47 dep1
-drwxrwx--- 2 user2 dep2      4096 Jul 25 20:47 dep2
-drwxrwx--- 2 user3 dep3      4096 Jul 25 20:47 dep3
-drwxrwx--- 2 user4 dep4      4096 Jul 25 20:47 dep4
-drwx------ 2 root  root     16384 Jul 25 20:44 lost+found
-drwxrwx--- 2 admin **e  4096 Jul 25 20:48 public
-第三、创建quota，配置磁盘配额
-#mount /dev/hdb1 /ftp -o usrquota,grpquota
-# quotacheck -cuvg /dev/sdb1
-# quotaon -a
-# edquota -g dep1
-Disk quotas for group dep1 (gid 503):
-  Filesystem                   blocks       soft       hard     inodes     soft     hard
-  /dev/hdb1                         0    1024000    2048000          0      500     1000
-# edquota -g -p dep1 dep2 dep3 dep4(-u -g将源用户组和群组的quota设置套用至其他用户或群组。)
-
-第四、编辑VSFTPD.CONF
-# vim /etc/vsftpd/vsftpd.conf
-anonymous_enable=NO
-加入
-local_root=/ftp
-user_config_dir=/etc/vsftpd/ftp_config_dir 
-
-开启chroot
+#----------------------------------------------------------------------------------------------
+#安全机制一：处理本地用户登录系统后的活动范围
+#YES:为本地用户提供用来限制用户登录后其活动范围的功能
+#系统默认：NO
+#备注：为了安全起见，应当开启该功能对用户的活动范围进行限
 chroot_list_enable=YES
-chroot_list_file=/etc/vsftpd/chroot_list
+#----------------------------------------------------------------------------------------------
+#YES:共性配置，所有本地用户将被限制在自己的用户主目录内活动
+#系统默认：NO
+chroot_local_user=YES
+#----------------------------------------------------------------------------------------------
+#YES:个性配置：在文件chroot_list下面列出的账户，可以切换到其他目录，而没有列出的，全部被限制在自己的主目录内
+#系统默认：NO
+chroot_list_file=/etc/vsftpd.chroot_list
 
-第五、建立用户的独立文件
-# mkdir /etc/vsftpd/ftp_config_dir
-# vim /etc/vsftpd/ftp_config_dir/user1
-cmds_allowed=ABOR,ACCT,APPE,CWD,CDUP,HELP,LIST,MODE,MDTM,NOOP,NLST,PASS,PASV,PORT,PWD,QUIT,REIN,RETR,SITE,SIZE,STOR,STAT,STOU,STRU,SYST,TYPE,USER
+#----------------------------------------------------------------------------------------------
+#安全机制二：阻挡某些不受欢迎的本地用户，禁止其使用FTP登录系统
+#YES:开启vsftpd提供的用来阻挡某些不受欢迎的账号的功能
+#系统默认：NO
+userlist_enable=YES
+#----------------------------------------------------------------------------------------------
+#前提：userlist_enable=YES
+#YES:在userlist_file指定的文件中的用户，以及/etc/ftpusers文件中的用户无法使用vsftp
+#NO:除了由userlist_file指定的文件中列出的用户，其他的用户都被拒绝登录,这个拒绝是在询问密码之前就被拒绝了
+#系统默认：YES
+userlist_deny=YES
+userlist_file=/etc/vsftpd.allowed_users
 
-# cp /etc/vsftpd/ftp_config_dir/user1 /etc/vsftpd/ftp_config_dir/user2
-# cp /etc/vsftpd/ftp_config_dir/user1 /etc/vsftpd/ftp_config_dir/user3
-# cp /etc/vsftpd/ftp_config_dir/user1 /etc/vsftpd/ftp_config_dir/user4
-第六、测试
- 
- 
- 
- 
- 
- 
- 
-添加一个新用户 test
-#useradd -d /home -s /sbin/nologin test
-修改配置文件 vsftpd.conf
-#vi /etc/vsftpd/vsftpd.conf
-anonymous_enable=NO
-local_enable=YES
-write_enable=YES
-chroot_list_enable=YES
-chroot_list_file=/etc/vsftpd/chroot_list
-user_config_dir=/etc/vsftpd/user_conf
-修改chroot_list文件,添加可以登录的用户 test
-#vi /etc/vsftpd/chroot_list
-创建用户配置文件
-#vi /etc/vsftpd/user_conf/test
-local_root=/data/www
-其他
-1)打开日志功能
-xferlog_file=/var/log/vsftpd.log
-2)定制欢迎信息
-dirmessage_enable=YES
-message_file=.message
-3)限制连接数
-max_clients=100
-max_per_ip=5
-4)限制传输速度
-anon_max_rate=81920
-local_max_rate=81920
-5)绑定IP
-listen_address=192.168.168.203 
-文章源自：烈火网，原文：http://www.veryhuo.com/a/view/14224.html
- 
- 
-匿名用户
-anonymous_enable=NO
-#anon_mkdir_write_enable=YES
-#anon_upload_enable=YES
-#本地用户能否登陆
-#local_enable=YES
-#是否可写
-write_enable=YES
-#VSFTPD独立运行 (用vsftpd /etc/vsftpd.conf &)以及下载速度的限制
-listen=YES
-max_clients=600
-max_per_ip=5
-tcp_wrappers=YES
-connect_from_port_20=YES
-#anon_max_rate=51200  (56k)
-#local_max_rate=512000 (560k)
-#如何更改路径
-#anon_root=/var/ftp/pub
-#local_root=/var/ftp
-#如何随意增加一个用户目录
-通过useradd -d /path/dir -M name 以及chmod ? /path/dir 可以达到
-#如何对磁盘限额
-用quota对/etc/fstab进行限制，然后对特定用户进行限制
-如何把用户限制在家目录中呢？ 
-　　我们要自己建一个文件，在/etc目录中 
-　　#touch /etc/vsftpd.chroot_list 
-　　以beinan这个用户为例 
-　　在vsftpd.chroot_list这个文件中，把beinan添上去就行。 
-　　然后改/etc/vsftpd/vsftpd.conf文件，找如下的两行 
-　　#chroot_list_enable=YES 
-　　#chroot_list_file=/etc/vsftpd.chroot_list 
-　　把前面的#号去掉，也就是这样的 
-　　chroot_list_enable=YES 
-　　chroot_list_file=/etc/vsftpd.chroot_list 
-　　如果没有这样的两行，就可以自己添加上去也是一样的。 
-　　设置好后，重新vsFTPD服务器。 
-打开vsFTP服务器的日志功能： 
-　　把下面xferlog_file前面的#号对掉，也就是把vsftp的log功能打开，这样我们就能在/var/log目录下查看vsftpd.log。这是vsFTP的日志功能，这对于我们来说是极为重要的。 
-　　#xferlog_file=/var/log/vsftpd.log 
-　　补充三：如何让绑定IP到vsFTP？也就是说，如何让用户只能通过某个IP来访问FTP。其实这个功能很有意思。如果绑定的是内网的IP，外部是没有办法访问的。如果绑定的是对外服务的IP，内网也只能通过对外服务的IP来访问FTP 
-　　在/etc/vsftpd/vsftpd.conf中加一行，以我的局域网为例，请看第一帖中的操作环境，这样外网就不能访问我的FTP了，内网也可能通过192.168.0.2来访问FTP 
-listen_address=192.168.0.2 
-　　加完后，要重启vsFTP服务器 
+#----------------------------------------------------------------------------------------------
+#系统默认：077
+#备注：该配置指定本地用户创建文件的默认权限：rw-------
+local_umask=077
+#----------------------------------------------------------------------------------------------
+#此项设置每本地个用户登陆后其根目录为/home/username/.emacs.d
+#系统默认:无
+#备注：该配置指定本地用户在登录之后，默认处在家目录下面的那个目录下
+#备注2：定义的目录可以是相对路径也可以是绝对路径.相对路径是针对用户家目录来说的
+local_root=.emacs.d
+
+#--------------------------------------------------------------------------------------------
+#该配置项指定一个目录，该目录下面是一些文件，这些文件的文件名，均以本地用户各自的用户名命名，用户
+#可以针对每个用户，做出不同的配置。当一个用户登录时，会去该目录下加载该用户自己的配置文件
+#备注：该配置的功能非常强大，可以实现专门针对不同用户，给出不同的配置文件
+#user_config_dir=/etc/vsftpd_user_conf
+
+
+
+
+##############################################################################################
+##########################################SSL配置#############################################
+##############################################################################################
+#备注：
+#(1)ftp传输数据是明文，弄个抓包软件就可以通过数据包来分析到账号和密码，为了搭建一个安全性比较高ftp，可以结合SSL来解决问题
+#(2)SSL(Secure Socket Layer)工作于传输层和应用程序之间,应用程序只要采用SSL提供的一套SSL套接字API来替换标准的Socket套接字,
+#   就可以把程序转换为SSL化的安全网络程序,在传输过程中将由SSL协议实现数据机密性和完整性的保证
+#(3)SSL取得大规模成功后,IETF将SSL作了标准化,并将其称为TLS,(Transport Layer Security),ftp结合SSL,将实现传输数据的加密,
+#   保证数据不被别人窃取
+#(4)vsftpd支持SSL，必须让OPENSSL≥0.9.6版本，还有就是本身vsftpd版本是否支持，查询vsftpd软件是否支持SSL，ldd /usr/sbin/vsft\
+#   pd |grep libssl,如没有输出libssl.so.6 => /lib/libssl.so.6 (0xf7f27000)类似文本，说明此vsftpd版本不支持SSL
+#(5)从底层来讲：使用了该功能，vsftpd将会针对OpenSSL来编译，支持SSL安全连接，并且是在FTP的命令通道和数据通道均加密
+#(6)使用该功能FTP客户端也需要SSL支持才行
+#备注2：手册建议，只有在需要的时候才使能它，因为vsftp不保证 OpenSSL libraries 的安全性
+#----------------------------------------------------------------------------------------------
+#YES:vsftpd将支持安全连接SSL
+#系统默认：NO
+ssl_enable=NO
+#-------------------------------------------------------------------------------------------
+#前提：ssl_enable=YES
+#YES:匿名用户将被允许使用安全的SSL连接
+#系统默认：NO
+allow_anon_ssl=NO
+#----------------------------------------------------------------------------------------------
+#前提：ssl_enable=YES
+#YES:所有的匿名用户在发送密码过程中都强制使用SSL连接
+#系统默认：NO
+force_anon_logins_ssl=YES
+#----------------------------------------------------------------------------------------------
+#前提：ssl_enable=YES
+#YES:所有的匿名用户在数据连接data-ftp中发送和接收数据都强制使用安全SSL连接
+#系统默认：NO
+force_anon_data_ssl=YES
+
+#----------------------------------------------------------------------------------------------
+#前提：ssl_enable=YES
+#YES:所有的本地用户在在数据连接data-ftp中发送和接收数据都强制使用安全SSL连接
+#系统默认：NO
+force_local_data_ssl=YES
+#----------------------------------------------------------------------------------------------
+#前提：ssl_enable=YES
+#YES:所有的本地用户在发送密码过程中都强制使用SSL连接
+#系统默认：NO
+force_local_logins_ssl=YES
+
+#----------------------------------------------------------------------------------------------
+#前提：ssl_enable=YES
+#YES:使用TLS v1 protocol连接
+#系统默认：YES
+ssl_tlsv1=YES
+#----------------------------------------------------------------------------------------------
+#前提：ssl_enable=YES
+#YES:使用SSL v2 protocol
+#系统默认：NO
+ssl_sslv2=NO
+#----------------------------------------------------------------------------------------------
+#前提：ssl_enable=YES
+#YES:使用SSL v3 protocol
+#系统默认：NO
+ssl_sslv3=NO
+#----------------------------------------------------------------------------------------------
+#该配置指出RSA证书的路径，vsftpd会加载该文件来对FTP连接中的数据进行SSL加密
+rsa_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem
+#----------------------------------------------------------------------------------------------
+#该配置指出RSA private key的路径，vsftpd会加载该文件来对FTP连接中的数据进行SSL加密
+rsa_private_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
+
+
+
+
+##############################################################################################
+##########################################日志配置#############################################
+##############################################################################################
+#YES:上传或者下载的细节将会被记录在/var/log/vsftpd.log中，也有可能是在vsftpd_log_file指定的文件中
+#默认：NO
+#备注：因为默认的格式可读性更高，所以xferlog_std_format设置为NO,除非使用wu-ftp日志文件分析软件
+xferlog_enable=YES
+xferlog_std_format=NO
+xferlog_file=/var/log/vsftpd_xferlog.log
+#----------------------------------------------------------------------------------------
+#YES:两种日志文件会同时生成
+#系统默认：NO
+#备注：如果FTP服务器不是很忙碌的情况下，定制出两个日志文件还是不错的选择
+#备注2：默认/var/log/xferlog and /var/log/vsftpd.log
+dual_log_enable=YES
+vsftpd_log_file=/var/log/vsftpd.log
+*** 测试心得
+--协议：ftp,
+--端口号：21
+
+--chown_uploads设置为YES,在windos上使用的xftp软件，匿名用户就无法登录
