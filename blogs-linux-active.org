@@ -17,3 +17,133 @@ Ubuntu下，只需一条命令即可安装curl：
 
 
 Blog creation time:[2017-09-11 一 15:24]
+** WAITTING Theme:kali bugs								   :@Blog:@Linux:
+    SCHEDULED:<2017-09-13 三>
+--C-L键按下之后，无法跳转到terminal的底部，使用鼠标滑轮手动滚动到 底部时，再次使用
+C-L想将光标当前位置置顶时，terminal卡死，需要杀死进程才行
+
+--在普通用户下，使用sudo emacs /etc/xxx进行编辑时，无法使用中文输入法，而直接
+切换到root后使用emacs /etc/xxx进行编辑时，就可以使用中文输入法
+
+Blog creation time:[2017-09-13 三 10:16]
+** WAITTING Theme:netstat									   :@Blog:@Linux:
+    SCHEDULED:<2017-09-14 四>
+--功能：用于打印linux系统网络的状态信息,列出系统上所有的网络套接字连接情况，包括 
+tcp, udp 以及 unix 套接字，另外它还能列出处于监听状态（即等待接入请求）的套接字
+
+--参数：
+(1) -a:显示侦听和未侦听的套接字，即列出当前所有的连接
+输出：
+>> Proto:被套接字使用的协议，有tcp, udp, udpl, raw四种
+>> Recv-Q:没有被连接到这个套接字的用户程序复制的字节数
+>> Send-Q:没有被远程主机认可的字节数
+
+备注：该命令列出 tcp, udp 和 unix 协议下所有套接字的所有连接，然而这些信息还不够详细，管理员往往需要查看某个协议或端口的具体连接情况
+
+
+Blog creation time:[2017-09-14 四 15:20]
+** DONE Theme:安装Debian									   :@Blog:@Linux:
+    SCHEDULED:<2017-09-14 四>
+	- State "DONE"       from "WAITTING"   [2017-09-15 五 10:24]
+(1)安装：
+--Debian官网:https://www.debian.org/
+--CD/USB ISO映像(在第三行第二列，比较小，仔细找)
+--选择：通过 BitTorrent 下载 CD/DVD 映像文件
+--选择：Official jigdo files for the stable release --->DVD amd64或者i386
+--选择：debian-9.1.0-amd64-DVD-1.iso.torrent   
+备注：还有debian-9.1.0-amd64-DVD-2.iso.torrent 和 debian-9.1.0-amd64-DVD-3.iso.torrent  
+这两个是软件包，可以自己下载
+--制作U盘启动盘，工具：rufus-2.16.exe(网址：http://rufus.akeo.ie/)
+--使用U盘安装
+
+(2)配置：
+--优化工具：下载扩展插件：workspace to dock
+Blog creation time:[2017-09-14 四 21:27]
+** DONE Theme:解决Debian使用apt安装软件时要求插入光盘的问题	   :@Blog:@Linux:
+    SCHEDULED:<2017-09-15 五>
+	- State "DONE"       from "WAITTING"   [2017-09-15 五 10:24]
+--原因：Debian安装后，/etc/apt/sources.list中开头几行默认优先从dvd光盘安装软件,而非从网上下载
+
+--解决方案：
+Debian系统自带一个叫做Software update的软件，专门用来管理源，打开该软件配置一下即可
+Blog creation time:[2017-09-15 五 09:10]
+** DONE Theme:解决软件安装过程中的依赖关系的心得			   :@Blog:@Linux:
+    SCHEDULED:<2017-09-15 五>
+	- State "DONE"       from "WAITTING"   [2017-09-16 六 20:39]
+(1)正常途径：
+>> dpkg -i xxx.deb
+>> apt -f install 
+>> dpkg -i xxx.deb
+	上面的三条指令几乎就是所有.deb类型的包安装的泛型，其原理如下：
+	一般情况下，拿到一个.deb的包之后，可以使用dpkg -i xxx.deb来安装，此时，有百分之90
+以上的情况都会提示说缺少依赖，但是呢，该软件xxx的状态信息已经存放在/var/lib/dpkg/status
+文件里面了，那紧接着使用apt -f install来强制安装，其原理是下面的包管理机制所述，apt去
+遍历分析整个/var/lib/dpkg/status的过程中自然会发现 xxx 这个软件的依赖中有软件包没有安装，
+自然会去安装这些检测到的包了
+	如此依赖，卸载命令sudo apt autoremove xxx --purge的原理也就很明了了，显然，系统会去
+将/var/lib/dpkg/status中软件xxx登记的信息给抹除掉，之后安装其他软件时才不会报错！
+
+(2)存放软件状态信息的文件：/var/lib/dpkg/status
+>> 当使用dpkg -s xxx时，该命令会从该文件中找到xxx这个软件，然后原封不动的将里面的信息
+输出到屏幕，使用该命令，不难发现会显示该软件xxx的所有依赖关系
+>> 这个文件很重要，因为每次使用apt安装软件时，apt会事先去遍历这个文件，分析文件中各个
+软件的依赖信息，这样做的原因不难猜测，你想啊，如果你现在安装的软件包当中依赖到了一个包，
+暂且记为pack.xx,而这个pack.xx在你过去某个时刻，安装某一个软件时作为依赖安装过一次，
+那么，现在你正在安装的这个软件用到这个包pack.xx的时候，你是再安装一遍呢，还是不要安装，
+答案是显然的，肯定是不用安装的，那么，apt又如何知道pack.xx以前安装过呢？
+
+(3)包管理机制：
+包管理器提供一种机制：每个软件在安装之后，都会在/var/lib/dpkg/status这个文件下登记状态，
+这里面记录了每个软件包的名称，大小，版本，依赖关系，描述信息等等，在安装一个软件之前，
+首先去遍历这个文件下所有软件的依赖关系这一部分，确定以前从没有安装过该软件以及其所依赖的包
+之后，才会去安装，否则就略过
+
+(3)缺什么补什么：
+	理想很丰满，现实很残酷，实际在安装过程中（1）所述的方法80%都会成功，有15%从原理上说
+压根就不可能（比如兼容性问题），有5%还是值得争取一下的，其失败的原因通常是因为源仓库
+里面无法满足待安装软件内部依赖包的版本，或者是源仓库里面没有某些依赖包等，针对后者，通常，
+可以想办法从外部获取缺少的依赖包进行安装即可。对于前者，得动一番手脚，下面以安装网易云音乐
+为例进行阐述：
+>> dpkg -i netease-cloud-music_1.0.0-2_amd64_Ubuntu16.04.deb
+备注：
+缺少几个依赖包，其中，有一个叫做libfontconfig1 (>=2.11.94)的比较特殊，该条目明确
+说明netease-cloud-music这个软件依赖于libfontconfig1 (>=2.11.94)，但是系统的源仓库中
+只有libfontconfig1 2.11.0-6.7+b1，原因已经告诉用户了，针对依赖包libfontconfig1，安装
+过程中需要其版本(>=2.11.94)，知道了原因，就好解决问题了
+
+>> 安装缺少的依赖：
+sudo aptitude install xxx yyy zzz ...  libfontconfig1
+备注：
+--在此处一定要使用aptitude,测试发现apt-get好像无法处理，至于原因嘛，查资料得知，aptitude 
+解决依赖关系比 apt-get 更智能，它有一个优点就是会自动记录哪些包是"自动安装"
+(即因依赖关系而安装)的, 总之，试一下就知道了
+--一个依赖可能会引出其他依赖，新出现的依赖也将其添加进来，知道不再有新的依赖时，就算完事了
+--这一步骤最后还是会显示上面说的那个比较特殊的libfontconfig1，版本太新，找不到，没关系，
+那安装时忽略版本就是了
+
+>> 解决 libfontconfig1 的版本问题
+sudo dpkg --ignore-depends=libfontconfig1 -i netease-cloud-music_1.0.0-2_amd64_Ubuntu16.04.deb
+
+>> 安装完成了吗？
+到目前为止，网易音乐安装并可以正常使用了，在终端下输入netease-cloud-music,就能启动网易音乐
+的界面并播放音乐，然而，事情真的结束了吗？你在使用apt install xxx安装另一个软件试试，会报告
+一个关于libfontconfig1的错，还是说版本不对，聪明的你大概已经想到了，我们前面说，apt以及
+aptitude在使用时，首先会去遍历/var/lib/dpkg/status这个文件中的依赖信息，OK，我们来理一下
+关于libfontconfig1的思路：
+第一个“>>”条目中，使用了dpkg安装网易音乐，结果，在/var/lib/dpkg/status中登记了该软件的
+信息，而信息中有个依赖信息中出现了libfontconfig1 (>=2.11.94)；
+第二个“>>”条目中，使用了aptitude安装缺少的依赖，其中，安装了libfontconfig1，不用说，安装的
+肯定是源仓库中唯一有的2.11.0-6.7+b1版本
+第三个“>>”条目中，使用 dpkg --ignore-depends=libfontconfig1 -i xxx在忽略libfontconfig1
+依赖问题的前提安装了网易音乐，之后就可以使用该软件了
+然而，矛盾在于：系统中实际安装了2.11.0-6.7+b1版本的libfontconfig1，而/var/lib/dpkg/status
+中登记的还是libfontconfig1 (>=2.11.94)，再次使用apt时，遍历/var/lib/dpkg/status的时候，
+apt是会发现这个问题的，所以就输出一条错误信息：
+netease-cloud-music：Depends:libfontconfig1 (>=2.11.94) but 2.11.0-6.7+b1 is 
+installed
+
+>> 修改依赖文件
+知道了问题的根源就在于/var/lib/dpkg/status中登记的还是libfontconfig1 (>=2.11.94)，
+那么，将 (>=2.11.94) 从该文件中去掉，问题就解决了，完毕！
+
+Blog creation time:[2017-09-15 五 16:37]

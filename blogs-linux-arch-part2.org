@@ -1,6 +1,12 @@
 * blogs-linux-arch-part2
-** DONE [#D] theme:ftp服务									   :@Blog:@Linux:
+** DONE [#D] theme:FTP服务 									   :@Blog:@Linux:
 	- State "DONE"       from "TODO"       [2017-09-05 二 09:29]
+*** 安装
+--安装vsftpd:
+sudo apt install vsftpd
+
+--安装ftp（针对kali）
+sudo apt install ftp  
 *** 基础知识
 #(1)FTP传输使用的是TCP数据包协议，TCP/IP协议的运用层
 #(2)FTP主要用来进行文件传输，采用的传输方式是明文传输，所以其传输的数据具有一定的危险性
@@ -25,7 +31,7 @@
 #以及ip_nat_ftp，用modprobe这个命令来加载，防火墙的这两个模块会去分析21号端口的连接
 #信息，就可以得到FTP服务器的资料，这种方法的前提是FTP必须是21号端口；第二种，被动式
 
-#被动式：被动式的连接是指由FTP客户端向服务器端发起索要数据的请求
+	#被动式：被动式的连接是指由FTP客户端向服务器端发起索要数据的请求
 *** 我的配置
 #########################################################################################
 #备注：下面一切的配置可以使用man 5 vsftpd.config来查询技术细节
@@ -496,7 +502,24 @@ xferlog_file=/var/log/vsftpd_xferlog.log
 dual_log_enable=YES
 vsftpd_log_file=/var/log/vsftpd.log
 *** 测试心得
---协议：ftp,
+--协议：ftp
 --端口号：21
 
 --chown_uploads设置为YES,在windos上使用的xftp软件，匿名用户就无法登录
+--对于配置项：anon_root=/var/ftp，文件/var/ftp必须在FTP服务器下面存在，否则无法登录
+
+** DONE [#D] theme:SSH服务								   :@Blog:@Linux:
+	- State "DONE"       from "TODO"       [2017-09-05 二 09:29]
+1.检查是否安装openssh-client:dpkg -s openssh-client
+2.检查是否安装openssh-server:dpkg -s openssh-server
+3.安装：apt install openssh-client openssh-server
+4.开启sshd服务：systemctl start sshd
+
+kali:
+1.sudo apt-get install ssh
+2.systemctl start ssh
+3.修改配置文件：/etc/ssh/sshd_config
+(a) 将#PasswordAuthentication no 该行前面的#去掉，并且将NO修改为YES；
+(b) 将#PermitRootLogin  without-password 该行前面的#去掉，并且将“without-password”修改为YES；
+4.重新启动:systemctl restart ssh
+Blog creation time:[2017-09-05 二 09:06]

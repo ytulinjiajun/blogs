@@ -1,42 +1,416 @@
 * blogs-emacs-active
-** DONE [#D] theme:博客开张了！ 									  :@Blog:@Emacs：
-   - State "DONE"       from ""           [2017-08-04 五 16:19]
-     今天注定难忘的一天，因为在折腾了一个周之后，终于成功的用上了emacs的gtd功能，有点
-小激动。这是我的第一个博客，为了纪念这一天，就描述一个我在hack我的emacs的gtd工具过程中
-遇到的一个困扰我长时间让我即将崩溃的问题吧！
-     变量org-agenda-files配置了关于我所有被gtd管理的文件，在init-org-mode.el中配置
-好以后，发现每次关闭emacs重启后C-c C-a快捷键对应的agenda-mode竟然找不到文件路径，总是
-为空，必须使用eval-buffer之后才能找到文件的路径，我是用list函数来包含目录下的所有org
-文件的，这有些说不通，我甚至用了eval-after-load函数来包裹我的代码都不行，我一度怀疑是
-不是这个list函数有bug，后来证明还是我的问题，解决方案如下：
-    需要C-h v一下org-agenda-files变量，最后一行有一个customize,点击进去之后配置该
-变量的文件加载路径添加，保存之后会在custom-set-variables函数下面生成该语句
-'(org-agenda-files (quote ("~/my-agenda")))，之后每次启动emacs，路径就能生效了！
-如此，问题得到完美解决，my-agenda目录下的所有org文件都能被gtd访问到了
-	总结：曾几度因为我自己配置的代码访问不了my-agenda目录下所有的org文件而放弃org
-模式下这么好用的gtd工具，好在最终折腾许久，终于在手册中找到了解决方案，所以说，多研究
-emacs的说明手册，是很重要的！
-Journal creation time:[2017-08-03 四 20:12]
-** DONE [#D] theme:如何删除一个被收录的条目 						  :@Blog:@Emacs:
-   - State "DONE"       from ""           [2017-08-04 五 16:19]
-   理论上，一个idear被收录后，说明它曾经是有一定价值的，所以，即使后来不想去完成这个任务了
-也应当留有痕迹，以便在以后需要时能随时找到，最好的方法是将其设置为Abort状态，应当给出终止的原
-因，以后如果又觉得该任务又有价值了，可以将其设置为TODO并修改时间戳,然后该任务就能在日程表中出
-现了，此时，可以去完成该任务！
-	然而，有时我们可能因为某些原因添加了一个事项，然后突然发现该事项写错了或者重复了，此时，
-我们需要真正的去删除该任务，将光标移动到该条目，使用快捷键C-k就能将该条目从源文件中移除，
-注意了，是从xxx.org文件中删除，一旦删除之后你就再也找不回来了！
-Journal creation time:[2017-08-04 五 08:45]
-** DONE [#D] theme:关于如何调整agenda的默认显示窗口为全屏 			  :@Blog:@Emacs:
-   - State "DONE"       from ""           [2017-08-04 五 16:19]
-	 修改agenda默认显示窗口为全屏，需要customize-group变量org-agenda-windows中
-Org Agenda Window Setup:current window即可
-Journal creation time:[2017-08-04 五 08:32]
-** DONE [#D] theme:org时间戳的组成 									  :@Blog:@Emacs:
-   - State "DONE"       from ""           [2017-08-04 五 16:18]
-   :PROPERTIES:
-   :LAST_REPEAT: [2017-08-04 五 16:18]
-   :END:
+** DONE [#D] Theme:emacs相关网站							   :@Blog:@Emacs:
+	- State "DONE"       from "TODO"       [2017-09-04 一 22:53]
+--Emacs 世界级大师 : Steve Purcell  http://www.sanityinc.com/
+--Emacs 官网 : www.gnu.org/software/emacs/
+--MELPA：http://melpa.org/#/
+--陈斌 : https://github.com/redguardtoo/mastering-emacs-in-one-year-guide/blob/master/guide-zh.org
+--陈斌的配置 : https://github.com/redguardtoo/emacs.d
+--国外的emacs视频：http://emacsrocks.com/
+--大牛的配置：https://github.com/tuhdo/tuhdo.github.io
+--子龙山人的配置: https://github.com/zilongshanren
+--经典社区 : https://www.reddit.com/r/emacs/
+--官方手册：https://www.gnu.org/software/emacs/manual/
+--牛0的博客 : https://github.com/search?p=1&q=stars%3A%3E20+extension%3Ael+language%3Aelisp&ref=searchresults&type=Repositories
+--牛1的博客 : http://planet.emacsen.org/
+--牛2的博客 ： http://www.lunaryorn.com/
+--牛3的博客 ：http://ergoemacs.org/
+--牛4的博客(超级棒)：https://tuhdo.github.io/
+--melpa镜像源：http://www.4gamers.cn/
+--emacs中国社区：https://github.com/emacs-china
+--21天学会emacs: https://emacs-china.org/t/21-emacs/55
+--入门elisp语法：https://learnxinyminutes.com/docs/elisp/
+Blog creation time:[2017-09-04 一 22:04]
+** DONE [#D] Theme:spacemacs相关网站						   :@Blog:@Emacs:
+	- State "DONE"       from "TODO"       [2017-09-05 二 09:27]
+--官网：http://spacemacs.org
+--github:https://github.com/syl20bnr/spacemacs
+Blog creation time:[2017-09-05 二 08:46]
+** DONE [#D] Theme:安装emacs								   :@Blog:@Emacs:
+	- State "DONE"       from "TODO"       [2017-09-04 一 22:53]
+1.ubuntu16.04使用apt install emacs安装的emacs是emacs24,而我希望能使用emacs25,
+因为里面有一些高级的函数可以实现，所以采用下面的方式来安装emacs25.2
+2.首先安装核心依赖文件：
+--sudo apt install build-essential
+--sudo apt-get build-dep emacs24
+备注:安装build-dep可能会出错，显示E：You must put some 'source' URIs in your source.list
+此时，我们需要到设置-->软件和更新下面勾选：源代码
+3.下载emacs25.2版本：
+--sudo wget -P 下载/ http://ftp.gnu.org/gnu/emacs/emacs-25.2.tar.xz
+4.解压：
+--由于下载包的格式为.tar.xz,所以:
+--xz -d emacs-25.2.tar.xz
+--tar -xvf emacs-25.2.tar
+5.切换到root，进入解压后的包，运行配置文件，且指定安装目录：
+--./configure --prefix=/usr/local
+6.安装emacs：
+--make && make install
+7.运行emacs
+Blog creation time:[2017-09-04 一 22:05]
+** DONE [#D] Theme:emacs启动流程							   :@Blog:@Emacs:
+    SCHEDULED:<2017-09-19 二>
+	- State "DONE"       from "WAITTING"   [2017-09-20 三 10:51]
+	Link position:[[info:elisp.info.gz#Startup%20Summary][Operating System Interface (emacs lisp 38)]]
+emacs在启动时，会执行下面的操作：
+1. 执行subdirs.el文件，给load-path变量赋值
+	Emacs在安装完成后，会自动生成一个叫做subdirs.el的文件，在emacs启动的时候，会去执行这个subdirs.el文件，该文件里的代码会将与emacs有关的文件路径(包括.emacs.d/*,/etc/emacs,/usr/local/share/..,/usr/share/emacs/..等等)，全部加载至load-path中
+	该步骤本质上是将emacs正常工作时可能加载到的文件的路径事先写进load-path这个变量中，在工作过程中用到相应的文件时，直接到load-path这个变量列表中提取该文件的绝对路径，就能找到该文件的物理位置并加载了
+2. 遍历load-path变量，查找文件leim-list.el，并加载
+	该文件是为注册输入法而准备的，该搜索仅仅是针对你已经创建了的私有文件leim-list.el,因此，会略过standard Emacs libraries目录。该文件应该是唯一的，它会被编译进Emacs executable中去
+
+  系统保证emacs相关的配置文件(.elc，.el等等)，以及一些系统用到的库文件能被找到，而所做的一个操作，这就保证了
+3. 设置时间
+	会将变量before-init-time的值设置成current-time，将after-init-time的值设置成nil,该操作会发信号给lisp programs，然后Emacs将会进行初始化
+4. 设置语言环境和终端的编码系统
+5. 解析命令行参数的基础语法
+6. 初始化窗口系统
+	如果不是运行在batch模式，那么，变量initial-window-system的值将会用来初始化窗口系统，每一个被窗口系统所支持的初始化函数都是由window-system-initialization-alist来指定，如果initial-window-system的值是WINDOWSYSTEM,则，一个合适的初始化函数在term/WINDOWSYSTEM-win.el中定义，当进行build时，该文件会被编译进Emacs executable中去
+7. 运行一个标准的钩子函数：before-init-hook
+8. 创建graphical frame
+	如果条件满足，那么会创建一个graphical frame，如果指定了‘--batch’ or ‘--daemon’就不会创建
+9. 初始化字体，菜单栏，工具栏
+	如果需要的话，会初始化frame的字体，设置菜单栏，工具栏，如果支持graphical frame的话，那么即使当前的frame不是一个graphical,也会设置一个工具栏，因为graphical frame在稍后也会被创建
+10. 使用custom-reevaluate-setting来重新初始化列表成员custom-delayed-init-variables
+11. 加载site-start这个库，如果指定了‘-Q’ or ‘--no-site-file’，该库不会被加载
+12. 加载初始化文件init.el
+	如果指定了‘-q’, ‘-Q’, or ‘--batch’ ，则不会去加载
+13. 加载default这个库
+	如果inhibit-default-init是non-nil,或者， ‘-q’, ‘-Q’,or ‘--batch’被指定，这个库就不会去加载
+14. 从abbrev-file-name指定的路径加载abbrevs，如果指定了--batch就不会去加载
+15. 调用函数：package-initialize来激活任何已经被安装了的package
+	但是，当package-enable-at-startup是nil或者指定了选项 ‘-q’, ‘-Q’, or ‘--batch’时，Emacs不会去初始化package，package-initialize这个函数应当明确的被调用
+16. 设置after-init-time的值为current-time
+	在第3步中，这个变量的值是被设置为nil的,设置该变量为current-time表明初始化已经完成
+17. 运行一个标准的钩子函数：after-init-hook
+18. 根据initial-major-mode来设置Fundamental mode为major mode
+19. 加载terminal-specific Lisp library
+	如果开启了一个text terminal，将会加载 terminal-specific Lisp library,然后运行tty-setup-hook这个钩子函数，如果指定--batch或者term-file-prefix为nil将不会加载
+20. 显示初始化过程中打印的区域信息
+21. 处理命令行的选项部分
+22. 如果指定了--batch，那启动过程到此为止
+23. 如果scratch buffer存在，而且是空的，那么将会在该buffer里面插入(substitute-command-keys initial-scratch-message)
+24. 解析initial-buffer-choice
+	如果initial-buffer-choice是一个字符串，那么会将这个字符串作为文件或者目录来访问，如果是一个函数，那么将会不传入参数的调用这个函数，并且将该函数的返回值作为选中的缓冲区，如果一个文件作为命令行参数的形式而给出，那么该文件将会被访问，并且该文件的buffer会显示在initial-buffer-choice里面，如果超过一个文件被给出，那么所有的文件都会被访问，然后*Buffer List*会被显示在initial-buffer-choice中
+25. 运行钩子函数：emacs-startup-hook
+26. 调用frame-notice-user-settings，该函数根据初始化文件所指出的内容来修改被选中的frame的参数
+27. 运行钩子函数：window-setup-hook
+	该函数与emacs-startup-hook唯一的不同之处在于该函数在上面26条提及的对frame参数的修改之后才进行的调用
+28. 运行startup screen
+	这是一个特殊的buffer，里面包含版权以及emacs的一些基础信息，如果，inhibit-startup-screen以及initial-buffer-choice设置为non-nil,或者如果‘--no-splash’ or ‘-Q’被指定，将不会去运行
+29. 调用server-start
+	如果选项--daemon被指定，那么会调用server-start
+30. 调用 emacs-session-restore 
+	如果开启了X会话管理，那么会调用该函数，并传递上一个会话的ID作为参数
+
+
+下面的一些选项会影响启动序列的一些方面：
+1. inhibit-startup-screen
+	non-nil: 抑制 startup screen ，在该情况下，Emacs会显示*scratch*缓冲区
+	inhibit-startup-message’ and ‘inhibit-splash-screen是这个变量的别名
+2. initial-buffer-choice
+   non-nil: 该变量是一个字符串，这个字符串指定了一个文件或者目录，这个文件里面所存放的是在Emacs启动之后所显示的内容(替代正常情况下的欢迎界面)
+   函数：该变量的值可以是一个函数，emacs会调用这个函数，这个函数需要返回一个buffer，然后显示这个buffer里面的内容
+   t: 显示*scratch*缓冲区
+3. inhibit-startup-echo-area-message
+	该变量控制startup echo area message的显示,可以通过添加下面的配置来抑制startup echo area message的显示：
+	 (setq inhibit-startup-echo-area-message
+                "YOUR-LOGIN-NAME")
+4. initial-scratch-message
+	non-nil: 给定一个字符串，在开机后进入*scratch*缓冲区时显示
+    t:禁止在*scratch*缓冲区显示信息，为空
+    
+Case creation time:[2017-09-19 二 15:00]
+** DONE [#D] Theme:初始化文件								   :@Blog:@Emacs:
+    SCHEDULED:<2017-09-20 三>
+	- State "DONE"       from "WAITTING"   [2017-09-20 三 15:22]
+1. .emacs 或 ~/.emacs.d/init.el
+	emacs启动完成后，会试图去加载位于家目录下的初始化配置文件，该文件要么是.emacs或者.emacs.el,要么是在.emacs.d目录下的一个名为init.el的文件
+	命令行‘-q’, ‘-Q’, and ‘-u’控制是否加载emacs的初始化文件以及到哪里加载，-q ,-Q,标识，不加载配置文件，-u USER,标识，加载USER的配置文件来替代自己的，如果什么选项都没有指定，emacs会使用：LOGNAME环境变量，或者USER(大多数系统常用)，或者USERNAME(MS系统),来查找家目录下面的初始化文件
+
+2. default.el
+	Emacs在安装之后，有一个默认的初始化文件：default.el，这是一个lisp library文件,Emacs会通过load来找到该文件。emacs的distribution没有这个文件，它有意让本地进行定制。如果这个默认的初始化文件存在，那么在emacs启动之后,随便什么时候去加载该文件都可以，但是，如果你自己的初始化文件存在，那么优先加载自己的初始化文件，可以在自己的初始化文件里面将inhibit-default-init设置为non-nil，那么，emacs在这之后都不会去加载default.el文件了，如果指定了-q选项，那么，emacs在启动之后，既不会加载自己的初始化文件，也不会加载default.el
+
+3. site-start.el
+   Emacs在加载1所示的用户初始化文件之前，会先加载该文件。可以使用--no-site-file选项来加载该文件,该文件是一个site-customization文件，与该文件相关的有：
+   site-run-file，该变量指定了在用户初始化文件之前要加载的site-customization文件，该变量的值一般就是site-start，即指定site-start.el作为site-customization文件
+   inhibit-default-init,该变量如果为non-nil，表示阻止emacs加载default initialization library file，默认为nil
+   before-init-hook,在所有加载初始化文件（site-start.el，init.el，default.el）之前运行的一个钩子函数
+   after-init-hook，在所有加载初始化文件（site-start.el，init.el，default.el）之后运行的一个钩子函数
+   emacs-startup-hook,处理完毕命令行参数之后运行的一个钩子函数
+   window-setup-hook，同emacs-startup-hook相似，不同之处在于该函数在frame参数设置完毕之后才被调用，调用的时机比emacs-startup-hook晚
+   user-init-file,保存用户的初始化文件的路径
+   user-emacs-directory，保存.emacs.d目录的路径
+Blog creation time:[2017-09-20 三 10:52]
+** DONE [#D] Theme:关于require、provide、load、load-file、 autoload、 load-path的解析 :@Blog:@Emacs:
+   SCHEDULED:<2017-09-18 一>
+   - State "DONE"       from "WAITTING"   [2017-09-18 一 21:41]
+参考网址：http://ergoemacs.org/emacs/elisp_library_system.html
+*** features provide require
+1. 三者之间的关系
+	require函数在被调用时，传递一个参数symbal_name，拿到该symbal_name之后,会到features变量列表中查找是否有symbal_name的存在如果没有，则调用load函数(依据load-path变量中的提供的路径列表),去加载symbal_name.el，并解析该文件的内容，当解析到provide函数时，就将provide后面的标识符(一般就是symbal_name),加入到features这个变量中去；如果有，则直接解析该文件的内容(因为既然在features变量列表中查询到了该symbal_name，那就意味着之前已经调用过load函数，因此也必然是在load-path变量列表的路径下找到的该symbal_name.el,所以路径问题也就不用在考虑了)；
+
+2. provide函数原型：(provide FEATURE &optional SUBFEATURES),其中，SUBFEATURES是FEATURE所支持的比较特别的子特性
+
+3. require函数原型：(require FEATURE &optional FILENAME NOERROR),其中，如果提供了FILENAME，当FEATURE没有在features列表中时，就去加载FILENAME，而如果FILENAME被忽略，则FEATURE被用于作为待加载的文件名，并依附上.el或者.elc后缀，从load-path变量列表中加载FEATURE.el
+
+5. features是一个全局变量列表，其值是elisp符号列表
+
+6. elisp的package通常都会在末尾位置给出(provide 'symbal_name)的形式，当解析器解析到provide这个关键字时，会将symbal_name加入到features这个列表中去
+
+7. 可以使用C-h v来查看该变量的值，里面的很多features是emacs内置的features，还有一些是用户定制的symbal_name
+
+8. 当解析器解析到(require symbal_name)这句语句的时候，会去查询features这个变量列表是否有该symbal_name,如果没有在该列表中，emacs将会基于symbal_name,来猜测文件的名字为symbal_name.elc或者symbal_name.el，然后使用load加载该文件；如果symbal_name在列表中，require函数可能会在第二个参数中指定文件名
+
+9. features的目的是让emacs知道，是否一个package已经被加载
+
+10. features变量和函数{provide,require}时相辅相成的，一个emacs的FEATURE想要加入features这个变量列表，首先必须有FEATURE.el这个文件，且该文件里有语句(provide FEATURE.el),其次，必须有语句(require FEATURE),缺少前者语句，则启动emacs时会报错，缺少后者语句，则FEATURE.el是无法被加载解析的
+
+11. 执行到require函数时，总是先去检查features列表，查看symbal_name是否已经在里面了，如果没有在里面，则调用load函数加载该文件，当然了，load函数会去查找load_path这个变量列表，该列表里面提供了symabl_name.el这个文件的绝对路径
+*** load-path
+1. 这是一个变量而非函数，该变量里面存放以空格分隔的目录列表或者为nil（这意味着为默认目录:default-directory）
+2. load一个文件时，会到该目录列表下面进行搜索
+3. 该变量会被require咨询
+4. 使用directory-file-name可以增加一个条目到该列表
+5. 实例1：(add-to-list 'load-path "~/.emacs.d/lisp")  备注：因为load-path是一个变量列表，所以，往里面添加内容需要使用add-to-list
+Blog creation time:[2017-09-18 一 13:49]
+*** load-file
+1. load-file的函数原型：(load-file FILE)
+2. 加载一个名为FILE的Lisp文件
+3. 该函数是指定一个具体的.el， .elc文件让emacs来加载，而不是让emacs去猜
+*** load
+1. load的函数原型：(load FILE &optional NOERROR NOMESSAGE NOSUFFIX MUST-SUFFIX)
+2. 该函数会去加载并执行一个名为FILE的文件.首先FILE会被附加.elc或者.el后缀，然后在load-path给定的目录列表中进行搜索
+3. 第二个参数 NOERROR 如果设置为non-nil,那么，那么当FILE不存在时，也不会报错
+4. 第三个参数 NOMESSAGE 如果设置为non-nil,那么，将不会在加载过程的开始和结束打印信息，但是，force-load-message会覆盖这个参数的设置
+5. 第四个参数 NOSUFFIX 如果设置为non-nil，那么，将不会试图为FILE增加.elc或者.el的后缀
+6. 第五个参数 MUST-SUFFIX 如果设置为non-nil，那么，一定要为FILE增加.elc或者.el的后缀
+7. require，autoload本质上最终都是调用该函数进行工作
+8. 该函数查找文件，打开文件，执行文件中的所有代码，最后关闭这个文件
+*** autoload
+1. 原理：
+	当调用package-initialize时,emacs的解析器会遍历elpa目录下面的所有的.el文件,然后提取出注释里面带有autoload关键字的函数声明，然后将这些函数声明写到packagename-autoloads.el中，同时还会将所有路径加到load-path中去(这一步骤的源代码也在packagename-autoloads.el中体现)，emacs在解析packagename-autoloads.el时，文件中有函数路径定义，有函数声明，通过这两个条件，就能实现：当一个autoload的函数被调用时，能根据函数路径以及函数声明立即定位到函数的定义（函数源代码所在的文件）处去执行函数
+2. autoload是一个函数
+3. 函数的原型：(autoload FUNCTION FILE &optional DOCSTRING INTERACTIVE TYPE)
+4. 第一个参数FUNCTION，是一个函数名，该函数在FILE.el或者FILE.elc中定义
+5. 第二个参数FILE,是FUNCTION这个函数定义所在的源文件名，这个文件名会传递给load函数
+6. 第三个参数DOCSTRINGS,是有关该函数的一些文档信息
+7. 第四个参数INTERACTIVE,如果为t,表示该函数是interactive的
+8. 第五个参数TYPE,标明FUNCTION的类型：如果为nil或者忽略，则表示FUNCTION是一个函数，如果为keymap,则表明是一个keymap,如果为macro或者t,则表明是一个macro
+9. autoload是一个函数，最终该函数调用的还是load函数
+10. 有两种方法可以将一个函数标识为autoload类型的函数，第一种是直接调用autoload;第二种是在函数定义处的源文件位置的上一行用魔法注释;;###autoload进行标识，第二种是最常用的方法
+11. 一个函数的定义处，如果其前面一行被注释了###autoload，那么，就表示该函数是一个autoload的函数
+12. 被标记为autoload类型的函数，能够在第一次被调用时自动加载
+** DONE [#D] Theme:快捷键(base+mode+plugin)					   :@Blog:@Emacs:
+	- State "DONE"       from "TODO"       [2017-09-04 一 22:53]
+*** 我的快捷键：
+系统命令：
+--emacs ~/.bashrc:添加别名alias em='emacs'  . ~/bashrc
+--C-h C-h:help-for-help:查看所有的快捷键，函数，变量等
+备注：下面的几个以C-h为前缀的命令均可以在该指令下找到
+--M-x:customize-group:定制插件的属性
+--M-x:package-list-packages:插件管理
+--M-x:shell: 打开外部shell
+--C-x e:计算某个变量以及函数的值，可以用eval-buffer来替代会更加高效
+
+--C-h t:打开基础手册
+--C-h i:阅读安装在系统里的软件包的使用手册
+--C-h m:describe-mode:列出当前打开的所有minor-mode
+--C-h w:where-is:对于一个给定的函数，列出所有关于它的调用者
+--C-h c:decribe-key-briefly:查询快捷键绑定的函数
+--C-h k:descrbie-key:查询快捷键绑定的函数的详细信息
+--C-h f:decribe-function:查询函数
+--C-h v:descrbie-variable:查询变量
+--C-h e:view-echo-area-message: 开辟*message*缓冲区,实时显示操作信息
+--C-h a xxx:搜索所有含有xxx关键字的命令
+
+分屏：
+--C-x 3:split-window-right:在右侧分屏
+--C-x 2:split-window-bottom:在下面分屏
+--C-x 1:delete-other-windows:关闭除当前光标所在窗口之外的所有窗口
+--C-x 0:delete-window:关闭当前光标所在的窗口
+--C-x o:other-window:将光标切换至下一个窗口（没有安装window-numbering这个插件时才使用，因为无法准确定位）
+--M-1:select-window-1:将光标切换至编号为1的窗口（前提是安装了window-numbering这个插件）
+--M-2:select-window-2:将光标切换至编号为2的窗口（前提是安装了window-numbering这个插件）
+
+缓冲区操作：
+--C-x b:switch-to-buffer:切换缓冲区
+--C-x C-b:ibuffer:切换缓冲区(ibuffer)
+--C-x k:kill-buffer:关闭当前缓冲区
+
+--C-v:向下翻页
+--M-v:向上翻页
+--C-M-v:光标在当前窗口，为上一个缓冲区向下翻页
+--C-M-S-v:光标在当前窗口，为上一个缓冲区向上翻页
+--C-l:将当前行重置中央
+--C-l C-l:将当前行重置屏幕最上方
+--C-p:向上移动一行
+--C-n:向下移动一行
+--C-f:向前移动一个字符
+--M-f:向前移动一个词
+--C-b:向后移动一个字符
+--M-b:向后移动一个词
+--C-a:移动光标到行首
+--C-e:移动光标到行尾
+--M-a:移动光标到句首
+--M-e:移动光标到句尾
+--S-M-<:移动光标到文件首
+--S-M->:移动光标到文件尾
+--M-g g:goto-line:跳转光标到指定行
+--C-u 8 C-f:向前移动8个字符
+--C-u 8 C-v:向后移动8行（注意是8行不是8页，此处比较特殊）
+--C-r:backward-delete-char:删除光标后面1个字符
+--M-r:backward-kill-word:删除光标后面的1个单词
+--C-d:hungry-delete-forward:删除光标前面的1个字符
+--M-d:kill-word:删除光标前面的1个单词
+--C-M-d:kill-whole-line:删除光标所在行
+--C-x l:显示文件行数以及当前行
+--C-g:终止命令
+
+编辑：
+--C-x C-f:打开/新建文件
+--C-x 4 C-f:在另外一个窗口中打开/新建文件  
+--C-Shift-@:set-mark-command:区域选择1
+--C-+/-:er/expand-region:区域选择2
+--C-x h:mark-whole-buffer:全选
+--C-w：kill-region:剪切
+--M-w:kill-ring-save:复制
+--C-y:org-yank:召回最近一次移除的项
+--M-y:召回之前移除过的项中的某一项，首先使用C-y召回最近一次移除的项，这不是我想召回的，所以
+使用M-y继续往移除历史记录的上沿查找
+--C-x u:undo:撤销
+--C-x C-s:save-buffer:保存当前
+--C-x s:save-some-buffers:保存所有
+--C-x C-w:write-file: 另存为
+--C-x C-c:save-buffers-kill-terminal:保存所有被修改的buffer并关闭emacs
+--C-s:搜索，再按C-s往前递推
+
+--<s-Tab:eclisp 宏（只能在org-mode中使用）
+--C-c ':在窗口的右边显示eclisp宏内的代码
+--Tab:收缩eclisp内部的宏代码
+
+Blog creation time:[2017-09-04 一 22:10]
+*** 快捷键操作
+**** 解除快捷键
+--(global-unset-key "you key")
+**** 绑定快捷键
+***** global-set-key
+--让emacs告诉你绑定的格式：
+	我们经常需要绑定各种各样的快捷键，可是有的时候，我们不知道如何去绑定一些复杂的快捷键，比如f1的格式，比如
+shift怎么写，比如像 ‘ 之类的符号怎么描述，再比如像 \ 这个具有特殊意义的字符格式是怎样的，这里介绍一种万能的
+方法，让emacs告诉你这个绑定的代码是什么：
+ 	举个例子来说，我需要将M-S-<RET>绑定到(org-insert-todo-heading)这个函数:
+-->M-x global-set-key RET 
+-->在键盘上按下你打算绑定的按键组合(会在小缓冲区中实时显示)：Set key <M-s-return> to command:
+-->输入你想要绑定到该快捷键的命令：org-insert-todo-heading 回车
+-->查看绑定代码：C-x ESC ESC:(global-set-key [M-s-return] (quote org-insert-todo-heading))
+-->将这条源代码添加到自己的配置文件中去(不添加的话，刚刚绑定的快捷键只会在本次环境中生效)
+** DONE [#D] Theme:插件(plugin-in)管理						   :@Blog:@Emacs:
+    SCHEDULED:<2017-09-17 日>
+	- State "DONE"       from "WAITTING"   [2017-09-18 一 09:16]
+*** 安装与卸载插件:
+方案一：(推荐)
+安装：在配置源码的包管理器函数：linjiajun/package下面添加对应包的名字，重启emacs，即可自动安装
+卸载：在配置源码的包管理器函数：linjiajun/package下面去除对应包的名字，然后M-x:package-autoremove,即可卸载
+
+方案二：
+安装：M-x：package-install:xxx
+	 将xxx这个包写入包管理器函数linjiajun/package下面
+
+卸载：在配置源码的包管理器函数：linjiajun/package下面去除对应包的名字，然后M-x:package-autoremove,即可卸载
+
+方案二：
+安装：M-x:package-list-packages
+	 C-s:xxx :查找package
+	 i:标记安装 
+	 u:撤销标记
+	 x:执行
+	 U:更新所有包至最新
+	 将xxx这个包写入包管理器函数linjiajun/package下面
+卸载：在配置源码的包管理器函数：linjiajun/package下面去除对应包的名字，然后M-x:package-autoremove,即可卸载
+
+备注：http://melpa.org 该网站存放了emacs的plugin,用户从该网站下下载插件进行安装，该网站上的插件有最新版
+和稳定版之分，稳定版在Getting started下面有介绍，用户只需要将包管理器中的地址换成：
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'package-archives
+             '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+#+END_SRC
+注意：在windows下，https要换成http，否则会有问题
+Blog creation time:[2017-09-17 日 16:15]
+*** 插件学习
+***** monokai-theme
+--功能：一个经典的主题
+--相关快捷键：无
+***** company
+--功能：补全代码
+--相关快捷键：C-n , C-p , C-f , C-b
+***** hungry-delete
+功能：一次性删除从光标位置到字串之间的空格
+快捷键：backspace
+***** swiper+counsel
+功能：在小缓冲区弹出可预览可供选择的窗口，提供更好的用户体验
+被改善的快捷键：
+--M-x:
+--C-s:
+--C-x C-f:
+--C-h f:
+--C-h v:
+--C-c g: 所有被git管理的文件都会在小缓冲区内显示出来
+--M-s i:
+***** smartparens
+功能：当输入“ ’ （ { 等符号时，会自动补全 ” ‘ ） } 
+触发：输入符号
+** DONE [#D] Theme:org-mode									   :@Blog:@Emacs:
+	- State "DONE"       from "TODO"       [2017-09-05 二 09:27]
+*** org-mode快捷键
+--C-c a:org-agenda
+--C-c l:org-store-link
+--C-c c:capture
+--C-c b:org-iswitchb
+
+--全局大纲之间移动光标：C-c C-p/n
+--同级别大纲之间移动光标：C-c C-b/f
+--跳转到上一级大纲：C-c C-u
+--切换到大纲浏览状态：C-c C-j
+
+--M-<RET>:在光标位置插入一个同级标题
+--C-<RET>:在尾端 插入一个同级标题
+--M-S-<RET>:在光标位置插入一个同级TODO标题:(global-set-key [M-s-return] (quote org-insert-todo-heading))
+--C-S-<RET>:在尾端插入一个同级的TODO标题：(global-set-key [C-s-return] (quote org-insert-todo-heading-respect-content))
+--<TAB>:循环切换光标所在大纲的状态
+--M-LEFT/RIGHT:将当前标题升级/降级
+--M-S-LEFT/RIGHT:
+--M-UP/DOWN：将子树上升/下降
+
+++C-x C-f : open file;
+++C-x C-s : save file;
+++C-x C-c : close file;
+
+++C-h t : tutorials
+
+++C-h-f : find function
+++C-h f : describes function;
+
+++C-h-v : find variable
+++C-h v : describes variable
+
+++C-h-k : find bingdingkey
+++C-h k : describes bingdingkey
+*** org-mode基础
+--要使用org-mode buffer就需要将font-lock开启，emacs默认是开启的
+
+--在org-mode下面，需要重点关注这四个org命令：org-store-link;org-capture;org-agenda;org-iswitchb
+
+--org-mode主要使用三种类型的关键字：TODO keywords，tags, property name
+
+--常见的tags关键字：boss,
+
+--property name关键字：Release
+
+--可选关键字：
+--> #+TITLE:用于设置title
+--> #+BEGIN_HTML:用于开启一个HTML环境
+Blog creation time:[2017-09-05 二 08:40]
+*** org-mode时间戳的组成
 一、时间戳
 	 时间戳由尖括号 <> 或方括号 [] 表示，前者为激活时间，后者为非激活时间（不加入日程
 表的时间）。括号内可以包括以下内容组成（按先后顺序）：
@@ -107,21 +481,58 @@ DEADLIsNE: ’2013-06-26 周三 -5d‘
 	和前面的重复任务时间戳没什么不同，只不过要注意表示重复和表示提醒安排的字符串的顺序，
 表示重复的在前，如：
 DEADsLINE: '2013-11-01 周五 ++1w -3d'
-Journal creation time:[2017-08-04 五 11:13]
-** DONE [#D] theme:如何创建归档文件							   :@Blog:@Emacs:
-   - State "DONE"       from "TODO"       [2017-08-06 日 20:33]
-   当我们使用gtd工具管理日程安排时，随着时间的推移，记录越来越多，相关的文件会越来越大，同时，
+*** org-mode实现gtd管理
+**** 研究在org-mode下如何实现gtd管理的文档搬家
+	 org-mode做为gtd时，有一个好用的功能，可以实现将一个TODO条目转移到gtd管理的任意文档下面，不过需要做
+一些配置，其主要起作用的是一个变量：org-refile-target,可以对该变量进行定制，当定制完毕之后，一般会绑定
+到一个快捷键：C-c w,就能实现将该条目移动至指定的文档下面
+**** 关于如何调整agenda的默认显示窗口为全屏
+	修改agenda默认显示窗口为全屏，需要customize-group变量org-agenda-windows中
+Org Agenda Window Setup:current window即可
+**** 关于删除一个被收录的条目的思考
+	 理论上，一个idear被收录后，说明它曾经是有一定价值的，所以，即使后来不想去完成这个任务了
+也应当留有痕迹，以便在以后需要时能随时找到，最好的方法是将其设置为Abort状态，应当给出终止的原
+因，以后如果又觉得该任务又有价值了，可以将其设置为TODO并修改时间戳,然后该任务就能在日程表中出
+现了，此时，可以去完成该任务！
+	然而，有时我们可能因为某些原因添加了一个事项，然后突然发现该事项写错了或者重复了，此时，
+我们需要真正的去删除该任务，将光标移动到该条目，使用快捷键C-k就能将该条目从源文件中移除，
+注意了，是从xxx.org文件中删除，一旦删除之后你就再也找不回来了！
+**** 解决emacs重启后无法加载到gtd所管理的文档的问题
+今天注定难忘的一天，因为在折腾了一个周之后，终于成功的用上了emacs的gtd功能，有点
+小激动。这是我的第一个博客，为了纪念这一天，就描述一个我在hack我的emacs的gtd工具过程中
+遇到的一个困扰我长时间让我即将崩溃的问题吧！
+     变量org-agenda-files配置了关于我所有被gtd管理的文件，在init-org-mode.el中配置
+好以后，发现每次关闭emacs重启后C-c C-a快捷键对应的agenda-mode竟然找不到文件路径，总是
+为空，必须使用eval-buffer之后才能找到文件的路径，我是用list函数来包含目录下的所有org
+文件的，这有些说不通，我甚至用了eval-after-load函数来包裹我的代码都不行，我一度怀疑是
+不是这个list函数有bug，后来证明还是我的问题，解决方案如下：
+    需要C-h v一下org-agenda-files变量，最后一行有一个customize,点击进去之后配置该
+变量的文件加载路径添加，保存之后会在custom-set-variables函数下面生成该语句
+'(org-agenda-files (quote ("~/my-agenda")))，之后每次启动emacs，路径就能生效了！
+如此，问题得到完美解决，my-agenda目录下的所有org文件都能被gtd访问到了
+	总结：曾几度因为我自己配置的代码访问不了my-agenda目录下所有的org文件而放弃org
+模式下这么好用的gtd工具，好在最终折腾许久，终于在手册中找到了解决方案，所以说，多研究
+emacs的说明手册，是很重要的！
+**** 创建归档文件
+	 当我们使用gtd工具管理日程安排时，随着时间的推移，记录越来越多，相关的文件会越来越大，同时，
 这些陈旧的记录干扰我们的视线，删除它们是不大合适的，因为以后我们可能还会去查询这些记录，所以，
 我们需要将这些陈旧的日程安排归档到其他文件中去，可以通过命令：C-C C-x a 实现，调用该命令之后，
 光标所在的条目将会被移至以该条目所在文件的文件名为前缀，加上archievd的文件中去，该文件不是.org
 结尾，所以，在即使在gtd目录下，但我们使用org-agenda进行查询时，不会去遍历里面的内容，这就有效
 的屏蔽了这些陈旧记录的干扰，同时还保留下了它们！
-Blog creation time:[2017-08-06 日 09:27]
-** DONE [#D] theme:如何打印将日程表打印成PDF				   :@Blog:@Emacs:
-   - State "DONE"       from "TODO"       [2017-08-06 日 20:33]
-	命令：C-x C-w
-Blog creation time:[2017-08-06 日 09:42]
-** WAITTING [#D] theme:搭建C/C++的IDE						   :@Blog:@Emacs:
+**** 如何创建和使用周期性任务
+	 (1)每天的某个时间段重复：在添加的时间段的SCHEDULED<>最后添加++1d
+	 (2)每周的某天的某个时间段重复：在添加的时间段的SCHEDULED<>最后添加++1w
+Case creation time:[2017-08-07 一 14:06]
+**** 如何打印将日程表打印成PDF
+命令：C-x C-w
+** DONE [#D] Theme:abbrev-mode								   :@Blog:@Emacs:
+    SCHEDULED:<2017-09-19 二>
+	- State "DONE"       from "WAITTING"   [2017-09-19 二 11:27]
+1. 功能：定制缩略词
+2. 使用方法：缩略词+空格
+Blog creation time:[2017-09-19 二 10:49]
+** WAITTING [#D] Theme:搭建C/C++的IDE						   :@Blog:@Emacs:
    - State "WAITTING"   from "DONE"       [2017-08-08 二 09:50] \\
 	 技术条件还不成熟！
 	- State "DONE"       from "TODO"       [2017-08-08 二 09:22]
@@ -134,181 +545,12 @@ Blog creation time:[2017-08-06 日 09:42]
 	5.编译:cmake
 	6.调试
 Blog creation time:[2017-08-07 一 13:05]
-** DONE [#D] theme:学习emacs的常用工具网站				:@Blog:@Emacs:
-	- State "DONE"       from "TODO"       [2017-08-08 二 09:58]
-
---Emacs 世界级大师 : Steve Purcell  http://www.sanityinc.com/
---Emacs 官网 : www.gnu.org/software/emacs/
---MELPA：http://melpa.org/#/
---陈斌 : https://github.com/redguardtoo/mastering-emacs-in-one-year-guide/blob/master/guide-zh.org
---陈斌的配置 : https://github.com/redguardtoo/emacs.d
---大牛的配置：https://github.com/tuhdo/tuhdo.github.io
---子龙山人 : https://zilongshanren.com/
---经典社区 : https://www.reddit.com/r/emacs/
---牛0的博客 : https://github.com/search?p=1&q=stars%3A%3E20+extension%3Ael+language%3Aelisp&ref=searchresults&type=Repositories
---牛1的博客 : http://planet.emacsen.org/
---牛2的博客 ： http://www.lunaryorn.com/
---牛3的博客 ：http://ergoemacs.org/
---牛4的博客(超级棒)：https://tuhdo.github.io/
---melpa镜像源：http://www.4gamers.cn/
---emacs中国社区：https://github.com/emacs-china
---入门elisp语法：https://learnxinyminutes.com/docs/elisp/
-
-Blog creation time:[2017-08-08 二 09:54]
-** INBOX [#D] theme:研究在org-mode下如何实现gtd管理的文档搬家  :@Blog:@Emacs:
-   - State "TODO"       from "DONE"       [2017-09-04 一 22:53]
-	- State "DONE"       from "TODO"       [2017-09-04 一 22:52]
-	org-mode做为gtd时，有一个好用的功能，
-Blog creation time:[2017-09-04 一 21:04]
-** DONE [#D] theme:我的工具网站								   :@Blog:@Emacs:
-	- State "DONE"       from "TODO"       [2017-09-04 一 22:53]
---Emacs 世界级大师 : Steve Purcell  http://www.sanityinc.com/
---Emacs 官网 : www.gnu.org/software/emacs/
---MELPA：http://melpa.org/#/
---陈斌 : https://github.com/redguardtoo/mastering-emacs-in-one-year-guide/blob/master/guide-zh.org
---陈斌的配置 : https://github.com/redguardtoo/emacs.d
---大牛的配置：https://github.com/tuhdo/tuhdo.github.io
---子龙山人 : https://zilongshanren.com/
---经典社区 : https://www.reddit.com/r/emacs/
---牛0的博客 : https://github.com/search?p=1&q=stars%3A%3E20+extension%3Ael+language%3Aelisp&ref=searchresults&type=Repositories
---牛1的博客 : http://planet.emacsen.org/
---牛2的博客 ： http://www.lunaryorn.com/
---牛3的博客 ：http://ergoemacs.org/
---牛4的博客(超级棒)：https://tuhdo.github.io/
---melpa镜像源：http://www.4gamers.cn/
---emacs中国社区：https://github.com/emacs-china
-Blog creation time:[2017-09-04 一 22:04]
-** DONE [#D] theme:安装emacs								   :@Blog:@Emacs:
-	- State "DONE"       from "TODO"       [2017-09-04 一 22:53]
-1.ubuntu16.04使用apt install emacs安装的emacs是emacs24,而我希望能使用emacs25,
-因为里面有一些高级的函数可以实现，所以采用下面的方式来安装emacs25.2
-2.首先安装核心依赖文件：
---sudo apt install build-essential
---sudo apt-get build-dep emacs24
-备注:安装build-dep可能会出错，显示E：You must put some 'source' URIs in your source.list
-此时，我们需要到设置-->软件和更新下面勾选：源代码
-3.下载emacs25.2版本：
---sudo wget -P 下载/ http://ftp.gnu.org/gnu/emacs/emacs-25.2.tar.xz
-4.解压：
---由于下载包的格式为.tar.xz,所以:
---xz -d emacs-25.2.tar.xz
---tar -xvf emacs-25.2.tar
-5.切换到root，进入解压后的包，运行配置文件，且指定安装目录：
---./configure --prefix=/usr/local
-6.安装emacs：
---make && make install
-7.运行emacs
-Blog creation time:[2017-09-04 一 22:05]
-** DONE [#D] theme:绑定快捷键								   :@Blog:@Emacs:
-	- State "DONE"       from "TODO"       [2017-09-04 一 22:53]
-*** 查询绑定
--->C-h k:待输入的快捷键
--->在键盘上按下你打算查询的按键组合，回车
--->只有两种结果:未定义，或给出绑定信息
-*** 解除绑定
---我们希望将某个已绑定的快捷键解除绑定，然后绑定为另外一个快捷键
---先查询
---在配置文件中写：(global-unset-key "you key")
-*** 绑定
-	我们经常需要绑定各种各样的快捷键，可是有的时候，我们不知道如何去绑定一些复杂的快捷键，举个例子来说，
-我需要将M-S-<RET>绑定到(org-insert-todo-heading)这个函数，你会发现尝试很多方法，还是绑定不正确，这个时候，
-这里介绍一种万能的方法：让emacs告诉你这个绑定的代码是什么，步骤如下：
--->M-x global-set-key RET 
--->在键盘上按下你打算绑定的按键组合(会在小缓冲区中实时显示)：Set key <M-s-return> to command:
--->输入你想要绑定到该快捷键的命令：org-insert-todo-heading 回车
--->查看绑定代码：C-x ESC ESC:(global-set-key [M-s-return] (quote org-insert-todo-heading))
--->将这条源代码添加到自己的配置文件中去(不添加的话，刚刚绑定的快捷键只会在本次环境中生效)
-Blog creation time:[2017-09-04 一 22:07]
-** DONE [#D] theme:快捷键学习								   :@Blog:@Emacs:
-	- State "DONE"       from "TODO"       [2017-09-04 一 22:53]
---emacs ~/.bashrc:添加别名alias em='emacs'  . ~/bashrc
---em:打开emacs
---C-x C-f:打开/新建文件
---C-x 4 C-f:在另外一个窗口中打开/新建文件
---C-x C-c:关闭所有缓冲区
---ESC ESC ESC:离开递归编辑
---C-x C-s:save-buffer:保存当前缓冲区
---C-x C-w:write-file: 当前文件另存为
---C-x b:switch-to-buffer:切换缓冲区
---C-x C-b:list-buffer:列出当前开启的buffer
---C-x k:kill-buffer:关闭当前缓冲区
---C-x u:撤销
---C-x l:显示文件行数以及当前行
---C-x 3:在右侧分屏
---C-x 1:只保留当前分屏
---C-x 0:关闭光标所在的当前屏幕
---C-x h:选中整个buffer
-
---C-h m:describe-mode:列出当前打开的所有minor-mode
---C-h w:where-is:对于一个给定的函数命令，列出所有关于它的调用者
---C-h c:decribe-key-briefly:对于一个绑定键，给出它调用了哪个函数命令
---C-h k:descrbie-key:查询键的功能
---C-h f:decribe-function:查询函数的功能
---C-h v:descrbie-variable:查询变量的功能
---C-h e:view-echo-area-message: 查看打印区的日志信息 
---C-h C-h:help-for-help:查看所有的快捷键，函数，变量等
---C-h t:打开手册
---C-h a xxx:搜索所有含有xxx关键字的命令
---C-h i:阅读安装在系统里的软件包的使用手册
---xxx C-h:查看当前emacs中绑定的所有以xxx为前缀开头的命令
-
-
---C-v:向下翻页
---M-v:向上翻页
---C-M-v:光标在当前窗口，为上一个缓冲区向下翻页
---C-M-S-v:光标在当前窗口，为上一个缓冲区向上翻页
---C-l:将当前行重置中央
---C-l C-l:将当前行重置屏幕最上方
-
---C-p:向上移动一行
---C-n:向下移动一行
---C-f:向前移动一个字符
---C-b:向后移动一个字符
---M-f:向前移动一个词
---M-b:向后移动一个词
-
---C-a:移动光标到行首
---C-e:移动光标到行尾
---M-a:移动光标到句首
---M-e:移动光标到句尾
---S-M-<:移动光标到文件首
---S-M->:移动光标到文件尾
---C-x-o:移动光标到其他窗口
-
---C-u 8 C-f:向前移动8个字符
---C-u 8 C-v:向后移动8行（注意是8行不是8页，此处比较特殊）
---C-g:终止命令
-
---C-x 3:在右边开启一个缓冲区；
---C-x 1:关闭除当前光标所在的缓冲区
-
---backspace:删除光标左边的1个字符
---C-d:删除光标后面的1个字符
---M-backspace:移除光标左边的一个词
---M-d:移除光标右边的一个词
---C-k:移除光标到行尾的所有字符
---M-k:移除光标到句尾的所有字符
---C-SPC：标记以当前光标为起点的字符
---C-w:移除被标记的字符
---C-y:召回最近一次移除的项
---M-y:召回之前移除过的项中的某一项，首先使用C-y召回最近一次移除的项，这不是我想召回的，所以
-使用M-y继续往移除历史记录的上沿查找
---C-/或者C-x u:撤销操作
-备注：移除和删除的区别在于，移除的东西可以被重新插入，而删除的东西只能通过撤销来找回
-
---M-x descri fon<Tab>:自动补全describe-font
-
---C-s:向下搜索，再按C-s往前递推，按backspace会撤回最近搜索命中的位置
---C-r:向上搜索，再按C-r往后递推，按backspace会撤回最近搜索命中的位置
-
---<s-Tab:eclisp 宏
-
---C-c C-t:将一个item变为TODO或者DONE状态
-
---M-S-!:执行外部shell命令
---M-x:shell: 打开外部shell
-Blog creation time:[2017-09-04 一 22:10]
-** DONE [#D] theme:研究包管理Cash							   :@Blog:@Emacs:
+** ABORT [#D] Theme:研究包管理Cask							   :@Blog:@Emacs:
+   - State "ABORT"      from "DONE"       [2017-09-18 一 09:45] \\
+	 由于使用Cask和pallet来管理插件，个人认为显得比较麻烦，不能做到从github上
+	 克隆下来源代码直接就能使用，还得配置cask,以及安装pallet，同时配置了cask以后，
+	 不仅在家目录下面产生.cask文件，而且在.emacs.d中也生成.Cask文件，这反而使得
+	 emacs变得不简洁了，因此，在用了一段时间的cask以后，决定回退到以前的包管理方案
 	- State "DONE"       from "TODO"       [2017-09-04 一 22:53]
 --安装cask:sudo curl -fsSL https://raw.githubusercontent.com/cask/cask/master/go | python
 --设置cask的环境变量
@@ -316,157 +558,48 @@ Blog creation time:[2017-09-04 一 22:10]
 --M-x:pallet-init:此时，在.emacs.d目录下有一个Cask的文件，列出了所有之前使用package-install
 安装的包的别名
 --M-x:pallet-install:此时，在.emacs.d目录下的elpa目录将会被复制到.emacs.d/.cask/下面
-Blog creation time:[2017-09-04 一 22:12]
-** DONE [#D] theme:org-mode基础								   :@Blog:@Emacs:
-	- State "DONE"       from "TODO"       [2017-09-05 二 09:27]
---要使用org-mode buffer就需要将font-lock开启，emacs默认是开启的
+Blog creation time:[2017-09-04 一 22:
+** DONE [#D] Theme:调节序号的小技巧							   :@Blog:@Emacs:
+    SCHEDULED:<2017-09-18 一>
+	- State "DONE"       from "WAITTING"   [2017-09-18 一 10:51]
+说明：
+	在编辑文档时，我们经常会给一些条目列出序号，但是，出于逻辑上或者排版的的考虑,经常
+会打乱之前的编号，通常情况下，编号被打乱以后我们只得手动重新排序，然而，emacs提供了一个
+自动重排编号的功能，只要满足前提所描述的格式即可
 
---在org-mode下面，需要重点关注这四个org命令：org-store-link;org-capture;org-agenda;org-iswitchb
+前提：该技巧必须要求条目的格式是：数字+点+空格+串
 
---org-mode主要使用三种类型的关键字：TODO keywords，tags, property name
+实现：
+--M-RET:调整序号
+1. hahhs
+2. asda
+3. asda
+4. asdads
+5. gfdgd#
+备注：将当前光标定位到序号为8的#位置，按下M-RET，上面的序号就会变为：  
+1. hahhs
+2. asda
+3. asda
+4. asdads
+5. gfdgd#
+6.
 
---常见的tags关键字：boss,
+备注： 以该格式书写的条目，还可以实现类似org-mode的收缩，使用十分方便
+Blog creation time:[2017-09-18 一 10:43]
+** DONE [#D] Theme:解决apt-get安装emacs后使用C-h i发现文档不全的问题 :@Blog:@Emacs:
+    SCHEDULED:<2017-09-18 一>
+	- State "DONE"       from "WAITTING"   [2017-09-18 一 14:53]
+	使用apt-get来安装emacs,好像没有提供完整的info文档，因此，我们需要自己去gnu的官网上
+下载info.gz结尾的手册，将其放到/usr/share/info/emacs-25下面，打开emacs,C-h i,然后按
+g,在小缓冲区出现Go to node,切换到刚刚下载的那个手册即可
+	一般情况下，安装完毕emacs之后，都需要到官方网站(https://www.gnu.org/software/emacs/manual/)
+下载GNU Emacs manual,GNU Emacs Lisp reference manual,An Introduction to Programming in Emacs Lisp
+的info document，将其移动至/usr/share/info/emacs-25下面，以备实时查询
+	要经常使用g来切换node，而且在切换前应当C-x k 先将当前的info缓冲区给kill掉再重新打开进行切换
+Blog creation time:[2017-09-18 一 14:47]
+** DONE [#D] Theme:设置org-mode的文本的宽度，在超过宽度的位置自动换行 :@Blog:@Emacs:
+    SCHEDULED:<2017-09-18 一>
+	- State "DONE"       from "WAITTING"   [2017-09-19 二 07:57]
+(global-set-key [f5] 'toggle-truncate-lines)
+Blog creation time:[2017-09-18 一 15:28]
 
---property name关键字：Release
-
---可选关键字：
---> #+TITLE:用于设置title
---> #+BEGIN_HTML:用于开启一个HTML环境
-Blog creation time:[2017-09-05 二 08:40]
-** DONE [#D] theme:org-mode快捷键							   :@Blog:@Emacs:
-	- State "DONE"       from "TODO"       [2017-09-05 二 09:27]
---C-c a:org-agenda
---C-c l:org-store-link
---C-c c:capture
---C-c b:org-iswitchb
-
---全局大纲之间移动光标：C-c C-p/n
---同级别大纲之间移动光标：C-c C-b/f
---跳转到上一级大纲：C-c C-u
---切换到大纲浏览状态：C-c C-j
-
---M-<RET>:在光标位置插入一个同级标题
---C-<RET>:在尾端 插入一个同级标题
---M-S-<RET>:在光标位置插入一个同级TODO标题:(global-set-key [M-s-return] (quote org-insert-todo-heading))
---C-S-<RET>:在尾端插入一个同级的TODO标题：(global-set-key [C-s-return] (quote org-insert-todo-heading-respect-content))
---<TAB>:循环切换光标所在大纲的状态
---M-LEFT/RIGHT:将当前标题升级/降级
---M-S-LEFT/RIGHT:
---M-UP/DOWN：将子树上升/下降
-
-++C-x C-f : open file;
-++C-x C-s : save file;
-++C-x C-c : close file;
-
-++C-h t : tutorials
-
-++C-h-f : find function
-++C-h f : describes function;
-
-++C-h-v : find variable
-++C-h v : describes variable
-
-++C-h-k : find bingdingkey
-++C-h k : describes bingdingkey
-Blog creation time:[2017-09-05 二 08:40]
-** DONE [#D] theme:spacemacs相关网站						   :@Blog:@Emacs:
-	- State "DONE"       from "TODO"       [2017-09-05 二 09:27]
---官网：http://spacemacs.org
---github:https://github.com/syl20bnr/spacemacs
-Blog creation time:[2017-09-05 二 08:46]
-** DONE [#D] theme:elisp									   :@Blog:@Emacs:
-	- State "DONE"       from "TODO"       [2017-09-05 二 09:28]
-++大前提：所有的Loading函数最终都调用该load函数来进行加载工作;
-++函数原型:(load FILE &optional NOERROR NOMESSAGE NOSUFFIX MUST-SUFFIX)
-++执行过程：
---首先寻找FILE.elc字节编译文件；
-	--若没有,则寻找FILE.el文件；
-	--若没有,如果Emacs的编译中加入了动态模块的支持,则去加载FILE.ext文件,这些.ext文件是系统依赖的共享库文件；
-	--若没有,则,load会去寻找按照文件名FILE(而不考虑后缀名)去查找,如果FILE存在的话,该文件将会被当作FILE.el；
-	--如果auto-compression-mode被使能(默认是使能的),并且load没有找到对应的文件, 在尝试查找其它文件名之前,会先去搜索该文件的压缩文件版本,如果存在的话,会解压缩并加载该文件；
-++参数对执行过程的影响：
-	--NOSUFFIX:如果该参数是non-nil,则load函数不会尝试加载.elc和.el为后缀名的文件，该情况下，必须指定FILE的文件名，除此之外，auto-compression-mode必须打开，load函数仍然会使用jka-compr-load-suffixes来查找压缩文件；如果该参数是t，并且指定了一个精准的文件名+后缀，你就可以过滤掉只考虑文件名而不检查后缀这样的情况；
-	--MUST-SUFFIX：如果该参数是non-nil,那么load就必须要求文件名的后缀是.el或者.elc或者.etc文件才能够被找到，除非文件包含了一个准确的目录名字
-	--FILE:如果找到的文件名是一个与FILE相关的名字，例如:FILE是init.el,而load搜索到的是init或者test/init.txt,load将使用load-path这个变量来搜索文件，load依赖于在load-path中列出来的路径目录下的每一个文件名，它会找出这些文件名的匹配，然后加载第一个文件， 如果只有当前在Load-path中被指定，那么load就会在当前目录下搜索;如果FILE是nil,则代表在默认目录下加载，load会尝试load-path下所有可能的后缀。不论这个名字最终在哪个文件下面被找到，也不论这个目录是emacs在哪发现的，Emacs都会用被找到的那个变量的文件名来给load-file-name变量赋值安装Fedora
-**** 在U盘上安装Fedora
-1.下载Fedora-workstation安装包
-2.制作 Linux
-
-Blog creation time:[2017-09-05 二 09:23]
-** DONE [#C] case:研究emacs中gtd工具中如何创建和使用周期性任务 :@Blog:@Emacs:
-#   DEADLINE: <2018-01-01 一 12:00> SCHEDULED: <2017-08-04 五 08:30>
-   - State "DONE"       from "ABORT"      [2017-08-07 一 08:58] \\
-	 找到解决方案：
-	 (1)每天的某个时间段重复：在添加的时间段的SCHEDULED<>最后添加++1d
-	 (2)每周的某天的某个时间段重复：在添加的时间段的SCHEDULED<>最后添加++1w
-   - State "ABORT"      from "TODO"       [2017-08-06 日 20:39] \\
-	 暂时用不到！
-   - State "TODO"       from "NEXT"       [2017-08-03 四 20:53]
-Next creation time:[2017-08-03 四 20:38]
-** DONE [#C] case:研究如何将agenda打印出来					   :@Blog:@Emacs:
-   - State "DONE"       from "TODO"       [2017-08-06 日 20:31]
-   - State "TODO"       from "NEXT"       [2017-08-04 五 13:37]
-Next creation time:[2017-08-04 五 08:06]
-** DONE [#C] case:如何修改一个todo任务的时间戳				   :@Blog:@Emacs:
-
-   - State "DONE"       from "TODO"       [2017-08-06 日 20:34]
-   - State "TODO"       from "NEXT"       [2017-08-04 五 13:37]
-Next creation time:[2017-08-04 五 08:48]
-** DONE [#C] case:配置番茄时间工作法						   :@Blog:@Emacs:
-   - State "DONE"       from "TODO"       [2017-08-06 日 20:31]
-   - State "TODO"       from "NEXT"       [2017-08-04 五 13:37]
-Next creation time:[2017-08-04 五 10:35]
-** DONE [#C] case:添加inbox.org								   :@Blog:@Emacs:
-   SCHEDULED: <2017-08-05 六 11:20>
-   - State "DONE"       from "TODO"       [2017-08-06 日 09:16]
-Task creation time:[2017-08-05 六 11:13]
-** DONE [#C] case:删除done.org,abort.org,waiting.org,添加work.org,project.org :@Blog:@Emacs:
-   SCHEDULED: <2017-08-05 六 11:25>
-   - State "DONE"       from "TODO"       [2017-08-06 日 09:17]
-Task creation time:[2017-08-05 六 11:14]
-** DONE [#C] case:对定制的gtd工具进行严格测试				   :@Blog:@Emacs:
-   SCHEDULED: <2017-08-04 五 08:00>
-   - State "DONE"       from "TODO"       [2017-08-04 五 15:54]
-   - State "TODO"       from "NEXT"       [2017-08-03 四 22:40]
-Next creation time:[2017-08-03 四 22:36]
-** DONE [#C] case:为工作，工程等对象分别建立各自包含待规划，待完成，已经完成，等待别人完成，丢弃的组 :@Blog:@Emacs:
-
-   - State "DONE"       from "TODO"       [2017-08-04 五 15:55]
-   - State "TODO"       from "NEXT"       [2017-08-03 四 22:49]
-Next creation time:[2017-08-03 四 22:47]
-** DONE [#C] case:更改gtd模板，使得在next和link时不用人工输入tags :@Blog:@Emacs:
-   - State "DONE"       from "TODO"       [2017-08-04 五 08:15]
-   - State "TODO"       from "NEXT"       [2017-08-04 五 08:02]
-Next creation time:[2017-08-04 五 07:46]
-** DONE [#C] case:将emacs的tab缩进由8变为4					   :@Blog:@Emacs:
-   - State "DONE"       from "TODO"       [2017-08-03 四 21:05]
-   - State "TODO"       from "NEXT"       [2017-08-03 四 20:51]
-Next creation time:[2017-08-03 四 20:43]
-** DONE [#C] case:研究如何自动根据任务状态移动到不同的文件中去 :@Blog:@Emacs:
-   - State "DONE"       from "TODO"       [2017-08-03 四 22:30]
-   - State "TODO"       from "NEXT"       [2017-08-03 四 21:32]
-Next creation time:[2017-08-03 四 21:11]
-
-** DONE [#C] case:研究如何删除一个TODO任务					   :@Blog:@Emacs:
-   - State "DONE"       from "TODO"       [2017-08-04 五 09:17] \\
-	 使用C-c k就能将该条目从源文件中移除！
-   - State "TODO"       from "NEXT"       [2017-08-03 四 22:41]
-Next creation time:[2017-08-03 四 22:35]
-** DONE [#C] case:让C-c C-a全屏显示							   :@Blog:@Emacs:
-   - State "DONE"       from "ABORT"      [2017-08-04 五 09:19]
-   - State "ABORT"      from "ABORT"      [2017-08-04 五 08:53] \\
-	 该任务与之后的任务重复！
-Task creation time:[2017-08-04 五 08:16]
-** DONE [#C] case:更改link的存储文件为gtd.org				   :@Blog:@Emacs:
-   - State "DONE"       from "TODO"       [2017-08-04 五 09:23]
-   - State "TODO"       from "NEXT"       [2017-08-04 五 07:58]
-Next creation time:[2017-08-04 五 07:48]
-** DONE [#C] case:将～/my-agenda改为隐藏目录				   :@Blog:@Emacs:
-   - State "DONE"       from "TODO"       [2017-08-04 五 10:08]
-   - State "TODO"       from "NEXT"       [2017-08-04 五 09:56]
-Next creation time:[2017-08-04 五 09:53]
-** DONE [#C] case:研究lisp语法								   :@Blog:@Emacs:
-   
-	- State "DONE"       from "TODO"       [2017-08-07 一 15:39]
-    https://learnxinyminutes.com/docs/elisp/
-Case creation time:[2017-08-07 一 14:06]

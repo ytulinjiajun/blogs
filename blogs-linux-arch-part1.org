@@ -74,6 +74,7 @@ kali:
 中文：https://www.hackfun.org/kali-tools/kali-tools-zh.html
 英文：https://tools.kali.org/tools-listing
 http://blog.csdn.net/u011596455/article/details/57125844
+介绍查询系统信息的命令：http://www.cnblogs.com/losbyday/p/5842661.html
 
 ubuntu:
 --Emacs软件包下载地址：http://ftp.gnu.org/gnu/emacs
@@ -358,16 +359,18 @@ Blog creation time:[2017-09-04 一 22:25]
 *** 帮助：info
 1.info与man的区别：man是UNIX里面的帮助指令，在Linux下还提供了另外一个帮助工具，info，与man一下子输出一堆信息不同的是，info将文件拆分成段落，还有超链接
 2.info的文档规则：
---翻页符合emacs
---/或？向下查询或向上查询
+--翻页命令符合emacs的基本命令：C v
+--？查询info命令
 --[Tab]:在节点之间移动
 --[Enter]:进入节点
---B：光标移动至第一节点
---E：光标移动至最后一个节点
---N：前往下一节点
---P：前往上一个节点
---U：前往上一层
---Q：退出
+--d: 跳转到info的目录节点
+--<: 移动到这个文件的顶层节点
+--u：向上移动一层
+--l：前进到最近一次访问的历史节点
+--r：回退到最近一次访问的历史节点
+--n：前往下一节点
+--p：前往上一个节点
+--q：退出
 *** 帮助：/usr/share/doc
 /usr目录是Linux的distrution软件都安装在这里，所以，这里面会有一些商家提供的关于软件的说明文档
 *** Terminal与X window的切换：
@@ -1752,16 +1755,21 @@ Blog creation time:[2017-09-05 二 08:28]
 Blog creation time:[2017-09-05 二 08:29]
 ** DONE [#D] theme:安装lantern								   :@Blog:@Linux:
 	- State "DONE"       from "TODO"       [2017-09-05 二 09:29]
-*** kali安装蓝灯翻墙
 下载： 
 --deb:https://github.com/getlantern/lantern
 --github:git clone https://github.com/getlantern/lantern.git
 备注：推荐使用第二种源码包，因为这里是lanten项目在github上托管的源码，这里下载的源码一定是最新的
 
-安装：
+kali安装：
 --cd lantern
 --make lantern
 ./lantern
+
+debian安装：
+--下载最新版本的.deb，ubuntu14.04
+--sudo dpkg -i xxx.deb
+--运行:lantern
+--出错，解决方案如下所示
 
 排错：
 运行时如果提示/.lantern/bin/lantern: error while loading shared libraries: libappindicator3.so.1: cannot open shared object file: No such file or directory 。
@@ -1769,7 +1777,6 @@ Blog creation time:[2017-09-05 二 08:29]
 Blog creation time:[2017-09-05 二 08:30]
 ** DONE [#D] theme:安装google浏览器							   :@Blog:@Linux:
 	- State "DONE"       from "TODO"       [2017-09-05 二 09:29]
-*** kali安装google浏览器
 --首先需要安装蓝灯能翻墙到google的官网下载.deb安装包
 --下载：http://www.google.cn/intl/zh-CN/chrome/browser/desktop/index.html
 --安装：
@@ -1803,234 +1810,6 @@ Blog creation time:[2017-09-05 二 09:04]
 3.可以在命令行下面执行：sudo add-apt-repository xxx即可（xxx是源地址）
 4.sudo apt update
 Blog creation time:[2017-09-05 二 09:05]
-** DONE [#D] theme:开启SSH服务								   :@Blog:@Linux:
-	- State "DONE"       from "TODO"       [2017-09-05 二 09:29]
-1.检查是否安装openssh-client:dpkg -s openssh-client
-2.检查是否安装openssh-server:dpkg -s openssh-server
-3.安装：apt install openssh-client openssh-server
-4.开启sshd服务：systemctl start sshd
-
-kali:
-1.sudo apt-get install ssh
-2.systemctl start ssh
-3.修改配置文件：/etc/ssh/sshd_config
-(a) 将#PasswordAuthentication no 该行前面的#去掉，并且将NO修改为YES；
-(b) 将#PermitRootLogin  without-password 该行前面的#去掉，并且将“without-password”修改为YES；
-4.重新启动:systemctl restart ssh
-Blog creation time:[2017-09-05 二 09:06]
-** DONE [#D] theme:apt-get									   :@Blog:@Linux:
-	- State "DONE"       from "DONE"       [2017-09-05 二 09:29]
-	- State "DONE"       from "TODO"       [2017-09-05 二 09:29]
-apt-cache search # ------(package 搜索包)
-apt-cache show #------(package 获取包的相关信息，如说明、大小、版本等)
-apt-get install # ------(package 安装包)
-apt-get install # -----(package --reinstall 重新安装包)
-apt-get -f install # -----(强制安装, "-f = --fix-missing"当是修复安装吧...)
-apt-get remove #-----(package 删除包)
-apt-get remove --purge # ------(package 删除包，包括删除配置文件等)
-apt-get autoremove --purge # ----(package 删除包及其依赖的软件包+配置文件等（只对6.10有效，强烈推荐）)
-apt-get update #------更新源
-apt-get upgrade #------更新已安装的包
-apt-get dist-upgrade # ---------升级系统
-apt-get dselect-upgrade #------使用 dselect 升级
-apt-cache depends #-------(package 了解使用依赖)
-apt-cache rdepends # ------(package 了解某个具体的依赖,当是查看该包被哪些包依赖吧...)
-apt-get build-dep # ------(package 安装相关的编译环境)
-apt-get source #------(package 下载该包的源代码)
-apt-get clean && apt-get autoclean # --------清理下载文件的存档 && 只清理过时的包
-apt-get check #-------检查是否有损坏的依赖
-dpkg -S filename -----查找filename属于哪个软件包
-apt-file search filename -----查找filename属于哪个软件包
-apt-file list packagename -----列出软件包的内容
-apt-file update --更新apt-file的数据库
-
-dpkg --info "软件包名" --列出软件包解包后的包名称.
-dpkg -l --列出当前系统中所有的包.可以和参数less一起使用在分屏查看. (类似于rpm -qa)
-dpkg -l |grep -i "软件包名" --查看系统中与"软件包名"相关联的包.
-dpkg -s 查询已安装的包的详细信息.
-dpkg -L 查询系统中已安装的软件包所安装的位置. (类似于rpm -ql)
-dpkg -S 查询系统中某个文件属于哪个软件包. (类似于rpm -qf)
-dpkg -I 查询deb包的详细信息,在一个软件包下载到本地之后看看用不用安装(看一下呗).
-dpkg -i 手动安装软件包(这个命令并不能解决软件包之前的依赖性问题),如果在安装某一个软件包的时候遇到了软件依赖的问题,可以用apt-get -f install在解决信赖性这个问题.
-dpkg -r 卸载软件包.不是完全的卸载,它的配置文件还存在.
-dpkg -P 全部卸载(但是还是不能解决软件包的依赖性的问题)
-dpkg -reconfigure 重新配置
-
-
-apt-get install
-下载软件包，以及所有依赖的包，同时进行包的安装或升级。如果某个包被设置了 hold (停止标志，就会被搁在一边(即不会被升级)。更多 hold 细节请看下面。
-apt-get remove [--purge]
-移除 以及任何依赖这个包的其它包。
---purge 指明这个包应该被完全清除 (purged) ，更多信息请看 dpkg -P。
-
-apt-get update
-升级来自 Debian 镜像的包列表，如果你想安装当天的任何软件，至少每天运行一次，而且每次修改了
-/etc/apt/sources.list 後，必须执行。
-
-apt-get upgrade [-u]
-升 级所有已经安装的包为最新可用版本。不会安装新的或移除老的包。如果一个包改变了依赖关系而需要安装一个新的包，那么它将不会被升级，而是标志为 hold。apt-get update 不会升级被标志为 hold 的包 (这个也就是 hold 的意思)。请看下文如何手动设置包为 hold。我建议同时使用 '-u' 选项，因为这样你就能看到哪些包将会被升级。
-
-apt-get dist-upgrade [-u]
-和 apt-get upgrade 类似，除了 dist-upgrade 会安装和移除包来满足依赖关系。因此具有一定的危险性。
-
-apt-cache search
-在软件包名称和描述中，搜索包含xxx的软件包。
-
-apt-cache show
-显示某个软件包的完整的描述。
-
-apt-cache showpkg
-显示软件包更多细节，以及和其它包的关系。
-
-dselect
-console-apt
-aptitude
-gnome-apt
-APT 的几个图形前端(其中一些在使用前得先安装)。这里 dselect 无疑是最强大的，也是最古老，最难驾驭。
-
-普通 Dpkg 用法
-dpkg -i
-安装一个 Debian 包文件，如你手动下载的文件。
-
-dpkg -c
-列出 的内容。
-
-dpkg -I
-从 中提取包信息。
-
-dpkg -r
-移除一个已安装的包。
-
-dpkg -P
-完全清除一个已安装的包。和 remove 不同的是，remove 只是删掉数据和可执行文件，purge 另外还删除所有的配制文件。
-
-dpkg -L
-列出 安装的所有文件清单。同时请看 dpkg -c 来检查一个 .deb 文件的内容。
-
-dpkg -s
-显示已安装包的信息。同时请看 apt-cache 显示 Debian 存档中的包信息，以及 dpkg -I 来显示从一个 .deb 文件中提取的包信息。
-
-dpkg-reconfigure
-重 新配制一个已经安装的包，如果它使用的是 debconf (debconf 为包安装提供了一个统一的配制界面)。你能够重新配制 debconf 它本身，如你想改变它的前端或提问的优先权。例如，重新配制 debconf，使用一个 dialog 前端，简单运行：
-
-Dpkg-reconfigure --frontend = dialog debconf (if you choose wrong when installed, here you can change back yo :)
-
-echo " hold" | dpkg --set-selections
-设置 的状态为 hlod (命令行方式)
-
-dpkg --get-selections ""
-取的 的当前状态 (命令行方式)
-
-支持通配符，如：
-Debian:~# dpkg --get-selections *wine*
-libwine hold
-libwine-alsa hold
-libwine-arts hold
-libwine-dev hold
-libwine-nas hold
-libwine-print hold
-libwine-twain hold
-wine hold
-wine+ hold
-wine-doc hold
-wine-utils hold
-
-例如：
-大家现在用的都是 gaim-0.58 + QQ-plugin，为了防止 gaim 被升级，我们可以采用如下方法：
-
-方法一：
-Debian:~# echo "gaim hold" | dpkg --set-selections
-然後用下面命令检查一下：
-Debian:~# dpkg --get-selections "gaim"
-gaim hold
-现在的状态标志是 hold，就不能被升级了。
-
-如果想恢复怎么办呢?
-Debian:~# echo "gaim install" | dpkg --set-selections
-Debian:~# dpkg --get-selections "gaim"
-gaim install
-这时状态标志又被重置为 install，可以继续升级了。
-
-同志们会问，哪个这些状态标志都写在哪个文件中呢?
-在 /var/lib/dpkg/status 里，你也可以通过修改这个文件实现 hold。
-
-有时你会发现有的软件状态标志是 purge，不要奇怪。
-如：事先已经安装了 amsn，然後把它卸了。
-apt-get remove --purge amsn
-那么状态标志就从 install 变成 purge。
-
-方法二：
-在/etc/apt 下手动建一个 preferences 文件
-内容：
-Package: gaim
-Pin: version 0.58*
-保存
-
-dpkg -S
-在包数据库中查找 ，并告诉你哪个包包含了这个文件。(注：查找的是事先已经安装的包)
-
---------------------------------------------
-Debian的软件包管理工具命令不完全列表
---------------------------------------------
-Debian系统中所有的包信息都在/var/lib/dpkg下.其中/var/lib/dpkg/info目录中保存了各个软件包的信息及管理文件.每个文件的作用如下:
-以 ".conffiles"     结尾的文件记录软件包的配置列表.
-以 ".list"          结尾的文件记录了软件包的文件列表,用户可在文件当中找到软件包文件的具体安装位置.
-以 ".md5sums"       结尾的文件记录了md5信息,用来进行包的验证的.
-以 ".config"        结尾的文件是软件包的安装配置角本.
-以 ".postinst"      角本是完成Debian包解开之后的配置工作,通常用来执行所安装软件包相关的命令和服务的重新启动.
-以 ".preinst"       角本在Debain解包之前运行,主要作用是是停止作用于即将升级的软件包服务直到软件包安装或和升级完成.
-以 ".prerm"         脚本负责停止与软件包关联的daemon服务,在删除软件包关联文件之前执行.
-以 ".postrm"        脚本负责修改软件包链接或文件关联,或删除由它创建的文件.
-
-/var/lib/dpkg/available是软件包的描述信息.
-包括当前系统中所有使用的Debian安装源中所有的软件包,还包括当前系统中已经安装和未安装的软件包.
-          
-1.dpkg包管理工具
-
-dpkg -r 卸载软件包.不是完全的卸载,它的配置文件还存在.
-dpkg --info "软件包名" --列出软件包解包后的包名称.
-dpkg -l     --列出当前系统中所有的包.可以和参数less一起使用在分屏查看.
-dpkg -l |grep -i "软件包名" --查看系统中与"软件包名"相关联的包.
-dpkg -s   查询已安装的包的详细信息. dpkg -L   查询系统中已安装的软件包所安装的位置.
-dpkg -S   查询系统中某个文件属于哪个软件包.
-dpkg -I   查询deb包的详细信息,在一个软件包下载到本地之后看看用不用安装(看一下呗).
-dpkg -i 手动安装软件包(这个命令并不能解决软件包之前的依赖性问题),如果在安装某一个软件包的时候遇到了软件依赖的问题,可以用apt-get -f install在解决信赖性这个问题.
-dpkg -reconfigure 重新配置 
-dpkg -P 全部卸载(但是还是不能解决软件包的依赖性的问题)
-
- 
-
-
-2. apt高级包管理工具
-   (1)GTK图形的"synaptic",这是APT的前端工具.
-   (2)"aptitude",这也是APT的前端工具.
-   用APT管理工具进行包的管理,可以有以下几种方法做源:
-   (1)拿安装盘做源,方法如下:
-        apt-cdrom ident        扫描光盘的信息
-        apt-cdrom add          添加光盘源
-   (2)这也是最常用的方法就是把源添加到/etc/apt/source.list中,之后更新列apt-get update
-
-
-APT管理工具常用命令
-apt-cache 加上不同的子命令和参数的使用可以实现查找,显示软件,包信息及包信赖关系等功能.
-apt-cache stats 显示当前系统所有使用的Debain数据源的统计信息.
-apt-cache search +"包名",可以查找相关的软件包.
-apt-cache show   +"包名",可以显示指定软件包的详细信息.
-apt-cache depends +"包名",可以查找软件包的依赖关系.
-apt-get upgrade   更新系统中所有的包到最新版
-apt-get install   安装软件包
-apt-get --reindtall install 重新安装软件包
-apt-get remove 卸载软件包
-apt-get --purge remove 完全卸载软件包
-apt-get clean 清除无用的软件包
-在用命令apt-get install之前,是先将软件包下载到/var/cache/apt/archives中,之后再进行安装的.所以我们可以用apt-get clean清除/var/cache/apt/archives目录中的软件包.
-
-
-源码包安装
-   apt-cache showsrc 查找看源码包的文件信息(在下载之前)
-   apt-get source 下载源码包.
-   apt-get build-dep +"包名" 构建源码包的编译环境.
-Blog creation time:[2017-09-05 二 09:07]
 ** DONE [#D] theme:安装思维导图								   :@Blog:@Linux:
 	- State "DONE"       from "TODO"       [2017-09-05 二 09:29]
 1.下载包:http://www.xmind.net/download/linux/
@@ -2050,3 +1829,59 @@ deb		file:/xxx/apt_apcks/
 	最后，使用命令更新一下软件源：sudo apt-get update就能一键安装apt-packs目录下的所有
 软件了
 Blog creation time:[2017-09-07 四 10:37]
+** DONE [#D] theme:apt-get									   :@Blog:@Linux:
+	- State "DONE"       from "DONE"       [2017-09-05 二 09:29]
+	- State "DONE"       from "TODO"       [2017-09-05 二 09:29]
+--查询某软件在系统中的基本信息：
+dpkg -s xxx
+(1)是否安装
+(2)安装包大小
+(3)32位还是64位
+(4)版本号
+(5)依赖
+(6)配置文件
+
+--查询当前apt-source下面，可供安装的指定软件xxx的信息（xxx必须是待安装软件在仓库中的真实名）
+apt-cache show xxx
+结果：列出源仓库中，软件xxx不同版本的基本信息
+
+--查询当前apt-source下面,与可供安装的指定软件xxx相关的软件（xxx不必是准确的名）
+apt-cache search xxx
+结果：列出源仓库中，所有与xxx沾边的软件
+
+--安装：
+1)dpkg -i xxx.deb
+2)apt-get -f install 
+3)dpkg -i xxx.deb
+备注：上面的这两个语句经常用来解决软件安装过程的存在的依赖关系，首先下载xxx.deb,然后使用dpkg -i xxx.deb
+安装，此时，一般情况下会显示有依赖文件找不到，接着在使用apt-get -f install,系统就会去安装那些个找不到
+依赖的文件，之后，再使用dpkg -i xxx.deb就能顺利完成xxx.deb的安装了
+
+--删除：
+apt-get autoremove --purge xxx
+备注：删除，软件包+依赖软件包+配置文件
+
+--更新：
+apt-get update && apt-get upgrade && apt-get dist-upgrade
+备注：更新源+更新已安装的软件+系统升级
+
+--了解安装包的依赖关系
+apt-cache depends xxx
+
+--清理下载文件的存档 && 只清理过时的包
+apt-get clean && apt-get autoclean
+
+--检查是否有损坏的依赖
+apt-get check
+
+--查看系统中与xxx相关联的包
+dpkg -l |grep -i xxx
+
+--查询系统中已安装的软件xxx在系统中的所有路径
+dpkg -L xxx
+
+源码包安装
+   apt-cache showsrc 查找看源码包的文件信息(在下载之前)
+   apt-get source 下载源码包.
+   apt-get build-dep +"包名" 构建源码包的编译环境.
+Blog creation time:[2017-09-05 二 09:07]
