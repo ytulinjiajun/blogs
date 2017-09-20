@@ -1,25 +1,25 @@
 * blogs-emacs-active
 ** DONE [#D] Theme:emacs相关网站							   :@Blog:@Emacs:
 	- State "DONE"       from "TODO"       [2017-09-04 一 22:53]
---Emacs 世界级大师 : Steve Purcell  http://www.sanityinc.com/
---Emacs 官网 : www.gnu.org/software/emacs/
---MELPA：http://melpa.org/#/
---陈斌 : https://github.com/redguardtoo/mastering-emacs-in-one-year-guide/blob/master/guide-zh.org
---陈斌的配置 : https://github.com/redguardtoo/emacs.d
---国外的emacs视频：http://emacsrocks.com/
---大牛的配置：https://github.com/tuhdo/tuhdo.github.io
---子龙山人的配置: https://github.com/zilongshanren
---经典社区 : https://www.reddit.com/r/emacs/
---官方手册：https://www.gnu.org/software/emacs/manual/
---牛0的博客 : https://github.com/search?p=1&q=stars%3A%3E20+extension%3Ael+language%3Aelisp&ref=searchresults&type=Repositories
---牛1的博客 : http://planet.emacsen.org/
---牛2的博客 ： http://www.lunaryorn.com/
---牛3的博客 ：http://ergoemacs.org/
---牛4的博客(超级棒)：https://tuhdo.github.io/
---melpa镜像源：http://www.4gamers.cn/
---emacs中国社区：https://github.com/emacs-china
---21天学会emacs: https://emacs-china.org/t/21-emacs/55
---入门elisp语法：https://learnxinyminutes.com/docs/elisp/
+1. Emacs 世界级大师 : Steve Purcell  http://www.sanityinc.com/
+2. Emacs 官网 : www.gnu.org/software/emacs/
+3. MELPA：http://melpa.org/#/
+4. 陈斌 : https://github.com/redguardtoo/mastering-emacs-in-one-year-guide/blob/master/guide-zh.org
+5. 陈斌的配置 : https://github.com/redguardtoo/emacs.d
+6. 国外的emacs视频：http://emacsrocks.com/
+7. 大牛的配置：https://github.com/tuhdo/tuhdo.github.io
+8. 子龙山人的配置: https://github.com/zilongshanren
+9. 经典社区 : https://www.reddit.com/r/emacs/
+10. 官方手册：https://www.gnu.org/software/emacs/manual/
+11. 牛0的博客 : https://github.com/search?p=1&q=stars%3A%3E20+extension%3Ael+language%3Aelisp&ref=searchresults&type=Repositories
+12. 牛1的博客 : http://planet.emacsen.org/
+13. 牛2的博客 ： https://www.lunaryorn.com/posts/autoloads-in-emacs-lisp
+14. 牛3的博客 ：http://ergoemacs.org/
+15. 牛4的博客(超级棒)：https://tuhdo.github.io/
+16. melpa镜像源：http://www.4gamers.cn/
+17. emacs中国社区：https://github.com/emacs-china
+18. 21天学会emacs: https://emacs-china.org/t/21-emacs/55
+19. 入门elisp语法：https://learnxinyminutes.com/docs/elisp/
 Blog creation time:[2017-09-04 一 22:04]
 ** DONE [#D] Theme:spacemacs相关网站						   :@Blog:@Emacs:
 	- State "DONE"       from "TODO"       [2017-09-05 二 09:27]
