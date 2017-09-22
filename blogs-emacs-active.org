@@ -20,32 +20,27 @@
 17. emacs中国社区：https://github.com/emacs-china
 18. 21天学会emacs: https://emacs-china.org/t/21-emacs/55
 19. 入门elisp语法：https://learnxinyminutes.com/docs/elisp/
+20. evil:https://www.emacswiki.org/emacs/Evil
 Blog creation time:[2017-09-04 一 22:04]
 ** DONE [#D] Theme:spacemacs相关网站						   :@Blog:@Emacs:
 	- State "DONE"       from "TODO"       [2017-09-05 二 09:27]
---官网：http://spacemacs.org
---github:https://github.com/syl20bnr/spacemacs
+1. 官网：http://spacemacs.org
+2. github:https://github.com/syl20bnr/spacemacs
 Blog creation time:[2017-09-05 二 08:46]
 ** DONE [#D] Theme:安装emacs								   :@Blog:@Emacs:
 	- State "DONE"       from "TODO"       [2017-09-04 一 22:53]
-1.ubuntu16.04使用apt install emacs安装的emacs是emacs24,而我希望能使用emacs25,
-因为里面有一些高级的函数可以实现，所以采用下面的方式来安装emacs25.2
-2.首先安装核心依赖文件：
---sudo apt install build-essential
---sudo apt-get build-dep emacs24
-备注:安装build-dep可能会出错，显示E：You must put some 'source' URIs in your source.list
-此时，我们需要到设置-->软件和更新下面勾选：源代码
-3.下载emacs25.2版本：
---sudo wget -P 下载/ http://ftp.gnu.org/gnu/emacs/emacs-25.2.tar.xz
-4.解压：
---由于下载包的格式为.tar.xz,所以:
---xz -d emacs-25.2.tar.xz
---tar -xvf emacs-25.2.tar
-5.切换到root，进入解压后的包，运行配置文件，且指定安装目录：
---./configure --prefix=/usr/local
-6.安装emacs：
---make && make install
-7.运行emacs
+1. ubuntu16.04使用apt install emacs安装的emacs是emacs24,而我希望能使用emacs25,因为里面有一些高级的函数可以实现，所以采用下面的方式来安装emacs25.2
+2. 首先安装核心依赖文件：
+	1. sudo apt install build-essential
+	2. sudo apt-get build-dep emacs24
+	3. 备注:安装build-dep可能会出错，显示E：You must put some 'source' URIs in your source.list此时，我们需要到设置-->软件和更新下面勾选：源代码
+3. 下载emacs25.2版本：sudo wget -P 下载/ http://ftp.gnu.org/gnu/emacs/emacs-25.2.tar.xz
+4. 解压：由于下载包的格式为.tar.xz,所以:
+	1. xz -d emacs-25.2.tar.xz
+	2. tar -xvf emacs-25.2.tar
+5. 切换到root，进入解压后的包，运行配置文件，且指定安装目录：./configure --prefix=/usr/local
+6. 安装emacs：make && make install
+7. 运行emacs
 Blog creation time:[2017-09-04 一 22:05]
 ** DONE [#D] Theme:emacs启动流程							   :@Blog:@Emacs:
     SCHEDULED:<2017-09-19 二>
@@ -53,80 +48,92 @@ Blog creation time:[2017-09-04 一 22:05]
 	Link position:[[info:elisp.info.gz#Startup%20Summary][Operating System Interface (emacs lisp 38)]]
 emacs在启动时，会执行下面的操作：
 1. 执行subdirs.el文件，给load-path变量赋值
-	Emacs在安装完成后，会自动生成一个叫做subdirs.el的文件，在emacs启动的时候，会去执行这个subdirs.el文件，该文件里的代码会将与emacs有关的文件路径(包括.emacs.d/*,/etc/emacs,/usr/local/share/..,/usr/share/emacs/..等等)，全部加载至load-path中
-	该步骤本质上是将emacs正常工作时可能加载到的文件的路径事先写进load-path这个变量中，在工作过程中用到相应的文件时，直接到load-path这个变量列表中提取该文件的绝对路径，就能找到该文件的物理位置并加载了
+   1. Emacs在安装完成后，会自动生成一个叫做subdirs.el的文件
+   2. 在emacs启动的时候，会去执行这个subdirs.el文件
+   3. 该文件里的代码会将与emacs有关的文件路径(包括.emacs.d/*,/etc/emacs,/usr/local/share/..,/usr/share/emacs/..等等)，全部加载至load-path中
+   4. 该步骤本质上是将emacs正常工作时可能加载到的文件的路径事先写进load-path这个变量中，在工作过程中用到相应的文件时，直接到load-path这个变量列表中提取该文件的绝对路径，就能找到该文件的物理位置并加载了
 2. 遍历load-path变量，查找文件leim-list.el，并加载
-	该文件是为注册输入法而准备的，该搜索仅仅是针对你已经创建了的私有文件leim-list.el,因此，会略过standard Emacs libraries目录。该文件应该是唯一的，它会被编译进Emacs executable中去
-
-  系统保证emacs相关的配置文件(.elc，.el等等)，以及一些系统用到的库文件能被找到，而所做的一个操作，这就保证了
+   1. 该文件是为注册输入法而准备的
+   2. 该搜索仅仅是针对你已经创建了的私有文件leim-list.el,因此，会略过standard Emacs libraries目录
+   3. 该文件应该是唯一的，它会被编译进Emacs executable中去
+   4. 系统保证emacs相关的配置文件(.elc，.el等等)，以及一些系统用到的库文件能被找到，而所做的一个操作，这就保证了
 3. 设置时间
-	会将变量before-init-time的值设置成current-time，将after-init-time的值设置成nil,该操作会发信号给lisp programs，然后Emacs将会进行初始化
+   1. 会将变量before-init-time的值设置成current-time
+   2. 将after-init-time的值设置成nil,该操作会发信号给lisp programs，然后Emacs将会进行初始化
 4. 设置语言环境和终端的编码系统
 5. 解析命令行参数的基础语法
 6. 初始化窗口系统
-	如果不是运行在batch模式，那么，变量initial-window-system的值将会用来初始化窗口系统，每一个被窗口系统所支持的初始化函数都是由window-system-initialization-alist来指定，如果initial-window-system的值是WINDOWSYSTEM,则，一个合适的初始化函数在term/WINDOWSYSTEM-win.el中定义，当进行build时，该文件会被编译进Emacs executable中去
+   1. 如果不是运行在batch模式，那么，变量initial-window-system的值将会用来初始化窗口系统
+   2. 每一个被窗口系统所支持的初始化函数都是由window-system-initialization-alist来指定
+   3. 如果initial-window-system的值是WINDOWSYSTEM,则，一个合适的初始化函数在term/WINDOWSYSTEM-win.el中定义
+   4. 当进行build时，该文件会被编译进Emacs executable中去
 7. 运行一个标准的钩子函数：before-init-hook
 8. 创建graphical frame
-	如果条件满足，那么会创建一个graphical frame，如果指定了‘--batch’ or ‘--daemon’就不会创建
+   1. 如果条件满足，那么会创建一个graphical frame
+   2. 如果指定了‘--batch’ or ‘--daemon’就不会创建
 9. 初始化字体，菜单栏，工具栏
-	如果需要的话，会初始化frame的字体，设置菜单栏，工具栏，如果支持graphical frame的话，那么即使当前的frame不是一个graphical,也会设置一个工具栏，因为graphical frame在稍后也会被创建
+   1. 如果需要的话，会初始化frame的字体，设置菜单栏，工具栏
+   2. 如果支持graphical frame的话，那么即使当前的frame不是一个graphical,也会设置一个工具栏，因为graphical frame在稍后也会被创建
 10. 使用custom-reevaluate-setting来重新初始化列表成员custom-delayed-init-variables
 11. 加载site-start这个库，如果指定了‘-Q’ or ‘--no-site-file’，该库不会被加载
 12. 加载初始化文件init.el
-	如果指定了‘-q’, ‘-Q’, or ‘--batch’ ，则不会去加载
+	1. 如果指定了‘-q’, ‘-Q’, or ‘--batch’ ，则不会去加载
 13. 加载default这个库
-	如果inhibit-default-init是non-nil,或者， ‘-q’, ‘-Q’,or ‘--batch’被指定，这个库就不会去加载
+	1. 如果inhibit-default-init是non-nil,或者， ‘-q’, ‘-Q’,or ‘--batch’被指定，这个库就不会去加载
 14. 从abbrev-file-name指定的路径加载abbrevs，如果指定了--batch就不会去加载
 15. 调用函数：package-initialize来激活任何已经被安装了的package
-	但是，当package-enable-at-startup是nil或者指定了选项 ‘-q’, ‘-Q’, or ‘--batch’时，Emacs不会去初始化package，package-initialize这个函数应当明确的被调用
+	1. 当package-enable-at-startup是nil或者指定了选项 ‘-q’, ‘-Q’, or ‘--batch’时，Emacs不会去初始化package，package-initialize这个函数应当明确的被调用
 16. 设置after-init-time的值为current-time
-	在第3步中，这个变量的值是被设置为nil的,设置该变量为current-time表明初始化已经完成
+	1. 在第3步中，这个变量的值是被设置为nil的,设置该变量为current-time表明初始化已经完成
 17. 运行一个标准的钩子函数：after-init-hook
 18. 根据initial-major-mode来设置Fundamental mode为major mode
 19. 加载terminal-specific Lisp library
-	如果开启了一个text terminal，将会加载 terminal-specific Lisp library,然后运行tty-setup-hook这个钩子函数，如果指定--batch或者term-file-prefix为nil将不会加载
+	1. 如果开启了一个text terminal，将会加载 terminal-specific Lisp library,然后运行tty-setup-hook这个钩子函数
+	2. 如果指定--batch或者term-file-prefix为nil将不会加载
 20. 显示初始化过程中打印的区域信息
 21. 处理命令行的选项部分
 22. 如果指定了--batch，那启动过程到此为止
 23. 如果scratch buffer存在，而且是空的，那么将会在该buffer里面插入(substitute-command-keys initial-scratch-message)
 24. 解析initial-buffer-choice
-	如果initial-buffer-choice是一个字符串，那么会将这个字符串作为文件或者目录来访问，如果是一个函数，那么将会不传入参数的调用这个函数，并且将该函数的返回值作为选中的缓冲区，如果一个文件作为命令行参数的形式而给出，那么该文件将会被访问，并且该文件的buffer会显示在initial-buffer-choice里面，如果超过一个文件被给出，那么所有的文件都会被访问，然后*Buffer List*会被显示在initial-buffer-choice中
+	1. 如果initial-buffer-choice是一个字符串，那么会将这个字符串作为文件或者目录来访问
+	2. 如果是一个函数，那么将会不传入参数的调用这个函数，并且将该函数的返回值作为选中的缓冲区
+	3. 如果一个文件作为命令行参数的形式而给出，那么该文件将会被访问，并且该文件的buffer会显示在initial-buffer-choice里面
+	4. 如果超过一个文件被给出，那么所有的文件都会被访问，然后*Buffer List*会被显示在initial-buffer-choice中
 25. 运行钩子函数：emacs-startup-hook
 26. 调用frame-notice-user-settings，该函数根据初始化文件所指出的内容来修改被选中的frame的参数
 27. 运行钩子函数：window-setup-hook
-	该函数与emacs-startup-hook唯一的不同之处在于该函数在上面26条提及的对frame参数的修改之后才进行的调用
+	1. 该函数与emacs-startup-hook唯一的不同之处在于该函数在上面26条提及的对frame参数的修改之后才进行的调用
 28. 运行startup screen
-	这是一个特殊的buffer，里面包含版权以及emacs的一些基础信息，如果，inhibit-startup-screen以及initial-buffer-choice设置为non-nil,或者如果‘--no-splash’ or ‘-Q’被指定，将不会去运行
+	1. 这是一个特殊的buffer，里面包含版权以及emacs的一些基础信息
+	2. 如果，inhibit-startup-screen以及initial-buffer-choice设置为non-nil,或者如果‘--no-splash’ or ‘-Q’被指定，将不会去运行
 29. 调用server-start
-	如果选项--daemon被指定，那么会调用server-start
+	1. 如果选项--daemon被指定，那么会调用server-start
 30. 调用 emacs-session-restore 
-	如果开启了X会话管理，那么会调用该函数，并传递上一个会话的ID作为参数
-
-
-下面的一些选项会影响启动序列的一些方面：
-1. inhibit-startup-screen
-	non-nil: 抑制 startup screen ，在该情况下，Emacs会显示*scratch*缓冲区
-	inhibit-startup-message’ and ‘inhibit-splash-screen是这个变量的别名
-2. initial-buffer-choice
-   non-nil: 该变量是一个字符串，这个字符串指定了一个文件或者目录，这个文件里面所存放的是在Emacs启动之后所显示的内容(替代正常情况下的欢迎界面)
-   函数：该变量的值可以是一个函数，emacs会调用这个函数，这个函数需要返回一个buffer，然后显示这个buffer里面的内容
-   t: 显示*scratch*缓冲区
-3. inhibit-startup-echo-area-message
-	该变量控制startup echo area message的显示,可以通过添加下面的配置来抑制startup echo area message的显示：
-	 (setq inhibit-startup-echo-area-message
-                "YOUR-LOGIN-NAME")
-4. initial-scratch-message
-	non-nil: 给定一个字符串，在开机后进入*scratch*缓冲区时显示
-    t:禁止在*scratch*缓冲区显示信息，为空
-    
+	1. 如果开启了X会话管理，那么会调用该函数，并传递上一个会话的ID作为参数
+31. 下面的一些选项会影响启动序列的一些方面：
+	1. inhibit-startup-screen
+	   1. non-nil: 抑制 startup screen ，在该情况下，Emacs会显示*scratch*缓冲区
+	   2. inhibit-startup-message’ and ‘inhibit-splash-screen是这个变量的别名
+    2. initial-buffer-choice
+	   1. non-nil: 该变量是一个字符串，这个字符串指定了一个文件或者目录,这个文件里面所存放的是在Emacs启动之后所显示的内容(替代正常情况下的欢迎界面)
+	   2. 函数：该变量的值可以是一个函数，emacs会调用这个函数，这个函数需要返回一个buffer，然后显示这个buffer里面的内容
+	   3. t: 显示*scratch*缓冲区
+    3. inhibit-startup-echo-area-message
+	   1. 该变量控制startup echo area message的显示
+	   2. 可以通过添加下面的配置来抑制startup echo area message的显示：
+	   (setq inhibit-startup-echo-area-message
+       "YOUR-LOGIN-NAME")
+    4. initial-scratch-message
+	   1. non-nil: 给定一个字符串，在开机后进入*scratch*缓冲区时显示
+       2. t:禁止在*scratch*缓冲区显示信息，为空
 Case creation time:[2017-09-19 二 15:00]
 ** DONE [#D] Theme:初始化文件								   :@Blog:@Emacs:
     SCHEDULED:<2017-09-20 三>
 	- State "DONE"       from "WAITTING"   [2017-09-20 三 15:22]
 1. .emacs 或 ~/.emacs.d/init.el
-	emacs启动完成后，会试图去加载位于家目录下的初始化配置文件，该文件要么是.emacs或者.emacs.el,要么是在.emacs.d目录下的一个名为init.el的文件
-	命令行‘-q’, ‘-Q’, and ‘-u’控制是否加载emacs的初始化文件以及到哪里加载，-q ,-Q,标识，不加载配置文件，-u USER,标识，加载USER的配置文件来替代自己的，如果什么选项都没有指定，emacs会使用：LOGNAME环境变量，或者USER(大多数系统常用)，或者USERNAME(MS系统),来查找家目录下面的初始化文件
-
+	  1. emacs启动完成后，会试图去加载位于家目录下的初始化配置文件，该文件要么是.emacs或者.emacs.el,要么是在.emacs.d目录下的一个名为init.el的文件
+	  2. 命令行‘-q’, ‘-Q’, and ‘-u’控制是否加载emacs的初始化文件以及到哪里加载，-q ,-Q,标识，不加载配置文件，-u USER,标识，加载USER的配置文件来替代自己的
+	  3. 如果什么选项都没有指定，emacs会使用：LOGNAME环境变量，或者USER(大多数系统常用)，或者USERNAME(MS系统),来查找家目录下面的初始化文件 
 2. default.el
 	Emacs在安装之后，有一个默认的初始化文件：default.el，这是一个lisp library文件,Emacs会通过load来找到该文件。emacs的distribution没有这个文件，它有意让本地进行定制。如果这个默认的初始化文件存在，那么在emacs启动之后,随便什么时候去加载该文件都可以，但是，如果你自己的初始化文件存在，那么优先加载自己的初始化文件，可以在自己的初始化文件里面将inhibit-default-init设置为non-nil，那么，emacs在这之后都不会去加载default.el文件了，如果指定了-q选项，那么，emacs在启动之后，既不会加载自己的初始化文件，也不会加载default.el
 
@@ -203,44 +210,41 @@ Blog creation time:[2017-09-18 一 13:49]
 ** DONE [#D] Theme:快捷键(base+mode+plugin)					   :@Blog:@Emacs:
 	- State "DONE"       from "TODO"       [2017-09-04 一 22:53]
 *** 我的快捷键：
-系统命令：
---emacs ~/.bashrc:添加别名alias em='emacs'  . ~/bashrc
---C-h C-h:help-for-help:查看所有的快捷键，函数，变量等
-备注：下面的几个以C-h为前缀的命令均可以在该指令下找到
---M-x:customize-group:定制插件的属性
---M-x:package-list-packages:插件管理
---M-x:shell: 打开外部shell
---C-x e:计算某个变量以及函数的值，可以用eval-buffer来替代会更加高效
+1. 系统命令：
+	- emacs ~/.bashrc:添加别名alias em='emacs'  . ~/bashrc
+	- C-h C-h:help-for-help:查看所有的快捷键，函数，变量等.备注：下面的几个以C-h为前缀的命令均可以在该指令下找到
+	- M-x:customize-group:定制插件的属性
+	- M-x:package-list-packages:插件管理
+	- M-x:shell: 打开外部shell
+	- C-x e:计算某个变量以及函数的值，可以用eval-buffer来替代会更加高效
+	- C-h t:打开基础手册
+	- C-h i:阅读安装在系统里的软件包的使用手册
+	- C-h m:describe-mode:列出当前打开的所有minor-mode
+	- C-h w:where-is:对于一个给定的函数，列出所有关于它的调用者
+	- C-h c:decribe-key-briefly:查询快捷键绑定的函数
+	- C-h k:descrbie-key:查询快捷键绑定的函数的详细信息
+	- C-h f:decribe-function:查询函数
+	- C-h v:descrbie-variable:查询变量
+	- C-h e:view-echo-area-message: 开辟*message*缓冲区,实时显示操作信息
+	- C-h a xxx:搜索所有含有xxx关键字的命令
 
---C-h t:打开基础手册
---C-h i:阅读安装在系统里的软件包的使用手册
---C-h m:describe-mode:列出当前打开的所有minor-mode
---C-h w:where-is:对于一个给定的函数，列出所有关于它的调用者
---C-h c:decribe-key-briefly:查询快捷键绑定的函数
---C-h k:descrbie-key:查询快捷键绑定的函数的详细信息
---C-h f:decribe-function:查询函数
---C-h v:descrbie-variable:查询变量
---C-h e:view-echo-area-message: 开辟*message*缓冲区,实时显示操作信息
---C-h a xxx:搜索所有含有xxx关键字的命令
+2. 分屏：
+	- C-x 3:split-window-right:在右侧分屏
+	- C-x 2:split-window-bottom:在下面分屏
+	- C-x 1:delete-other-windows:关闭除当前光标所在窗口之外的所有窗口
+	- C-x 0:delete-window:关闭当前光标所在的窗口
+	- C-x o:other-window:将光标切换至下一个窗口（没有安装window-numbering这个插件时才使用，因为无法准确定位）
+	- M-1:select-window-1:将光标切换至编号为1的窗口（前提是安装了window-numbering这个插件）
+	- M-2:select-window-2:将光标切换至编号为2的窗口（前提是安装了window-numbering这个插件）
 
-分屏：
---C-x 3:split-window-right:在右侧分屏
---C-x 2:split-window-bottom:在下面分屏
---C-x 1:delete-other-windows:关闭除当前光标所在窗口之外的所有窗口
---C-x 0:delete-window:关闭当前光标所在的窗口
---C-x o:other-window:将光标切换至下一个窗口（没有安装window-numbering这个插件时才使用，因为无法准确定位）
---M-1:select-window-1:将光标切换至编号为1的窗口（前提是安装了window-numbering这个插件）
---M-2:select-window-2:将光标切换至编号为2的窗口（前提是安装了window-numbering这个插件）
-
-缓冲区操作：
---C-x b:switch-to-buffer:切换缓冲区
---C-x C-b:ibuffer:切换缓冲区(ibuffer)
---C-x k:kill-buffer:关闭当前缓冲区
-
---C-v:向下翻页
---M-v:向上翻页
---C-M-v:光标在当前窗口，为上一个缓冲区向下翻页
---C-M-S-v:光标在当前窗口，为上一个缓冲区向上翻页
+3. 缓冲区操作：
+	- C-x b:switch-to-buffer:切换缓冲区
+	- C-x C-b:ibuffer:切换缓冲区(ibuffer)
+	- C-x k:kill-buffer:关闭当前缓冲区
+	- C-v:向下翻页
+	- M-v:向上翻页
+	- C-M-v:光标在当前窗口，为上一个缓冲区向下翻页
+	- C-M-S-v:光标在当前窗口，为上一个缓冲区向上翻页
 --C-l:将当前行重置中央
 --C-l C-l:将当前行重置屏幕最上方
 --C-p:向上移动一行
@@ -250,6 +254,7 @@ Blog creation time:[2017-09-18 一 13:49]
 --C-b:向后移动一个字符
 --M-b:向后移动一个词
 --C-a:移动光标到行首
+--M-m:移动光标至行首第一个字符
 --C-e:移动光标到行尾
 --M-a:移动光标到句首
 --M-e:移动光标到句尾
@@ -265,6 +270,7 @@ Blog creation time:[2017-09-18 一 13:49]
 --C-M-d:kill-whole-line:删除光标所在行
 --C-x l:显示文件行数以及当前行
 --C-g:终止命令
+--C-c n:在光标所在行的前面一行插入一个空行
 
 编辑：
 --C-x C-f:打开/新建文件
@@ -288,16 +294,22 @@ Blog creation time:[2017-09-18 一 13:49]
 --C-c ':在窗口的右边显示eclisp宏内的代码
 --Tab:收缩eclisp内部的宏代码
 
+排版与缩进：
+1. 排版:在加入定制的两个函数：indent-buffer以及indent-region-or-buffer之后，对当前buffer进行排版时，不用再选中，直接按TAB键即可
+2. 缩进：TAB q
+
+增强补全：M-/
+
+Ace跳转：M-SPC
+
+跳转到某一行：M-g M-g 
 Blog creation time:[2017-09-04 一 22:10]
 *** 快捷键操作
-**** 解除快捷键
---(global-unset-key "you key")
-**** 绑定快捷键
-***** global-set-key
---让emacs告诉你绑定的格式：
-	我们经常需要绑定各种各样的快捷键，可是有的时候，我们不知道如何去绑定一些复杂的快捷键，比如f1的格式，比如
-shift怎么写，比如像 ‘ 之类的符号怎么描述，再比如像 \ 这个具有特殊意义的字符格式是怎样的，这里介绍一种万能的
-方法，让emacs告诉你这个绑定的代码是什么：
+1. 解除快捷键: (global-unset-key "you key")
+2. 绑定快捷键
+   1. global-set-key
+	  1. 让emacs告诉你绑定的格式：
+	  	 我们经常需要绑定各种各样的快捷键，可是有的时候，我们不知道如何去绑定一些复杂的快捷键，比如f1的格式，比如shift怎么写，比如像 ‘ 之类的符号怎么描述，再比如像 \ 这个具有特殊意义的字符格式是怎样的，这里介绍一种万能的方法，让emacs告诉你这个绑定的代码是什么：
  	举个例子来说，我需要将M-S-<RET>绑定到(org-insert-todo-heading)这个函数:
 -->M-x global-set-key RET 
 -->在键盘上按下你打算绑定的按键组合(会在小缓冲区中实时显示)：Set key <M-s-return> to command:
@@ -395,6 +407,8 @@ Blog creation time:[2017-09-17 日 16:15]
 
 ++C-h-k : find bingdingkey
 ++C-h k : describes bingdingkey
+
+--C-c C-e:导出pdf
 *** org-mode基础
 --要使用org-mode buffer就需要将font-lock开启，emacs默认是开启的
 
@@ -526,6 +540,38 @@ emacs的说明手册，是很重要的！
 Case creation time:[2017-08-07 一 14:06]
 **** 如何打印将日程表打印成PDF
 命令：C-x C-w
+*** org-mode实现排版
+- 示例
+	1. 标题一
+		1. 条目一
+	  		- 事项1
+	  		- 事项2
+	  		- 事项3
+		2. 条目二
+	  		- 事项1
+			- 事项2
+	 		 - 事项3
+   		3. 条目三
+	  		- 事项1
+	  		- 事项2
+	  		- 事项3
+	2. 标题二
+		1. 条目一
+	  		- 事项1
+	  		- 事项2
+	  		- 事项3
+		2. 条目二
+	  		- 事项1
+			- 事项2
+	  		- 事项3
+		3. 条目三
+	  		- 事项1
+		    - 事项2
+	  		- 事项3
+- 快捷键：
+	1. 排版：M-TAB
+	2. 对齐：TAB
+	3. 缩进：TAB q
 ** DONE [#D] Theme:abbrev-mode								   :@Blog:@Emacs:
     SCHEDULED:<2017-09-19 二>
 	- State "DONE"       from "WAITTING"   [2017-09-19 二 11:27]
@@ -602,4 +648,91 @@ Blog creation time:[2017-09-18 一 14:47]
 	- State "DONE"       from "WAITTING"   [2017-09-19 二 07:57]
 (global-set-key [f5] 'toggle-truncate-lines)
 Blog creation time:[2017-09-18 一 15:28]
-
+** WAITTING Theme:evil-mode								   :@Blog:@Emacs:
+    SCHEDULED:<2017-09-22 五>
+*** vim基本概念
+1. vim的作者Bram Moolenaar
+2. vim是在vi的基础上改进，以及增加很多特性之后，发展而来的一个文本编辑器
+3. vim的四种模式
+   1. 正常模式 (Normal-mode)
+	  - 按ESC从任意模式切换至该模式
+	  - 该模式是vim启动后的默认模式
+   2. 插入模式 (Insert-mode)
+	  - i：insert,插入(前),在方形光标，标记字符的前面插入
+	  - a: append,追加(后)，在方形光标，标记字符的后面追加
+	  - I: 在方形光标，所在行的行首插入
+	  - A: 在方形光标，所在行的行尾插入
+   3. 命令模式 (Command-mode)：
+	  - 按‘：’会进入该模式
+	  - 可以执行一些输入并执行一些vim或插件提供的指令
+	  - 这些指令包括设置环境、文件操作、调用某个功能等
+   4. 可视模式 (Visual-mode)：
+	  - 在正常模式中按v会进入该模式,光标经过的地方会被选中
+	  - 在正常模式中按V会进入该模式，光标经过的行都会被选中
+	  - 在正常模式中按C-v进入该模式,光标定位的一个矩形区块会被选中
+      - 备注：可以用i来阻止空格
+4. vim的设计理念：命令的组合，该组合基本模型为：光标初始位置+操作+光标终止位置，其中光标初始位置可以缺省，缺省之后，光标的初始位置就是光标的当前位置
+5. vim中最重要的概念：motion，译为“跨过”,指光标从初始位置移动到结束位置，这两个位置之间的选区称为一个motion，就实际运用而言，这个选区的有效范围还是取决于“光标初始位置+操作+光标终止位置”模型中的操作，比如，d表示删除行，
+6. motion之所以重要，是因为vim的设计理念是命令组合,看下面的例子：
+   - d: 删除, j: 移动到下一行，所以，dj: 删除前行和下一行
+   - d: 删除, dd: 删除当前行，2: 两次 >> 2dd: 连续两次删除当前行（效果同dj）
+   - d: 删除， $: 行尾 >> d$: 删除光标到行尾部之间的内容
+   - d: 删除， G：文件尾部 >> dG: 删除光标位置
+   - gg: 文件首部，y: 拷贝，G: 文件尾部 >> ggyG:先移动到文件首部，紧接着执行拷贝命令，再移动到文件尾部，所以拷贝的内容就是光标两次移动的motion，即拷贝整个文件
+*** vim命令
+1. cmd{motion}中的cmd
+   - d: 触发剪切这个动作
+	 例：dd: 两个d的含义是不一样的，第一个d是cmd,含义是触发剪切这个动作，第二个d是motion，含义是，跨过当前行），组合起来就是剪切当前行的内容到剪切板
+   - c：触发剪切这个动作，并进入插入模式
+	 例：cw: 剪切光标后面的一个单词到剪切板
+   - y： 触发拷贝这个动作
+	 例：yw: 拷贝光标后面的一个单词到剪切板
+   - 备注：这三个命令都有的一个特点是，命令输入之后，方形光标的变成一个矮方形的模样，这意味着需要用户继续给出一个motion
+2. normal-mode：ESC
+3. insert-mode：i
+4. command-mode: ':'
+5. 向前移动一个字符：l
+6. 向后移动一个字符：h
+7. 向上移动一行：k
+8. 向下移动一行：j
+9. 行首：^
+10. 行末尾：$
+11. 文件首：gg
+12. 文件尾部：G
+13. 移动到第88行：88G
+14. 向后移动一个词： w
+15. 向前移动一个词： b
+16. 向下翻页：C-f
+17. 向下翻半页：C-d
+18. 向上翻页：C-b
+19. 向上翻半页：C-u
+20. 剪切： d
+21. 拷贝： y
+22. 剪切字符： x
+23. 选区：在normal-mode下按v或者V
+24. 删除选区之间的内容：选中，d
+25. 向后删除一个字符：x
+26. 向前删除一个字符：X
+27. 向后删除一个单词：dw (diw，保留待删除的单词后面的空格)
+28. 向前删除一个单词：db
+29. 删除光标到行首之间的内容：d^
+30. 删除光标到行尾部之间的内容: d$
+31. 删除当前行：dd
+32. 全选：ggVG
+33. 黏贴： p
+34. 撤销上一步：u
+35. 恢复上一步撤销：C-r
+36. fx:向后查找，最近的一个x字符，并移动光标到x的前面
+37. Fz:向前查找，最近的一个z字符,并移动光标到z的前面
+38. /:查找，n查找下一个
+Blog creation time:[2017-09-22 五 07:46]
+*** evil的基本概念
+1. evil的6种模式：
+   1. evil-normal-state
+   2. evil-insert-state
+   3. evil-visual-state
+   4. evil-motion-state
+   5. evil-emacs-state
+	  - 在正常模式中按C-z会进入到该模式
+	  - 
+   6. evil-operator-state

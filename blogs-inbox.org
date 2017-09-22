@@ -34,3 +34,7 @@ Case creation time:[2017-09-15 五 10:36]
     SCHEDULED:<2017-09-17 日>
     Link position:
 Case creation time:[2017-09-17 日 11:04]
+** INBOX [#C] Theme:整理dired-mode的知识点				   :@Blog:@Emacs:
+    SCHEDULED:<2017-09-21 四>
+    Link position:
+Case creation time:[2017-09-21 四 08:55]
