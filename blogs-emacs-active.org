@@ -578,77 +578,7 @@ Case creation time:[2017-08-07 一 14:06]
 1. 功能：定制缩略词
 2. 使用方法：缩略词+空格
 Blog creation time:[2017-09-19 二 10:49]
-** WAITTING [#D] Theme:搭建C/C++的IDE						   :@Blog:@Emacs:
-   - State "WAITTING"   from "DONE"       [2017-08-08 二 09:50] \\
-	 技术条件还不成熟！
-	- State "DONE"       from "TODO"       [2017-08-08 二 09:22]
-功能：	
-	1.Tab缩进:4字符
-	1.跳转到函数定义：Gtags   ycmd
-	2.自动补全：
-	3.语法检查：flycheck-ycmd
-	4.查找:find-file-in-project and projectile
-	5.编译:cmake
-	6.调试
-Blog creation time:[2017-08-07 一 13:05]
-** ABORT [#D] Theme:研究包管理Cask							   :@Blog:@Emacs:
-   - State "ABORT"      from "DONE"       [2017-09-18 一 09:45] \\
-	 由于使用Cask和pallet来管理插件，个人认为显得比较麻烦，不能做到从github上
-	 克隆下来源代码直接就能使用，还得配置cask,以及安装pallet，同时配置了cask以后，
-	 不仅在家目录下面产生.cask文件，而且在.emacs.d中也生成.Cask文件，这反而使得
-	 emacs变得不简洁了，因此，在用了一段时间的cask以后，决定回退到以前的包管理方案
-	- State "DONE"       from "TODO"       [2017-09-04 一 22:53]
---安装cask:sudo curl -fsSL https://raw.githubusercontent.com/cask/cask/master/go | python
---设置cask的环境变量
---安装pallet:package-install --- pallet
---M-x:pallet-init:此时，在.emacs.d目录下有一个Cask的文件，列出了所有之前使用package-install
-安装的包的别名
---M-x:pallet-install:此时，在.emacs.d目录下的elpa目录将会被复制到.emacs.d/.cask/下面
-Blog creation time:[2017-09-04 一 22:
-** DONE [#D] Theme:调节序号的小技巧							   :@Blog:@Emacs:
-    SCHEDULED:<2017-09-18 一>
-	- State "DONE"       from "WAITTING"   [2017-09-18 一 10:51]
-说明：
-	在编辑文档时，我们经常会给一些条目列出序号，但是，出于逻辑上或者排版的的考虑,经常
-会打乱之前的编号，通常情况下，编号被打乱以后我们只得手动重新排序，然而，emacs提供了一个
-自动重排编号的功能，只要满足前提所描述的格式即可
-
-前提：该技巧必须要求条目的格式是：数字+点+空格+串
-
-实现：
---M-RET:调整序号
-1. hahhs
-2. asda
-3. asda
-4. asdads
-5. gfdgd#
-备注：将当前光标定位到序号为8的#位置，按下M-RET，上面的序号就会变为：  
-1. hahhs
-2. asda
-3. asda
-4. asdads
-5. gfdgd#
-6.
-
-备注： 以该格式书写的条目，还可以实现类似org-mode的收缩，使用十分方便
-Blog creation time:[2017-09-18 一 10:43]
-** DONE [#D] Theme:解决apt-get安装emacs后使用C-h i发现文档不全的问题 :@Blog:@Emacs:
-    SCHEDULED:<2017-09-18 一>
-	- State "DONE"       from "WAITTING"   [2017-09-18 一 14:53]
-	使用apt-get来安装emacs,好像没有提供完整的info文档，因此，我们需要自己去gnu的官网上
-下载info.gz结尾的手册，将其放到/usr/share/info/emacs-25下面，打开emacs,C-h i,然后按
-g,在小缓冲区出现Go to node,切换到刚刚下载的那个手册即可
-	一般情况下，安装完毕emacs之后，都需要到官方网站(https://www.gnu.org/software/emacs/manual/)
-下载GNU Emacs manual,GNU Emacs Lisp reference manual,An Introduction to Programming in Emacs Lisp
-的info document，将其移动至/usr/share/info/emacs-25下面，以备实时查询
-	要经常使用g来切换node，而且在切换前应当C-x k 先将当前的info缓冲区给kill掉再重新打开进行切换
-Blog creation time:[2017-09-18 一 14:47]
-** DONE [#D] Theme:设置org-mode的文本的宽度，在超过宽度的位置自动换行 :@Blog:@Emacs:
-    SCHEDULED:<2017-09-18 一>
-	- State "DONE"       from "WAITTING"   [2017-09-19 二 07:57]
-(global-set-key [f5] 'toggle-truncate-lines)
-Blog creation time:[2017-09-18 一 15:28]
-** WAITTING Theme:evil-mode								   :@Blog:@Emacs:
+** WAITTING [#D] Theme:evil-mode							   :@Blog:@Emacs:
     SCHEDULED:<2017-09-22 五>
 *** vim基本概念
 1. vim的作者Bram Moolenaar
@@ -734,5 +664,75 @@ Blog creation time:[2017-09-22 五 07:46]
    4. evil-motion-state
    5. evil-emacs-state
 	  - 在正常模式中按C-z会进入到该模式
-	  - 
+	  - 再次按C-z会进入到normal-mode 
    6. evil-operator-state
+** WAITTING [#D] Theme:搭建C/C++的IDE						   :@Blog:@Emacs:
+   - State "WAITTING"   from "DONE"       [2017-08-08 二 09:50] \\
+	 技术条件还不成熟！
+	- State "DONE"       from "TODO"       [2017-08-08 二 09:22]
+功能：	
+	1.Tab缩进:4字符
+	1.跳转到函数定义：Gtags   ycmd
+	2.自动补全：
+	3.语法检查：flycheck-ycmd
+	4.查找:find-file-in-project and projectile
+	5.编译:cmake
+	6.调试
+Blog creation time:[2017-08-07 一 13:05]
+** ABORT [#D] Theme:研究包管理Cask							   :@Blog:@Emacs:
+   - State "ABORT"      from "DONE"       [2017-09-18 一 09:45] \\
+	 由于使用Cask和pallet来管理插件，个人认为显得比较麻烦，不能做到从github上
+	 克隆下来源代码直接就能使用，还得配置cask,以及安装pallet，同时配置了cask以后，
+	 不仅在家目录下面产生.cask文件，而且在.emacs.d中也生成.Cask文件，这反而使得
+	 emacs变得不简洁了，因此，在用了一段时间的cask以后，决定回退到以前的包管理方案
+	- State "DONE"       from "TODO"       [2017-09-04 一 22:53]
+--安装cask:sudo curl -fsSL https://raw.githubusercontent.com/cask/cask/master/go | python
+--设置cask的环境变量
+--安装pallet:package-install --- pallet
+--M-x:pallet-init:此时，在.emacs.d目录下有一个Cask的文件，列出了所有之前使用package-install
+安装的包的别名
+--M-x:pallet-install:此时，在.emacs.d目录下的elpa目录将会被复制到.emacs.d/.cask/下面
+Blog creation time:[2017-09-04 一 22:
+** DONE [#D] Theme:调节序号的小技巧							   :@Blog:@Emacs:
+    SCHEDULED:<2017-09-18 一>
+	- State "DONE"       from "WAITTING"   [2017-09-18 一 10:51]
+说明：
+	在编辑文档时，我们经常会给一些条目列出序号，但是，出于逻辑上或者排版的的考虑,经常
+会打乱之前的编号，通常情况下，编号被打乱以后我们只得手动重新排序，然而，emacs提供了一个
+自动重排编号的功能，只要满足前提所描述的格式即可
+
+前提：该技巧必须要求条目的格式是：数字+点+空格+串
+
+实现：
+--M-RET:调整序号
+1. hahhs
+2. asda
+3. asda
+4. asdads
+5. gfdgd#
+备注：将当前光标定位到序号为8的#位置，按下M-RET，上面的序号就会变为：  
+1. hahhs
+2. asda
+3. asda
+4. asdads
+5. gfdgd#
+6.
+
+备注： 以该格式书写的条目，还可以实现类似org-mode的收缩，使用十分方便
+Blog creation time:[2017-09-18 一 10:43]
+** DONE [#D] Theme:解决apt-get安装emacs后使用C-h i发现文档不全的问题 :@Blog:@Emacs:
+    SCHEDULED:<2017-09-18 一>
+	- State "DONE"       from "WAITTING"   [2017-09-18 一 14:53]
+	使用apt-get来安装emacs,好像没有提供完整的info文档，因此，我们需要自己去gnu的官网上
+下载info.gz结尾的手册，将其放到/usr/share/info/emacs-25下面，打开emacs,C-h i,然后按
+g,在小缓冲区出现Go to node,切换到刚刚下载的那个手册即可
+	一般情况下，安装完毕emacs之后，都需要到官方网站(https://www.gnu.org/software/emacs/manual/)
+下载GNU Emacs manual,GNU Emacs Lisp reference manual,An Introduction to Programming in Emacs Lisp
+的info document，将其移动至/usr/share/info/emacs-25下面，以备实时查询
+	要经常使用g来切换node，而且在切换前应当C-x k 先将当前的info缓冲区给kill掉再重新打开进行切换
+Blog creation time:[2017-09-18 一 14:47]
+** DONE [#D] Theme:设置org-mode的文本的宽度，在超过宽度的位置自动换行 :@Blog:@Emacs:
+    SCHEDULED:<2017-09-18 一>
+	- State "DONE"       from "WAITTING"   [2017-09-19 二 07:57]
+(global-set-key [f5] 'toggle-truncate-lines)
+Blog creation time:[2017-09-18 一 15:28]

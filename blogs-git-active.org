@@ -4,24 +4,383 @@
 --git 官方网站：http://git-scm.com
 --廖雪锋：http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000
 Blog creation time:[2017-09-05 二 08:01]
-** DONE [#D] theme:我的快捷键习惯								 :@Blog:@Git:
-	- State "DONE"       from "TODO"       [2017-09-05 二 09:28]
---sta = status
---ci = commit
---ps = push origin
---co = checkout
---br = branch
---mg = merge --no-ff
---throw = reset HEAD
---cl = clone
---rmt =  remote add origin
---lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
-Blog creation time:[2017-09-05 二 08:02]
+** WAITTING [#D] Theme:基本概念								 :@Blog:@Git:
+    SCHEDULED:<2017-09-23 六>
+1. 工作区：一个等待进行版本控制的文件夹
+2. 版本库：当使用git init对一个工作区进行初始化之后，在工作区下产生一个名为.git的文件夹，该文件夹称为该工作区的版本库
+4. 原理：
+   
+   1. 待管理的文件位于工作区下面
+   2. 使用git add .将工作区内的所有文件添加至版本库里面的暂存区中，接受版本控制
+   3. 
+5. 正确使用版本控制系统的方法是：一次提交只完成一件事
+   1. 或是完成一个新功能
+   2. 或是修改一个bug
+   3. 或是写完一节内容
+   4. 或是添加一副图片
+   5. 注意：不要在下班才想起进行一次提交，那样的话git就降格成文件备份系统了
+Blog creation time:[2017-09-23 六 22:36]
+** WAITTING [#D] Theme:版本库workspace/.git/里面有什么？		 :@Blog:@Git:
+    SCHEDULED:<2017-09-26 二>
+1. index:
+   1. 该文件是一个二进制文件,本质上，是一个包含文件索引的目录树
+   2. 使用git add xx-file之后，xx-file这个文件的文件名将会挂接在index这个文件的目录树上
+   3. 然而，xx-file这个文件的实际内容并没有存储在index这个文件中，而是存储在.git/objects目录这个对象库中
+   4. index中xx-file这个文件的索引和对象库.git/objects中xx-file这个文件的实体建立起对应关系
+   5. index的真实面目：所有加入版本库的文件形成目录树；目录树上挂接着接受版本控制的文件（其中，每个挂接的文件主要提供三部分信息：第一，该文件的文件名；第二，该文件的文件大小，第三，最近一次使用扫描工作区改动的命令(如git status,git diff等)时，所扫描到的文件的最新的时间戳）；目录树同对象库中相应的文件形成对应
+2. objects/:
+   1. 使用git add xx-file将xx-file文件加入到版本库之后，文件名，大小，时间戳等信息登记在index文件的目录树上，xx-file文件内部的真实内容则存储在.git/object/这个对象库中
+   2. 对象库.git/object/中的文件同index中的目录树有着对应关系(我猜想，index中的目录树好比一个指针链表，每一个节点下存放指针类型的文件名，指向对象库中的对应文件)
+3. branches/
+4. HEAD
+5. config
+6. hooks/
+7. info/
+8. refs
+9. packed-refs
+10. description
+11. logs/
+
+Blog creation time:[2017-09-26 二 08:42]
+** WAITTING [#D] Theme:版本库的基本原理						   :@Blog:@Emacs:
+    SCHEDULED:<2017-09-25 一>
+1. 扫描工作区的改动
+   1. 执行git status 或者 git diff 命令时，将触发扫描工作区改动这一行为
+   2. 取版本库.git/index中记录的文件名和时间戳，以及文件的长度，依据文件名，找到工作区内与之对应的文件，对比时间戳
+   3. 若，发现，该文件在工作区中的当前时间戳与该文件在版本库中记录的时间戳不一致，则，判定为文件内容可能发生了改变，注意了，是可能改变而并非一定发生了改变，例如，你打开了一个文件，删除了一个字符，又重新输入该字符，此时，该文件的时间戳一定会更新的，因为你操作了文件，可是呢，内容却没有发生改变
+   4. 此时，会打开该文件名对应的，在工作区中和在版本库中的该文件，两者进行比较(注意了，git管理的是修改而不是文件，所以该文件在版本库中不是同在工作区中一样的格式，这里暂且这么理解也没什么问题，因为更细致且复杂的工作由git这个系统的代码所承担了)，从而进一步进行判断该文件的内容是否真的发生了改变
+   5. 如果该文件的内容没有发生改变，则将该文件的当前时间戳替换.git/index中该文件较老的那个时间戳
+2. 将工作区中的文件添加至版本库
+   1. 执行git add xx-file命令时，发生了两件事，第一，xx-file文件名被挂接到index文件的目录树上面；第二，xx-file文件内容被写入到对象库.git/objects/中
+Blog creation time:[2017-09-25 一 16:57]
+
+** DONE [#D] theme:命令 										 :@Blog:@Git:
+1. 安装
+   - 检查是否安装：dpkg -s git
+   - 安装： sudo apt-get install git
+   - 查看版本： git --version
+2. 配置
+   1. 单一版本库的配置：workspace/.git/config
+	  1. 打开并编辑：git config -e
+	  2. ...
+   2. 全局配置：～/.gitconfig
+	  1. 打开并编辑：git config -e --global
+	  2. 配置标识
+		 - 用户标识：git config --global user.name "linjiajun"
+		 - 用户邮件：git congih --global user.email "ytulinjiajun@163"
+		 - 标识的意义：指出 提交者 的身份， 标识是非常重要的，没有标识，git便没法识别提交者的身份
+		 - 标识适合设置在全局文件中，因为全局文件存在于用户家目录下面，这样便同linux的多用户属性一致，当然了，也可以配置在版本库文件中
+      3. 开启颜色显示：
+	     - git config --global color.ui true
+   3. 系统级配置：/etc/gitconfig
+	  1. 打开并编辑：git config -e --system
+	  2. 配置别名
+	     - git config --system alias.sta status
+	     - git config --system alias.ci commit
+	  	 - git config --system alias.co checkout
+	  	 - git config --system alias.br branch
+   4. 读取某一配置项的值
+	  1. git config core.bare
+	  2. git config --global user.name
+	  3. git config --system alias.sta
+   5. 更改某一配置项的值
+	  1. git config core.bare true
+	  2. git config --global user.name ljj
+	  3. git config --system alias.sta status
+   6. 删除某一配置项：
+	  1. git config --unset core.bare
+	  2. git config --unset --global user.name
+	  3. git config --unset --system alias.sta
+   7. 直接使用配置文件
+      - git完毕后立即可以使用的一个指令是:clone
+      - 将自己保存在github上的配置文件clone到～目录下面:git clone git@github.com:xxx/.gitconfig
+   8. 配置文件的格式：INI文件格式
+   9. 优先级:版本库 > 全局 > 系统，高优先级的文件中的配置可以覆盖低优先级文件中的配置
+   10. git config命令可以操作任何其他的INI文件
+	   1. 读取配置文件test.ini中的配置：$ GIT_CONFIG=test.ini  git config a.b.c.d
+	   2. 向配置文件test.ini中写配置：$ GIT_CONFIG=test.ini  git config a.b.c.d "hello world"
+3. 操作
+   1. 创建版本库：
+      1. git init: 其结果是在工作区中生成版本库：.git/
+	  2. git rev-parse --git-dir: 该操作可以在工作区的任何子目录下执行，其结果是显示该工作区的版本库的路径
+	  3. git rev-parse --show-toplevel: 该操作可以在工作区的任何子目录下执行，其结果是显示该版本控制系统的根路径
+	  4. git rev_parse --show-prefix: 该操作可以在工作区的任何子目录下执行，其结果是显示相对于该版本控制系统的根路径的相对目录
+	  5. git rev_parse --show-cdup: 该操作可以在工作区的任何子目录下执行，其结果是显示当前目录回退到版本控制系统根的深度
+   2. 删除版本库：
+   3. 查看工作区内的文件状态
+   4. 添加工作区文件至版本库的暂存区：
+	  1. 工作区和暂存区中文件的状态
+		 1. 工作区性质的文件： 从未使用git add xx-file登记过的文件，又称 未跟踪的文件
+		 2. 暂存区性质的文件： 曾使用过git add xx-file登记过的文件
+			1. 自从使用git add xx-file登记过以后就再没对xx-file进行过：修改，删除，
+		 3. 工作区性质的文件的状态：未被跟踪的文件(Untracted files)
+		 4. 版本库文件
+	  2. git add -A:
+		 1. 
+	  3. git add -u
+	     1. 工作区中的所有文件中，那些文件状态为tracked的文件，即，已经加入到.git这个版本库中管理的文件，当其文件状态发生改变时，该指令会处理这类文件的改变
+		 2. 该指令不会去处理工作区中，那些untracked的文件，比如，新建的文件
+	  4. git add -A: 将本地文件的删除文件的新增登记到暂存区
+   5. 回滚版本库暂存区的文件至工作区
+   6. 提交暂存区的文件至本地分支
+   7. 回滚本地分支文件至暂存区
+   8. 回滚本地分支文件至工作区
+   9. 制作补丁文件：diff
+      1. 基础框架
+	     1. 范式：diff OPTIONS... TAG1  TAG2
+		 2. 情况一，TAG1与TAG2均是文件
+			1. 这种情况是最为简单的，diff命令比较的是这两个文件的内容
+			2. 特殊标识‘-’代表标准输入，diff -u - b.txt <a.txt >c.txt 等价于 diff -u a.txt b.txt >c.txt
+			3. 这种情况按照下面的三种方式：正常模式，上下文模式，合并模式进行操作
+		 3. 情况二，TAG1与TAG2之间有其一是文件，其一是目录
+			1. 
+		 4. 情况三，TAG1与TAG2均是目录
+			1. 研究对象
+			   1. directory1
+				  1. a.txt
+					 应该杜绝文章中的错别子。
+					 
+			         但是无论使用
+			         *全拼，双拼
+			         *还是五笔
+					 
+			         是人就有可能犯错,软件更是如此。
+					 
+			         犯了错，就要扣工资！
+					 
+			         改正的成本可能会很高。	 
+				  2. b.txt
+		    		 我的路径是/directory1/b.txt。
+			   
+			         这是一个关于目录和目录比较的测试
+				     结束
+			   2. directory2
+				  1. a.txt
+		    		 应该杜绝文章中的错别字。
+			   
+			         但是无论使用
+			         *全拼，双拼
+			         *还是五笔
+			   
+			         是人就有可能犯错,软件更是如此。
+			   
+			         改正的成本可能会很高。
+			   
+			         但是“只要眼球足够多，所有的bug都好捉“，
+			         这就是开源的哲学之一
+				  2. c.txt
+		    		 我的路径是/directory2/c.txt。
+
+                     这是一个关于dir和dir比较的测试
+				     
+                     结束了。
+            2. 
+	  2. 研究对象
+		 1. 原始文件： a.txt
+			应该杜绝文章中的错别子。
+			   
+			但是无论使用
+			*全拼，双拼
+			*还是五笔
+			   
+			是人就有可能犯错,软件更是如此。
+			   
+			犯了错，就要扣工资！
+			   
+			改正的成本可能会很高。
+		 2. 目标文件: b.txt
+		    应该杜绝文章中的错别字。
+			   
+			但是无论使用
+			*全拼，双拼
+			*还是五笔
+			   
+			是人就有可能犯错,软件更是如此。
+			   
+			改正的成本可能会很高。
+			   
+			但是“只要眼球足够多，所有的bug都好捉“，
+			这就是开源的哲学之一
+		 3. 备注： 在 diff [选项] [FILE1] [FILE2] 中，定义FILE1为原始文件，FILE2为目标文件
+      3. 正常模式(normal diff)
+		 1. 命令：diff a.txt b.txt >c.txt
+		 2. 差异输出：
+			1c1
+			< 应该杜绝文章中的错别子。
+			---
+			> 应该杜绝文章中的错别字。
+			9,10d8
+			< 犯了错，就要扣工资！
+			< 
+			11a10,12
+			> 
+			> 但是“只要眼球足够多，所有的bug都好捉“，
+			> 这就是开源的哲学之一
+		 3. 要点
+			1. 正常模式的基本原则：需要对原始文件做出怎样的操作之后，才能用与目标文件匹配
+			2. 正常模式是diff命令的默认模式
+			3. 默认模式的输出结果比较符合计算机的思维方式，但是，不太直观，所以，提供了contex-mode和unified-mode，使得人们能更好的理解
+			4. git diff使用的是unified-mode,即，合并模式
+		 4. 语法分析：(正常模式语法分析的重要原则是：需要对原始文件做出怎样的操作“a d c”之后，才能用与目标文件匹配)
+			1. [数字1，数字2] + 字母 + [数字3,数字4]格式分析： 如上结果中的 9,10d8
+			   1. 字母: a=add ; c=change ; d=delete
+			   2. [数字1，数字2]：  9,10 表示原始文件中的第[9,10]行，注意是闭区间，包含第9行和第10行
+			   3. [数字3，数字4]：  8 表示目标文件中的第8行
+			   4. 9,10d8的含义：对原始文件的第9行到第10行，做出删除的操作后，可以同目标文件的第8行匹配
+			2. 以<开始的行： 标识这是属于原始文件专有的行
+			3. 以>开始的行： 标识这是属于目标文件专有的行
+			4. ---： 原始文件和目标文件的分隔符
+	  4. 上下文模式(context diff)
+		 1. 命令： diff -c a.txt b.txt >c.txt
+		 2. 差异输出：
+			*** a.txt	2017-09-30 16:11:33.961502252 +0800
+            --- b.txt	2017-09-30 16:12:27.869501287 +0800
+            ***************
+            *** 1,4 ****
+            ! 应该杜绝文章中的错别子。
+			
+            但是无论使用
+            *全拼，双拼
+            --- 1,4 ----
+            ! 应该杜绝文章中的错别字。
+			
+            但是无论使用
+			*全拼，双拼
+			***************
+			*** 6,11 ****
+			
+    	    是人就有可能犯错,软件更是如此。
+	  
+            - 犯了错，就要扣工资！
+            - 
+            改正的成本可能会很高。
+            --- 6,12 ----
+
+            是人就有可能犯错,软件更是如此。
+
+            改正的成本可能会很高。
+            + 
+            + 但是“只要眼球足够多，所有的bug都好捉“，
+            + 这就是开源的哲学之一
+	     3. 要点
+			1. 在输出的差异文件中，无论+ - !出现在原始文件块还是目标文件块中，其含义均是表示需要对原始文件做出操作才能与目标文件相匹配
+			2. 命令中的 -c 正是标识上下文模式的关键选项 
+		 4. 语法分析(上下文模式语法分析的重要原则是：需要对原始文件做出怎样的操作“+ - ！”之后，才能与目标文件匹配)
+			1. 原始文件标识： 第一行以3个***开头，标识的是原始文件，该行记录了原始文件的文件名和时间戳
+			2. 目标文件标识： 第二行以3个---开头，标识的是目标文件，该行记录了目标文件的文件名和时间戳
+			3. 分隔符： 第三行15个***************是分隔符
+			4. 原始文件，差异定位语句： *** 1,4 ****
+			   1. ***： 原始文件，差异定位语句开始标志
+			   2. 1,4： 本差异小节的内容，位于原始文件的第[1,4]行
+			   3. ****： 差异定位语句结束标志
+			5. 目标文件，差异定位语句： --- 1,4 ----
+			   1. ---： 目标文件，差异定位语句开始标志
+			   2. 1,4： 本差异小节的内容，位于目标文件的第[1,4]行
+			   3. ----： 差异定位语句结束标志
+			6. 两个差异定位语句之间的内容称为一个差异小节
+		    7. 差异小节操作符：
+			   1. + 表示，原始文件需要增加这一行，才能同目标文件匹配
+			   2. - 表示，原始文件需要删除这一行，才能同目标文件匹配
+			   3. ! 表示，原始文件需要经过修改，才能同目标文件匹配
+	  5. 合并模式(unified diff)
+	     1. 命令： diff -u a.txt b.txt >c.txt
+		 2. 差异输出：
+	  	 	--- a.txt	2017-09-29 14:55:40.091131063 +0800
+		 	+++ b.txt	2017-09-29 15:00:00.075126407 +0800
+		 	@@ -1,4 +1,4 @@
+		 	-应该杜绝文章中的错别子。
+		 	+应该杜绝文章中的错别字。
+			
+		 	但是无论使用
+		 	*全拼，双拼
+		 	@@ -6,6 +6,7 @@
+			
+		 	是人就有可能犯错,软件更是如此。
+			
+		 	-犯了错，就要扣工资！
+			- 
+	     	改正的成本可能会很高。
+			+ 
+         	+但是“只要眼球足够多，所有的bug都好捉“，
+	     	+这就是开源的哲学之一
+	     3. 要点
+			1. 合并模式是比较重要的模式，因为git集成的diff使用的就是该模式，因此务必掌握
+		    2. 命令中的 -u 正是标识合并模式的关键选项
+		 4. 语法分析
+			1. 原始文件标识： 第一行以3个---开头，标识的是原始文件，该行记录了原始文件的文件名和时间戳 
+		    2. 目标文件标识： 第二行以3个+++开始，标识的是目标文件，该行记录了目标文件的文件名和时间戳
+		    3. 原始文件专有行：以-号开始的行，表示只出现在原始文件中的行
+		    4. 目标文件专有行：以+号开始的行，表示只出现在目标文件中的行
+		    5. 公共行：以空格开始的行，表示在原始问价和目标文件中都出现的行
+		    6. 差异定位语句： @@ -6,6 +6,7 @@
+			   1. @@： 差异定位语句开始标志
+			   2. -6，6： 本差异小节的内容，位于原始文件中的位置是：从第6行开始,之后的6行
+			   3. +6,7： 本差异小节的内容，位于目标文件中的位置是：从第6行开始，之后的7行
+			   4. @@： 差异定位语句的结束标志
+		    7. 差异小节：两个差异定位语句之间的内容构成一个差异小节
+      6. 文件同目录之间的比较
+	     1. 命令： diff a.txt dir/
+		 2. a.txt会且仅会同dir/a.txt进行比较，即，即使dir/sub-dir/a.txt存在，且使用-r,比较也无法进行
+	  7. 目录同目录之间的比较
+	     1. 目录与目录比较的要领： 
+            1. 当原始目录和目标目录在各自的递归(指定-r选项)过程中,在相同深度的地方,出现名字相同的文件时，才会对这个名字相同的文件做比较
+			2. 当原始目录和目标目录在各自的递归(指定-r选项)过程中,在相同深度的地方，出现名字相同的目录时，才会各自进入这个名字相同的目录，并goto 1
+			3. 一旦在相同深度的地方，找到名字相同的文件时，比较的原则就演变为文件同文件之间的比较,将上面所述的3中模式！
+		 2. 目录比较时，2个有用的选项
+			1. -q: 只列举出两个文件有无差异，而不进行比较
+			2. -r: 递归比较目录中的子目录，其本质要点是：原始目录和目标目录，在相同深度的位置，是否有相同名字(文件，目录)
+	  8. 关于git diff
+   10. 打补丁：patch
+	   1. patch 是 diff 的反向操作
+	   2. 有了差异文件，和原始文件，能够将目标文件恢复
+4. 日志
+   1. git log --pretty=fuller
+	  commit ae1c32a2b284c241aed415ffb5b9bef4cf9f565f (HEAD -> master, origin/master, origin/HEAD)
+	  Author:     ytulinjiajun <ytulinjiajun@163.com>
+	  AuthorDate: Fri Sep 22 20:17:49 2017 +0800
+	  Commit:     ytulinjiajun <ytulinjiajun@163.com>
+	  CommitDate: Fri Sep 22 20:17:49 2017 +0800
+	  
+	  -----
+	  
+	  commit 8051ab98bf3b5d1e234ea8f0eb5efa145c1c5345
+	  Author:     ytulinjiajun <ytulinjiajun@163.com>
+	  AuthorDate: Fri Sep 22 19:35:59 2017 +0800
+	  Commit:     ytulinjiajun <ytulinjiajun@163.com>
+	  CommitDate: Fri Sep 22 19:35:59 2017 +0800
+   2. git log --pretty=online
+      ae1c32a2b284c241aed415ffb5b9bef4cf9f565f (HEAD -> master, origin/master, origin/HEAD) -----
+	  8051ab98bf3b5d1e234ea8f0eb5efa145c1c5345 -----
+	  228e998f2b5b1936fbd90f2441bf610d689caee1 -----
+	  58c9b9ed50b28b4e47302dbc4248686d9e835f27 evil-mode
+	  f9f1d307bb08c94f78e0714998759c1515e0f027 -----
+	  34b45e97083e705d98900aaa8ec9692bc27e89eb -----
+	  21c290a0cdebe3bebaff7148a5f69e4399a5ecc3 -----
+	  915cd2a2564a5b8a942301de31b993d0f6ec2636 -----
+   3. git log --stat
+	  commit ae1c32a2b284c241aed415ffb5b9bef4cf9f565f (HEAD -> master, origin/master, origin/HEAD)
+	  Author: ytulinjiajun <ytulinjiajun@163.com>
+	  Date:   Fri Sep 22 20:17:49 2017 +0800
+	  
+      -----
+	  
+      evil/config-evil-mode.el | 14 ++++++++++++++
+      1 file changed, 14 insertions(+)
+	  
+	  commit 8051ab98bf3b5d1e234ea8f0eb5efa145c1c5345
+	  Author: ytulinjiajun <ytulinjiajun@163.com>
+	  Date:   Fri Sep 22 19:35:59 2017 +0800
+	  
+	  -----
+	  
+	  evil/config-evil-nerd-commenter.el  |  4 ++++
+	  evil/config-evil-surround-plugin.el | 10 ++++++++++
+	  2 files changed, 14 insertions(+)
+5. 创建.gitignore文件：该文件里面记录着该仓库里面不想接受版本控制的文件及目录
+   Blog creation time:[2017-09-05 二 08:02]
 ** DONE [#D] theme:安装git										 :@Blog:@Git:
 	- State "DONE"       from "TODO"       [2017-09-05 二 09:28]
---fedora:dnf install git
---ubuntu:sudo apt install git
-Blog creation time:[2017-09-05 二 08:03]
+	Blog creation time:[2017-09-05 二 08:03]
 ** DONE [#D] theme:配置git										 :@Blog:@Git:
 	- State "DONE"       from "TODO"       [2017-09-05 二 09:28]
 1.设置 git 的user . name 和 user . email:
@@ -183,5 +542,5 @@ Blog creation time:[2017-09-05 二 08:07]
 ** DONE [#D] theme:场景分析										 :@Blog:@Git:
 	- State "DONE"       from "TODO"       [2017-09-05 二 09:28]
 *** 场景分析
-场景一：工作备份
-Blog creation time:[2017-09-05 二 08:08]
+	场景一：工作备份
+	Blog creation time:[2017-09-05 二 08:08]
