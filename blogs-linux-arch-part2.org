@@ -1,4 +1,4 @@
-* blogs-linux-arch-part2
+* blogs-linux-arch-part2 
 ** DONE [#D] theme:FTP服务 									   :@Blog:@Linux:
 	- State "DONE"       from "TODO"       [2017-09-05 二 09:29]
 *** 安装
