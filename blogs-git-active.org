@@ -1,27 +1,23 @@
 * blogs-git-active
 ** DONE [#D] theme:我的工具网站									 :@Blog:@Git:
 	- State "DONE"       from "TODO"       [2017-09-05 二 09:28]
---git 官方网站：http://git-scm.com
---廖雪锋：http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000
-Blog creation time:[2017-09-05 二 08:01]
+1. git 官方网站：http://git-scm.com
+2. 廖雪锋：http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000
+   Blog creation time:[2017-09-05 二 08:01]
 ** WAITTING [#D] Theme:基本概念								 :@Blog:@Git:
-    SCHEDULED:<2017-09-23 六>
-1. 工作区：一个等待进行版本控制的文件夹
-2. 版本库：当使用git init对一个工作区进行初始化之后，在工作区下产生一个名为.git的文件夹，该文件夹称为该工作区的版本库
-4. 原理：
-   
-   1. 待管理的文件位于工作区下面
-   2. 使用git add .将工作区内的所有文件添加至版本库里面的暂存区中，接受版本控制
-   3. 
-5. 正确使用版本控制系统的方法是：一次提交只完成一件事
+   SCHEDULED:<2017-09-23 六>
+1. 工作区：一个等待进行版本控制的目标目录
+2. 版本库：当使用git init对一个工作区进行初始化之后，在工作区下产生一个名为.git的文件夹，该文件夹就称为版本库
+3. 正确使用版本控制系统的方法是：一次提交只完成一件事
    1. 或是完成一个新功能
    2. 或是修改一个bug
    3. 或是写完一节内容
    4. 或是添加一副图片
    5. 注意：不要在下班才想起进行一次提交，那样的话git就降格成文件备份系统了
+4.  　
 Blog creation time:[2017-09-23 六 22:36]
-** WAITTING [#D] Theme:版本库workspace/.git/里面有什么？		 :@Blog:@Git:
-    SCHEDULED:<2017-09-26 二>
+** WAITTING [#D] Theme:对象库解析 								 :@Blog:@Git:
+   SCHEDULED:<2017-09-26 二>
 1. index:
    1. 该文件是一个二进制文件,本质上，是一个包含文件索引的目录树
    2. 使用git add xx-file之后，xx-file这个文件的文件名将会挂接在index这个文件的目录树上
@@ -40,95 +36,133 @@ Blog creation time:[2017-09-23 六 22:36]
 9. packed-refs
 10. description
 11. logs/
-
+12. 对象库解析
+	1. 对象库.git/obj/ ： 直观图解参看《git权威指南p87》
+	   1. 对象库的本质一个双向链表，当前分支(比如master)是该链表的头指针,HEAD则是指向头指针的指针
+	   2. 该链表的结点是一个又一个的commit，当前分支(比如master)可以在这些commit结点前后来回移动
+	   3. 结点的指针域的值是commit类型的ID，该双向链表的就是通过这些ID值组织起来的
+	   4. 结点的数据域由三部分构成：tree类型的ID,parent类型的ID,用户标识
+		  1. tree类型是一个结构体类型,其成员是blob类型的指针，blob类型可以理解为文件类型，所以这些blob类型的指针就指向真正的文件
+		  2. 每个blob类型的文件均有一个ID
+	2. 寻址ID：git cat-file -p ID
+	   1. ID值总是一个指针类型，要么指向commit结点，要么指向tree类型的结构体，要么指向blob类型的文件
+	   2. 我们总可以使用:git cat-file -p ID,来解析指针ID的值,取得该指针下的值
+	   3. 常规步骤是先使用git lg查看commit类型的ID,然后通过该ID就能逐一解析出tree类型的ID以及blobn类型的ID
+	3. 查看对象库中文件内容
+	   1. 查看当前分支对应的提交内容：git cat-file commit HEAD
+	   2. 查看指定分支(比如master)对应的提交: git cat-file commit master
+	   3. 查看当前分支下某文件的内容: git cat-file blob HEAD:<TAB补全>
+	   4. 查看指定分支(比如master)下某文件的内容： git cat-file blob master:<TAB补全>
+	4. 获取ID类型：git cat-file -t ID
+	   1. 从上面对象库的分析中可以知道，git提供了如下3种类型的ID，对于给定ID，使用git cat-file -t ID，来了解该ID的类型
+	   2. commit: 使用git lg查看到的ID就是commit类型的ID
+	   3. tree:  
+	   4. blob:
+	5. 获取,分支以及HEAD，的ID: git rev-parse master;  git rev_parse HEAD
+	6. HEAD,master,^,~的关系
+	   1. HEAD指向当前分支，所以，HEAD就理解为当前分支
+	   2. 分支是对象库的头指针，所以分支指向对象库的最新提交
+	   3. master属于分支，是分支里面比较特殊的一个分支，称为主分支
+	   4. 当且仅当存在master分支时，HAED自然就指向master
+	   5. HEAD～n,指向当前分支，最新提交的第n个父提交，HEAD~1 等价于 HEAD^
 Blog creation time:[2017-09-26 二 08:42]
-** WAITTING [#D] Theme:版本库的基本原理						   :@Blog:@Emacs:
-    SCHEDULED:<2017-09-25 一>
-1. 扫描工作区的改动
-   1. 执行git status 或者 git diff 命令时，将触发扫描工作区改动这一行为
-   2. 取版本库.git/index中记录的文件名和时间戳，以及文件的长度，依据文件名，找到工作区内与之对应的文件，对比时间戳
-   3. 若，发现，该文件在工作区中的当前时间戳与该文件在版本库中记录的时间戳不一致，则，判定为文件内容可能发生了改变，注意了，是可能改变而并非一定发生了改变，例如，你打开了一个文件，删除了一个字符，又重新输入该字符，此时，该文件的时间戳一定会更新的，因为你操作了文件，可是呢，内容却没有发生改变
-   4. 此时，会打开该文件名对应的，在工作区中和在版本库中的该文件，两者进行比较(注意了，git管理的是修改而不是文件，所以该文件在版本库中不是同在工作区中一样的格式，这里暂且这么理解也没什么问题，因为更细致且复杂的工作由git这个系统的代码所承担了)，从而进一步进行判断该文件的内容是否真的发生了改变
-   5. 如果该文件的内容没有发生改变，则将该文件的当前时间戳替换.git/index中该文件较老的那个时间戳
-2. 将工作区中的文件添加至版本库
-   1. 执行git add xx-file命令时，发生了两件事，第一，xx-file文件名被挂接到index文件的目录树上面；第二，xx-file文件内容被写入到对象库.git/objects/中
-Blog creation time:[2017-09-25 一 16:57]
+** DONE [#D] Theme:配置 										 :@Blog:@Git:
+1. 本地配置：　git config -e
+   1. 配置文件路径：workspace/.git/config
+   2. 作用域：该文件下的配置，只在该workspace／中有效
+   3. 优先级：最高
+2. 全局配置：　git config --global -e
+   1. 配置文件路径：　~/.gitconfig　
+   2. 作用域：该文件下的配置，对当前用户的所有的版本库均有效
+   3. 优先级：高于系统配置，低于全局配置
+   4. 用户标识配置：git config --global user.name "linjiajun"
+   5. 用户邮件配置：git config --global user.email "ytulinjiajun@163"
+   6. 开启颜色显示：git config --global color.ui true
+   7. 说明：用户标识和用户邮件必须进行配置，因为git会使用到这两个信息来标识提交者身份
+3. 系统配置：　git config --system -e
+   1. 配置文件路径：　/etc/gitconfig
+   2. 作用域：该文件下的配置，对所有用户的所有版本库均有效
+   3. 优先级：最低
+   4. 配置别名：git config --system alias.sta status
+4. 读取配置：　git config --global user.name 回车
+5. 更改配置：　git config --system alias.co checkout
+6. 删除配置：　git config --unset core.bare
+7. 备注： 建议将配置文件上传到github,用到时直接clone到指定路径即可！
+** DONE [#D] Theme:SSH											  :Blog:@Git:
+1. 生成SSH秘钥： ssh-keygen -t rsa -C "ytulinjiajun@163.com"
+   1. -t  用于指定加密类型，常见的有RSA和DSA加密方式，默认是DSA;
+   2. -C 作为批注
+   3. 三次回车，按默认路径.ssh以及不需要密码安装即可
+2. 在Github上添加密钥： Account Setting -> SSH Key -> Add SSH Key
+   复制~/.ssh/ssh-ras 的内容到 key 区域
+3. 验证SSH配置是否成功： ssh -T git@github.com
+   Hi username! You've successfully authenticated ,but GitHub does not provide shell access
+5. 创建一个本地版本库： git init
+6. 关联远程库： git rmt git@github.com:ytulinjiajun/GitHub-Lin.git
+6. 从github克隆一个版本库验证SSH配置是否成功：git clone git@github.com:ytulinjiajun/GitHub-Lin.git
+Blog creation time:[2017-09-05 二 08:04]
+** DONE [#D] Theme:创建版本库　									   :Blog:@Git:
+1. git init: 其结果是在工作区中生成版本库：.git/
+2. git rev-parse --git-dir: 该操作可以在工作区的任何子目录下执行，其结果是显示该工作区的版本库的路径
+3. git rev-parse --show-toplevel: 该操作可以在工作区的任何子目录下执行，其结果是显示该版本控制系统的根路径
+4. git rev_parse --show-prefix: 该操作可以在工作区的任何子目录下执行，其结果是显示相对于该版本控制系统的根路径的相对目录
+5. git rev_parse --show-cdup: 该操作可以在工作区的任何子目录下执行，其结果是显示当前目录回退到版本控制系统根的深度
+** DONE [#D] Theme:查看状态										 :@Blog:@Git:
+    SCHEDULED:<2017-10-05 四>
+	- State "DONE"       from "WAITTING"   [2017-10-05 四 21:45]
+1. 常规：git status
+2. 精简(推荐)：git status -sb
+   1. 红色： 表示该文件需要执行add操作
+   2. 绿色： 表示该文件已经执行过add操作，现在可以执行commit操作
+   3. 空： 表示工作区干净
+   4. ??：表示该文件是一个未被追踪的文件(只可能是红色)
+   5. A： 表示该文件还从未进行过commit(只可能是绿色)
+   6. M: 表该文件发生了修改(红色和绿色均可能)
+   7. D: 表示该文件被删除(红色和绿色均可能)
+Blog creation time:[2017-10-05 四 21:41]
+** DONE [#D] Theme:浏览											 :@Blog:@Git:
+   SCHEDULED:<2017-10-05 四>
+1. 浏览文件内容
+   1. 浏览工作区中的文件内容：　less a.txt
+   2. 浏览暂存区中的文件内容：　git diff
+   3. 浏览对象库中的文件内容：　git cat-file blob commit-ID:a.txt
+2. 浏览目录树
+   1. 浏览工作区中的目录树： ls -al
+   2. 浏览暂存区中的目录树： git ls-files -s
+	  第三列是暂存区编号不是文件大小
+   3. 浏览指定提交的目录树： git ls-tree -lrt commit-ID
+	  1. 第一列100644是文件的属性：rw-r--r--
+	  2. 第二列标识文件还是目录：blob，文件，tree,目录
+	  3. 第三列标识该文件在当前分支中的40为SHA1哈希值ID
+	  4. 第四列是文件大小(Byte)
+	  5. 第五列是文件名
+3. 浏览对象库
+   1. ID的类型: commit-ID,tree-ID,blob-ID
+   2. ID的本质: 指针
+   3. 对象库本质: 一个双向链表,其节点是提交, git lg 可以查看到这些节点的ID
+   4. 版本库的构成: HEAD指针,分支指针头,对象库
+   5. "提交节点"的成分: 前驱指针域(id),数据域(tree,author),后继指针域(parent)
+   6. 数据域中的tree: tree是一个tree-ID,因此,是一个指针,这个tree指向一个目录树索引,该目录树索引和暂存区中的目录树索引经常发生交互,它们均指向add进对象库中真正的文件 
+   7. 获取指定ID的类型：git cat-file -t ID, 其返回值是: commit,tree,blob
+   8. 解引用commit-ID: git cat-file -p commit-ID
+	  1. 使用 git lg 可以查看到对象库的所有commit-ID
+	  2. 其效果与 git cat-file commit commit-ID一致
+	  3. 解引用的结果: 得到"提交节点"的成分,包括tree-ID
+   9. 解引用tree-ID: git cat-file -p tree-ID
+	  1. 其效果与 git ls-tree -lrt commit-ID 一样
+	  2. 解引用的结果: 可以查看对象库中commit-ID下数据域tree-ID指向的目录树下面的所有blob-ID
+   10. 解引用blob-ID: git cat-file -p blob-ID
+	   1. 其效果与 git cat-file blob commit-ID:<tab补全>一致
+	   2. 解引用的结果: 可以查看tree-ID下面所有blob-ID指向的文件的真正内容
+Blog creation time:[2017-10-05 四 21:46]
+
+
+
+
+
 
 ** DONE [#D] theme:命令 										 :@Blog:@Git:
-1. 安装
-   - 检查是否安装：dpkg -s git
-   - 安装： sudo apt-get install git
-   - 查看版本： git --version
-2. 配置
-   1. 单一版本库的配置：workspace/.git/config
-	  1. 打开并编辑：git config -e
-	  2. ...
-   2. 全局配置：～/.gitconfig
-	  1. 打开并编辑：git config -e --global
-	  2. 配置标识
-		 - 用户标识：git config --global user.name "linjiajun"
-		 - 用户邮件：git congih --global user.email "ytulinjiajun@163"
-		 - 标识的意义：指出 提交者 的身份， 标识是非常重要的，没有标识，git便没法识别提交者的身份
-		 - 标识适合设置在全局文件中，因为全局文件存在于用户家目录下面，这样便同linux的多用户属性一致，当然了，也可以配置在版本库文件中
-      3. 开启颜色显示：
-	     - git config --global color.ui true
-   3. 系统级配置：/etc/gitconfig
-	  1. 打开并编辑：git config -e --system
-	  2. 配置别名
-	     - git config --system alias.sta status
-	     - git config --system alias.ci commit
-	  	 - git config --system alias.co checkout
-	  	 - git config --system alias.br branch
-   4. 读取某一配置项的值
-	  1. git config core.bare
-	  2. git config --global user.name
-	  3. git config --system alias.sta
-   5. 更改某一配置项的值
-	  1. git config core.bare true
-	  2. git config --global user.name ljj
-	  3. git config --system alias.sta status
-   6. 删除某一配置项：
-	  1. git config --unset core.bare
-	  2. git config --unset --global user.name
-	  3. git config --unset --system alias.sta
-   7. 直接使用配置文件
-      - git完毕后立即可以使用的一个指令是:clone
-      - 将自己保存在github上的配置文件clone到～目录下面:git clone git@github.com:xxx/.gitconfig
-   8. 配置文件的格式：INI文件格式
-   9. 优先级:版本库 > 全局 > 系统，高优先级的文件中的配置可以覆盖低优先级文件中的配置
-   10. git config命令可以操作任何其他的INI文件
-	   1. 读取配置文件test.ini中的配置：$ GIT_CONFIG=test.ini  git config a.b.c.d
-	   2. 向配置文件test.ini中写配置：$ GIT_CONFIG=test.ini  git config a.b.c.d "hello world"
-3. 对象库解析
-   1. 对象库.git/obj/ ： 直观图解参看《git权威指南p87》
-	  1. 对象库的本质一个双向链表，当前分支(比如master)是该链表的头指针,HEAD则是指向头指针的指针
-	  2. 该链表的结点是一个又一个的commit，当前分支(比如master)可以在这些commit结点前后来回移动
-	  3. 结点的指针域的值是commit类型的ID，该双向链表的就是通过这些ID值组织起来的
-	  4. 结点的数据域由三部分构成：tree类型的ID,parent类型的ID,用户标识
-		 1. tree类型是一个结构体类型,其成员是blob类型的指针，blob类型可以理解为文件类型，所以这些blob类型的指针就指向真正的文件
-		 2. 每个blob类型的文件均有一个ID
-   2. 寻址ID：git cat-file -p ID
-      1. ID值总是一个指针类型，要么指向commit结点，要么指向tree类型的结构体，要么指向blob类型的文件
-	  2. 我们总可以使用:git cat-file -p ID,来解析指针ID的值,取得该指针下的值
-	  3. 常规步骤是先使用git lg查看commit类型的ID,然后通过该ID就能逐一解析出tree类型的ID以及blobn类型的ID
-   3. 查看对象库中文件内容
-	  1. 查看当前分支对应的提交内容：git cat-file commit HEAD
-	  2. 查看指定分支(比如master)对应的提交: git cat-file commit master
-	  3. 查看当前分支下某文件的内容: git cat-file blob HEAD:<TAB补全>
-	  4. 查看指定分支(比如master)下某文件的内容： git cat-file blob master:<TAB补全>
-   4. 获取ID类型：git cat-file -t ID
-      1. 从上面对象库的分析中可以知道，git提供了如下3种类型的ID，对于给定ID，使用git cat-file -t ID，来了解该ID的类型
-      2. commit: 使用git lg查看到的ID就是commit类型的ID
-      3. tree:  
-      4. blob:
-   5. 获取,分支以及HEAD，的ID: git rev-parse master;  git rev_parse HEAD   
-   6. HEAD,master,^,~的关系
-	  1. HEAD指向当前分支，所以，HEAD就理解为当前分支
-	  2. 分支是对象库的头指针，所以分支指向对象库的最新提交
-	  3. master属于分支，是分支里面比较特殊的一个分支，称为主分支
-	  4. 当且仅当存在master分支时，HAED自然就指向master
-	  5. HEAD～n,指向当前分支，最新提交的第n个父提交，HEAD~1 等价于 HEAD^
-4. 操作
+3. 基础操作
    1. 概念
       1. 环节 
 	     1. 工作区  ----(1)--->  暂存区
@@ -139,22 +173,6 @@ Blog creation time:[2017-09-25 一 16:57]
 	     6. 分支    ----(6)--->  工作区
 	  2. 研究清楚，标编号上面6个环节中：单个文件的传递，所有文件传递，的相关操作方法，git的知识点就全了
 	  3. 版本库干净： 当工作区 = 暂存区 = 对象库（最新）提交 ===> 版本库干净（使用git status无任何状态）
-   2. 创建版本库
-      1. git init: 其结果是在工作区中生成版本库：.git/
-	  2. git rev-parse --git-dir: 该操作可以在工作区的任何子目录下执行，其结果是显示该工作区的版本库的路径
-	  3. git rev-parse --show-toplevel: 该操作可以在工作区的任何子目录下执行，其结果是显示该版本控制系统的根路径
-	  4. git rev_parse --show-prefix: 该操作可以在工作区的任何子目录下执行，其结果是显示相对于该版本控制系统的根路径的相对目录
-	  5. git rev_parse --show-cdup: 该操作可以在工作区的任何子目录下执行，其结果是显示当前目录回退到版本控制系统根的深度
-   3. 查看状态
-	  1. 常规：git status
-	  2. 精简(推荐)：git status -s -b
-	     1. 红色： 表示该文件需要执行add操作
-		 2. 绿色： 表示该文件已经执行过add操作，现在可以执行commit操作
-		 3. 空： 表示工作区干净
-		 4. ??：表示该文件是一个未被追踪的文件(只可能是红色)
-		 5. A： 表示该文件还从未进行过commit(只可能是绿色)
-		 6. M: 表该文件发生了修改(红色和绿色均可能)
-		 7. D: 表示该文件被删除(红色和绿色均可能)
    4. 浏览目录树
 	  1. 浏览工作区中的目录树： ls -al
 	  2. 浏览暂存区中的目录树： git ls-files -s
@@ -196,13 +214,17 @@ Blog creation time:[2017-09-25 一 16:57]
 		  4. 结果： 工作区中的文件内容，同暂存区中目录树索引下的文件内容保持一致
 		  5. 后果： 这意味着会丢失工作区中未添加到暂存区中的修改 
 	   2. 从对象库回滚至暂存区
-		  1. 命令： git reset commit-ID a.txt
-		  2. 说明：
-			 1. 该操作不会重置对象库中的提交，更不会更改工作区文件的内容
-			 2. 只能回滚某个文件，而不能回滚所有(回滚所有，相当于在暂存区重新产生一个对象库已经存在的提交，对象库已经存在了，所以回滚所有的本质就是重置到对象库的某一版本)
-		  3. 结果： 该操作用对象库commit-ID下的a.txt替换掉暂存区中的a.txt
-		  4. 后果： 会丢失在执行该操作之前，使用命令git add a.txt到暂存区的修改
-		  5. 备注： 该操作同3-1中回滚单个文件最大的区别在于，该操作不会更改工作区文件的内容
+		  1. 回滚单个文件： 
+			 1. 命令： git reset commit-ID a.txt
+			 2. 说明： 回滚单个文件不会丢失对象库中的最新提交到commit-ID这一段之间的commit，因为只回滚个别文件，说明用户有意要和对象库中的commit-ID存在差异，所以，回滚后的a.txt和暂存区的其他文件构成另一个commit
+			 3. 结果： 该操作用对象库commit-ID下的a.txt替换掉暂存区中的a.txt
+			 4. 后果： 会丢失在执行该操作之前，使用命令git add a.txt到暂存区的修改
+			 5. 备注： 该操作同3-1中回滚单个文件最大的区别在于，该操作不会更改工作区文件的内容 
+		  2. 回滚所有文件： 
+			 1. 命令： git reset commit-ID
+			 2. 说明： 该操作让对象库中的commit-ID提交同暂存区保持一致,但是,对象库比commit-ID还新的提交有可能存在，鉴于保持一致的理念，对象库只能将最新版本重置到commit-ID
+		     3. 结果： 该操作用对象库commit-ID，替换整个暂存区，即，暂存区中的索引与commit-ID中tree指针下的索引，完全一致
+		     4. 后果： 丢失最近一次add到暂存区的修改以及暂存区尚未提交的commit，丢失最新的commit到待重置的commit之间的这一段commit
 	   3. 从对象库回滚至(暂存区+工作区)
 		  1. 回滚单个文件： git checkout commit-ID a.txt
 		  2. 回滚所有文件： git checkout commit-ID .
@@ -274,6 +296,32 @@ Blog creation time:[2017-09-25 一 16:57]
 	   3. 标准的diff和patch存在一个局限：无法对二进制文件进行处理
 	   4. git对二进制文件的比较提供了支持：git diff
 	   5. git diff命令使用的是标准diff中的合并模式(unified mode)的语法格式，相当于diff -u
+4. 分支
+   1. 分支的构成
+      1. 分支的祖先起点：主分支上的第一次提交，是任意分支的祖先起点
+	  2. 分支的起点： 每个分支，都有一个分支起点。任意分支上的任意提交，都可以是某指定分支的起点
+	  3. 分支指针头： 每个新建的分支，都有一个分支指针。分支指针头总是指向该分支的最新提交
+	  4. 空分支：只有分支起点和分支指针构成的分支称为一个空分支
+	  5. 分支指针头的生命周期：分支指针在该分支被创建的时候产生，在该分支合并到其起点所在的分支时，分支指针死亡
+	  6. 分支的构成：任意一个新创建的分支，由：分支起点 + 分支提交结点 + 指向分支最新提交的分支指针头 构成
+   2. 分支的背景知识
+	  1. HEAD，总是指向当前分支的分支指针头
+	  2. 分支指针头，总是指向自己分支所有提交中的最新提交
+	  3. 提交： 提交永远都是HEAD的“跟屁虫”，只会盯着HEAD,HEAD在哪个分支，该提交就挂接在这个分支最新提交的后面成为最新提交
+      4. 切换到新分支的本质是让HEAD指向新分支的分支指针头 
+   3. 查看版本库的分支：git branch -v
+   4. 创建分支：git branch new-br
+   5. 切换到新分支：git checkout new-br
+   6. 创建分支并切换到新分支:git checkout -b new-br
+   7. 切换到“分离头指针状态”
+      1. 命令： git checkout commit-ID
+      2. 通常，HEAD总是指向分支指针头，表示该分支指针头指向的分支是当前分支，而让HEAD指向提交，表示版本库处于“分离头指针状态” 即，'detached HEAD'		 
+      3. ”分离头指针状态“的特点：
+	     1. 可以检查，测试，提交而不影响任何分支
+	     2. 切换会分支之后，在分离头指针状态下的提交在log中不再显示，提交也消失了，但是，依然存在版本库中，但是，当reflog中的该提交日志过期之后，这个提交随时会彻底删除
+	  4. 合并“分离头指针状态”的提交至主分支master
+		 1. 命令：git merge new-commit-ID
+		 2. 由于在“分离头指针状态”所做出的提交除了能被new-commit-ID所访问到之外，就无法通过分支访问。另外，该提交随时会在版本库中彻底消失，如果这个提交对master很重要的话，可以通过该操作将这个提交合并到master上即可
 5. 日志
    1. 在执行commit命令之后，就会在log中产生一条提交信息
    2. git log --stat
@@ -323,59 +371,11 @@ Blog creation time:[2017-09-25 一 16:57]
    5. git log -l --pretty=raw
 6. 创建.gitignore文件：该文件里面记录着该仓库里面不想接受版本控制的文件及目录
    Blog creation time:[2017-09-05 二 08:02]
-** DONE [#D] theme:安装git										 :@Blog:@Git:
-	- State "DONE"       from "TODO"       [2017-09-05 二 09:28]
-	Blog creation time:[2017-09-05 二 08:03]
-** DONE [#D] theme:配置git										 :@Blog:@Git:
-	- State "DONE"       from "TODO"       [2017-09-05 二 09:28]
-1.设置 git 的user . name 和 user . email:
-    git config --global user.name "linjiajun" ;
-    git config --global  user.email "ytulinjiajun@163.com" ;
-备注：这两个配置项会出现在git的配置文件中，当提交一个版本时，会从配置文件中取出这个信息，
-若不配置这两个选项，则版本信息中会出现错误的提交者信息;
-
-2.生成SSH秘钥：
-生成：ssh-keygen -t rsa -C "ytulinjiajun@163.com"
-其中：-t  用于指定加密类型，常见的有RSA和DSA加密方式，默认是DSA;
--C 作为批注
-三次回车，按默认路径.ssh以及不需要密码安装即可
-
-3.在GitHub上添加密钥：
-Account Setting -> SSH Key -> Add SSH Key ;
-复制~/.ssh/ssh-ras 的内容到 key 区域
-
-4.验证SSH配置是否成功：
-ssh -T git@github.com
-Hi username! You've successfully authenticated ,but GitHub does not # provide shell access 
-
-5.创建一个本地版本库：
-git init
-
-6.关联远程库：
-git rmt git@github.com:ytulinjiajun/GitHub-Lin.git
-
-6.从github克隆一个版本库验证SSH配置是否成功：
-
-git clone git@github.com:ytulinjiajun/GitHub-Lin.git@github
-
-7.配置别名：
-方法一：使用命令
-git config --global alias.sta status
-方法二：修改配置文件
-配置文件路径：～/.gitconfig
-[alias]
-	sta = status
-	ci = commit
-	rmt = remote add origin
-	ps = push origin 
-	co = checkout
-	br = branch
-	mg = merge --no-ff 
-	unstage = reset HEAD
-	rmt =  remote add origin 
-	cl =  clone 
-	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
-Blog creation time:[2017-09-05 二 08:04]
+** DONE [#D] theme:安装										 :@Blog:@Git:
+1. 检查是否安装：dpkg -s git
+2. 安装： sudo apt-get install git
+3. 查看版本： git --version
+Blog creation time:[2017-09-05 二 08:03]
 ** DONE [#D] theme:创建版本库									 :@Blog:@Git:
 	- State "DONE"       from "TODO"       [2017-09-05 二 09:28]
 --在指定位置新建一个目录：mkdir git-learn
