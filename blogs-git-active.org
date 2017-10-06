@@ -14,7 +14,15 @@
    3. 或是写完一节内容
    4. 或是添加一副图片
    5. 注意：不要在下班才想起进行一次提交，那样的话git就降格成文件备份系统了
-4.  　
+4. 环节
+   1. 工作区  ----(1)--->  暂存区
+   2. 暂存区  ----(2)--->  分支
+   3. 工作区  ----(3)--->  分支
+   4. 暂存区  ----(4)--->  工作区
+   5. 分支    ----(5)--->  暂存区
+   6. 分支    ----(6)--->  工作区 　
+   7. 研究清楚，标编号上面6个环节中：单个文件的传递，所有文件传递，的相关操作方法，git的知识点就全了
+5. 版本库干净： 当工作区 = 暂存区 = 对象库（最新）提交 ===> 版本库干净（使用git status无任何状态）
 Blog creation time:[2017-09-23 六 22:36]
 ** WAITTING [#D] Theme:对象库解析 								 :@Blog:@Git:
    SCHEDULED:<2017-09-26 二>
@@ -66,6 +74,11 @@ Blog creation time:[2017-09-23 六 22:36]
 	   4. 当且仅当存在master分支时，HAED自然就指向master
 	   5. HEAD～n,指向当前分支，最新提交的第n个父提交，HEAD~1 等价于 HEAD^
 Blog creation time:[2017-09-26 二 08:42]
+** DONE [#D] Theme:安装 										 :@Blog:@Git:
+1. 检查是否安装：dpkg -s git
+2. 安装： sudo apt-get install git
+3. 查看版本： git --version
+Blog creation time:[2017-09-05 二 08:03]
 ** DONE [#D] Theme:配置 										 :@Blog:@Git:
 1. 本地配置：　git config -e
    1. 配置文件路径：workspace/.git/config
@@ -119,6 +132,7 @@ Blog creation time:[2017-09-05 二 08:04]
    5. A： 表示该文件还从未进行过commit(只可能是绿色)
    6. M: 表该文件发生了修改(红色和绿色均可能)
    7. D: 表示该文件被删除(红色和绿色均可能)
+3. 原则: 使用该操作,只要有输出, 那就表明工作区,暂存区,最新提交三者之间文件内容不一致
 Blog creation time:[2017-10-05 四 21:41]
 ** DONE [#D] Theme:浏览											 :@Blog:@Git:
    SCHEDULED:<2017-10-05 四>
@@ -155,174 +169,205 @@ Blog creation time:[2017-10-05 四 21:41]
 	   1. 其效果与 git cat-file blob commit-ID:<tab补全>一致
 	   2. 解引用的结果: 可以查看tree-ID下面所有blob-ID指向的文件的真正内容
 Blog creation time:[2017-10-05 四 21:46]
-
-
-
-
-
-
-** DONE [#D] theme:命令 										 :@Blog:@Git:
-3. 基础操作
-   1. 概念
-      1. 环节 
-	     1. 工作区  ----(1)--->  暂存区
-	     2. 暂存区  ----(2)--->  分支
-	     3. 工作区  ----(3)--->  分支
-	     4. 暂存区  ----(4)--->  工作区
-	     5. 分支    ----(5)--->  暂存区
-	     6. 分支    ----(6)--->  工作区
-	  2. 研究清楚，标编号上面6个环节中：单个文件的传递，所有文件传递，的相关操作方法，git的知识点就全了
-	  3. 版本库干净： 当工作区 = 暂存区 = 对象库（最新）提交 ===> 版本库干净（使用git status无任何状态）
-   4. 浏览目录树
-	  1. 浏览工作区中的目录树： ls -al
-	  2. 浏览暂存区中的目录树： git ls-files -s
-		 1. 第三列是暂存区编号不是文件大小
-	  3. 浏览当前分支中的目录树： git ls-tree -l -rt HEAD
-		 1. 第一列100644是文件的属性：rw-r--r--
-		 2. 第二列标识文件还是目录：blob，文件，tree,目录
-		 3. 第三列标识该文件在当前分支中的40为SHA1哈希值ID
-		 4. 第四列是文件大小(Byte)
-		 5. 第五列是文件名
-   5. 添加至暂存区
-      1. 添加单个文件： git add a.txt
-	  2. 添加所有文件： git add -A
-	  3. 所有文件中，添加已经被跟踪过的文件： git add -u
-   6. 撤销出暂存区
-	  1. 撤销单个文件的add： git reset -- a.txt
-	  2. 撤销所有文件的add: git reset -- .
-	  3. 该操作是add的逆,所以，对暂存区和对象库无任何影响
-   7. 提交
-	  1. 命令： git commit -m "Initialized"
-	  2. 提交操作发生在暂存区到分支这个环节上，所以，只会将存在暂存区内的记录进行提交
-	  3. 该命令将暂存区下的所有目录树索引，全部复制，黏贴到当前分支的目录树索引上,构成一个commit记录
-	  4. 该命令执行之后，暂存区和当前分支就有了相同的目录树索引，均指向版本库的.git/object/下的文件
-   8. 撤销提交
-	  1. 命令： git reset --soft HEAD^
-	  2. 该操作是commit的逆，对暂存区和工作区文件的内容没有任何影响，主要用于想要重新书写提交说明时使用
-   9. 修补提交
-	  1. 命令： git commit --amend
-	  2. 该命令本质上相当于这两条命令的组合：git reset --soft HEAD^ ; git commit -e -F .git/COMMIT_EDITMSG(保存了上次的提交日志)  
-   10. 比较差异
-	   1. 比较暂存区与工作区的差异：git diff (原始对象是暂存区)
-	   2. 比较当前分支与暂存区的差异：git diff --cached (原始对象是对象库最新提交)
-	   3. 比较当前分支与工作区的差异：git diff commit-ID (原始对象是对象库commit-ID)
-   11. 回滚
-	   1. 从暂存区回滚至工作区
-		  1. 回滚单个文件： git checkout -- a.txt
-		  2. 回滚所有文件： git checkout .
-		  3. 说明：该操作会用暂存区的指定文件或者全部文件替换工作区的文件
-		  4. 结果： 工作区中的文件内容，同暂存区中目录树索引下的文件内容保持一致
-		  5. 后果： 这意味着会丢失工作区中未添加到暂存区中的修改 
-	   2. 从对象库回滚至暂存区
-		  1. 回滚单个文件： 
-			 1. 命令： git reset commit-ID a.txt
-			 2. 说明： 回滚单个文件不会丢失对象库中的最新提交到commit-ID这一段之间的commit，因为只回滚个别文件，说明用户有意要和对象库中的commit-ID存在差异，所以，回滚后的a.txt和暂存区的其他文件构成另一个commit
-			 3. 结果： 该操作用对象库commit-ID下的a.txt替换掉暂存区中的a.txt
-			 4. 后果： 会丢失在执行该操作之前，使用命令git add a.txt到暂存区的修改
-			 5. 备注： 该操作同3-1中回滚单个文件最大的区别在于，该操作不会更改工作区文件的内容 
-		  2. 回滚所有文件： 
-			 1. 命令： git reset commit-ID
-			 2. 说明： 该操作让对象库中的commit-ID提交同暂存区保持一致,但是,对象库比commit-ID还新的提交有可能存在，鉴于保持一致的理念，对象库只能将最新版本重置到commit-ID
-		     3. 结果： 该操作用对象库commit-ID，替换整个暂存区，即，暂存区中的索引与commit-ID中tree指针下的索引，完全一致
-		     4. 后果： 丢失最近一次add到暂存区的修改以及暂存区尚未提交的commit，丢失最新的commit到待重置的commit之间的这一段commit
-	   3. 从对象库回滚至(暂存区+工作区)
-		  1. 回滚单个文件： git checkout commit-ID a.txt
-		  2. 回滚所有文件： git checkout commit-ID .
-		  3. 说明：
-			 1. 如果commit-ID不是最新提交(HEAD->master)而是之前的提交，那么，在回滚后，暂存区会与对象库的最新提交不一致而不干净，要求再次提交
-			 2. 该操作会用对象库中的一个commit-ID节点在当前分支下的目录树索引，替换暂存区下（当前存在的文件）的索引，用索引下的全部文件替换工作区下（对应）的文件
-			 3. 注意：2中用小括号括起来的两个关键字非常重要：在进行替换时，如果暂存区或者工作区中新增加了对象库提交中没有的文件，此时的替换只会替换对象库，工作区，暂存区中公共的文件，差异的文件内容以及文件状态不变
-		  4. 结果：工作区中的文件内容，暂存区目录树索引下的文件的内容，同commit-ID节点中tree元素指向的目录树索引下的blob文件内容一致，而那些只在工作区下或者暂存区下才有的而commit-ID这个提交中没有的文件，依旧保持其该有的状态以及内容
-		  5. 后果：工作区中未add的改动以及暂存区中未commit的改动，如果发生改动的文件在commit-ID这个提交下存在，那么，这些改动会被commit-ID下的文件内容覆盖
-   12. 重置
-	   1. 软重置
-		  1. 命令： git reset --soft commit-ID
-		  2. “软”的意义：只改变对象库中HEAD->master对commit-ID的指向，不改变暂存区和工作区文件的内容
-		  3. 使用场合：当对最新提交的提交说明或者提交的更改不满意时，撤销最新提交以便重新提交
-	   2. 混合重置
-		  1. 命令： git reset --mixed commit-ID(默认缺省--mixed)
-		  2. “混合”的意义： 不改变工作区文件的内容，但是会改变暂存区的内容
-		  3. 说明： 该操作会用对象库中的一个commit-ID节点在当前分支下的目录树索引，替换整个暂存区，即，暂存区中的索引与commit-ID中tree指针下的索引，完全一致
-		  4. 结果： 暂存区与commit-ID的文件内容一致，工作区的文件的内容还是重置前的内容，但是状态变为待add的状态
-		  5. 后果：丢失最近一次add到暂存区的修改以及暂存区尚未提交的commit，丢失最新的commit到待重置的commit之间的这一段commit
-	   3. 强制重置
-		  1. 命令： git reset --hard commit-ID
-		  2. “强制”的意义： 工作区和暂存区的文件内容都会被commit-ID下的文件内容覆盖
-		  3. 结果：工作区，暂存区，与commit-ID的文件内容一致
-		  4. 后果： 会丢失工作区中尚未add的改动以及暂存区尚未提交的commit，丢失最新的commit到待重置的commit之间的这一段commit
-		  5. 备注： 可以使用git reset --hard HEAD来彻底恢复到上一次提交的那个干净的版本
-	   4. 挽救错误的重置
-		  1. 重置最显著的特点就是，最新的commit-ID到待重置的commit-ID这一段之间的commit会丢失，因此，重置行为是版本库中最危险的行为，因为会丢失提交
-		  2. 使用reflog来挽救错误的重置
-			 1. 从日志中获取最新ID：git reflog show | head -5
-			 2. 找到eb3bcab master@{0}: reset: moving to HEAD^所在行
-			 3. 由于该日志是将最新的改变放在前面，因此，这一行的下面一行就是重置前的commit，假设为master@{2}所在行
-			 4. 再次重置：git reset --hard master@{2}
-   13. 保存工作进度
-	   1. 背景：
-		  1. 正在当前分支作业，工作区的修改尚未完成，突然出现一个紧急任务，需要重新创建一个分支，然后切换到该分支处理这个紧急任务
-		  2. 但是，由于之前分支的任务未完成导致工作区不干净，切换到该分支之后，工作区的修改是之前分支的，所以，这个紧急任务和之前的任务混杂在一起了，这是非常糟糕的
-		  3. git的处理方案是：在切换到处理紧急任务的分支之前，先保存一下工作进度，然后切换到分支，此时在新分支内工作区就是干净的了
-		  4. 立即在新分支里面处理紧急任务，处理完毕之后，切换回之前的分支，然后恢复任务进度
-		  5. 继续之前的任务进度完成任务
-	   2. 实现：
-		  1. 保存当前分支的任务进度：git stash
-		  2. 切换到新分支：git checkout <new_branch>
-		  3. 在新分支中完成紧急任务
-		  4. 切换回之前的分支：git checkout <orignal_branch>
-		  5. 恢复之前保存的任务进度：git stash pop
-   14. 删除
-	   1. 删除工作区
-		  1. 删除工作区单个文件
-		  2. 删除工作区全部文件
-		  3. 删除工作区中所有未跟踪的文件： git clean -fd
-		  4. 说明：
-	   2. 剔除暂存区索引
-		  1. 剔除暂存区单个个文件的索引： git rm -rf --cached a.txt
-		  2. 剔除暂存区所有文件索引: git rm -rf --cached *
-		  3. 说明：
-			 1. 该操作仅仅是将某文件从暂存区的索引树里面剔除出去，但是该文件的内容依旧是当前工作区下文件的最新内容
-			 2. 如果该文件之前从未被commit到主分支过，则该操作使得文件变成一个未被跟踪的文件；
-			 3. 如果该文件之前被commit到主分支过，则该操作使得文件变成一个未被跟踪的文件的同时，会要求commit暂存区的剔除操作到分支，以使得暂存区的索引和分支的索引保持一致
-			 4. 如3所述，当然，你也可以选择不提交这个剔除操作到分支，重新编辑该文件然后add进暂存区，会将剔除状态覆盖为修改状态
-	   3. 删除分支索引
-   15. 修补最新提交的提交说明
-	   1. 命令：git commit --amend
-   16. 修补历史提交的提交说明  
-	   1. 变基操作： git rebase -i <commit-id>^
-   17. 文件差异性比较
-	   1. 命令：git diff
-	   2. 该命令查看的是修改后的文件，与暂存区中该文件之间的差异
-	   3. 标准的diff和patch存在一个局限：无法对二进制文件进行处理
-	   4. git对二进制文件的比较提供了支持：git diff
-	   5. git diff命令使用的是标准diff中的合并模式(unified mode)的语法格式，相当于diff -u
-4. 分支
-   1. 分支的构成
-      1. 分支的祖先起点：主分支上的第一次提交，是任意分支的祖先起点
-	  2. 分支的起点： 每个分支，都有一个分支起点。任意分支上的任意提交，都可以是某指定分支的起点
-	  3. 分支指针头： 每个新建的分支，都有一个分支指针。分支指针头总是指向该分支的最新提交
-	  4. 空分支：只有分支起点和分支指针构成的分支称为一个空分支
-	  5. 分支指针头的生命周期：分支指针在该分支被创建的时候产生，在该分支合并到其起点所在的分支时，分支指针死亡
-	  6. 分支的构成：任意一个新创建的分支，由：分支起点 + 分支提交结点 + 指向分支最新提交的分支指针头 构成
-   2. 分支的背景知识
-	  1. HEAD，总是指向当前分支的分支指针头
-	  2. 分支指针头，总是指向自己分支所有提交中的最新提交
-	  3. 提交： 提交永远都是HEAD的“跟屁虫”，只会盯着HEAD,HEAD在哪个分支，该提交就挂接在这个分支最新提交的后面成为最新提交
-      4. 切换到新分支的本质是让HEAD指向新分支的分支指针头 
-   3. 查看版本库的分支：git branch -v
-   4. 创建分支：git branch new-br
-   5. 切换到新分支：git checkout new-br
-   6. 创建分支并切换到新分支:git checkout -b new-br
-   7. 切换到“分离头指针状态”
-      1. 命令： git checkout commit-ID
-      2. 通常，HEAD总是指向分支指针头，表示该分支指针头指向的分支是当前分支，而让HEAD指向提交，表示版本库处于“分离头指针状态” 即，'detached HEAD'		 
-      3. ”分离头指针状态“的特点：
-	     1. 可以检查，测试，提交而不影响任何分支
-	     2. 切换会分支之后，在分离头指针状态下的提交在log中不再显示，提交也消失了，但是，依然存在版本库中，但是，当reflog中的该提交日志过期之后，这个提交随时会彻底删除
+** DONE [#D] Theme:添加至暂存区									 :@Blog:@Git:
+    SCHEDULED:<2017-10-06 五>
+	- State "DONE"       from "WAITTING"   [2017-10-06 五 10:28]
+1. 添加单个文件： git add a.txt
+2. 添加所有文件： git add -A
+3. 所有文件中，添加已经被跟踪过的文件： git add -u
+Blog creation time:[2017-10-06 五 10:26]
+** DONE [#D] Theme:撤销出暂存区									 :@Blog:@Git:
+    SCHEDULED:<2017-10-06 五>
+	- State "DONE"       from "WAITTING"   [2017-10-06 五 10:30]
+1. 撤销单个文件的add： git reset -- a.txt
+2. 撤销所有文件的add: git reset -- .
+3. 该操作是add的逆,所以，对暂存区和对象库无任何影响
+Blog creation time:[2017-10-06 五 10:28]
+** DONE [#D] Theme:提交											 :@Blog:@Git:
+    SCHEDULED:<2017-10-06 五>
+	- State "DONE"       from "WAITTING"   [2017-10-06 五 10:46]
+1. 命令： git commit -m "Initialized"
+2. 底层: 事实上执行add操作的时候,工作区中的文件就已经加入到了对象库中,暂存区的目录树索引和对象库tree-ID下的目录树索引同时指向对象库中真实的文件
+3. 提交的本质: commit操作执行之后立即产生一个commit-ID节点,使用暂存区下面的目录树索引为该commit-ID节点下面的数据域tree-ID指向的目录树索引赋值
+4. 提交到哪里: 提交永远都是HEAD的“跟屁虫”，只会盯着HEAD,HEAD在哪个分支，该提交就挂接在这个分支最新提交的后面成为最新提交
+6. 结果:该命令执行之后，暂存区和最新提交就有了相同的目录树索引，均指向版本库的.git/object/下的文件,因此,使用git diff HEAD比价暂存区和最新提交时返回无差异
+Blog creation time:[2017-10-06 五 10:32]
+** DONE [#D] Theme:撤销提交										 :@Blog:@Git:
+    SCHEDULED:<2017-10-06 五>
+	- State "DONE"       from "WAITTING"   [2017-10-06 五 10:49]
+1. 命令： git reset --soft HEAD^
+2. 说明: 该操作是commit的逆，对暂存区和工作区文件的内容没有任何影响，主要用于想要重新书写提交说明时使用
+Blog creation time:[2017-10-06 五 10:46]
+** DONE [#D] Theme:修补提交										 :@Blog:@Git:
+    SCHEDULED:<2017-10-06 五>
+	- State "DONE"       from "WAITTING"   [2017-10-06 五 10:51]
+1. 命令： git commit --amend
+2. 该命令本质上相当于这两条命令的组合：
+   1. git reset --soft HEAD^
+   2. git commit -e -F .git/COMMIT_EDITMSG(保存了上次的提交日志)  
+Blog creation time:[2017-10-06 五 10:50]
+** DONE [#D] Theme:比较差异										 :@Blog:@Git:
+    SCHEDULED:<2017-10-06 五>
+	- State "DONE"       from "WAITTING"   [2017-10-06 五 10:53]
+1. 比较暂存区与工作区的差异：git diff (原始对象是暂存区)
+2. 比较暂存区与工作区指定文件的差异：git diff a.txt
+3. 比较当前分支最新提交与暂存区的差异：git diff --cached (原始对象是对象库最新提交)
+4. 比较当前分支最新提交与暂存区指定文件的差异：git diff --cached a.txt
+5. 比较当前分支指定提交与工作区的差异：git diff commit-ID (原始对象是对象库commit-ID)
+6. 比较当前分支指定与工作区指定文件的差异：git diff commit-ID a.txt
+Blog creation time:[2017-10-06 五 10:52]
+** DONE [#D] Theme:回滚											 :@Blog:@Git:
+    SCHEDULED:<2017-10-06 五>
+	- State "DONE"       from "WAITTING"   [2017-10-06 五 11:12]
+1. 从暂存区回滚至工作区
+   1. 回滚单个文件： git checkout -- a.txt
+   2. 回滚所有文件： git checkout .
+   3. 说明：该操作会用暂存区的指定文件或者全部文件替换工作区的文件
+   4. 结果： 工作区中的文件内容，同暂存区中目录树索引下的文件内容保持一致
+   5. 后果： 这意味着会丢失工作区中未添加到暂存区中的修改 
+2. 从对象库回滚至暂存区
+   1. 回滚单个文件： 
+	  1. 命令： git reset commit-ID a.txt
+	  2. 说明： 回滚单个文件不会丢失对象库中的最新提交到commit-ID这一段之间的commit，因为只回滚个别文件，说明用户有意要和对象库中的commit-ID存在差异，所以，回滚后的a.txt和暂存区的其他文件构成另一个commit
+	  3. 结果： 该操作用对象库commit-ID下的a.txt替换掉暂存区中的a.txt
+	  4. 后果： 会丢失在执行该操作之前，使用命令git add a.txt到暂存区的修改
+	  5. 备注： 该操作同3-1中回滚单个文件最大的区别在于，该操作不会更改工作区文件的内容 
+   2. 回滚所有文件： 
+	  1. 命令： git reset --mixed commit-ID
+	  2. 说明： 该操作让对象库中的commit-ID提交同暂存区保持一致,但是,对象库比commit-ID还新的提交有可能存在，鉴于保持一致的理念，对象库只能将最新版本重置到commit-ID
+	  3. 结果： 该操作用对象库commit-ID，替换整个暂存区，即，暂存区中的索引与commit-ID中tree指针下的索引，完全一致
+	  4. 后果： 丢失最近一次add到暂存区的修改以及暂存区尚未提交的commit，丢失最新的commit到待重置的commit之间的这一段commit
+3. 从对象库回滚至(暂存区+工作区)
+   1. 回滚单个文件： git checkout commit-ID -- a.txt
+   2. 回滚所有文件： git checkout commit-ID -- .
+   3. 说明：
+	  1. 如果commit-ID不是最新提交(HEAD->master)而是之前的提交，那么，在回滚后，暂存区会与对象库的最新提交不一致而不干净，要求再次提交
+	  2. 该操作会用对象库中的一个commit-ID节点在当前分支下的目录树索引，替换暂存区下（当前存在的文件）的索引，用索引下的全部文件替换工作区下（对应）的文件
+	  3. 注意：2中用小括号括起来的两个关键字非常重要：在进行替换时，如果暂存区或者工作区中新增加了对象库提交中没有的文件，此时的替换只会替换对象库，工作区，暂存区中公共的文件，差异的文件内容以及文件状态不变
+      4. 回滚操作与重置(git reset --hard commit-ID)的区别在于,回滚操作只用commit-ID中文件覆盖暂存区以及工作区中的同名文件,暂存区和工作区特有的,commit-ID中没有的这些文件保持原样,而重置则是使得工作区暂存区中有且仅有commit-ID中的文件(版本库干净)
+   4. 结果：
+      1. 工作区中的文件内容，暂存区目录树索引下的文件的内容，同commit-ID节点中tree元素指向的目录树索引下的blob文件内容一致
+      2. 那些只在工作区下或者暂存区下才有的而commit-ID这个提交中没有的文件，依旧保持其该有的状态以及内容
+   5. 后果：工作区中未add的改动以及暂存区中未commit的改动，如果发生改动的文件在commit-ID这个提交下存在，那么，这些改动会被commit-ID下的文件内容覆盖
+Blog creation time:[2017-10-06 五 10:58]
+** DONE [#D] Theme:重置											 :@Blog:@Git:
+    SCHEDULED:<2017-10-06 五>
+	- State "DONE"       from "WAITTING"   [2017-10-06 五 11:30]
+1. 软重置
+   1. 命令： git reset --soft commit-ID
+   2. “软”的意义：只改变对象库中HEAD->master对commit-ID的指向，不改变暂存区和工作区文件的内容
+   3. 使用场合：当对最新提交的提交说明或者提交的更改不满意时，撤销最新提交以便重新提交
+2. 混合重置
+   1. 命令： git reset --mixed commit-ID(默认缺省--mixed)
+   2. “混合”的意义： 不改变工作区文件的内容，但是会改变暂存区的内容
+   3. 说明： 该操作会用对象库中的一个commit-ID节点在当前分支下的目录树索引，替换整个暂存区，即，暂存区中的索引与commit-ID中tree指针下的索引，完全一致
+   4. 结果： 暂存区与commit-ID的文件内容一致，工作区的文件的内容还是重置前的内容，但是状态变为待add的状态
+   5. 后果：丢失最近一次add到暂存区的修改以及暂存区尚未提交的commit，丢失最新的commit到待重置的commit之间的这一段commit
+3. 强制重置
+   1. 命令： git reset --hard commit-ID
+   2. “强制”的意义： 工作区和暂存区的文件内容都会被commit-ID下的文件内容覆盖
+   3. 结果：工作区，暂存区，与commit-ID的文件内容一致
+   4. 后果： 会丢失工作区中尚未add的改动以及暂存区尚未提交的commit，丢失最新的commit到待重置的commit之间的这一段commit
+   5. 备注： 可以使用git reset --hard HEAD来彻底恢复到上一次提交的那个干净的版本
+4. 挽救错误的重置
+   1. 重置最显著的特点就是，最新的commit-ID到待重置的commit-ID这一段之间的commit会丢失，因此，重置行为是版本库中最危险的行为，因为会丢失提交
+   2. 使用reflog来挽救错误的重置
+	  1. 从日志中获取最新ID：git reflog show | head -5
+	  2. 找到eb3bcab master@{0}: reset: moving to HEAD^所在行
+	  3. 由于该日志是将最新的改变放在前面，因此，这一行的下面一行就是重置前的commit，假设为master@{2}所在行
+	  4. 再次重置：git reset --hard master@{2}
+Blog creation time:[2017-10-06 五 11:12]
+** DONE [#D] Theme:删除											 :@Blog:@Git:
+    SCHEDULED:<2017-10-06 五>
+	- State "DONE"       from "WAITTING"   [2017-10-06 五 15:41]
+1. 删除工作区尚未追踪的文件 
+   1. 删除尚未追踪的指定文件: git clean -fd a.txt
+   2. 删除尚未追踪的所有文件: git clean -fd
+   3. 说明: 尚未追踪的文件,其删除操作与暂存区和对象库没有任何联系
+2. 删除暂存区中的文件
+   1. 删除指定文件： git rm -rf --cached a.txt
+   2. 删除所有文件:  git rm -rf --cached *
+   3. 说明： 该操作只删除暂存区中的文件,工作区中的文件依旧是删除操作之前的最新内容
+3. 删除 工作区+暂存区 中的文件
+   1. 删除指定文件: git rm -rf a.txt
+   2. 删除所有文件: git rm -rf *
+   3. 结果: 该操作使得在工作区和暂存区的指定文件都会被删除,因此,暂存区与对象库的最新提交不一致,会要求提交新版本
+4. 删除对象库提交
+   1. 命令: git reset --soft commit-ID
+   2. 说明: 对象库中的提交是版本库这个大链表上的一些个节点,删除某个节点破坏了版本控制系统连续记录的原则,因此,该操作会将最新提交到该commit-ID之间的提交都删除掉
+Blog creation time:[2017-10-06 五 14:17]
+** DONE [#D] Theme:恢复删除										 :@Blog:@Git:
+    SCHEDULED:<2017-10-06 五>
+	- State "DONE"       from "WAITTING"   [2017-10-06 五 15:41]
+1. 命令: git checkout HEAD~1 -- a.txt
+2. 说明: 如果a.txt使用git rm -rf a.txt删除了工作区和暂存区中的a.txt并进行了提交,如果想要找回a.txt,可以在HEAD^这个提交下面找回 
+Blog creation time:[2017-10-06 五 15:27]
+** DONE [#D] Theme:更改文件名字									 :@Blog:@Git:
+    SCHEDULED:<2017-10-06 五>
+	- State "DONE"       from "WAITTING"   [2017-10-06 五 22:25]
+1. 命令: git mv a.txt aa.txt
+2. 说明: 该操作可以同时更改工作区和暂存区中的中的a.txt的名字为aa.txt
+Blog creation time:[2017-10-06 五 15:42]
+** DONE [#D] Theme:保存工作进度									 :@Blog:@Git:
+   SCHEDULED:<2017-10-06 五>
+   - State "DONE"       from "WAITTING"   [2017-10-06 五 22:25]
+1. 保存进度的原理:
+   1. 调用进度保存指令git stash save "注释",触发下面的步骤
+   2. 从当前分支的最新提交节点处,开创建一个特殊(stash分支)的新分支,这个最新的提交节点就是特殊新分支的起点,让进度指针头refs/stash指向这个起点,如此便创建了一个进度分支
+   3. 将暂存区提交到进度分支上,保存好暂存区的进度
+   4. 将该进度分支的起点节点与进度分支的暂存区进度进行合并,生成工作区进度
+2. 保存进度: git stash save "gMrM--a.txt gM--b.txt gM--subdir/dir/c.txt"
+   1. 该命令使用了git reset --hard HEAD,工作区,暂存区,最新提交,三者内容一致,版本库干净
+   2. 当存在未追踪的文件时,进度保存操作无法进行,需要先追踪才可以
+   3. 该命令执行之后,会产生一条进度保存记录,使用git stash list查看
+   4. 我的注释格式: g:green ; r:red 用于描述大写字母的颜色
+   5. 进度保存的实质: 将进度保存在引用refs/stash所指向的提交中
+   6. 进度保存操作会将,暂存区提交后产生的stash-commit-ID,与进度保存前,对象库的最新进行合并,产生一个stash-commit-ID,refs/stash指向会指向它
+3. 查看进度保存记录: git stash list
+   1. 该命令显示之前保存过的众多进度
+   2. 恢复进度时,可以查看该记录来选择恢复那个进度
+4. 恢复进度: git stash pop --index stash@{n}
+   1. --index: 指明恢复进度时,除了恢复工作区之外,还会尝试恢复暂存区.如果不指定该参数则只恢复工作区的文件内容
+   2. 恢复后删除进度保存列表中的记录
+5. 运用进度: git stash apply --index stash@{n}
+   1. --index: 指明恢复进度时,除了恢复工作区之外,还会尝试恢复暂存区.如果不指定该参数则只恢复工作区的文件内容
+   2. 只是运用该进度而不会将其从进度保存列表中删除
+   3. 该操作和恢复进度的功能是一样的,区别就是恢复后不删除,该命令的优点在于可以多次运用该进度
+6. 删除进度: git stash drop stash@{n}
+7. 删除所有进度: git stash clear
+8. 查看进度保存日志: git log --graph --pretty=raw refs/stash -2
+Blog creation time:[2017-10-06 五 14:17]
+** WAITTING [#D] Theme:分支									 :@Blog:@Git:
+    SCHEDULED:<2017-10-06 五>
+1. 分支的构成
+   1. 分支的祖先起点：主分支上的第一次提交，是任意分支的祖先起点
+   2. 分支的起点： 每个分支，都有一个分支起点。任意分支上的任意提交，都可以是某指定分支的起点
+   3. 分支指针头： 每个新建的分支，都有一个分支指针。分支指针头总是指向该分支的最新提交
+   4. 空分支：只有分支起点和分支指针构成的分支称为一个空分支
+   5. 分支指针头的生命周期：分支指针在该分支被创建的时候产生，在该分支合并到其起点所在的分支时，分支指针死亡
+   6. 分支的构成：任意一个新创建的分支，由：分支起点 + 分支提交结点 + 指向分支最新提交的分支指针头 构成
+2. 分支的背景知识
+   1. HEAD，总是指向当前分支的分支指针头
+   2. 分支指针头，总是指向自己分支所有提交中的最新提交
+   3. 提交： 提交永远都是HEAD的“跟屁虫”，只会盯着HEAD,HEAD在哪个分支，该提交就挂接在这个分支最新提交的后面成为最新提交
+   4. 切换到新分支的本质是让HEAD指向新分支的分支指针头 
+3. 查看版本库的分支：git branch -v
+4. 创建分支：git branch new-br
+5. 切换到新分支：git checkout new-br
+6. 创建分支并切换到新分支:git checkout -b new-br
+7. 切换到“分离头指针状态”
+   1. 命令： git checkout commit-ID
+   2. 通常，HEAD总是指向分支指针头，表示该分支指针头指向的分支是当前分支，而让HEAD指向提交，表示版本库处于“分离头指针状态” 即，'detached HEAD'		 
+   3. ”分离头指针状态“的特点：
+	  1. 可以检查，测试，提交而不影响任何分支
+	  2. 切换会分支之后，在分离头指针状态下的提交在log中不再显示，提交也消失了，但是，依然存在版本库中，但是，当reflog中的该提交日志过期之后，这个提交随时会彻底删除
 	  4. 合并“分离头指针状态”的提交至主分支master
 		 1. 命令：git merge new-commit-ID
 		 2. 由于在“分离头指针状态”所做出的提交除了能被new-commit-ID所访问到之外，就无法通过分支访问。另外，该提交随时会在版本库中彻底消失，如果这个提交对master很重要的话，可以通过该操作将这个提交合并到master上即可
-5. 日志
+Blog creation time:[2017-10-06 五 14:21]
+** WAITTING [#D] Theme:日志									 :@Blog:@Git:
+    SCHEDULED:<2017-10-06 五>
+3. 日志
    1. 在执行commit命令之后，就会在log中产生一条提交信息
    2. git log --stat
       commit ccbbaeae9b9444ad21caa6d8216f7b8a4d22f59a (HEAD -> master, origin/master)
@@ -369,74 +414,7 @@ Blog creation time:[2017-10-05 四 21:46]
 	  21c290a0cdebe3bebaff7148a5f69e4399a5ecc3 -----
 	  915cd2a2564a5b8a942301de31b993d0f6ec2636 -----
    5. git log -l --pretty=raw
-6. 创建.gitignore文件：该文件里面记录着该仓库里面不想接受版本控制的文件及目录
-   Blog creation time:[2017-09-05 二 08:02]
-** DONE [#D] theme:安装										 :@Blog:@Git:
-1. 检查是否安装：dpkg -s git
-2. 安装： sudo apt-get install git
-3. 查看版本： git --version
-Blog creation time:[2017-09-05 二 08:03]
-** DONE [#D] theme:创建版本库									 :@Blog:@Git:
-	- State "DONE"       from "TODO"       [2017-09-05 二 09:28]
---在指定位置新建一个目录：mkdir git-learn
---进入该目录：cd git-learn
---执行：git init
-备注：也可以不进入该目录，直接输入：git init git-learn
-
---执行ls -al 可以发现：.git,这就是我们创建的版本库
---称git-learn为工作区，.git为版本库
-Blog creation time:[2017-09-05 二 08:05]
-** DONE [#D] theme:操作版本库									 :@Blog:@Git:
-	- State "DONE"       from "TODO"       [2017-09-05 二 09:28]
-1.原则
---正确使用版本控制系统的方法是，一次提交只完成一件事
---只有git commit才会产生版本，这意味着可以多次使用add文件到暂存区，提交版本时
-  只会commit最新版？
---使用git push只会将本地众多版本中HEAD指向的版本推送到服务器？这意味着可以多
-  次commit文件到本地版本库
-
-2.查询操作
---查询当前git的版本：git --version
---查看某个版本号下面的文件内容：
---查询版本库的分支数：
---查询该仓库对应的远程仓库：
---查询日志：
-
-3.基本操作
-3-1 git status：
---包含三块信息：当前位于哪个分支、文件发生了哪些行为、目前可以执行哪些指令处理问题
--当前位于哪个分支：默认 on branch master
--文件发生了哪些行为：
-1.Nothing to commit(working directory clean):干净的工作区
-2.Untracked files:工作区内未被git管理的文件
-3.Change not staged for commit:工作区内已经被git管理的文件发生了某些行为
-4.Change to be commited:暂存区内有待提交的文件
--目前可以执行哪些指令处理问题：
-1.Untracked files：可以add到暂存区给git管理，也可以放到.gitignore中告诉git不用管理它
-2.
-
-3-2 git add： 
---该操作的结果是：将工作区内的发生的行为同步到暂存区（unstage）
---注意：
-
-4.未解决的疑惑
---在本地执行commit后，git status操作给出下面提示：
-Your branch is based on 'origin/master', but the upstream is gone.
-  (use "git branch --unset-upstream" to fixup)
-Blog creation time:[2017-09-05 二 08:06]
-** DONE [#D] theme:分支管理										 :@Blog:@Git:
-	- State "DONE"       from "TODO"       [2017-09-05 二 09:28]
-1.查看分支
---git br 
-2.创建分支：
---git br slaver
-3.切换分支：
---git co slaver
-4.合并分支：
---git mg slaver
-5.删除分支：
---git br -d slaver
-Blog creation time:[2017-09-05 二 08:06]
+Blog creation time:[2017-10-06 五 14:21]
 ** DONE [#D] theme:开发模型										 :@Blog:@Git:
 	- State "DONE"       from "TODO"       [2017-09-05 二 09:28]
 1. 单人工作模型
@@ -484,8 +462,3 @@ Blog creation time:[2017-09-05 二 08:06]
 分支主要用于三个方面：向上级分支推送代码，接受别人代码的合并，接受自己在slaver分支
 上的代码的合并
 Blog creation time:[2017-09-05 二 08:07]
-** DONE [#D] theme:场景分析										 :@Blog:@Git:
-	- State "DONE"       from "TODO"       [2017-09-05 二 09:28]
-*** 场景分析
-	场景一：工作备份
-	Blog creation time:[2017-09-05 二 08:08]
