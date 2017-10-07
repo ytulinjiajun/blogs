@@ -134,6 +134,13 @@ Blog creation time:[2017-09-05 二 08:04]
    7. D: 表示该文件被删除(红色和绿色均可能)
 3. 原则: 使用该操作,只要有输出, 那就表明工作区,暂存区,最新提交三者之间文件内容不一致
 Blog creation time:[2017-10-05 四 21:41]
+** WAITTING [#D] Theme:引用									 :@Blog:@Git:
+    SCHEDULED:<2017-10-07 六>
+1. HEAD
+2. master
+3. stash
+4. tag
+Blog creation time:[2017-10-07 六 21:16]
 ** DONE [#D] Theme:浏览											 :@Blog:@Git:
    SCHEDULED:<2017-10-05 四>
 1. 浏览文件内容
@@ -175,6 +182,7 @@ Blog creation time:[2017-10-05 四 21:46]
 1. 添加单个文件： git add a.txt
 2. 添加所有文件： git add -A
 3. 所有文件中，添加已经被跟踪过的文件： git add -u
+4. 选择性添加: git add -i (当文件特别多,且需要仔细考虑添加哪些文件时,该操作以交互的方式,给出一个更直观的操作)
 Blog creation time:[2017-10-06 五 10:26]
 ** DONE [#D] Theme:撤销出暂存区									 :@Blog:@Git:
     SCHEDULED:<2017-10-06 五>
@@ -198,10 +206,10 @@ Blog creation time:[2017-10-06 五 10:32]
 1. 命令： git reset --soft HEAD^
 2. 说明: 该操作是commit的逆，对暂存区和工作区文件的内容没有任何影响，主要用于想要重新书写提交说明时使用
 Blog creation time:[2017-10-06 五 10:46]
-** DONE [#D] Theme:修补提交										 :@Blog:@Git:
+** DONE [#D] Theme:修补提交说明 								 :@Blog:@Git:
     SCHEDULED:<2017-10-06 五>
 	- State "DONE"       from "WAITTING"   [2017-10-06 五 10:51]
-1. 命令： git commit --amend
+1. 命令： git commit --amend -m "重新注释"
 2. 该命令本质上相当于这两条命令的组合：
    1. git reset --soft HEAD^
    2. git commit -e -F .git/COMMIT_EDITMSG(保存了上次的提交日志)  
@@ -323,6 +331,7 @@ Blog creation time:[2017-10-06 五 15:42]
    4. 我的注释格式: g:green ; r:red 用于描述大写字母的颜色
    5. 进度保存的实质: 将进度保存在引用refs/stash所指向的提交中
    6. 进度保存操作会将,暂存区提交后产生的stash-commit-ID,与进度保存前,对象库的最新进行合并,产生一个stash-commit-ID,refs/stash指向会指向它
+   7. 可以使用-k参数,在保存进度后不会将暂存区重置
 3. 查看进度保存记录: git stash list
    1. 该命令显示之前保存过的众多进度
    2. 恢复进度时,可以查看该记录来选择恢复那个进度
@@ -337,6 +346,47 @@ Blog creation time:[2017-10-06 五 15:42]
 7. 删除所有进度: git stash clear
 8. 查看进度保存日志: git log --graph --pretty=raw refs/stash -2
 Blog creation time:[2017-10-06 五 14:17]
+** DONE [#D] Theme:里程碑										 :@Blog:@Git:
+    SCHEDULED:<2017-10-07 六>
+	- State "DONE"       from "WAITTING"   [2017-10-07 六 22:45]
+1. 创建里程碑: git tag -m "注释" tag-name
+   1. 创建里程碑操作会产生一个tag-commit-ID提交,并产生一个tag-name
+   2. 创建里程碑操作,实质上是对当前最新版进行引用, tag-name就是这个引用
+2. 查看tag的ID: git rev-parse refs/tags/tag-name
+3. 显示版本号: git descrbie
+   1. 前提: 执行过创建里程碑的操作
+   2. 作用: 将最新的提交显示为一个容易记忆的版本号,而不是ID
+   3. 版本号格式: (tag-name)-(num)-(ID)
+   4. 该命令会去选取离最新提交最近的里程碑的tag-name作为基础版本号,后面加一个数字(标识该提交是里程碑后面的第几个提交),最后就是最新提交的哈希值ID
+   5. 该操作的输出可以作为软件版本号,这个功能非常有用,因为这样可以将发布的软件包版本和版本库中的代码对应到一起,当发现软件包中有bug时,查看该软件包的版本,直接在代码中就能找到对应代码并进行修复,然后提交
+   6. tag-name的命令: linux-kernel_1.0
+Blog creation time:[2017-10-07 六 21:13]
+** DONE [#D] Theme:忽略文件										 :@Blog:@Git:
+    SCHEDULED:<2017-10-07 六>
+	- State "DONE"       from "WAITTING"   [2017-10-07 六 22:23]
+1. 共享式忽略
+   1. 一个文件的文件名如果被添加进workspace/.gitignore,则该文件不会被版本库管理
+   2. 注意: 如果一个文件在被添加进.gitignore之前就已经add进了版本控制系统,则忽略无效
+   3. 共享的含义: 当其他人clone,pull该版本库时,这个忽略文件仍然有效
+2. 独享式忽略
+   1. 局部独享: .git/info/exclude,只针对某一个版本库
+   2. 全局独享: ~/.gitconfig,下面的core.excludesfile指定的文件,针对该用户相关的所有版本库
+   3. 设置全局独享忽略: git config --global core.excludesfile /home/ljj/.gitconfig
+   4. 独享的含义: 当其他人clone,pull该版本库时,该忽略文件不会被传递给该用户
+Blog creation time:[2017-10-07 六 22:01]
+** DONE [#D] Theme:文件归档										 :@Blog:@Git:
+    SCHEDULED:<2017-10-07 六>
+	- State "DONE"       from "WAITTING"   [2017-10-07 六 22:45]
+1. 基于提交创建归档: git archive -o lastest.zip commit-ID
+2. 基于提交中的指定目录创建归档: git archive -o lastest.tar commit-ID -- subdir1 subdir2
+3. 基于里程碑linux_1.0创建归档,并将归档中的所有文件都添加kernal/n前缀: git archive --format=tar --prefix=kernel/ linux_1.0 | gzip > linux_1.0-3-g5ea60ef.tar.gz
+Blog creation time:[2017-10-07 六 22:27]
+** WAITTING [#D] Theme:gitg									 :@Blog:@Git:
+    SCHEDULED:<2017-10-07 六>
+1. gitg 是使用GTK+图形库实现的一个git版本库浏览器软件
+2. gitg不仅可以实现gitk的全部功能(浏览历史和文件),还能帮助执行提交
+3. 安装gitg: sudo aptitude install gitg
+Blog creation time:[2017-10-07 六 22:52]
 ** WAITTING [#D] Theme:分支									 :@Blog:@Git:
     SCHEDULED:<2017-10-06 五>
 1. 分支的构成
