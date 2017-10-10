@@ -23,6 +23,21 @@
    6. 分支    ----(6)--->  工作区 　
    7. 研究清楚，标编号上面6个环节中：单个文件的传递，所有文件传递，的相关操作方法，git的知识点就全了
 5. 版本库干净： 当工作区 = 暂存区 = 对象库（最新）提交 ===> 版本库干净（使用git status无任何状态）
+6. 思维逻辑: 从树形结构看版本库
+   1. 错误的思维: 开发从树的根部到枝干进行.你可能会在想创建分支的过程:
+	  1. 开发成员1,以master分支上的第1次提交,作为branch1分支的分支起点,在该分支上产生若干提交,形成第一个分支
+	  2. 开发成员2,以master分支上的第1次提交,作为branch2分支的分支起点,在该分支上产生若干提交,形成第二个分支
+	  3. 开发成员3,以master分支上的第1次提交,作为branch3分支的分支起点,在该分支上产生若干提交,形成第三个分支
+	  4. ......
+	  5. 开发成员n,以master分支上的第1次提交,作为branchn分支的分支起点,在该分支上产生若干提交,形成第n个分支
+	  6. 结论: 版本库是从根到枝干的开发! 但是,不好意思,这个结论是错的
+   2. 正确的思维: 开发从树的枝干到根部进行
+      1. 根,可以看做系统的输出,即最终版本,枝干可以看成系统的输入,即各个分支的提交,开发的目的是为了得到根
+	  2. 其实上面错误思维里面的所谓的根只是一个"假根",通常master分支上的第一次提交只是一个工程项目的基础设施而已,而并非结果
+	  3. 项目的发起者在master分支上提交了一次该项目的"基础设施",该提交只包含了一些必备的初始化,驱动等等,相当于kernal
+	  4. 项目的参与者以master分支上的第一次提交为分支起点,创建只属于自己的分支,所以一开始,每个参与者获得相同的"原料"
+	  5. 项目的发起者自己想要开发,也需要以master创建一个自己的分支,比如master-manager,只有它才有权限在master生成根
+	  6. 每个参与者在自己的分支上做属于自己模块的开发,然后不断向master-manager分支合并,master-manger认为开发的差不多了,可以生成第二个版本(根)的 时候,他会向master合并
 Blog creation time:[2017-09-23 六 22:36]
 ** WAITTING [#D] Theme:对象库解析 								 :@Blog:@Git:
    SCHEDULED:<2017-09-26 二>
@@ -114,6 +129,19 @@ Blog creation time:[2017-09-05 二 08:03]
 6. 关联远程库： git rmt git@github.com:ytulinjiajun/GitHub-Lin.git
 6. 从github克隆一个版本库验证SSH配置是否成功：git clone git@github.com:ytulinjiajun/GitHub-Lin.git
 Blog creation time:[2017-09-05 二 08:04]
+** WAITTING [#D] Theme:搭建git服务器							 :@Blog:@Git:
+    SCHEDULED:<2017-10-09 一>
+1. 必要性: 如果仅仅是自己一个人使用git开发,就不需要git服务器,但是,如果如果需要和他人分享代码,协作开发,或者为个人开发建立一个远程备份,则务必掌握git服务器的搭建
+2. git服务器假设方案:
+| HTTP | Git-daemon | SSH | Gitoslite |   |
+|------+------------+-----+-----------+---|
+|      |            |     |           |   |
+   1. HTTP: 简单,支持匿名读取,支持身份认证,支持版本库写操作,不支持企业级授权,不支持远程建库
+   2. Git-daemon: 中等难度,支持匿名读取,不支持身份认证,不支持版本库写操作,不支持企业级授权,不支持远程建库
+   3. SSH:  简单,不支持匿名读取,支持身份认证,支持版本库写操作,不支持企业级授权,不支持远程建库
+   4. Gitoslite: 复杂,不支持匿名读取,支持身份认证,支持版本库写操作,支持企业级授权,支持远程建库
+3. HTTP
+Blog creation time:[2017-10-09 一 15:13]
 ** DONE [#D] Theme:创建版本库　									   :Blog:@Git:
 1. git init: 其结果是在工作区中生成版本库：.git/
 2. git rev-parse --git-dir: 该操作可以在工作区的任何子目录下执行，其结果是显示该工作区的版本库的路径
@@ -136,11 +164,27 @@ Blog creation time:[2017-09-05 二 08:04]
 Blog creation time:[2017-10-05 四 21:41]
 ** WAITTING [#D] Theme:引用									 :@Blog:@Git:
     SCHEDULED:<2017-10-07 六>
-1. HEAD
-2. master
+1. HEAD: 
+2. master: .git/refs/heads/master
 3. stash
-4. tag
+4. tag-name: .git/refs/tags/tag-name 
 Blog creation time:[2017-10-07 六 21:16]
+** DONE [#D] Theme:里程碑										 :@Blog:@Git:
+    SCHEDULED:<2017-10-07 六>
+1. 创建里程碑: git tag -m "注释" tag-name
+   1. 创建里程碑操作会产生一个tag-commit-ID提交,并产生一个tag-name
+   2. 创建里程碑后,tag-name指向一个tag-commit-ID对象,该tag-commit-ID指向对象库中的commit-ID
+2. 对特定提交创建里程碑: git tag tag-name commit-ID
+3. 查看tag的ID: git rev-parse tag-name
+4. 显示版本号: git descrbie
+   1. 前提: 执行过创建里程碑的操作
+   2. 作用: 将最新的提交显示为一个容易记忆的版本号,而不是ID
+   3. 版本号格式: (tag-name)-(num)-(ID)
+   4. 该命令会去选取离最新提交最近的里程碑的tag-name作为基础版本号,后面加一个数字(标识该提交是里程碑后面的第几个提交),最后就是最新提交的哈希值ID
+   5. 该操作的输出可以作为软件版本号,这个功能非常有用,因为这样可以将发布的软件包版本和版本库中的代码对应到一起,当发现软件包中有bug时,查看该软件包的版本,直接在代码中就能找到对应代码并进行修复,然后提交
+   6. tag-name的命令: linux-kernel_1.0
+5. 说明: 里程碑是个非常好的功能,建议经常使用它
+Blog creation time:[2017-10-07 六 21:13]
 ** DONE [#D] Theme:浏览											 :@Blog:@Git:
    SCHEDULED:<2017-10-05 四>
 1. 浏览文件内容
@@ -206,7 +250,7 @@ Blog creation time:[2017-10-06 五 10:32]
 1. 命令： git reset --soft HEAD^
 2. 说明: 该操作是commit的逆，对暂存区和工作区文件的内容没有任何影响，主要用于想要重新书写提交说明时使用
 Blog creation time:[2017-10-06 五 10:46]
-** DONE [#D] Theme:修补提交说明 								 :@Blog:@Git:
+** DONE [#D] Theme:修补提交 								 :@Blog:@Git:
     SCHEDULED:<2017-10-06 五>
 	- State "DONE"       from "WAITTING"   [2017-10-06 五 10:51]
 1. 命令： git commit --amend -m "重新注释"
@@ -216,17 +260,31 @@ Blog creation time:[2017-10-06 五 10:46]
 Blog creation time:[2017-10-06 五 10:50]
 ** DONE [#D] Theme:比较差异										 :@Blog:@Git:
     SCHEDULED:<2017-10-06 五>
-	- State "DONE"       from "WAITTING"   [2017-10-06 五 10:53]
-1. 比较暂存区与工作区的差异：git diff (原始对象是暂存区)
-2. 比较暂存区与工作区指定文件的差异：git diff a.txt
-3. 比较当前分支最新提交与暂存区的差异：git diff --cached (原始对象是对象库最新提交)
-4. 比较当前分支最新提交与暂存区指定文件的差异：git diff --cached a.txt
-5. 比较当前分支指定提交与工作区的差异：git diff commit-ID (原始对象是对象库commit-ID)
-6. 比较当前分支指定与工作区指定文件的差异：git diff commit-ID a.txt
+1. 暂存区与工作区
+   1. 比较暂存区与工作区的差异：git diff (原始对象是暂存区)
+   2. 比较暂存区与工作区指定文件的差异：git diff -- a.txt
+2. 提交与暂存区
+   1. 比较最新提交与暂存区：git diff HEAD --cached
+   2. 比较最新提交与暂存区中指定文件：git diff HEAD --cached -- a.txt
+   3. 比较指定提交与暂存区: git diff commit-ID --cached 
+   4. 比较指定提交与暂存区中指定文件: git diff commit-ID --cached -- a.txt
+   5. 比较里程碑A与暂存区: git diff A --cached
+   6. 比较里程碑A与暂存区中指定文件: git diff A --cached -- a.txt
+3. 提交与工作区
+   1. 比较最新提交与工作区: git diff HEAD
+   2. 比较最新提交与工作区中指定文件: git diff HEAD -- a.txt
+   3. 比较指定提交与工作区：git diff commit-ID
+   4. 比较指定提交与工作区中指定文件：git diff commit-ID -- a.txt
+   5. 比较里程碑A与工作区的差异: git diff A
+   6. 比较里程碑A与工作区中,指定文件的差异: git diff A -- a.txt
+4. 提交与提交
+   1. 比较指定提交与指定提交: git diff commit1-ID commit2-ID 
+   2. 比较指定提交与指定提交中指定文件:git diff commit1-ID commit2-ID -- a.txt
+   3. 比较里程碑A与里程碑B: git diff A B
+   4. 比较里程碑A与里程碑B中指定文件: git diff A B -- a.txt
 Blog creation time:[2017-10-06 五 10:52]
 ** DONE [#D] Theme:回滚											 :@Blog:@Git:
     SCHEDULED:<2017-10-06 五>
-	- State "DONE"       from "WAITTING"   [2017-10-06 五 11:12]
 1. 从暂存区回滚至工作区
    1. 回滚单个文件： git checkout -- a.txt
    2. 回滚所有文件： git checkout .
@@ -248,23 +306,25 @@ Blog creation time:[2017-10-06 五 10:52]
 3. 从对象库回滚至(暂存区+工作区)
    1. 回滚单个文件： git checkout commit-ID -- a.txt
    2. 回滚所有文件： git checkout commit-ID -- .
-   3. 说明：
+   3. 回滚所有文件(常用): git checkout tag-name -- .
+   4. 说明：
 	  1. 如果commit-ID不是最新提交(HEAD->master)而是之前的提交，那么，在回滚后，暂存区会与对象库的最新提交不一致而不干净，要求再次提交
 	  2. 该操作会用对象库中的一个commit-ID节点在当前分支下的目录树索引，替换暂存区下（当前存在的文件）的索引，用索引下的全部文件替换工作区下（对应）的文件
 	  3. 注意：2中用小括号括起来的两个关键字非常重要：在进行替换时，如果暂存区或者工作区中新增加了对象库提交中没有的文件，此时的替换只会替换对象库，工作区，暂存区中公共的文件，差异的文件内容以及文件状态不变
       4. 回滚操作与重置(git reset --hard commit-ID)的区别在于,回滚操作只用commit-ID中文件覆盖暂存区以及工作区中的同名文件,暂存区和工作区特有的,commit-ID中没有的这些文件保持原样,而重置则是使得工作区暂存区中有且仅有commit-ID中的文件(版本库干净)
-   4. 结果：
+   5. 结果：
       1. 工作区中的文件内容，暂存区目录树索引下的文件的内容，同commit-ID节点中tree元素指向的目录树索引下的blob文件内容一致
       2. 那些只在工作区下或者暂存区下才有的而commit-ID这个提交中没有的文件，依旧保持其该有的状态以及内容
-   5. 后果：工作区中未add的改动以及暂存区中未commit的改动，如果发生改动的文件在commit-ID这个提交下存在，那么，这些改动会被commit-ID下的文件内容覆盖
+   6. 后果：工作区中未add的改动以及暂存区中未commit的改动，如果发生改动的文件在commit-ID这个提交下存在，那么，这些改动会被commit-ID下的文件内容覆盖
 Blog creation time:[2017-10-06 五 10:58]
 ** DONE [#D] Theme:重置											 :@Blog:@Git:
     SCHEDULED:<2017-10-06 五>
-	- State "DONE"       from "WAITTING"   [2017-10-06 五 11:30]
 1. 软重置
-   1. 命令： git reset --soft commit-ID
-   2. “软”的意义：只改变对象库中HEAD->master对commit-ID的指向，不改变暂存区和工作区文件的内容
-   3. 使用场合：当对最新提交的提交说明或者提交的更改不满意时，撤销最新提交以便重新提交
+   1. 基础命令: git reset --soft commit-ID
+   2. 常用命令: git reset --soft tag-name (里程碑真的很好用,建议多用!)
+   3. “软”的意义：只改变对象库中HEAD->master对commit-ID的指向，不改变暂存区和工作区文件的内容
+   4. 功能昵称: 多步悔棋,穿梭过去
+   5. 使用场合： 开发过程中,对某一个特性功能进行一系列测试,修补,再测试之后终于得到了正确的版本,但是,却在版本库中遗留了多个提交,这些提交都是中间过程提交,遗留在版本库中意义不大,此时,可以使用该重置命令,将版本库中的最新提交重置到特性功能测试之前的那个提交上,然后再将这个最终得到的正确版本提交到版本库,这样就更改剔除了那些个不必要的版本,还可以重设提交说明,这样做使得版本库更加简洁
 2. 混合重置
    1. 命令： git reset --mixed commit-ID(默认缺省--mixed)
    2. “混合”的意义： 不改变工作区文件的内容，但是会改变暂存区的内容
@@ -346,21 +406,24 @@ Blog creation time:[2017-10-06 五 15:42]
 7. 删除所有进度: git stash clear
 8. 查看进度保存日志: git log --graph --pretty=raw refs/stash -2
 Blog creation time:[2017-10-06 五 14:17]
-** DONE [#D] Theme:里程碑										 :@Blog:@Git:
-    SCHEDULED:<2017-10-07 六>
-	- State "DONE"       from "WAITTING"   [2017-10-07 六 22:45]
-1. 创建里程碑: git tag -m "注释" tag-name
-   1. 创建里程碑操作会产生一个tag-commit-ID提交,并产生一个tag-name
-   2. 创建里程碑操作,实质上是对当前最新版进行引用, tag-name就是这个引用
-2. 查看tag的ID: git rev-parse refs/tags/tag-name
-3. 显示版本号: git descrbie
-   1. 前提: 执行过创建里程碑的操作
-   2. 作用: 将最新的提交显示为一个容易记忆的版本号,而不是ID
-   3. 版本号格式: (tag-name)-(num)-(ID)
-   4. 该命令会去选取离最新提交最近的里程碑的tag-name作为基础版本号,后面加一个数字(标识该提交是里程碑后面的第几个提交),最后就是最新提交的哈希值ID
-   5. 该操作的输出可以作为软件版本号,这个功能非常有用,因为这样可以将发布的软件包版本和版本库中的代码对应到一起,当发现软件包中有bug时,查看该软件包的版本,直接在代码中就能找到对应代码并进行修复,然后提交
-   6. tag-name的命令: linux-kernel_1.0
-Blog creation time:[2017-10-07 六 21:13]
+** DONE [#D] Theme:文件追溯										 :@Blog:@Git:
+    SCHEDULED:<2017-10-09 一>
+	- State "DONE"       from "WAITTING"   [2017-10-09 一 10:08]
+1. 追溯a.txt中的所有行: git blame a.txt
+2. 追溯a.txt中第2行开始的3行内容: git blame -L 2,+3 a.txt
+3. 要求: blame的对象必须一个文件,且该文件必须commit到对象库中
+4. 作用: 以行为单位,显示该行最早在哪个commit中引入,以及由谁在什么时候引入
+5. 使用场合: 在开发过程中发现bug时,定位到具体的源文件之后,可以使用该命令追溯该bug是由谁在什么时候的哪个commit中引入
+6. 使用前提: 该操作是建立在bug已经定位到源代码的基础之上,然后才能定位到bug行的提交者,进行打板子教育
+Blog creation time:[2017-10-09 一 09:29]
+** WAITTING [#D] Theme:拣选 									 :@Blog:@Git:
+    SCHEDULED:<2017-10-09 一>
+1. 开发还在进行中......
+2. 在历史提交 commit-ID4 中发现一个严重的bug,需要去fixed这个提交的bug
+3. 
+4. 回滚版本库中 commit-ID3 至暂存区和工作区
+5. 挑拣过程中出现冲突:http://blog.csdn.net/wh_19910525/article/details/7554430
+Blog creation time:[2017-10-09 一 10:30]
 ** DONE [#D] Theme:忽略文件										 :@Blog:@Git:
     SCHEDULED:<2017-10-07 六>
 	- State "DONE"       from "WAITTING"   [2017-10-07 六 22:23]
@@ -381,12 +444,36 @@ Blog creation time:[2017-10-07 六 22:01]
 2. 基于提交中的指定目录创建归档: git archive -o lastest.tar commit-ID -- subdir1 subdir2
 3. 基于里程碑linux_1.0创建归档,并将归档中的所有文件都添加kernal/n前缀: git archive --format=tar --prefix=kernel/ linux_1.0 | gzip > linux_1.0-3-g5ea60ef.tar.gz
 Blog creation time:[2017-10-07 六 22:27]
-** WAITTING [#D] Theme:gitg									 :@Blog:@Git:
+** DONE [#D] Theme:gitg											 :@Blog:@Git:
     SCHEDULED:<2017-10-07 六>
+	- State "DONE"       from "WAITTING"   [2017-10-08 日 08:53]
 1. gitg 是使用GTK+图形库实现的一个git版本库浏览器软件
 2. gitg不仅可以实现gitk的全部功能(浏览历史和文件),还能帮助执行提交
 3. 安装gitg: sudo aptitude install gitg
 Blog creation time:[2017-10-07 六 22:52]
+** WAITTING [#D] Theme:底层命令								 :@Blog:@Git:
+    SCHEDULED:<2017-10-08 日>
+1. git 的命令中,一部分是使用ID作为参数,一部分则使用范围作为参数,下面的两个底层命令中rev-parse就是负责ID相关,rev-list负责范围相关
+2. git rev-parse
+   1. 该底层命令功能非常丰富和杂乱,很多的git脚本或者工具都会用到这条命令
+   2. 显示分支: git rev-parse --symbolic --branches
+   3. 显示所有里程碑: git rev-parse --symbolic --tags
+   4. 显示定义的所有引用: git rev-parse --symbolic --glob=refs/*
+   5. 显示HEAD对应的的commit-ID: git rev-parse HEAD
+   6. 显示tag对应的tag-commit-ID: git rev-parse linux_1.0
+   7. 显示tag对应的tag-commit-ID指向的提交的父提交的commit-ID: git rev-parse linux_1.0~2
+   8. 显示tag对应的tag-commit-ID指向的提交下的tree-ID: git rev-parse linux_1.0:
+   9. 显示tag对应的tag-commit-ID指向的提交下的tree-ID下子目录的tree-ID或者文件的blob-ID
+   10. 同时显示多个对应的SHA1哈希值: git rev-parse master refs/heads/master
+   11. 给定一个简写的SHA1哈希值,给出完整的SHA1哈希值: git rev-parse 5ea60ef
+3. git rev-list
+   1. 显示,所有与版本A关联的历史提交: git rev-list --oneline A
+   2. 显示,所有与版本A关联的历史提交(A自身除外): git rev-list --oneline A^@
+   3. 显示,A自身: git rev-list --oneline A^!
+   4. 显示,所有与版本A关联 and 与版本B关联的历史提交: git rev-list --oneline A B
+   5. 显示,所有与版本A关联的历史提交中排除掉与D,F关联的历史提交之后剩下的提交: git rev-list --oneline B ^D ^F
+   6. 显示,所有B,C的历史提交 中,排除B,C的交集之后,剩余的所有历史提交: git rev-list --oneline B...C
+Blog creation time:[2017-10-08 日 08:54]
 ** WAITTING [#D] Theme:分支									 :@Blog:@Git:
     SCHEDULED:<2017-10-06 五>
 1. 分支的构成
@@ -415,6 +502,64 @@ Blog creation time:[2017-10-07 六 22:52]
 		 1. 命令：git merge new-commit-ID
 		 2. 由于在“分离头指针状态”所做出的提交除了能被new-commit-ID所访问到之外，就无法通过分支访问。另外，该提交随时会在版本库中彻底消失，如果这个提交对master很重要的话，可以通过该操作将这个提交合并到master上即可
 Blog creation time:[2017-10-06 五 14:21]
+** WAITTING [#D] Theme:开发模型 								 :@Blog:@Git:
+*** 金字塔式协同模型
+1. linux社区就是使用的金字塔协同模型
+2. 特点:
+   1. 只有核心开发者develop才具备向master推送的权限,任何开发者都具备读master的权限(这意味着需要搭建一个只读的Git服务器)
+*** Android式多版本协同模型(重点)
+
+
+1. 单人工作模型
+2. 团队工作模型
+2-1 金字塔版本控制模型：发布Linux
+--最终版本库；  ---> Fedora 25发行版
+--有一个权威贡献者的版本库（linus）
+--有几个核心贡献者的版本库（Kernel、Samba、KDE、Gnome）
+--有若干开发者（37人）的版本库（10个人负责开发Kernel、6个人负责开发Samba、
+  12个人负责开发KDE、9个人负责开发Gnome）
+
+特点：
+--每个贡献者的版本库都是平等的；
+--用于版本控制的模型；
+
+2-2金字塔版开发模型：开发Samba
+2-2-1服务器端，主分支master;   ---> Samba 3.4.1
+1.不允许在master分支上干活，所以该分支不属于某一个成员，应当找一个牛来管理
+（合并分支）master分支以及slaver分支，这个人一般是核心开发者中最牛的那一个人；
+2.只有slaver分支对它有写权限，即，只有slaver分支才能向它合并代码；
+3.所有分支对它都有读权限；
+4.这个分支是非常稳定的，可以作为产品的。
+
+2-2-2服务器端，开发分支（slaver）
+1.这个开发分支用于干活，但是该分支也不属于某一个成员，应当找一个牛来管理（合并分支）
+  master分支以及slaver分支，这个人一般是核心开发者中最牛的那一个人；
+2.只有核心开发分支（A、B、C、D）才对它有写权限，即，只有核心开发者才能向
+  slaver分支合并代码；
+3.只有核心开发分支（A、B、C、D）才对它有读权限
+4.这个分支是不稳定的，找来管理它的牛在充分测试后时不时把它作为版本合并
+  到master分支上即可。
+
+2-2-3服务器端，核心开发者的开发分支（A、B、C、D）
+1.这四个分支的所有者可以在属于自己的分支上干活，并且时不时向slaver分支合并代码
+  并且，接受
+2.向slaver合并代码，
+  
+--有若干开发者（37人）的开发分支（其中10个人只能）
+
+特点：
+-每个开发者的版本库都是平等的；
+--用于版本开发的模型；
+
+个人也必须有一个master分支和slaver分支，其中，slaver分支用于自己干活，master
+分支主要用于三个方面：向上级分支推送代码，接受别人代码的合并，接受自己在slaver分支
+上的代码的合并
+Blog creation time:[2017-09-05 二 08:07]
+** WAITTING [#D] Theme:克隆									 :@Blog:@Git:
+    SCHEDULED:<2017-10-09 一>
+1. 必要性: 再健壮的版本库设计,也抵挡不了存储介质的崩溃,因此,不要将鸡蛋装在同一个篮子里
+2. 
+Blog creation time:[2017-10-09 一 14:50]
 ** WAITTING [#D] Theme:日志									 :@Blog:@Git:
     SCHEDULED:<2017-10-06 五>
 3. 日志
@@ -465,50 +610,3 @@ Blog creation time:[2017-10-06 五 14:21]
 	  915cd2a2564a5b8a942301de31b993d0f6ec2636 -----
    5. git log -l --pretty=raw
 Blog creation time:[2017-10-06 五 14:21]
-** DONE [#D] theme:开发模型										 :@Blog:@Git:
-	- State "DONE"       from "TODO"       [2017-09-05 二 09:28]
-1. 单人工作模型
-2. 团队工作模型
-2-1 金字塔版本控制模型：发布Linux
---最终版本库；  ---> Fedora 25发行版
---有一个权威贡献者的版本库（linus）
---有几个核心贡献者的版本库（Kernel、Samba、KDE、Gnome）
---有若干开发者（37人）的版本库（10个人负责开发Kernel、6个人负责开发Samba、
-  12个人负责开发KDE、9个人负责开发Gnome）
-
-特点：
---每个贡献者的版本库都是平等的；
---用于版本控制的模型；
-
-2-2金字塔版开发模型：开发Samba
-2-2-1服务器端，主分支master;   ---> Samba 3.4.1
-1.不允许在master分支上干活，所以该分支不属于某一个成员，应当找一个牛来管理
-（合并分支）master分支以及slaver分支，这个人一般是核心开发者中最牛的那一个人；
-2.只有slaver分支对它有写权限，即，只有slaver分支才能向它合并代码；
-3.所有分支对它都有读权限；
-4.这个分支是非常稳定的，可以作为产品的。
-
-2-2-2服务器端，开发分支（slaver）
-1.这个开发分支用于干活，但是该分支也不属于某一个成员，应当找一个牛来管理（合并分支）
-  master分支以及slaver分支，这个人一般是核心开发者中最牛的那一个人；
-2.只有核心开发分支（A、B、C、D）才对它有写权限，即，只有核心开发者才能向
-  slaver分支合并代码；
-3.只有核心开发分支（A、B、C、D）才对它有读权限
-4.这个分支是不稳定的，找来管理它的牛在充分测试后时不时把它作为版本合并
-  到master分支上即可。
-
-2-2-3服务器端，核心开发者的开发分支（A、B、C、D）
-1.这四个分支的所有者可以在属于自己的分支上干活，并且时不时向slaver分支合并代码
-  并且，接受
-2.向slaver合并代码，
-  
---有若干开发者（37人）的开发分支（其中10个人只能）
-
-特点：
--每个开发者的版本库都是平等的；
---用于版本开发的模型；
-
-个人也必须有一个master分支和slaver分支，其中，slaver分支用于自己干活，master
-分支主要用于三个方面：向上级分支推送代码，接受别人代码的合并，接受自己在slaver分支
-上的代码的合并
-Blog creation time:[2017-09-05 二 08:07]
