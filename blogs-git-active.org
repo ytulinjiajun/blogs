@@ -133,14 +133,16 @@ Blog creation time:[2017-09-05 二 08:04]
     SCHEDULED:<2017-10-09 一>
 1. 必要性: 如果仅仅是自己一个人使用git开发,就不需要git服务器,但是,如果如果需要和他人分享代码,协作开发,或者为个人开发建立一个远程备份,则务必掌握git服务器的搭建
 2. git服务器假设方案:
-| HTTP | Git-daemon | SSH | Gitoslite |   |
-|------+------------+-----+-----------+---|
-|      |            |     |           |   |
-   1. HTTP: 简单,支持匿名读取,支持身份认证,支持版本库写操作,不支持企业级授权,不支持远程建库
-   2. Git-daemon: 中等难度,支持匿名读取,不支持身份认证,不支持版本库写操作,不支持企业级授权,不支持远程建库
-   3. SSH:  简单,不支持匿名读取,支持身份认证,支持版本库写操作,不支持企业级授权,不支持远程建库
-   4. Gitoslite: 复杂,不支持匿名读取,支持身份认证,支持版本库写操作,支持企业级授权,支持远程建库
-3. HTTP
+| item               | HTTP    | Git-daemon | SSH     | Gitolite/Gitosis |
+|--------------------+---------+------------+---------+------------------|
+| server             | simple  | middle     | simple  | compliex         |
+| anonymous read     | support | support    | against | against          |
+| Authentication     | support | against    | support | suppost          |
+| repo write         | support | against    | support | support          |
+| Authorization      | against | against    | against | against          |
+| remote create repo | against | against    | against | support          |
+|--------------------+---------+------------+---------+------------------|
+3. 
 Blog creation time:[2017-10-09 一 15:13]
 ** DONE [#D] Theme:创建版本库　									   :Blog:@Git:
 1. git init: 其结果是在工作区中生成版本库：.git/

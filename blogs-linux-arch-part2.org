@@ -509,17 +509,111 @@ vsftpd_log_file=/var/log/vsftpd.log
 --对于配置项：anon_root=/var/ftp，文件/var/ftp必须在FTP服务器下面存在，否则无法登录
 
 ** DONE [#D] theme:SSH服务								   :@Blog:@Linux:
-	- State "DONE"       from "TODO"       [2017-09-05 二 09:29]
-1.检查是否安装openssh-client:dpkg -s openssh-client
-2.检查是否安装openssh-server:dpkg -s openssh-server
-3.安装：apt install openssh-client openssh-server
-4.开启sshd服务：systemctl start sshd
-
-kali:
-1.sudo apt-get install ssh
-2.systemctl start ssh
-3.修改配置文件：/etc/ssh/sshd_config
-(a) 将#PasswordAuthentication no 该行前面的#去掉，并且将NO修改为YES；
-(b) 将#PermitRootLogin  without-password 该行前面的#去掉，并且将“without-password”修改为YES；
-4.重新启动:systemctl restart ssh
+1. 基础知识:
+   1. SSH: secure shell protocol 安全的壳程序协议
+   2. 远程服务器: 一台可供上网的主机上,安装提供远程服务的程序,比如SSHD,便可以将该主机称为一个远程服务器,用户可以远程取得该主机的Shell进行操作
+   3. FTP同SSH最大的区别在于: SSH能够取得Shell对主机进行操作,因此,除非必要,否则通常应当关闭计算机的SSH服务防止被入侵
+   4. 基于广域网和局域网的差别,可以将远程服务器分为: server类型和workstation类型,前者对因特网有限度的开放连接,后者只对内网内开放
+   5. 基于TCP/IP运用层的差别,远程服务器主要有:明文传输的Telnet,RSH;加密传输的SSH,其中前者已经逐渐被后者取缔(当然了,还有图形接口的VNC,XDMCP,XRDP等就不说了)
+   6. 明文传输: 数据包在网络上传输时,数据包的内容就是原始内容(Telnet)
+   7. 加密传输: 数据包在网络上传输时,数据包的内容是经过加密的(SSH)
+   8. SSH协议有2个版本,使用哪个版本,由/etc/ssh/sshd_config中的相关配置项决定,建议使用v2
+   9. SSH协议本身提供两个服务器功能: 类似Telent的远程连接shell的服务器;类似FTP的sftp-server服务器.这两个服务均是架设在22号端口,由于ftp服务有更好的vsftpd,因此,主要使用ssh的远程功能
+2. 工作原理
+   1. 在服务器上安装远程服务程序: openssh-server
+	  1. 检查是否安装: dpkg -s openssh-server
+      2. 安装：apt install openssh-server
+      3. 重要说明: 在安装该软件时,会生成/etc/ssh/ssh_host*,这是采用3种OPEN-SSH自身支持的加密算法产生的,服务器公钥和私钥,共6个文件
+	  4. 备注:经测试,安装openssh-server以及openssh-client中的其中一个会默认将另外一个也安装上,即默认既可以作为服务器又可以作为客户端
+   2. 在客户端上安装远程登录程序: openssh-client
+	  1. 检查是否安装: dpkg -s openssh-client
+	  2. 安装：apt install openssh-client
+	  3. 重要说明: 在安装该软件时,会生成/etc/ssh/ssh_host*,这是采用3种OPEN-SSH自身支持的加密算法产生的,服务器公钥和私钥,共6个文件 
+	  4. 备注:经测试,安装openssh-server以及openssh-client中的其中一个会默认将另外一个也安装上,即默认既可以作为服务器又可以作为客户端
+   3. 服务器生成秘钥文件: /etc/ssh/ssh_host*
+	  1. 在第一次安装openssh-xxx过程中,会计算出服务器(非客户端)的公钥文件和私钥文件,存放在/etc/ssh/下面,客户端连接该服务器时,会查找这些文件中的某个公钥传输给客户端
+	  2. /etc/ssh/ssh_host*这6个公钥和私钥是在安装软件过程中生成的,所以,在没有找到如何使用命令生成之前(据说删除之后重启ssh就能生成,我在debian上测试不知道为何不管用),最好不要轻易删除这6个文件
+	  3. 6个秘钥的命名(系统不同略有差异): ssh_host_dsa_key ,ssh_host_dsa_key.pub, ssh_host_rsa_key,ssh_host_rsa_key.pub, ssh_host_key,ssh_host_key.pub 
+   4. 服务器开启: openssh-server:
+	  1. 检查是否开启: systemctl status sshd :active (running)
+      2. 开启ssh服务：systemctl start sshd
+	  3. 重启ssh服务: systemctl restart sshd
+	  4. 关闭ssh服务: systemctl stop sshd  :inactive (dead)
+   5. 查看服务器是否开启22号端口: netstat -tlnp | grep ssh
+   6. 检查客户端是否安装openssh-client: dpkg -s openssh-client
+   7. 客户端使用openssh-client主动连接服务器,服务器处于侦听状态
+   8. 服务器将自己在4取得的自己的公钥发送给客户端(明码发送)
+   9. 若客户端是第一次连接到服务器,那么,在接收服务器的公钥后,询问用户是否将其记录到客户端的主目录~/.ssh/known_hosts中(是,继续登录,否,退出)
+   10. 若不是第一次连接,则对比本次接收的服务器的公钥与记录中的是否一致,一致则继续登录,不一致则发出警告并退出(ssh的自我保护,防止伪装的服务器公钥浑水摸鱼)
+   11. 客户端处置完毕服务器的公钥之后,则建立(或查找)自己的公钥和私钥,并将客户端自己的公钥传递给服务器
+   12. 服务器收到客户端的公钥之后,理论上应当会将其记录在/etc/ssh/ssh_known_hosts文件里面(不知为啥,实测没有生成该文件)
+   13. 至此,服务器有了客户端的公钥和自己的私钥,而客户端有了服务器的公钥和自己的私钥,接下来就可以进行数据的加密传输了
+   14. 服务器向客户端发送的数据,先使用该客户端自己的公钥进行加密,该客户端收到加密的数据包之后使用自己的私钥进行解密
+   15. 客户端向服务器发送的数据,向使用服务器的公钥进行加密,服务器端收到加密的数据包之后使用使用自己的私钥进行解密
+   16. 循环反复,实现了数据的安全加密传输
+3. 加密与解密技术
+   1. 目前常见的网路数据包加密技术通常采用:非对称密钥系统,主要研究的是对两把不一样的 公钥 和 私钥 进行加密与解密的过程
+   2. 公钥: public key, 在用户客户端生成,提供给远程服务器使用,用于加密从远程服务器网络传输至用户客户端的数据
+   3. 私钥: private key, 在用户客户端生成,由用户客户端自己使用,用于解密从远程服务器接收到的传给自己的数据
+   4. 使用非对称密钥系统进行网路数据包加密的计算机系统中,每台计算机都必须有一个公钥和私钥(包括服务器自己)
+   5. 加密解密算法: 目前SSH上使用的主要是rsa或者dsa机制
+   6. 原理:
+      1. 服务器与客户端在完成3次握手之后,需要做的第一件事是: 交换公钥(该过程中,公钥被抓包窃取也没关系,因为有公钥没有私钥也没法解密)
+      2. 公钥交换完毕之后,使用服务器的公钥加密客户端向服务器发送索要数据的命令,然后在网络上安全的传输(该过程中,抓包窃取到的数据是加密的,因此该过程也是安全的)
+	  3. 服务器收到客户端发送过来的加密后的数据,由于加密的公钥是自己的,所以,找到存储在服务器本地的私钥进行解密,的到真正的命令
+	  4. 服务器收到数据请求命令之后进行解析,然后提取相关数据,并使用客户端的公钥将数据加密之后,通过网络发送出去(该过程中,抓包窃取到的数据是还是加密的,因此该过程也是安全的)
+	  5. 如此反复传输数据,每个过程均是安全的!
+	  6. 备注: 第一步交换公钥,实际上可以通过人工交换,即,让服务器管理员去收集想要使用该服务器的用户的客户端公钥,放到服务器的相关目录下即可
+4. 秘钥文件:
+   1. /etc/ssh/ssh_host_*.pub: 服务器的公钥,该公钥会被发送给客户端,存储在客户端的~/.ssh/known_hosts里面
+   2. /etc/ssh/ssh_host_*_key: 服务器的私钥,谨慎保管,解密客户端发送过来的数据包时用得到
+   3. /etc/ssh/ssh_known_hosts: 服务器存放客户端公钥的文件,客户端的向服务器发送的公钥存放在该文件内,系统管理员应当收集到各个客户端的公钥,然后放到该文件内,其格式是: 系统名字, 公钥, 可选的注释
+   4. ~/.ssh/id_rsa.pub: 客户端的公钥,该公钥会被发送给服务器,存储在服务器的/etc/ssh/ssh_known_hosts里面
+   5. ~/.ssh/id_rsa: 客户端的私钥,谨慎保管,解密服务器发送过来的数据包时用得到
+   6. ~/.ssh/known_hosts: 客户端存放服务器公钥的文件(dsa),客户端每次连接到服务器,服务器向客户端发送的公钥就存储在文件内,所以,该文件可以用户确认客户端是否正确的连接上服务器
+5. 秘钥文件的生成:
+   1. 服务器秘钥的生成: 安装openssh-server过程中生成;据说重启服务器时也可以生成,我在debian上测试不知道为何不管用
+   2. 客户端秘钥的生成: ssh-keygen -t rsa -C "ytulinjiajun@163.com"
+      1. -t  用于指定加密类型，常见的有RSA和DSA加密方式，默认是DSA;
+      2. -C 作为批注
+      3. 三次回车，按默认路径.ssh以及不需要密码安装即可
+6. 客户端配置文件:
+   1. /etc/ssh/ssh_config
+   2. ~/.ssh/config
+7. 服务器端配置文件:
+   1. /etc/ssh/sshd_config
+8. 运用:
+   1. 服务器:
+      1. 检查服务器是否安装: dpkg -s openssh-server
+      2. 检查服务器22号端口: netstat -tlnp | grep ssh
+      3. 检查服务器是否开启: systemctl status ssh
+      4. 开启ssh服务：systemctl start ssh
+      5. 重启ssh服务: systemctl restart ssh
+      6. 关闭ssh服务: systemctl stop ssh
+   2. 客户端:
+      1. 检查客户端是否安装: dpkg -s openssh-client
+      2. 登录远程服务器: ssh telnet-user-name@192.168.19.100
+	     1. 命令: ssh telnet-user-name@192.168.19.100
+	     2. 说明: telnet-user-name是远程服务器上某用户名的用户名,192.168.19.100是远程服务器的ip地址
+	     3. 结果: 在本地客户端,以远程服务器上的某用户名登录,取得远程shell,能在本地操作这个shell
+	     4. 注意: 经测试,此种方式登录,默认采用的加密方式为dsa
+	     5. 登录 and 登录: 可以登录到A服务器,再借助A服务器登录到B服务器,这是允许的
+      3. 不登录服务器直接发送一个命令过去执行: ssh -f telnet-user-name@192.168.19.100 cmd
+      4. 第一次登录时自动添加服务器公钥至~/.ssh/known_hosts中而不用询问yes: ssh -o StrickHostKeyChecking=no telnet-user-name@192.168.19.100 cmd
+      5. 退出登录:exit
+	  6. 使用ssh实现sftp: 当你取得shell后,远程操作服务器过程中,想要下载远程服务器上的某个文件,或者上传某个文件,可以使用ssh的sftp而不必去专门搭建vsftpd,非常高效
+		 1. 登录: sftp telnet-user-name@192.168.19.101
+		 2. 浏览: ls
+		 3. 切换: cd
+		 4. 显示路径: pwd
+		 5. 创建目录: mkdir dir-name
+		 6. 删除目录: rmdir dir-name
+		 7. 删除文件或目录: rm PATH
+		 8. 更改文件或目录名: rename old-name new-name
+		 9. 上传文件: put PATH
+		 10. 下载文件: get PATH
+		 11. 本地浏览: lls
+		 12. 本地切换: lcd
+		 13. 本地显示路径: lpwd
+		 14. 本地创建目录: lmkdir dir-name
 Blog creation time:[2017-09-05 二 09:06]
