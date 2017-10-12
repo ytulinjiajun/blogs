@@ -1,6 +1,5 @@
 * blogs-linux-arch-part2 
 ** DONE [#D] theme:FTP服务 									   :@Blog:@Linux:
-	- State "DONE"       from "TODO"       [2017-09-05 二 09:29]
 *** 安装
 --安装vsftpd:
 sudo apt install vsftpd
@@ -504,11 +503,10 @@ vsftpd_log_file=/var/log/vsftpd.log
 *** 测试心得
 --协议：ftp
 --端口号：21
-
 --chown_uploads设置为YES,在windos上使用的xftp软件，匿名用户就无法登录
 --对于配置项：anon_root=/var/ftp，文件/var/ftp必须在FTP服务器下面存在，否则无法登录
-
 ** DONE [#D] theme:SSH服务								   :@Blog:@Linux:
+   CLOCK: [2017-10-10 二 18:29]--[2017-10-10 二 19:09] =>  0:40
 1. 基础知识:
    1. SSH: secure shell protocol 安全的壳程序协议
    2. 远程服务器: 一台可供上网的主机上,安装提供远程服务的程序,比如SSHD,便可以将该主机称为一个远程服务器,用户可以远程取得该主机的Shell进行操作
@@ -533,7 +531,8 @@ vsftpd_log_file=/var/log/vsftpd.log
    3. 服务器生成秘钥文件: /etc/ssh/ssh_host*
 	  1. 在第一次安装openssh-xxx过程中,会计算出服务器(非客户端)的公钥文件和私钥文件,存放在/etc/ssh/下面,客户端连接该服务器时,会查找这些文件中的某个公钥传输给客户端
 	  2. /etc/ssh/ssh_host*这6个公钥和私钥是在安装软件过程中生成的,所以,在没有找到如何使用命令生成之前(据说删除之后重启ssh就能生成,我在debian上测试不知道为何不管用),最好不要轻易删除这6个文件
-	  3. 6个秘钥的命名(系统不同略有差异): ssh_host_dsa_key ,ssh_host_dsa_key.pub, ssh_host_rsa_key,ssh_host_rsa_key.pub, ssh_host_key,ssh_host_key.pub 
+	  3. 6个秘钥的命名(系统不同略有差异): ssh_host_dsa_key ,ssh_host_dsa_key.pub, ssh_host_rsa_key,ssh_host_rsa_key.pub, ssh_host_key,ssh_host_key.pub
+	  4. 其中: ssh-host-key*是SSH version1的,ssh-host-rsa-key是SSH version2的rsa加密, ssh-host-dsa-key是SSH version2的dsa加密(默认)
    4. 服务器开启: openssh-server:
 	  1. 检查是否开启: systemctl status sshd :active (running)
       2. 开启ssh服务：systemctl start sshd
@@ -571,7 +570,7 @@ vsftpd_log_file=/var/log/vsftpd.log
    4. ~/.ssh/id_rsa.pub: 客户端的公钥,该公钥会被发送给服务器,存储在服务器的/etc/ssh/ssh_known_hosts里面
    5. ~/.ssh/id_rsa: 客户端的私钥,谨慎保管,解密服务器发送过来的数据包时用得到
    6. ~/.ssh/known_hosts: 客户端存放服务器公钥的文件(dsa),客户端每次连接到服务器,服务器向客户端发送的公钥就存储在文件内,所以,该文件可以用户确认客户端是否正确的连接上服务器
-5. 秘钥文件的生成:
+5. 制作秘钥文件:
    1. 服务器秘钥的生成: 安装openssh-server过程中生成;据说重启服务器时也可以生成,我在debian上测试不知道为何不管用
    2. 客户端秘钥的生成: ssh-keygen -t rsa -C "ytulinjiajun@163.com"
       1. -t  用于指定加密类型，常见的有RSA和DSA加密方式，默认是DSA;
@@ -580,9 +579,8 @@ vsftpd_log_file=/var/log/vsftpd.log
 6. 客户端配置文件:
    1. /etc/ssh/ssh_config
    2. ~/.ssh/config
-7. 服务器端配置文件:
-   1. /etc/ssh/sshd_config
-8. 运用:
+7. 服务器端配置文件: /etc/ssh/sshd_config 
+8. 操作:
    1. 服务器:
       1. 检查服务器是否安装: dpkg -s openssh-server
       2. 检查服务器22号端口: netstat -tlnp | grep ssh
@@ -616,4 +614,25 @@ vsftpd_log_file=/var/log/vsftpd.log
 		 12. 本地切换: lcd
 		 13. 本地显示路径: lpwd
 		 14. 本地创建目录: lmkdir dir-name
+9. 制作不用密码即可登录的SHH用户
+   1. 原理:
+	  正常情况下,客户端向服务请求登录时,首先会收到服务器发送过来的的公钥,客户端对比或保存服务器的公钥至~/.ssh/known_hosts中,然后,客户端向服务其发送自己的公钥,服务器收到之后也保存至/etc/ssh/ssh_known_hosts里面,进接着立即进入密码认证阶段,密码认证成功之后就能取得shell进行工作了
+      但是,如果事先客户端的公钥放置在服务器上,客户端用户自己的家目录的.ssh/authorized_keys下面(由/etc/ssh/sshd_config中的AuthorizedKeysFile指定),则,该客户端用户在登录服务器时,可以省略掉输入密码的步骤
+   2. 实现:
+	  1. 服务器管理员收集各个客户端用户的公钥
+	  2. 在服务器上,由服务器管理员在指定用户的家目录下面创建一个目录: .ssh/,并执行chomd 700 .ssh
+	  3. 在服务器上,由服务器管理员在指定用户的家目录下的.ssh/中新建一个文件: authorized_keys,并执行chomd 644 authorized_keys
+	  4. 在服务器上,由服务器管理员将收集到的各个客户端用户的公钥拷贝到指定用户的家目录下的.ssh/authorized_keys文件内部: cat id_rsa.pub >> ~/.ssh/authorized_keys
+	  5. 到此为止,这些个提交了自己公钥的客户端登录服务器上的那个指定的用户时就不再需要身份认证了
+   3. 要点:
+	  1. 客户端用户必须制作出public_key和private_key
+	  2. 将客户端用户的public_key放到服务器哪个用户的家目录下面的.ssh/authorized_keys中,该客户端用户就能无需密码远程登录到该系统
+	  3. 服务器用户家目录下: .ssh/的权限是700, .ssh/authorized_keys的权限是644
+10. 安全
+	1. 不要允许root用户或者管理员远程登录: #permitRootLogin no
+	2. 不要将SSH服务暴露在整个Internet的环境下,通常,尽量使用防火墙规则局限在几个小范围的ip内或者限制主机名
+	3. 建议使用非标准port,尤其在外网中,还是不要开放22号端口的好,这样,能避开一些ISP或者Cracker的扫描: ssh -p 23 test@192.168.19.10
+11. SSH的高级功能: rsync实现异地备份
+	1. 命令: rsync -av -e ssh test@192.168.19.10:~ /tmp
+	2. 注意:该功能是将服务器上的~复制到本地客户端的/tmp中
 Blog creation time:[2017-09-05 二 09:06]
