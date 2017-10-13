@@ -131,18 +131,17 @@ Blog creation time:[2017-09-05 二 08:03]
 Blog creation time:[2017-09-05 二 08:04]
 ** WAITTING [#D] Theme:搭建git服务器							 :@Blog:@Git:
    SCHEDULED:<2017-10-09 一>
-1. 必要性: 如果仅仅是自己一个人使用git开发,就不需要git服务器,但是,如果如果需要和他人分享代码,协作开发,或者为个人开发建立一个远程备份,则务必掌握git服务器的搭建
-2. git服务器假设方案:
+git服务器假设方案:
 | item               | HTTP    | Git-daemon | SSH     | Gitolite/Gitosis |
 |--------------------+---------+------------+---------+------------------|
 | server             | simple  | middle     | simple  | compliex         |
 | anonymous read     | support | support    | against | against          |
 | Authentication     | support | against    | support | suppost          |
 | repo write         | support | against    | support | support          |
-| Authorization      | against | against    | against | against          |
+| Authorization      | against | against    | against | support          |
 | remote create repo | against | against    | against | support          |
 |--------------------+---------+------------+---------+------------------|
-1. 我的选择: 标准SSH 以及  Gitolite
+1. 我的选择: Gitolite
 2. 基于标准的SSH搭建git服务器
    1. 服务器管理员在服务器上创建一个账号:git-server,专门用于git开发
    2. 客户端用户自己生成公钥和私钥: ssh-keygen -t rsa -C "ytulinjiajun@163.com" -f ~/.ssh/github
@@ -168,6 +167,62 @@ Blog creation time:[2017-09-05 二 08:04]
    8. 执行git命令
 	  1. git clone git-lin-github:ytulinjiajun/emacs.d.git
 3. 基于Gitlite搭建git服务器
+   1. 相关网址:
+	  1. gitolite官方源代码:  http://github.com/sitaramc/gitolite
+	  2. 官方学习文档(英文): http://gitolite.com/gitolite/
+	  3. gitolite官方推荐资料(中文):https://git-scm.com/book/zh/v1/%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A%E7%9A%84-Git-Gitolite
+   2. Gitolite介绍:
+	  1. gitolit是一款Perl语言开发的Git服务管理工具
+	  2. gitolite的设计灵感来源于Gitosis,目前其功能已经超过Gitosis
+	  3. gitolite提供两个功能: 身份认证; 权限控制
+	  4. git本身不提供权限控制,当搭建完毕标准SSH服务器之后,而在团队开发中就会出现,任何人能对任何版本库执行任何操作,在团队开发中,这样的情况是非常糟糕的
+	  5. git没有提供身份认证和权限控制的功能,而基于SSH的gitolite正是针对这一需求而设计,从某种意义上弥补了git的不足
+	  6. gitolite在安装过程中,会指定一个gitolite管理员(提供该用户在客户端的秘钥),之后在git账号的家目录下的repositories/下生成一个名为gitolite-admin.git的版本库
+	  7. gitolite-admin.git版本库只能被gitolite管理员所clone和push
+	  8. gitolite管理员在客户端执行: git clone git@server:gitolite-admin.git,在本地得到一个名为gitolite-admin的仓库(和服务器上的gitolite-admin.git内容不同)
+	  9. gitolite管理员clone到本地的gitolite-admin仓库里面有一个config/和keydir/,前者用于实现权限控制,后者用于实现身份认证
+	  10. gitolite-admin/config/gitolite.conf,就是用于实现权限限制的配置文件,而gitolite-admin/keydir/下面则保存参与项目开发的程序员自己客户端上的公钥
+	  11. gitolite针对config/gitolite.conf专门提供一套配置语法用于限制参与项目开发的所有程序员对repositories/下面的各个版本库中的分支,里程碑,文件,目录等的读,写权限
+	  12. gitolite管理员将参与项目开发的所有程序员的公钥收集过来,重命令,然后放在gitolite-admin/keydir/下面,在该目录下面的程序员就能参与项目的开发中来
+	  13. gitolite管理员在本地版本库gitolite-admin中执行: git push,将11,12中做的配置推送到服务器的gitolite-admin.git中,配置生效后,就能实现身份认证和权限限制的目的
+	  14. 备注: 服务器git账号的密码只有gitolite管理员才知道, 在keydir/下面提交过公钥的程序员,无法直接使用ssh git@server的形式登录服务器的git账号来取得shell,但是却可以使用如push,pull等命令,至于reset或者git checkout等命令则需要依据config/gitolite.conf中的权限而定;不在keydir/下面提交过公钥的程序员,可以使用ssh git@server的形式登录服务器的git账号来取得shell,但是前提是,你得知道git账号的密码(只有gitolite管理员才有),这正是我们希望的结果
+   3. Gitolite安装
+      1. 建议参照源代码下面的README.markdown来进行操作 
+	  2. 前提: 
+         1. 事先安装了Git,且版本必须在1.6.6以上,且服务器要提供SSH服务
+		 2. 事先安装了perl
+		 3. 事先搭建好了SSH服务器,且该服务器的账号命名为git
+	  3. 安装步骤: 由gitolite管理员来操作
+	     1. 在服务器上创建一个用户账号: git
+		 2. 在该账号的家目录下新建目录和文件: .ssh/authorized_keys
+		 3. gitolite预备管理员在自己的客户端生成SSH秘钥对,然后使用sftp将生成的公钥gitolite-admin.pub 给 put 到服务器上
+		 4. 登录到服务器(非远程),在家目录下面下载gitolite的源代码: git clone git@github.com:sitaramc/gitolite.git
+		 5. 创建gitolite的安装路径: mkdir -p $HOME/bin
+		 6. 安装: gitolite/install -to $HOME/bin
+		 7. 指定gitolite的管理员: gitolite setup -pk $HOME/gitolite-admin.pub
+		    1. 该操作之后 gitolite-admin.pub 这个公钥的所有者正式设置为 gitolite 的管理员
+			2. 该操作会将 gitolite-admin.pub 添加至~/.ssh/authorized-keys中,这在标准SSH中意味着,该用户可以使用 ssh git@server 免密码直接远程登录服务器git账号,在这里,意味着: 第一,gitolite管理员再也无法使用ssh git@server 登录服务器的git账号取得shell了; 第二,gitolite是唯一一个可以使用git clone git@server gitolite-admin.git将gitolite的配置文件所在的这个版本库克隆到本地,修改,然后push上去使配置生效的人
+		 8. 备注: 到此为止,gitolite已经在服务器上安装完毕,并且,还将服务器假设员的客户端账号设置为服务器上gitolite唯一的管理员
+   4. Gitolite管理员的那些事: (本地完成)
+	  1. 克隆服务器上专门管理 Gitolite 的版本库: git clone git@server:gitolite-admin.git
+	  2. 新建配置文件: ~/.ssh/config
+	     #+BEGIN_SRC 
+		 host gitolite     # 相当于一个代号,登录时使用该代号即可加载该代号下面的配置
+		   user git  # 远程服务器上专门用于git的用户账户
+           hostname 192.168.19.10 # 远程服务的ip地址
+           port 22  # 远程服务器ssh服务使用的端口号
+           identityfile ~/.ssh/gitolite-admin  # git-lin使用哪个公钥
+		 #+END_SRC	 
+	  3. 更改授权文件
+	     1. 授权文件: gitolite-admin/conf/gitolite.conf  
+		 2. 语法:
+	  4. 新增用户:
+		 1. gitolite管理员从参与项目的开发者那些收集公钥,并将公钥按照ytulinjiajun@163.com.pub的方式统一命令
+		 2. 将统一命名之后的公钥拷贝到keydir中
+		 3. 将新增的公钥文件添加进版本库: git add keydir
+		 4. 提交新增修改: git commit -m "add user: dev1 dev2 dev3"
+		 5. 同步到服务器,完成用户添加: git push
+		 6. 备注: 执行完毕push操作之后,将会发现在服务器的git账户的~/.ssh/authorized_keys中追加了新增用户的公钥,这意味着----(待测试),
 Blog creation time:[2017-10-09 一 15:13]
 ** DONE [#D] Theme:创建版本库　									   :Blog:@Git:
 1. git init: 其结果是在工作区中生成版本库：.git/

@@ -1,0 +1,21 @@
+* blogs-python-active
+** WAITTING [#D] Theme:python简介							  :@Blog:@Python:
+    SCHEDULED:<2017-10-12 四>
+1. python 是一种解释型的,面向对象的,带有动态语义的高级语言
+2. 诞生时间1989年,起源ABC语言,由Guido van Rossum开发,他现在在谷歌工作
+3. python是一种解释性语言,但是,也可以将其编译成为.pyc的二进制文件进行执行,编译后执行的效率更高
+4. python被称为胶水语言,可以和c,c++嵌套使用
+Blog creation time:[2017-10-12 四 20:04]
+** WAITTING [#D] Theme:python开发环境						  :@Blog:@Python:
+    SCHEDULED:<2017-10-12 四>
+1. 环境: linux的发行版基本上都默认提供了python,因此,开箱即用
+2. 开发模式: 交互式,脚本
+3. 交互模式的进入和退出: python  exit()
+4. 交互模式适合用于调试或者测试代码的场合
+5. 脚本模式开发：emacs a.py
+6. 脚本首行: #!/usr/bin/python
+7. 运行脚本: python a.py 或者 ./a.py
+8. 编译脚本文件: 创建a.py的编译脚本文件b.py,该文件中写: import py_compile    py_compile.compile("a.py") ,保存退出后运行python b.py就能生成a.pyc,运行a.pyc(python a.pyc)即可输出
+9. 优化代码: 使用命令python -O -m py_compile a.py 生成a.pyo,运行a.pyo(python a.pyo)即可输出
+Blog creation time:[2017-10-12 四 20:27]
+
