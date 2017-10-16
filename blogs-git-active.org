@@ -131,22 +131,22 @@ Blog creation time:[2017-09-05 二 08:03]
 Blog creation time:[2017-09-05 二 08:04]
 ** WAITTING [#D] Theme:搭建git服务器							 :@Blog:@Git:
    SCHEDULED:<2017-10-09 一>
-git服务器假设方案:
-| item               | HTTP    | Git-daemon | SSH     | Gitolite/Gitosis |
-|--------------------+---------+------------+---------+------------------|
-| server             | simple  | middle     | simple  | compliex         |
-| anonymous read     | support | support    | against | against          |
-| Authentication     | support | against    | support | suppost          |
-| repo write         | support | against    | support | support          |
-| Authorization      | against | against    | against | support          |
-| remote create repo | against | against    | against | support          |
-|--------------------+---------+------------+---------+------------------|
+   git服务器假设方案:
+   | item               | HTTP    | Git-daemon | SSH     | Gitolite/Gitosis |
+   |--------------------+---------+------------+---------+------------------|
+   | server             | simple  | middle     | simple  | compliex         |
+   | anonymous read     | support | support    | against | against          |
+   | Authentication     | support | against    | support | suppost          |
+   | repo write         | support | against    | support | support          |
+   | Authorization      | against | against    | against | support          |
+   | remote create repo | against | against    | against | support          |
+   |--------------------+---------+------------+---------+------------------|
 1. 我的选择: Gitolite
 2. 基于标准的SSH搭建git服务器
    1. 服务器管理员在服务器上创建一个账号:git-server,专门用于git开发
    2. 客户端用户自己生成公钥和私钥: ssh-keygen -t rsa -C "ytulinjiajun@163.com" -f ~/.ssh/github
 	  1. 在实际运用中,一个客户端用户可能需要使用多套秘钥对,如github使用一套,自己搭建的ssh-server需要一套
-	  2. -用于定制生成的秘钥的名字为一个有意义的名,如github.pub,而不是简单的id_ras.pub之类的
+	  2. -f用于定制生成的秘钥的名字为一个有意义的名,如github.pub,而不是简单的id_ras.pub之类的
    3. 服务器管理员收集各个客户端用户的公钥,放在key/下面
    4. 将这些客户端的公钥/key/*依次添加进服务器/home/git-server/.ssh/authorized_keys文件内部
 	  1. 方法一:直接在服务器上使用git-server账号操作: cat key/user1.pub >> ~/.ssh/authorized_keys
@@ -201,11 +201,14 @@ git服务器假设方案:
 		 6. 安装: gitolite/install -to $HOME/bin
 		 7. 指定gitolite的管理员: gitolite setup -pk $HOME/gitolite-admin.pub
 		    1. 该操作之后 gitolite-admin.pub 这个公钥的所有者正式设置为 gitolite 的管理员
-			2. 该操作会将 gitolite-admin.pub 添加至~/.ssh/authorized-keys中,这在标准SSH中意味着,该用户可以使用 ssh git@server 免密码直接远程登录服务器git账号,在这里,意味着: 第一,gitolite管理员再也无法使用ssh git@server 登录服务器的git账号取得shell了; 第二,gitolite是唯一一个可以使用git clone git@server gitolite-admin.git将gitolite的配置文件所在的这个版本库克隆到本地,修改,然后push上去使配置生效的人
+			2. 该操作会将 gitolite-admin.pub 添加至~/.ssh/authorized-keys中,这在标准SSH中意味着,该用户可以使用 ssh git@server 免密码直接远程登录服务器git账号
+			3. 在这里,意味着: 第一,gitolite管理员再也无法使用ssh git@server 登录服务器的git账号取得shell了;
+			4. 第二,gitolite是唯一一个可以使用git clone 将gitolite-admin.git 这个配置相关的版本库克隆到本地,修改,然后push上去使配置生效的人
+			5. 当然了只有gitolite管理员才有gitolite-admin.git的读写和强制更新的权限是在gitolite-admin.git/config/gitolite.conf中配置的,也可以让其他人拥有此权限
 		 8. 备注: 到此为止,gitolite已经在服务器上安装完毕,并且,还将服务器假设员的客户端账号设置为服务器上gitolite唯一的管理员
    4. Gitolite管理员的那些事: (本地完成)
 	  1. 克隆服务器上专门管理 Gitolite 的版本库: git clone git@server:gitolite-admin.git
-	  2. 新建配置文件: ~/.ssh/config
+	  2. 新建配置文件(客户端): ~/.ssh/config
 	     #+BEGIN_SRC 
 		 host gitolite     # 相当于一个代号,登录时使用该代号即可加载该代号下面的配置
 		   user git  # 远程服务器上专门用于git的用户账户
@@ -213,16 +216,89 @@ git服务器假设方案:
            port 22  # 远程服务器ssh服务使用的端口号
            identityfile ~/.ssh/gitolite-admin  # git-lin使用哪个公钥
 		 #+END_SRC	 
-	  3. 更改授权文件
-	     1. 授权文件: gitolite-admin/conf/gitolite.conf  
-		 2. 语法:
-	  4. 新增用户:
+	  3. 新增用户:
 		 1. gitolite管理员从参与项目的开发者那些收集公钥,并将公钥按照ytulinjiajun@163.com.pub的方式统一命令
 		 2. 将统一命名之后的公钥拷贝到keydir中
 		 3. 将新增的公钥文件添加进版本库: git add keydir
 		 4. 提交新增修改: git commit -m "add user: dev1 dev2 dev3"
 		 5. 同步到服务器,完成用户添加: git push
-		 6. 备注: 执行完毕push操作之后,将会发现在服务器的git账户的~/.ssh/authorized_keys中追加了新增用户的公钥,这意味着----(待测试),
+		 6. 执行完毕push操作之后,将会发现在服务器的git账户的~/.ssh/authorized_keys中追加了新增用户的公钥
+		 7. 这意味着该用户加入到研发团队中来,但是新增的普通用户仍然还没有读,写,克隆服务器上git/repositories/*.git的权限
+		 8. 事情还没完,接下来需要配置用户对gitolite管理的所有版本库git/repositories/*.git的权限进行控制,见下面的权限控制
+	  4. 权限控制
+	     1. 配置文件: gitolite-admin/conf/gitolite.conf
+		 2. 研究目标: 仓库(分支,里程碑,目录,文件),研发人员 <==> 读,写,管理  之间的关系
+		 3. 用户组:
+			1. 用户组语法: @team1 = devlp1 devlp2 @team3
+			2. 用户组的必要性: gitolite是版本控制系统的权限管理工具,因此实际情况很可能是这样的:
+			   1. 版本控制系统中有很多个独立的仓库A,B,C,D...
+			   2. 项目的参与者均通过上面3介绍的新增用户的方法加入到 gitolite 体系中,项目参与者的除了gitolite-admin这个管理员之外,还有很多人,按编号为1,2,3,4...
+			   3. 成员1既在仓库A中有任务分工,又在仓库B中有任务分工
+			   4. 成员2只在仓库B中有任务
+			   5. 成员3既在仓库A中有任务分工,又在仓库C中有任务分工
+			   6. 成员4比较厉害,在仓库B,C,D中都有任务分工
+			   7. 当仓库的数量趋向无穷多,项目参与者的数量趋向无穷多,则,仓库,项目参与者之间的关系就会变得非常复杂,因此,gitolite权限控制语法中提供分组的概念
+			   8. (仓库A : 成员1 成员3), (仓库B : 成员2 成员4), (仓库C : 成员3 成员4), (仓库D : 成员4)
+			3. 备注: 组可以嵌套,表示@team3中的所有用户都加入到用户组@team1中去
+			4. 用户组的意义: 给出了仓库可研发人员的对应,为仓库里面的分支,里程碑,目录,文件和研发人员的对应做出宏观的铺垫
+		 4. 管理员组:
+			1. 管理员组语法: @admin = admin1 admin2
+			2. 管理员组的必要性: 一个人管理gitolite的所有仓库,可能会忙不过来,此时,可以设置多个gitolite管理员
+			3. @admin: gitolite系统内建标识,代表管理员组,加入管理员组的用户具有gitolite管理员的权限
+			4. @all: gitolite系统内建标识,代表所有用户
+		 5. 通配符仓库模块: repo subdir-repo-name/.+$ <回车+缩进> 授权指令 
+			1. repo: gitolite系统内建关键字,用来标识仓库
+			2. subdir-repo-name/:位于服务器git账号家目录~/repositories/下的一个子目录
+			3. .+$: 正则表达式,表示所有仓库
+			4. <回车+缩进>: 配置文件格式所要求
+			5. 授权指令: 稍后再叙
+			6. 说明: 通配符仓库语法定义了一组仓库的规则,该语法使用正则表达式匹配一组仓库而不是特指某个具体的仓库
+			7. 作用: 通配符仓库模块主要用于配置多个仓库的共性配置,个性配置则通过单个仓库配置模块的语法来实现
+         6. 单个仓库模块: repo repo-name <回车+缩进> 授权指令
+			1. repo: gitolite系统内建关键字,用来标识仓库
+			2. repo-name: 服务器git账户家目录中(~/repositories/*.git)的一个具体的仓库,以服务器的~/repositories/作为根
+			3. <回车+缩进>: 配置文件格式所要求
+			4. 授权指令: 稍后再叙
+			5. 9. 仓库的意义: 用户组的配置给出了仓库和研发人员对应关系,而仓库的配置给出了仓库和研发人员对应关系的具体实现
+			6. 仓库是gitolite系统进行权限控制的基本对象
+			7. 2. 注意: 在配置某个用户在该仓库中的权限之前,应当先配置该用户的用户组
+		 7. 授权指令: <权限> [零个或多个正则表达式的匹配,或者引用] = <user> [<user> ...]
+			1. 授权的两个阶段
+			   1. 第一阶段: gl-auth-command检查
+				  1. 读权限检查: 检查是否具有R, RW, RW+之一,如果有,则指定的用户对整个仓库(包含分支)均可读
+				  2. 写权限检查: 检查是否具有RW,RW+,C之一,若果有,则通过第一阶段的写权限检查,准备第二阶段的写权限检查
+				  3. 创建权限检查: 检查通配符仓库模块中,是否具有C权限,如果有,则指定用户可以 创建,读,写 和正则表达式匹配的仓库
+			   2. 第二阶段: update钩子脚本检查
+				  1. 写权限检查: 针对推送的操作的各分支, 精细的进行逐一检查是否具有写权限,若果有,则进行写授权
+				  2. 基于路径的写授权也是发生在这个阶段
+			2. <权限>:
+			   1. 基础权限: C,R,W,+,D,-
+			      1. C: 创建仓库权限(同时也拥有RW权限), 只在通配符仓库模块中使用, 被指定用户可以在通配符仓库模块中的subdir-repo-name/目录下创建仓库
+			      2. R: 只读权限(不可写), 通配符仓库模块和单个仓库模块均可使用, 被指定的用户不可写该仓库
+			      3. W: 写权限, 一般与R一起,不会单独使用, 发生在授权的两个阶段中
+			      4. +: 强制推送权限, 通配符仓库模块和单个仓库模块均可使用, 被指定的用户可以向仓库强制执行非快进式推送
+				  5. -: 禁用写权限, 只在授权的第二阶段中起作用,因此只对写权限起到禁用的效果,对读权限没有影响
+			      6. D: 删除和正则表达式匹配的引用, 只在定义了 [零个或多个正则表达式的匹配,或者引用] 时才可使用 
+			   2. 组合权限: RW,RW+,RWC,RW+C,RWD,RW+D,RWCD,RW+CD
+				  1. RW: 读写权限
+				  2. RW+: 读写和推送权限
+				  3. RWC: C的含义是允许创建和正则表达式相匹配的引用(分支,里程碑)的权限, 只有定义了[零个或多个正则表达式的匹配,或者引用]时才允许使用该权限
+				  4. RW+C: C的含义同上,+的含义是允许强制推送,只有定义了[零个或多个正则表达式的匹配,或者引用]时才允许使用该权限
+				  5. RWD: D的含义是允许创建和正则表达式相匹配的引用(分支,里程碑)的权限,只有定义了[零个或多个正则表达式的匹配,或者引用]时才允许使用该权限
+				  6. RW+D: D的含义同上,+的含义是允许强制推送,只有定义了[零个或多个正则表达式的匹配,或者引用]时才允许使用该权限
+				  7. RWCD: CD的含义是允许创建和删除和正则表达式相匹配的引用(分支,里程碑)的权限,只有定义了[零个或多个正则表达式的匹配,或者引用]时才允许使用该权限
+				  8. RWC+D: CD的含义同上,+的含义是允许强制推送,只有定义了[零个或多个正则表达式的匹配,或者引用]时才允许使用该权限
+			3. [零个或多个,正则表达式的匹配,或者引用]
+			   1. 如果没有在授权指令中提供该选项,则相当于提供refs/*作为引用参数
+			   2. 对引用的授权有两种模式,传统模式和扩展模式
+			   3. 传统模式:
+				  1. 只采用RW和RW+关键字的授权
+			   4. 扩展模式:
+			   5. 
+			4. <user> [<user> ...]
+         8. 经典授权实例
+			1. 
+		 9. 最后一步: 提交配置,使之生效
 Blog creation time:[2017-10-09 一 15:13]
 ** DONE [#D] Theme:创建版本库　									   :Blog:@Git:
 1. git init: 其结果是在工作区中生成版本库：.git/

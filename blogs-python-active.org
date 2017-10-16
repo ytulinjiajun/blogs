@@ -1,21 +1,168 @@
 * blogs-python-active
+** WAITTING [#D] Theme:python相关网站						  :@Blog:@Python:
+    SCHEDULED:<2017-10-15 日>
+1. 官网: http://www.python.org
+Blog creation time:[2017-10-15 日 13:52]
 ** WAITTING [#D] Theme:python简介							  :@Blog:@Python:
-    SCHEDULED:<2017-10-12 四>
+   SCHEDULED:<2017-10-12 四>
 1. python 是一种解释型的,面向对象的,带有动态语义的高级语言
 2. 诞生时间1989年,起源ABC语言,由Guido van Rossum开发,他现在在谷歌工作
 3. python是一种解释性语言,但是,也可以将其编译成为.pyc的二进制文件进行执行,编译后执行的效率更高
 4. python被称为胶水语言,可以和c,c++嵌套使用
 Blog creation time:[2017-10-12 四 20:04]
 ** WAITTING [#D] Theme:python开发环境						  :@Blog:@Python:
-    SCHEDULED:<2017-10-12 四>
-1. 环境: linux的发行版基本上都默认提供了python,因此,开箱即用
+   SCHEDULED:<2017-10-12 四>
+1. 环境: linux的发行版基本上都默认提供了python解释器,因此,开箱即用; Debian: apt-get install python
 2. 开发模式: 交互式,脚本
-3. 交互模式的进入和退出: python  exit()
-4. 交互模式适合用于调试或者测试代码的场合
-5. 脚本模式开发：emacs a.py
-6. 脚本首行: #!/usr/bin/python
-7. 运行脚本: python a.py 或者 ./a.py
-8. 编译脚本文件: 创建a.py的编译脚本文件b.py,该文件中写: import py_compile    py_compile.compile("a.py") ,保存退出后运行python b.py就能生成a.pyc,运行a.pyc(python a.pyc)即可输出
-9. 优化代码: 使用命令python -O -m py_compile a.py 生成a.pyo,运行a.pyo(python a.pyo)即可输出
+4. 交互模式进入: python
+5. 交互模式退出: exit() 或者C-d
+6. 交互模式适合用于调试或者测试代码的场合
+7. 脚本模式开发：emacs a.py
+8. 脚本首行: #!/usr/bin/python
+9. 编译专用的脚本文件: 创建a.py的编译脚本文件b.py,该文件中写: import py_compile    py_compile.compile("a.py") ,保存退出后运行python b.py就能生成a.pyc,运行a.pyc(python a.pyc)即可输出
+10. 运行脚本: python a.py 或者 ./a.py
+11. 优化代码: 使用命令python -O -m py_compile a.py 生成a.pyo,运行a.pyo(python a.pyo)即可输出
 Blog creation time:[2017-10-12 四 20:27]
-
+** WAITTING [#D] Theme:python运算 							  :@Blog:@Python:
+   SCHEDULED:<2017-10-14 六>
+1. 交互式和脚本:
+   1. 交互式:
+	  1. 进入交互式环境: 在终端下面输入python,即可进入
+	  2. 退出交互式环境: 在终端下面输入exit()或者直接按C-d,在退出交互式环境的那一刻,解释器里面输入的一切都会丢失
+	  3. 在交互式下,语句和表达式的效果是不同的,交互式会给出表达式在内存的值,而语句则不会给出值
+	     1. 3+2是表达式,x=3+2是语句,因此前者会给出值
+		 2. x是一个表达式,因此会给出变量x在内存中的值
+	     3. print 3+2 是一个特殊的语句,print是一个将结果打印到标准输出的函数,因此,虽然是语句,但是也给出值,不过呢,该语句与表达式3+2本质上还是不一样的
+		 4. 证明print语句和表达式不一样:
+			1. str1 = "hello\n world"
+			2. 表达式: str1 ---> 'hello\n world'
+			3. print语句: print str1 ---> hello体现换行行为 world 
+   2. 脚本:
+	  1. #!: 在脚本的首行加上该标识,表示告诉解释器,在解释到该标识的时候,使用其后面的路径下的程序去解释该脚本程序,一般为#!/usr/bin/python
+	  2. 运行脚本: ./xx.py,注意,在运行脚本之前,要让该脚本具有可执行的权限才行
+	  3. 由于linux并不是以后缀标识文件的,所以可以去掉.py后缀,让你的程序更加像一个通用的程序
+	  4. 注释: #
+2. 运算符:
+   1. 除了下面所示特殊的运算符之外，其他的都与c的一致:
+   2. 整除运算：　3.0 // 2 = 1.0
+   3. 平方运算：　3 ** 2 = 9 (相当于pow(3,2)，所以，ｍ的n次方可以表示为 m ** n)
+   4. 与，或，非：　and, or, not
+   5. 
+3. 变量:
+   1. c中变量的本质: 数据的地址,一个数据有唯一一个地址,为方便记忆,该地址有一个别名,变量名;一个萝卜一个坑(如: a=12; b=12; c=12; &a != &b != &c)
+   2. python中变量的本质: 某个数值的引用,一个数据可以有多个变量名,每个变量名都是对该数据的引用,一对多(如: a=12; b=12; c=12; id(a) == id(b) == id(c))
+   3. 结论: 对于变量而言,在c中,目光集中在数据地址(变量名)上;在python中,目光集中在数据值上(而变量称为数据的引用,所以,在python中,很自然的就将变量抽象为一个对象)
+   4. 变量赋值: a,b,c = 123,"hello",12.5
+   5. 取地址： 若a=123;b=123;c=123,则 id(a) == id(b) == id(c) == id(123), 其中,id()是一个函数,其作用是取对象地址
+   6. 输出函数: print("hello world")
+   7. 返回字符串的输入函数: x = raw_input("tips:please input number1:") ---> 若x=2; y=3;则 x + y = 23 (其他运算非法)   
+   8. 返回数字的输入函数: x = input("tips:please input number2:") ---> 若x=2; y=3;则x + y = 5
+   9. 强制类型转换：int(raw_input("tips:please input number1:")) --->  若x=2; y=3;则 x + y = 5
+   10. 使用变量引用内建函数: tmp = pow, tmp(2,3) = 8,注: pow是一个内建函数
+   11. mail = 'tom:\n\thello,\ni am lilei\n',查看变量存储:tom:\n\thello,\ni am lilei\n; 格式化后的输出:print
+4. 数据类型：　
+   1. 数字：
+	  1. int类型:(2147483647,-2147483648)
+	  2. long类型:超过上述区间,或者以L结尾(23L)
+	  3. float类型: 3.0
+	  4. complex类型: 2j  (1+3j) * (9+4j) ==> (-3+31j)
+	  5. 十六进制:0xAF
+	  6. 八进制:047
+   2. 字符串:
+	  1. str1 = 'hello world'
+	  2. str2 = "Let't Go"
+	  3. str3 = "Let's\n\t Go\n \"bybe\"\n"
+	  4. 拼接字符串: str5 = str1 + str2 返回 "hello world Let's Go"
+	  5. 字符串的两种机制:
+	     1. str()机制: str6 = str("423") ---> print str6 返回 423,  type(str6)返回str类型
+	     2. repr()机制: str7 = repr("423") ---> print str7 返回 '423',  type(str7)返回str类型
+	  6. 从键盘接收repr()机制的输入: >>> name = input("tips:please input a name:") Tom 是非法的,而'Tom'是合法的
+	  7. 从键盘接收str()机制的输入: >>> name = raw_input("tips:please input a name:") Tom 是合法的,'Tom'也是合法的
+	  8. 对于从键盘接收输入,要求用户带着引号输入有点过分,因此,除非特殊需要,应当尽可能的使用raw_input()
+	  9. 长字符串: """ ... """
+		 1. 使用场合:如果要写一个跨过多行且需要排版的字符串,可以使用三个双引号实现
+	     2. 示例str1 = """tom:<RET> ...多行+排版... """
+		 3. 这样的排版中,解释器将"""之间的内容当成了text文本,因此,可以在文本中随意使用",'而不需要\转义
+      10. 原始字符串: r"Let's Go" 或者 r'Hello "ljj" nihao'
+		  1. 以r开头的字符串称为原始字符串
+		  2. 原始字符串的一个重要特性是:不会将\当做特殊字符,输出会与原始字符串中的字符保持一致
+		  3. 原始字符串的最后一个字符不能是\,如果最后一个字符一定要是\则可以将这个\单独分离出去成为一个字符串,然后和前面的进行拼接
+      11. unicode字符串: u'Hello world!'
+		  1. python中普通字符串在内部是以8位ASCII码进行存储的
+		  2. unicode字符串是以16位ASCII码进行存储的
+		  3. python3.0中,所有字符串都是unicode字符串
+	  12. 转义换行: 可以在一行的末尾加上一个\,然后回车,此时可以接着下一行继续输入
+	  13. str1[1] = 'e'; str1[4] = 'o'
+	  14. str1[1]+str[2]+str[3] = 'ell'
+	  15. str1[1:4] = 'ell'
+	  16. str1[:4] = 'hell'
+	  17. str1[4:] = 'o world'
+	  18. str1[ ::1] = 'hello world'
+	  19. str1[ ::2] = 'hlowrd'
+	  20. str1[ ::3] = 'hlwl'
+	  21. str1[-1] = 'd'
+	  22. str1[-5:-1] = 'worl'
+	  23. 下标索引的方向默认是从左边到右边的,因此:str1[4:1]是不合法的,16是唯一可以改变索引方向为从右到左边的方式
+	  24. str[-2:-6:-1] = 'lrow'
+   3. 列表
+   4. 元组
+   5. 字典
+   6. 模块
+	  1. 可以将模块想象成导入到Python中以增强其功能的扩展
+	  2. 导入模块的两种方案:
+		 1. import model
+			1. import math
+			2. math.floor(32.9)
+			3. 结果: 32.0
+		 2. from  model import function
+			1. from math import floor
+			2. floor(32.9)
+			3. 结果: 32.0
+		 3. 备注: 建议使用方案一
+   	  3. 使用变量引用模块函数: tmp = math.floor ; tmp(32.9) 返回 32.0
+	  4. cmath 模块: cmath(complex math)
+		 1. python语言本身就有提供对复数的支持,一些复数的数学计算需要导入cmath这个模块
+		 2. math.sqrt(-1)显示错误,原因是-1开平方根是一个虚数,而math模块中的sqrt函数并没有提供虚数的计算方法
+		 3. cmath.sqrt(-1),返回1j
+	  5. __future__ 模块
+		 1. __future__是一个模块,该模块中的内容是那些在未来会成为标准python组成部分的新特性
+		 2. 示例:
+			1. from __future__ import division
+			2. 此时,1/2 = 0.5
+   7. 函数
+      1. id(), 取地址
+	     1. id(a): 取变量名a所指向的内存单元数据的地址
+		 2. id(123): 取数据123所在内存单元的地址
+		 3. 如果a=123,b=123则id(a)等于id(123) == id(a) == id(b)的结果是true 
+	  2. type(), 检查类型
+		 1. type(3),返回int
+		 2. type(3L),返回long
+		 3. type(3.0),返回float
+		 4. type(3j),返回complex
+	  3. pow(2,3), 相当于 2 ** 3,结果为8
+	  4. math.sqrt()
+		 1. 在math模块中有一个成员函数math.sqrt,用于开平方根
+		 2. 既然是模块,则需要执行导入操作import
+		 3. 开平方根: math.sqrt(9) = 3.0
+		 4. 备注: 开平方根操作的结果是一个浮点数
+	  5. abs(-10), 结果为10
+	  6. round(5.0/2), 四舍五入,结果为3.0
+	  7. math.floor(), 向下取整
+	     1. 在math模块中有一个成员函数math.floor,用于向下取整
+		 2. 既然是模块,则需要执行导入操作import math
+		 3. 向下取整: math.floor(32.9) = 32.0
+		 4. 备注: 该函数略显多余,直接使用整除法就行
+	  8. math.ceil(),向上取整
+		 1. 在math模块中有一个成员函数math.ceil,用于向上取整
+		 2. 既然是模块,则需要执行导入操作import math
+		 3. 向上取整: math.ceil(32.1) = 33.0
+	  9. int(round(5.0/2)),将float型的3.0强制类型转换为int型的3
+	  10. float(5/2),将int型的5/2强制转换为float型的2.0
+	  11. long(6/3),将int型的5/2强制转换为long型的2L
+   8. 查看数据类型： type(数据)　或者　type(变量)
+   9. python的数据类型由数据本身决定，不需要事先定义类型：
+	  1. 423L是long类型而423是int类型；
+	  2. 12是int型，12.0是float型
+	  3. 3.14是float型，3.14j是complex型
+	  4. 123是int型,"123"是str型
+Blog creation time:[2017-10-14 六 20:26]
