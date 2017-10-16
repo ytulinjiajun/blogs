@@ -131,18 +131,7 @@ Blog creation time:[2017-09-05 二 08:03]
 Blog creation time:[2017-09-05 二 08:04]
 ** WAITTING [#D] Theme:搭建git服务器							 :@Blog:@Git:
    SCHEDULED:<2017-10-09 一>
-   git服务器假设方案:
-   | item               | HTTP    | Git-daemon | SSH     | Gitolite/Gitosis |
-   |--------------------+---------+------------+---------+------------------|
-   | server             | simple  | middle     | simple  | compliex         |
-   | anonymous read     | support | support    | against | against          |
-   | Authentication     | support | against    | support | suppost          |
-   | repo write         | support | against    | support | support          |
-   | Authorization      | against | against    | against | support          |
-   | remote create repo | against | against    | against | support          |
-   |--------------------+---------+------------+---------+------------------|
-1. 我的选择: Gitolite
-2. 基于标准的SSH搭建git服务器
+1. 基于标准的SSH搭建git服务器
    1. 服务器管理员在服务器上创建一个账号:git-server,专门用于git开发
    2. 客户端用户自己生成公钥和私钥: ssh-keygen -t rsa -C "ytulinjiajun@163.com" -f ~/.ssh/github
 	  1. 在实际运用中,一个客户端用户可能需要使用多套秘钥对,如github使用一套,自己搭建的ssh-server需要一套
@@ -166,7 +155,7 @@ Blog creation time:[2017-09-05 二 08:04]
    7. ssh登录: ssh git-lin-server
    8. 执行git命令
 	  1. git clone git-lin-github:ytulinjiajun/emacs.d.git
-3. 基于Gitlite搭建git服务器
+2. 基于Gitlite搭建git服务器
    1. 相关网址:
 	  1. gitolite官方源代码:  http://github.com/sitaramc/gitolite
 	  2. 官方学习文档(英文): http://gitolite.com/gitolite/
@@ -205,27 +194,21 @@ Blog creation time:[2017-09-05 二 08:04]
 			3. 在这里,意味着: 第一,gitolite管理员再也无法使用ssh git@server 登录服务器的git账号取得shell了;
 			4. 第二,gitolite是唯一一个可以使用git clone 将gitolite-admin.git 这个配置相关的版本库克隆到本地,修改,然后push上去使配置生效的人
 			5. 当然了只有gitolite管理员才有gitolite-admin.git的读写和强制更新的权限是在gitolite-admin.git/config/gitolite.conf中配置的,也可以让其他人拥有此权限
-		 8. 备注: 到此为止,gitolite已经在服务器上安装完毕,并且,还将服务器假设员的客户端账号设置为服务器上gitolite唯一的管理员
+		 8. 客户端登录配置: ~/.ssh/config
+			1. 该配置在客户端完成,将ssh连接的参数配置在该文件中是一种非常好的习惯
+			2. 该文件的identityfile特别重要,它指定了本次ssh连接使用哪个秘钥文件来进行认证,当.ssh/下面有多个*.pub存在时,该参数必须进行配置
+			3. 配置说明:
+			   #+BEGIN_SRC 
+		       host gitolite-admin     # 相当于一个代号,登录时使用该代号即可加载该代号下面的配置
+		       	 user git  # 远程服务器上专门用于git的用户账户
+                 hostname 192.168.19.10 # 远程服务的ip地址
+                 port 22  # 远程服务器ssh服务使用的端口号
+                 identityfile ~/.ssh/gitolite-admin  # git-lin使用哪个公钥
+		       #+END_SRC	 
+		 9. 克隆gitolite-admin.git到本地: git clone git-server:gitolite-admin.git
+		 10. 备注: 到此为止,gitolite已经在服务器上安装完毕,并且,还将服务器假设员的客户端账号设置为服务器上gitolite唯一的管理员
    4. Gitolite管理员的那些事: (本地完成)
-	  1. 克隆服务器上专门管理 Gitolite 的版本库: git clone git@server:gitolite-admin.git
-	  2. 新建配置文件(客户端): ~/.ssh/config
-	     #+BEGIN_SRC 
-		 host gitolite     # 相当于一个代号,登录时使用该代号即可加载该代号下面的配置
-		   user git  # 远程服务器上专门用于git的用户账户
-           hostname 192.168.19.10 # 远程服务的ip地址
-           port 22  # 远程服务器ssh服务使用的端口号
-           identityfile ~/.ssh/gitolite-admin  # git-lin使用哪个公钥
-		 #+END_SRC	 
-	  3. 新增用户:
-		 1. gitolite管理员从参与项目的开发者那些收集公钥,并将公钥按照ytulinjiajun@163.com.pub的方式统一命令
-		 2. 将统一命名之后的公钥拷贝到keydir中
-		 3. 将新增的公钥文件添加进版本库: git add keydir
-		 4. 提交新增修改: git commit -m "add user: dev1 dev2 dev3"
-		 5. 同步到服务器,完成用户添加: git push
-		 6. 执行完毕push操作之后,将会发现在服务器的git账户的~/.ssh/authorized_keys中追加了新增用户的公钥
-		 7. 这意味着该用户加入到研发团队中来,但是新增的普通用户仍然还没有读,写,克隆服务器上git/repositories/*.git的权限
-		 8. 事情还没完,接下来需要配置用户对gitolite管理的所有版本库git/repositories/*.git的权限进行控制,见下面的权限控制
-	  4. 权限控制
+	  1. 权限控制
 	     1. 配置文件: gitolite-admin/conf/gitolite.conf
 		 2. 研究目标: 仓库(分支,里程碑,目录,文件),研发人员 <==> 读,写,管理  之间的关系
 		 3. 用户组:
@@ -299,6 +282,35 @@ Blog creation time:[2017-09-05 二 08:04]
          8. 经典授权实例
 			1. 
 		 9. 最后一步: 提交配置,使之生效
+	  2. 新增用户:
+		 1. gitolite管理员从参与项目的开发者那些收集公钥,并将公钥按照ytulinjiajun@163.com.pub的方式统一命令
+		 2. 将统一命名之后的公钥拷贝到keydir中
+		 3. 将新增的公钥文件添加进版本库: git add keydir
+		 4. 提交新增修改: git commit -m "add user: dev1 dev2 dev3"
+		 5. 同步到服务器,完成用户添加: git push
+		 6. 执行完毕push操作之后,将会发现在服务器的git账户的~/.ssh/authorized_keys中追加了新增用户的公钥
+		 7. 这意味着该用户加入到研发团队中来,但是新增的普通用户仍然还没有读,写,克隆服务器上git/repositories/*.git的权限
+		 8. 事情还没完,接下来需要配置用户对gitolite管理的所有版本库git/repositories/*.git的权限进行控制,见下面的权限控制
+	  3. 删除用户:
+		 1. 由gitolite-admin在gitolite-admin.git/keydir/中删除目标用户的公钥
+		 2. 由gitolite-admin在gitolite-admin.git/conf/gitolite.conf中去除有关该用户的配置
+	  4. 更换管理员
+		 1. 更换管理员的本质,就是由老管理员自己在gitolite-admin.git/keydir/gitolite-admin.pub中的内容换成新管理员客户端的公钥
+		 2. 操作: more new-gitolite-admin.pub >gitolite-admin.git/keydir/gitolite-admin.pub ,然后提交
+	  5. 异地管理
+		 1. 场景描述:
+		    1. 作为gitolite管理员,我希望在公司,在家,在办公路上等,的任意一台电脑上,都能克隆到gitolite-admin.git,以便随时进行管理
+			2. 作为gitolite项目参与者,我希望在公司,在家,在办公路上等,的任意一台电脑上, 都能拥有该有的权限以便随时随地进行开发
+		 2. 可行性分析:
+			1. 无论是gitolite的管理员还是项目参与者,约定号了它们在gitolite-admin/keydir/下面都唯一只有一个公钥(虽然每个用户可以有多个公钥)
+			2. gitolite-admin/keydir/目录下的公钥一旦push到服务器,就会将下面的公钥存储至服务器git账号家目录下~/.ssh/authorized_keys中去
+			3. gitolite管理员的秘钥肯定在服务器上的~/.ssh/authorized_keys中;至于项目参与者,管理员曾经肯定和它们收集过公钥加入了gitolite-admin/keydir/下,并push到服务器,因此项目参与者的公钥必定也在在服务器上的~/.ssh/authorized_keys中
+			4. 原理: 客户端登录服务器时,使用~/.ssh/config下面identityfile指定的公钥文件中的内容去和服务器上~/.ssh/authorized_keys中的内容匹配,如果找到了匹配,则认证成功
+			5. 结论: gitolite的认证是秘钥认证,和用户账号及密码无关, 无论是管理员还是项目参与者,只要备份好公钥和私钥,将其拷贝到其他电脑账户下的~/.ssh/下面,然后在~/.ssh/config中添加一条配置,该电脑即可登录服务器
+		 3. 操作: 
+			1. 将公司自己办公用的笔记本,家目录下面的公钥和私钥的内容做个备份,复制到自己的U盘里面
+			2. 回到家后,将U盘里面的公钥和私钥拷贝到家里电脑家目录下的~/.ssh/中
+			3. 配置家里那台电脑的~/.ssh/config(尤其注意identityfile的值一定是公钥名),服务器ip之类的,配置完毕之后就可以愉快的在家里登录上服务器了
 Blog creation time:[2017-10-09 一 15:13]
 ** DONE [#D] Theme:创建版本库　									   :Blog:@Git:
 1. git init: 其结果是在工作区中生成版本库：.git/
