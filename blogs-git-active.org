@@ -414,10 +414,14 @@ Blog creation time:[2017-10-09 一 15:13]
 Blog creation time:[2017-10-05 四 21:41]
 ** WAITTING [#D] Theme:引用									 :@Blog:@Git:
     SCHEDULED:<2017-10-07 六>
-1. HEAD: 
-2. master: .git/refs/heads/master
-3. stash
-4. tag-name: .git/refs/tags/tag-name 
+1. 查看所有引用:  git show-ref
+2. 以refs/heads/开头的是分支指针头
+3. 以refs/remotes/开头的是远程版本库分支在本地的映射
+4. 以refs/tags/开头的是里程碑
+5. HEAD: 
+6. master: .git/refs/heads/master
+7. stash
+8. tag-name: .git/refs/tags/tag-name 
 Blog creation time:[2017-10-07 六 21:16]
 ** DONE [#D] Theme:里程碑										 :@Blog:@Git:
     SCHEDULED:<2017-10-07 六>
@@ -508,6 +512,12 @@ Blog creation time:[2017-10-06 五 10:46]
    1. git reset --soft HEAD^
    2. git commit -e -F .git/COMMIT_EDITMSG(保存了上次的提交日志)  
 Blog creation time:[2017-10-06 五 10:50]
+** DONE [#D] Theme:反转提交										 :@Blog:@Git:
+    SCHEDULED:<2017-10-20 五>
+	- State "DONE"       from "WAITTING"   [2017-10-20 五 10:46]
+1. 用途: 在不具备reset权限的前提下,该命令可以将一个错误提交的前面那个提交回滚至工作区,暂存区,以及最新提交处
+2. 命令: git reset commit-ID
+Blog creation time:[2017-10-20 五 10:34]
 ** DONE [#D] Theme:比较差异										 :@Blog:@Git:
     SCHEDULED:<2017-10-06 五>
 1. 暂存区与工作区
@@ -858,3 +868,16 @@ Blog creation time:[2017-10-09 一 14:50]
 	  915cd2a2564a5b8a942301de31b993d0f6ec2636 -----
    5. git log -l --pretty=raw
 Blog creation time:[2017-10-06 五 14:21]
+** WAITTING [#D] Theme:远程									 :@Blog:@Git:
+    SCHEDULED:<2017-10-20 五>
+1. 注册前的推送git push git@server:shared-repo/CREATOR/test.git master
+2. 注册远程信息: git remote add origin git@server:shared-repo/CREATOR/test.git
+3. 修改注册路径: git remote set-url origin git@server:personal-repo/CREATOR/hello.git
+4. 修改注册名:   git remote rename origin new-name
+5. 删除注册: git remote rm origin
+6. 查看远程注册信息: git remote -v
+7. 注册后的推送: git push origin master
+8. 查看远程注册文件: git config -e
+9. 查看远程版本库的分支信息: git ls-remote origin
+10. 
+Blog creation time:[2017-10-20 五 10:48]
