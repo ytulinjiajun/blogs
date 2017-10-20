@@ -129,7 +129,7 @@ Blog creation time:[2017-09-05 二 08:03]
 6. 关联远程库： git rmt git@github.com:ytulinjiajun/GitHub-Lin.git
 6. 从github克隆一个版本库验证SSH配置是否成功：git clone git@github.com:ytulinjiajun/GitHub-Lin.git
 Blog creation time:[2017-09-05 二 08:04]
-** WAITTING [#D] Theme:搭建git服务器							 :@Blog:@Git:
+** WAITTING [#D] Theme:搭建git服务器 							 :@Blog:@Git:
    SCHEDULED:<2017-10-09 一>
 1. 基于标准的SSH搭建git服务器
    1. 服务器管理员在服务器上创建一个账号:git-server,专门用于git开发
@@ -207,6 +207,7 @@ Blog creation time:[2017-09-05 二 08:04]
 		       #+END_SRC	 
 		 9. 克隆gitolite-admin.git到本地: git clone git-server:gitolite-admin.git
 		 10. 备注: 到此为止,gitolite已经在服务器上安装完毕,并且,还将服务器假设员的客户端账号设置为服务器上gitolite唯一的管理员
+		 11. 备注2: 能克隆gitolite-admin.git并管理然后推送的人只有该管理员
    4. Gitolite管理员的那些事: (本地完成)
 	  1. 配置文件管理
 		 1. 默认配置文件: gitolite-admin/conf/gitolite.conf
@@ -239,7 +240,7 @@ Blog creation time:[2017-09-05 二 08:04]
 
             repo personal-repo/CREATOR/[a-z]..*
 	             C       =   @all 
-	        RW+CD   = CREATOR
+	             RW+CD   = CREATOR
             #+END_SRC            
 	  2. 权限控制
 		 1. 管理员组:
@@ -339,17 +340,39 @@ Blog creation time:[2017-09-05 二 08:04]
 		 1. 说明:
 		    1. 在gitolite.git/keydir/的一个公钥,对应一个具体的加入git服务器的成员,而该公钥的名字就是gitolite系统承认的用户名
 		    2. 配置代码里面的CREATOR关键字指代的正是gitolite.git/keydir/下公钥名字的集合
-		 2. 创建步骤:
+		 2. clone方式的创建:
 			1. 管理员在gitolite.git/config/gitolite.conf中加入以下语句
 			   #+BEGIN_SRC 
 			   repo shared-repo/CREATOR/[a-z]..*
                     C       =   @can_create-repo
                     RW+CD   =   CREATOR
 			   #+END_SRC
+			   #+BEGIN_SRC 
+			   repo personal-repo/CREATOR/[a-z]..*
+                    C       =   @all
+                    RW+CD   =   CREATOR
+			   #+END_SRC
 			2. 确保上面1中所述的事,必要的的话,先创建秘钥
-			3. 在本地创建版本库: git clone git@server:shared-repo/CREATOR/test
+			3. 创建版本库(服务器+本地): git clone git@server:shared-repo/CREATOR/test
 			4. 至此,在服务器和本地就创建了一个名为test的版本库(CREATOR注意替换为相应的名)
 			5. 备注: 在服务器上创建的版本库只能
+         3. push方式的创建
+			1. 初始化版本库: git init
+			2. 注册远程信息: git remote add rmt-origin git@server:personal-repo/CREATOR/test
+			3. 管理员在gitolite.git/config/gitolite.conf中加入以下语句
+			   #+BEGIN_SRC 
+			   repo shared-repo/CREATOR/[a-z]..*
+                    C       =   @can_create-repo
+                    RW+CD   =   CREATOR
+			   #+END_SRC
+			   #+BEGIN_SRC 
+			   repo personal-repo/CREATOR/[a-z]..*
+                    C       =   @all
+                    RW+CD   =   CREATOR
+			   #+END_SRC
+  			4. 确保上面1中所述的事,必要的的话,先创建秘钥
+			5. 创建版本库(服务器): git push origin master
+			6. 特别注意: 在注册远程信息时,版本库test.git要写成test,即不可带后缀".git",否则会创建失败
 	  7. 异地管理
 		 1. 场景描述:
 			1. 作为gitolite管理员,我希望在公司,在家,在办公路上等,的任意一台电脑上,都能克隆到gitolite-admin.git,以便随时进行管理
@@ -881,3 +904,10 @@ Blog creation time:[2017-10-06 五 14:21]
 9. 查看远程版本库的分支信息: git ls-remote origin
 10. 
 Blog creation time:[2017-10-20 五 10:48]
+** WAITTING [#D] Theme:推送									 :@Blog:@Git:
+    SCHEDULED:<2017-10-20 五>
+1. 命令: git push rmt-origin master
+2. 快进式推送: fast-forward push
+   1. 远程版本库相应分支的最新提交是本地版本库最新提交的祖先提交(即,本地的最新提交总是建立在远程最新提交的基础之上)
+   2. 一般情况下推送只允许快进式推送
+Blog creation time:[2017-10-20 五 13:18]
