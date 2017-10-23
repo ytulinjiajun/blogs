@@ -999,7 +999,7 @@ Blog creation time:[2017-10-23 一 08:58]
 	  6. 分支去向: master
 	  7. 生命周期: 永久
 	  8. 权限分配:
-   3. 辅助分支: 
+   3. 辅助分支: 辅助分支的生命周期是有限的,因此不应当push到远端服务器 
       1. 特性分支: feature branch
 		 1. 意义: 在特性分支上开发新的功能需求,这些功能是否需要整合到软件中还是未知的,所以,新功能在特性分支中进行研发,以方便新功能的加入和剔除
 		 2. 特点: 一个功能对应一个特性分支,特性分支上的功能总是作为预备功能,时机成熟后合并到develop上
@@ -1032,14 +1032,14 @@ Blog creation time:[2017-10-23 一 08:58]
 			 2. 删除之后,该用户可以去领取下一个任务
 			 3. 备注: 删除特性分支的本质是释放分支指针头feature-xxx
       2. 发布分支: release branch
-		 1. 意义: 修补bug;修改版本号
+		 1. 意义: 修补bug;修改版本号; 通常,测试小组在develop上发现了bug,如果该bug还没有引入master分支,则适合用发布分支而不是紧急修复分支
 		 2. 特点: 当从develop分支中创建发布分支以后，develop分支便可以进行新版本之后需求的研发工作，从而既不会影响到最新的研发进度，也不会影响到新版本的发布
 		 3. 分支起点: develop分支上的任意提交
 		 4. 分支指针头: release-xxx (如: release-fix-1.2 或者 release-tag-1.2)
 		 5. 分支变更来源: 被指定修补该bug或者版本号的那个开发者在该分支上的提交
 		 6. 分支去向: develop分支以及master分支
 		 7. 合并时机: bug或者tag修复完毕后在该发布分支上生成提交,测试成功后,立即将该提交同时向develop分支以及master分支进行合并
-		 8. 生命周期:
+		 8. 生命周期: 向develop分支以及master分支合并完毕之后
 		 9. 权限分配:
 		 10. 从develop的任意提交,创建并切换至发布分支: git checkout -b release-fix-1.2 develop~n
 			 1. 用户user1在特性分支:feature-led上正专心致志的写led的驱动
@@ -1061,7 +1061,7 @@ Blog creation time:[2017-10-23 一 08:58]
 				2. fast-forward式的合并将不会产生新节点,而是直接移动指针,因此,这种合并方式在执行特性分支的删除操作之后,该特性分支的合并信息将会丢失
 				3. --no-ff起到禁止fast-farward式的合并,删除特性分支后可以将该特性分支的合并信息保留下来,方便以后查看
 			 4. 由于本次合并后会在develop分支上创建新的提交,所以 -m 选项是提交说明 
-         12. 将发布分支上修补好的提交合并到master分支上并进行tag操作:
+         12. 将发布分支上修补好的提交合并到master分支上并进行tag操作(可选):
 			 1. 切换至master: git checkout master
 			 2. 合并: git merge --no-ff -m "-----" release-fix-1.2
 			 3. 创建里程碑: git tag -m "fix-1.2" v1.2-fix
@@ -1071,16 +1071,50 @@ Blog creation time:[2017-10-23 一 08:58]
 				   2. 此时，master分支在创建develop分支之后并未产生任何新的commit,此时的合并就叫fast forward
 				2. fast-forward式的合并将不会产生新节点,而是直接移动指针,因此,这种合并方式在执行特性分支的删除操作之后,该特性分支的合并信息将会丢失
 				3. --no-ff起到禁止fast-farward式的合并,删除特性分支后可以将该特性分支的合并信息保留下来,方便以后查看
-			 5. 由于本次合并后会在master分支上创建新的提交,所以 -m 选项是提交说明 
+			 5. 由于本次合并后会在master分支上创建新的提交,所以 -m 选项是提交说明
+			 6. 特别说明: 有可能出于战略上的考虑或者新版本发布的时间以及时机尚未成熟,暂时不合并到master上, 即这一步骤暂时不用进行,但是如果想要及时修补掉已发布版本中的bug,可以考虑使用hotfix分支
          13. 完成合并之后,删除该发布分支: git branch -d release-fix-1.2
       3. 紧急修复分支: hotfix branch
-		 1. 意义:
-		 2. 特点:
-		 3. 分支起点:
+		 1. 意义: 用于正式版本的紧急修复,即如果在master分支发布的版本中发现了bug,则需要进行紧急修复,此时适合用紧急修复分支
+		 2. 特点: bug已经引入master分支中
+		 3. 分支起点: master
 		 4. 分支指针头: hotfix-xxx
-		 5. 分支变更来源:
-		 6. 分支去向:
-		 7. 生命周期:
-		 8. 权限分配
-      4. 备注: 辅助分支的生命周期是有限的,因此不应当push到远端服务器
+		 5. 分支变更来源: 被指定修补该紧急bug的那个开发者在该分支上的提交
+		 6. 分支去向: master和develop
+		 7. 生命周期: 合并到master以及develop分支之后
+		 8. 权限分配:
+		 9. 从master的任意版本,创建并切换至紧急修复分支: git checkout -b hotfix-1.2 master~n
+			1. 用户user1在特性分支:feature-led上正专心致志的写led的驱动
+			2. 产品经理告知user1在2个小时之内需要修补一个已经发布了的产品中有一个代号为hotfix-1.2的bug
+			3. 用户user1感觉很为难,因为在当前特性分支feature-led上的任务还要3小时才能结束,而切换分支时,git又强制要求用户先提交当前分支的更改后才能切换到其他分支
+			4. 用户user1想到了一个好办法: git stash, 该命令将当前分支的工作现场储存起来
+			5. 此时当前分支的工作区已经干净了,用户就可以顺利的创建切换到发布分支了hotfix-1.2
+			6. 从master的任意提交创建发布分支: git br hotfix-fix-1.2 develop~n
+			7. 切换至该发布分支: git checkout hotfix-1.2
+			8. 在hotfix-1.2分支上修补bug,产生若干提交后终于修补了bug,最新的那个提交就是bug修复后的版本
+			9. 备注: 切换分支的本质是将HEAD指针指向当前切换分支的分支起点或者最新提交
+         10. 将紧急修复分支上修补好的提交合并到master分支上并进行tag操作:
+			 1. 切换至master: git checkout master
+			 2. 合并: git merge --no-ff -m "-----" hotfix-1.2
+			 3. 创建里程碑: git tag -m "hotfix-1.2" v1.2-hotfix
+			 4. 备注: --no-ff表示禁止fast-forward,这是通常的选择
+			    1. fast-forward式的合并:
+				   1. 开发一直在master分支进行，但忽然有一个新的想法，于是新建了一个develop的分支，并在其上进行一系列提交，完成时，回到 master分支
+				   2. 此时，master分支在创建develop分支之后并未产生任何新的commit,此时的合并就叫fast forward
+				2. fast-forward式的合并将不会产生新节点,而是直接移动指针,因此,这种合并方式在执行特性分支的删除操作之后,该特性分支的合并信息将会丢失
+				3. --no-ff起到禁止fast-farward式的合并,删除特性分支后可以将该特性分支的合并信息保留下来,方便以后查看
+			 5. 由于本次合并后会在master分支上创建新的提交,所以 -m 选项是提交说明
+		 11. 将紧急修复分支上修补好的提交合并到develop分支上(必须)
+			 1. 切换至develop: git checkout develop
+			 2. 合并: git merge --no-ff -m "-----" hotfix-1.2
+			 3. 备注: --no-ff表示禁止fast-forward,这是通常的选择
+			    1. fast-forward式的合并:
+				   1. 开发一直在master分支进行，但忽然有一个新的想法，于是新建了一个develop的分支，并在其上进行一系列提交，完成时，回到 master分支
+				   2. 此时，master分支在创建develop分支之后并未产生任何新的commit,此时的合并就叫fast forward
+				2. fast-forward式的合并将不会产生新节点,而是直接移动指针,因此,这种合并方式在执行特性分支的删除操作之后,该特性分支的合并信息将会丢失
+				3. --no-ff起到禁止fast-farward式的合并,删除特性分支后可以将该特性分支的合并信息保留下来,方便以后查看
+			 4. 由于本次合并后会在develop分支上创建新的提交,所以 -m 选项是提交说明
+			 5. 备注: 当release-xx分支也存在时,紧急修复分支上的提交通常应当合并到release-xx分支上而不是develop分支
+         12. 完成合并之后,删除该紧急修复分支: git branch -d hotfix-1.2
+		 12. 备注: 紧急修复分支同发布分支最大的区别在于,紧急修复分支主要针对master分支修复,而发布分支主要针对develop分支修复,其次,紧急修复分支必须同时向master分支以及develop分支合并,而发布分支向master的合并是可选的
 Blog creation time:[2017-10-06 五 14:21]
