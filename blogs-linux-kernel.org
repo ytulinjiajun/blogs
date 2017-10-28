@@ -1,0 +1,308 @@
+* blogs-linux-kernel
+** WAITTING [#D] Theme:内核目录架构						  :@Blog:@Kernel:
+    SCHEDULED:<2017-10-25 三>
+1. 顶层Makefile: torvalds-linux/linux/Makefile
+   1. 决定torvalds-linux/linux/下面,哪些子目录被编译进内核
+2. 体系结构相关的Makefile: torvalds-linux/linux/$(ARCH)/Makefile
+   1. 决定torvalds-linux/linux/$(ARCH)/下面哪些文件,目录被编译进内核
+3. 公用规则的Makefile: torvalds-linux/linux/scripts/Makefile.*
+4. 通用Makefile: 每级子目录下都有一个 Makefile
+   1. 决定所在目录下,哪些文件被编译进内核
+   2. 决定所在目录下,哪些文件被编译成模块
+   3. 决定进入哪些子目录继续调用它们的Makefile
+5. 配置文件.config: 在配置内核是生成, 所有的Makefile都根据它来决定使用哪些文件
+
+Blog creation time:[2017-10-25 三 16:53]
+
+--kbuild将所有与编译过程相关的共用规则和变量都提取到scripts 目录下的Makefile.build中,具体的子目录下的 Makefile 文件则可以编写的非常简单与直接
+
+--用 obj-* 连接的Objects 在指明的文件夹中被用作模块或者综合进built-in.o，也有可能被列出的objects 将会被包含进一个库,lib.a
+
+--所有用lib-y 列出的objects 在那个文件夹中被综合进单独的一个库
+
+--列在obj-y 且 附加列在lib-y 中的Objects 将不会被包含在库中
+
+--对于被连接在lib-m 中，连续的objects 将会被包含在lib.a 中
+
+--kbuild makefile 可能列出文件用作built-in ，并且作为库的一部分。因此，同一个文件夹可能包含一个built-in.o 和lib.a 文件  
+
+--lib-y 的使用方法通常被限制在lib/ 和arc/*/lib 中
+**** Makefile
+--路径：位于linux kernel源码的顶层目录，该Makefile也就是顶层Makefile
+
+--顶层的Makefile也叫做Kernel Makefile
+
+--顶层Makefile文件负责产生两个主要的程序：vmlinux (内核image)和模块
+
+--主要用于指定编译Linux Kernel 目标文件（vmlinux ）和模块（module ）路径
+
+--顶层Makefile文件根据内核配置，通过递归编译内核代码树子目录建立这两个文件。
+
+--顶层Makefile文件文本一个名为 arch/$(ARCH)/Makefile的机器体系Makefile文件。
+
+--机器体系Makefile文件为顶层Makefile文件提供与机器相关的信息。
+
+--根据.config文件决定了内核根目录下那些文件、子目录被编译进内核
+**** ARCH/$(ARCH)/Makefile 
+--系统对应平台的Makefile
+
+--Makefile 会包含这个文件来指定平台相关信息
+
+--根据.config文件，决定了ARCH/$(ARCH) 目录下 那些文件、子目录被编译进内核
+**** scripts/Makefile.build: 
+--被顶层Makefile所调用
+
+--与各级子目录的Makefile合起来构成一个完整的Makefile文件，定义built-in.o、.lib以及目标文件.o的生成规则
+
+--这个Makefile文件生成了子目录的.lib、built-in.o以及目标文件.o
+
+**** scripts/Kbuild.include:
+--被Makefile.build所调用
+
+--定义了一些函数，如if_changed、if_changed_rule、echo-cmd
+**** scripts/Makefile.clean
+--被顶层Makefile所调用
+
+--用来删除目标文件等
+**** scripts/Makefile.lib
+--被Makefile.build所调用
+--主要是对一些变量的处理，比如说在obj-y前边加上obj目录
+**** .config
+--位于linux内核的根目录下
+
+--产生自来自配置过程
+
+--被顶层的Makefile包含
+
+--配置过程产生.config文件
+
+--.config又产生auto.conf以及autoconf.h文件
+**** KBuild Makefile
+--从Linux 内核2.6 开始，Linux 内核的编译采用Kbuild 系统 
+
+--大多的Kbuild 文件的名字都是Makefile 。为了与其他Makefile 文件相区别，你也可以指定Kbuild Makefile 的名字为 Kbuild
+
+--如果“Makefile ”和“Kbuild ”文件同时存在，则Kbuild 系统会使用“Kbuild ”文件,linux内核中,Kbuild Makefile 就是各个子目录的Makefile 
+
+--Kbuild 系统使用Kbuild Makefile 来编译内核或模块
+
+--每个子目录下都有一个KBuild Makefile，作用就是 指定当前目录下的文件，哪些被编译进当前目录的built-in.o、那些被编译成模块、那些不编译
+
+--当顶层 Makefile 被解析完成后，Kbuild 会读取相关的Kbuild Makefile 进行内核或模块的编译
+
+--Kbuild Makefile 有特定的语法指定哪些编译进内核中、哪些编译为模块、及对应的源文件是什么
+
+--Kbuild Makefile 的一个最主要功能就是指定编译什么，这个功能是通过下面两个对象指定的obj-? 和xxx-objs  
+例1：
+     obj-y += foo.o 
+     obj-m += abc.o 
+实际：obj-$(CONFIG_DM9000) += dm9000.o，CONFIG_DM9000 是y 还是m取决于配置过程
+
+例2：
+	如果内核模块是通过几个源文件编译而成的，此时Kbuild需要知道编译模块时是基于哪些目标文件的,因此需要设置一个$(<module_name>-objs)变量来告诉编译器
+    obj-$(CONFIG_ISDN) += isdn.o
+    isdn-objs := isdn_net_lib.o isdn_v110.o isdn_common.o
+由于obj-$(CONFIG_ISDN)是由isdn_net_lib.o isdn_v110.o isdn_common.o这三个目标文件编译而成的，所以，需要定义isdn-objs
+
+**** scripts/kconfig/Makefile
+--顶层Makefile调用： include scripts/kconfig/Makefile ，用于指定目标
+
+--顶层Makefile调用： include scripts/kconfig/Makefile ，生成auto.conf autoconf.h auto.conf.cmd
+**** .config文件
+.config文件在进行内核编译时（make uImage）生成了include/config/auto.conf和include/linux/autoconf.h
+Linux的内核配置，就是为了生成.config文件。因为在编译时需要用.config文件生成其他相关配置文件。我们的配置项大多是例如CONFIG_XXXDRIVER，这里的XXXDRIVER指的是各种驱动。我们需要告诉内核，这些驱动是编译进内核，还是编译成模块。通过查找CONFIG_XXXDRIVER，我们可以发现，它出现在四个地方：
+
+　　1>C源代码
+
+　　2>子目录Makefile:drivers/XXX/Makefile
+
+　　3>include/config/auto.conf
+
+　　4>include/linux/autoconf.h
+里首先说明：.config文件在进行内核编译时（make uImage）生成了include/config/auto.conf和include/linux/autoconf.h。
+通过查看C源代码我们发现CONFIG_XXXDRIVER是一个宏定义，等于一个常量。在include/linux/autoconf.h中宏定义CONFIG_XXXDRIVER为一个常量，可能是0或1。
+那么现在有一个问题，就是CONFIG_XXXDRIVER到底被编译进内核还是编译成一个模块呢？这在C语言中是无法进行区分的，这种区分体现在哪里呢？这种区分体现在子目录的Makefile文件中。
+在子目录的Makefile中，若有 obj -y += XXX.o则表示XXX.c被编译进内核；obj -m +=XXX.o则表示XXX被编译成模块，为XXX.ko。include/config/auto.conf文件则是对CONFIG_XXXDRIVER进行赋值，
+为y时表示编译进内核，为m时表示编译成独立模块
+
+--在Linux内核里，每个子目录都有一个makefile，它被称作Kbuilt-makefile，它将当前目录的文件编译成built-in.o、以及库文件、模块文件。
+然后顶层Makefile里指定这些built-in.o的路径，将它们连接在一起
+
+--通过内核配置操作产生.config文件，顶层Makefile文件读取该文件的配置。
+
+Blog creation time:[2017-09-04 一 15:17]
+
+*** 入口：
+1.顶层Makefile---- 指定目标-----include scripts/kconfig/Makefile
+如在终端中执行配置命令make nitrogen6x_defconfig
+%config: scripts_basic outputmakefile FORCE
+    $(Q)mkdir -p include/linux include/config
+    $(Q)$(MAKE)$(build)=scripts/kconfig $@
+
+2.auto.conf autoconf.h auto.conf.cmd的生成----指定目标-----include scripts/kconfig/Makefile
+include/config/%.conf:$(KCONFIG_CONFIG)include/config/auto.conf.cmd
+    $(Q)$(MAKE)-f$(srctree)/Makefile silentoldconfig
+
+将在顶层Makefile中递归到上述1中的%config规则，所以，其最终还会包含scripts/kconfig/Makefile
+
+3. 目标编译和链接----不指定目标-----include 各个build目标下的Makefile
+$(vmlinux-dirs): prepare scripts
+        $(Q)$(MAKE) $(build)=$@
+
+4. 模块----模块建构中单独讨论
+$(module-dirs):crmodverdir$(objtree)/Module.symvers
+    $(Q)$(MAKE)$(build)=$(patsubst _module_%,%,$@)
+
+modules:$(module-dirs)
+    @$(kecho)'  Building modules, stage 2.';
+    $(Q)$(MAKE)-f$(srctree)/scripts/Makefile.modpost
+
+5. 单目标----不指定目标
+%.o:%.c prepare scripts FORCE
+    $(Q)$(MAKE)$(build)=$(build-dir)$(target-dir)$(notdir $@)
+
+6. 子目录递归----不指定目标-----include递归的子目录下Makefile
+scripts/Makefile.build
+$(subdir-ym):
+    $(Q)$(MAKE)$(build)=$@
+*** 暂存
+--
+
+*** 基本流程
+--在scripts/Kbuild.include中有一条规则：build := -f $(srctree)/scripts/Makefile.build obj
+
+--在scripts/Makefile.build中：
+
+*** 内核makefile源码分析
+**** 顶层makefile
+***** make参数信息:MAKEFLAGS
+MAKEFLAGS += -rR --include-dir=$(CURDIR)
+****** 分析
+(1) MAKEFLAGS：
+--该变量是一个系统级别的环境变量，包含了 make 的参数信息;
+--这个变量不管你是否export,其总是要传递到下层 Makefile 中;
+--如果我们在命令行使用make执行“总控 Makefile”时有 make参数,或是在上层 Makefile 中定义了这个变量,
+那么MAKEFILES 变量将会是这些参数,并会传递到下层 Makefile 中
+--但是 make 命令中的有几个参数并不往下传递,它们是“-C”,“-f”,“-h”“-o”和“-W”
+
+(2) -r：
+--取消所有内嵌的隐含规则
+--但是，仍然可以在Makefile中使用模式规则来定义你自己的隐含规则
+--同时，还会取消所有支持后追规则的隐含后缀列表
+--但是，可以在Makefile中使用“.SUFFIXES”定义我们自己的后缀规则
+
+(3) -R:
+--取消 make 内嵌的隐含变量
+--不过我们可以在 Makefile 中明确定义某些变量
+
+(4) --include-dir=$(CURDIR)
+--该参数指定包含makefile文件的搜索目录(也就是下面的filename的路径)
+--include filename: filename 是 shell 所支持的文件名(可以使用通配符),一般是makefile文件，在自动依赖关系技术中，也用来包含.d文件
+--如果filename的内容是空的，那么相当于什么事也没有做，继续执行当前Makefile之后的内容（不报错）
+--在Makefile中出现“include”另外一个文件时，首先在当前目录下搜索，找不到的话将会在include-dir指定的目录下搜索，
+找不到的话去/usr/gnu/include,或者/usr/local/include, /usr/include这几个目录下找，
+还是找不到的话make将会提示一个包含文件未找到的告警提示,但是不会立刻退出，而是继续处理Makefile的后续内容，
+当完成读取整个Makefile后,make将试图使用规则来创建通过指示符“include”指定的但未找到的文件
+--在搜索include-dir指定的目录时，按照指定顺序进行
+--include”指示符告诉 make 暂停读取当前的 Makefile,而转去读取“include”指定的一个或者多个文件，完成以后再继续当前 Makefile 的读取
+--指示符“include”和文件名之间、多个文件之间使用空格隔开，行尾的空白字符在处理时被忽略
+
+(5) CURDIR
+--此变量代表 make 的工作目录
+--当使用“-C”选项进入一个子目录后,此变量将被重新赋值
+--总之,如果在Makefile 中没有对此变量进行显式的赋值操作,那么它代表 make 的工作目录
+--我们也可以在 Makefile 为这个变量赋一个新的值,此时这变量将不再代表 make 的工作目录
+
+总结：该语句为存储make参数的专用系统环境变量MAKEFLAGS，追加了三个参数，不论用户传递任何参数进来，这三个参数都将作为MAKEFLAGS
+里面默许的，这三个参数宏观上取消了内嵌的隐含规则和隐含变量，使得编译器不能干涉用户的配置，然后指出Makefile文件的搜索路径，这一点
+在make -C $(subdir)时尤其重要，有了--include-dir=$(CURDIR)，用户不用再考虑编译器怎样寻找子目录下的Makefile文件的问题
+***** 从命令行传递参数
+ifeq ("$(origin V)", "command line")
+  KBUILD_VERBOSE = $(V)
+endif
+****** 分析
+(1) V:一个来源尚不明确的变量
+
+(2) $(origin V): 函数，返回这个变量的来源，变量有以下几种来源：
+--undefined： 没定义
+--default： V是内嵌变量，比如CC,MAKE之类的变量就是内嵌变量，不过一般情况下我们会取消隐含变量
+--environment： 变量V是一个系统环境变量,并且make没有使用命令行选项“-e”(Makefile中不存在同名的变量定义,此变量没有被替代)
+--environment override： 变量V是一个系统环境变量,并且make使用了命令行选项“-e”(Makefile中存在一个同名的变量定义,使用“make -e”时
+环境变量值替代了文件中的变量定义)
+--file: 变量V在某一个的makefile文件中定义
+--command line：变量V在命令行中定义，比如：make V=1
+--override: 变量V在某一个在makefile文件中定义并使用“override”指示符声明
+--automatic： 变量V是一个自动化变量
+
+(3) ifeq ("$(origin V)", "command line")
+           xxx
+    endif
+--此关键字用来判断参数是否相等,如果相等，则执行xxx
+--通常我们会使用它来判断一个变量的值是否为空(不是任何字符)
+--参数值可能是通过引用变量或者函数得到的,因而在展开过程中可能造成参数值中包含空字符(空格等)，
+一般在这种情况时我们使用make的“strip”函数来去除空字符
+***** 从MAKEFLAGS中找出
+ifneq ($(findstring s,$(filter-out --%,$(MAKEFLAGS))),)
+  quiet=silent_
+  tools_silent=s
+endif
+****** 分析
+--首先过滤掉MAKEFLAGS中所有以--打头的单词(夹在两个空格之间的串称为一个单词，比如--include-dir就是一个单词)
+--在剩下的集合中再去查找含有字符s的单词，找到则返回字符s，找不到则返回空字符。(make -s时，-s中有s，所以返回s)
+--该语句的意思是，过滤掉MAKEFLAGS中以--打头的参数之后，查找MAKEFLAGS中有没有-s参数
+--选项-s解析
+1）该选项是--silent和--quiet的组合，其作用是：取消命令执行过程的打印，同时还禁止所有规则的命令的回显
+2）说到执行过程的打印，就得聊一下-w参数，见下面
+3）说到规则命令的回显，就得聊一下make执行命令之前所做的那些事
+
+make在执行规则的命令之前会做什么？
+1）会把要执行的命令行输出到标准输出设备，我们称之为“回显”，注意回显的是规则中的命令的原型
+2）如果规则的命令行以字符“@”开始,则 make 在执行这个命令时就不会回显这个将要被执行的命令
+3）使用了-s参数，相当于在规则的所有命令前面加上了@
+备注：如果使用make的命令行参数“-n”或“--just-print”,那么make执行时只显示所要执行的命令,但不会真正的去执行这些命令，
+这个选项对于我们调试Makefile非常有用,使用这个选项我们可以《按执行顺序》打印出Makefile中所有需要执行的所有命令
+
+聊一聊-w:
+1）该选项可以让 make 在开始编译一个目录之前和完成此目录的编译之后给出相应的提示信息，如
+在目录“/u/gnu/make”目录下执行“make -w”会有：make: Entering directory `/u/gnu/make'以及make: Leaving directory `/u/gnu/make'的提示
+2）通常,选项“-w”会被自动打开。在主控Makefile中当如果使用“-C”参数来为make指定一个目录或者使用“cd”进入一个目录时,“-w”选项会被自动打开
+3）那么，可以使用 -s 选项来禁止所有关于目录信息的打印
+** linux-kernel 基本基本流水线:
+   1. 编译生成 vmlinux: make all
+	  1. all: vmlinux
+   2. 产生: vmlinux
+      1. vmlinux: scripts/link-vmlinux.sh vmlinux_prereq $(vmlinux-deps) FORCE
+      2. ----+$(call if_changed,link-vmlinux)
+   3. 产生: scripts/link-vmlinux.sh
+   4. 产生: vmlinux_prereq
+   5. 产生: $(vmlinux-deps)
+   6. 产生: FORCE
+** WAITTING [#D] Theme:将linux-kernel架构移植stm32上		  :@Blog:@Kernel:
+   SCHEDULED:<2017-10-26 四>
+1. 基本要求:
+   1. 精简
+   2. 提供裁剪功能的实现机制
+   3. arch/arm/下面区分stm32不同型号的硬件
+3. stm32基本流水线
+   1. 烧录至硬件: sudo make burn
+	  1. burn: vmstm32.bin 
+	  2. ----@st-flash write $< 0x08000000
+   2. 编译生成 vmstm32.bin 文件: make all
+	  1. all: vmstm32.bin
+   3. 产生 vmstm32.bin 文件: vmstm32.bin
+      1. vmstm32.bin: vmstm32.elf
+      2. ----@arm-none-eabi-objcopy -O binary -S $< $@
+   4. 产生 vmstm32.elf 文件: vmstm32.elf
+      1. CFLAGS += -mcpu=cortex-m4 -mthumb -Wall   LFLAGS += -mcpu=cortex-m4 -mthumb  
+      2. vmstm32.elf: $(OBJS)
+	  3. ----@arm-none-eabi-gcc $(LFLAGS) $^ -T stm32f4-flash.ld -o $@
+	  4. ----@arm-none-eabi-size $@
+   5. 产生 $(OBJS): $(OBJS)
+	  1. %.o: %.S
+	  2. ----@arm-none-eabi-gcc $(CFLAGS) -c $< -o $@
+      3. %.o: %.c
+	  4. ----@arm-none-eabi-gcc $(CFLAGS) $(DEFS) $(INCS) -c $< -o $@
+   6. 清除编译: make clean
+      1. clean:
+      2. ----@rm -f $(OBJS) blink.bin blink.elf
+Blog creation time:[2017-10-26 四 08:37]
