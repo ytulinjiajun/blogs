@@ -1,6 +1,4 @@
 * blogs-linux-arch-part1
-  - State "ABORT"      from "DONE"       [2017-09-11 一 16:56]
-  - State "DONE"       from ""           [2017-09-11 一 16:55]
 ** DONE [#D] theme:我的工具网站								   :@Blog:@Linux:
 	- State "DONE"       from "TODO"       [2017-09-04 一 22:40]
 --Linux内核官网：http://www.kernel.org
@@ -1568,8 +1566,8 @@ Blog creation time:[2017-09-04 一 22:33]
 5.标准输入重定向：more < /home/ljj/info.txt 标准输入重定向意义不大
 6.标准错误重定向：cd /rot >/home/ljj/out.txt 2>/home/ljj/err.txt
 Blog creation time:[2017-09-04 一 22:34]
-** DONE [#D] theme:shell-scripts							   :@Blog:@Linux:
-	- State "DONE"       from "TODO"       [2017-09-04 一 22:43]
+** WAITTING [#D] theme:shell-scripts						   :@Blog:@Linux:
+   - State "WAITTING"   from "DONE"       [2017-10-29 日 20:22]
 *** 从键盘读取
 --read -p -t
 Blog creation time:[2017-09-04 一 22:35]
