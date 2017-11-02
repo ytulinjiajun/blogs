@@ -16,7 +16,7 @@
    2. ----$(Q)$(MAKE) -f $(srctree)/Makefile headers_check
    3. endif
    4. 
-   5. $(srctree)/Makefile
+   5. $(srctree)
 	  1. # building in the source tree
 	  2. ifeq ($(KBUILD_SRC),)
       3. ----srctree := .   (200)
@@ -167,7 +167,7 @@
       vmlinux-dirs += samples
       endif
    2. arch/$(SRCARCH)/kernel/vmlinux.lds $(head-y) $(init-y) $(core-y) $(libs-y2) $(drivers-y) $(net-y) $(virt-y) $(libs-y1):  \
-5. init usr drivers sound firmware net lib virt    (未定义:init-m core-m dirvers-m net-m libs-m)
+   3. init usr drivers sound firmware net lib virt    (未定义:init-m core-m dirvers-m net-m libs-m)
 ** FORCE
    PHONY += FORCE
    FORCE:
@@ -199,3 +199,6 @@
    9. if_changed核心功能就是当目标的依赖或者编译命令发生变化时，执行表达式“cmd_$(1)”展开后的值
    10. 
 5. +$(call if_changed,link-vmlinux)
+
+
+

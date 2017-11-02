@@ -1488,4 +1488,7 @@ Blog creation time:[2017-10-07 六 21:16]
 		 12. 完成合并之后,删除该紧急修复分支: git branch -d hotfix-1.2
 		 13. 备注: 紧急修复分支同发布分支最大的区别在于,紧急修复分支主要针对master分支修复,而发布分支主要针对develop分支修复,其次,紧急修复分支必须同时向master分支以及develop分支合并,而发布分支向master的合并是可选的
 Blog creation time:[2017-10-06 五 14:21]
-  
+** WAITTING [#D] Theme:郑亚军学linux							 :@Blog:@Git:
+    SCHEDULED:<2017-10-31 二>
+
+Blog creation time:[2017-10-31 二 18:58]
