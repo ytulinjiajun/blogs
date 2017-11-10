@@ -1,4 +1,7 @@
 * blogs-linux-kernel
+** WAITTING [#D] Theme:源码分析							  :@Blog:@Kernel:
+    SCHEDULED:<2017-11-02 四>
+
   all: vmlinux
   
   vmlinux: scripts/link-vmlinux.sh vmlinux_prereq $(vmlinux-deps) FORCE (999)
@@ -8,8 +11,8 @@
 1. @@@@@表示已经追踪到文件真实路径的级别
 2. %%%%%表示已超出顶层Makefile文件
 3. ||||||||||表示分隔小节
-** scripts/link-vmlinux.sh @@@@@
-** vmlinux_prereq
+*** scripts/link-vmlinux.sh @@@@@
+*** vmlinux_prereq
 1. PHONY += vmlinux_prereq (975)
 2. vmlinux_prereq: $(vmlinux-deps) FORCE  (976)
    1. ifdef CONFIG_HEADERS_CHECK
@@ -52,6 +55,14 @@
 		 7. __headers
 		    1. __headers: $(version_h) scripts_basic uapi-asm-generic archheaders archscripts
 	        2. ----$(Q)$(MAKE) $(build)=scripts build_unifdef
+			3. 
+			4. 
+			5. PHONY += scripts_basic
+			6. scripts_basic:
+	 	    7. ----$(Q)$(MAKE) $(build)=scripts/basic
+ 		 	8. ----$(Q)rm -f .tmp_quiet_recordmcount
+			6. 
+			7. 
 		 8. 
 		 9. 
    8. 
@@ -64,7 +75,7 @@
    15. ----$(Q)$(CONFIG_SHELL) $(srctree)/scripts/adjust_autoksyms.sh \
    16. "$(MAKE) -f $(srctree)/Makefile vmlinux"
    17. endif
-** $(vmlinux-deps)
+*** $(vmlinux-deps)
 	第970行: vmlinux-deps := $(KBUILD_LDS) $(KBUILD_VMLINUX_INIT) $(KBUILD_VMLINUX_MAIN) $(KBUILD_VMLINUX_LIBS)
 	第1009行: $(sort $(vmlinux-deps)): $(vmlinux-dirs) ;		
 	
@@ -168,11 +179,11 @@
       endif
    2. arch/$(SRCARCH)/kernel/vmlinux.lds $(head-y) $(init-y) $(core-y) $(libs-y2) $(drivers-y) $(net-y) $(virt-y) $(libs-y1):  \
    3. init usr drivers sound firmware net lib virt    (未定义:init-m core-m dirvers-m net-m libs-m)
-** FORCE
-   PHONY += FORCE
-   FORCE:
-   .PHONY: $(PHONY)   
-** +$(call if_changed,link-vmlinux) 
+*** FORCE
+   	PHONY += FORCE
+   	FORCE:
+   	.PHONY: $(PHONY)   
+*** +$(call if_changed,link-vmlinux) 
 3. call函数
    1. make 内置的一个特殊的函数,它可以引用用户自己定义的带有参数的函数
 4. if_changed 变量
@@ -199,6 +210,18 @@
    9. if_changed核心功能就是当目标的依赖或者编译命令发生变化时，执行表达式“cmd_$(1)”展开后的值
    10. 
 5. +$(call if_changed,link-vmlinux)
+Blog creation time:[2017-11-02 四 16:51]
+** WAITTING [#D] Theme:编译kernel							  :@Blog:@Kernel:
+    SCHEDULED:<2017-11-02 四>
+1. 配置系统的基本结构:
+   1. Makefile：分布在 Linux 内核源代码根目录及各层目录中，定义 Linux 内核的编译规则；
+   2. 配置文件（config.in(2.4内核，2.6内核)）：给用户提供配置选择的功能；
+   3. 配置工具：包括配置命令解释器（对配置脚本中使用的配置命令进行解释）和配置用户界面（提供基于字符界面、基于 Ncurses 图形界面以及基于 Xwindows 图形界面的用户配置界面，各自对应于 Make config、Make menuconfig 和 make xconfig）,些配置工具都是使用脚本语言，如 Tcl/TK、Perl 编写的（也包含一些用 C 编写的代码）。本文并不是对配置系统本身进行分析，而是介绍如何使用配置系统。所以，除非是配置系统的维护者，一般的内核开发者无须了解它们的原理，只需要知道如何编写 Makefile 和配置文件就可以
 
-
-
+2. makefile menuconfig过程讲解:
+   1. make menuconfig提示'make menuconfig' requires the ncurses libraries解决方法:sudo apt-get install libncurses5-dev
+   2. 
+   3. 
+3. Linux内核的配置系统:
+   1. 
+Blog creation time:[2017-11-02 四 16:53]

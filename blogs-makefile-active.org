@@ -1,12 +1,88 @@
 * blogs-makefile-active
-** WAITTING [#D] Theme:gcc基础							:@Blog:@Makefile:
+** DONE [#D] Theme:静态库									:@Blog:@Makefile:
+    SCHEDULED:<2017-11-10 五>
+	- State "DONE"       from "WAITTING"   [2017-11-10 五 16:07]
+1. 静态库的真实面目: 目标文件(.o)的集合(归档)
+2. 必要性: 使用库,是一种好习惯
+   1. 汇编的结果产生了目标文件(.o),即机器码, 链接过程就是将这些目标文件(*.o)合并在一起生成可执行文件
+   2. 在汇编与链接这两个过程之间,当一个项目生成目标文件较少时,直接针对有限个目标文件进行链接是没有问题的,但是在一个大型工程中,情况就有所不同
+   3. 在大型工程中,可能需要模块化一些功能,可能随时需要裁剪一些功能,此时,将一些彼此之间独立的代码编译后生成的目标文件制作成静态库,然后在链接阶段将其链接包含进来,这是一种很好的做法
+   4. 另外,1000个.o文件一次性进行链接,任何一个错误都会导致全部重新处理,而制作成不同的库之后,在进行链接时,如果出现问题,只用处理产生错误的那个库,这样效率会更高
+3. 特点:
+   1. 在链接阶段,指定的静态库中的全部目标文件(*.o)均加入链接的"队伍",因此,生成的可执行文件比较大
+   2. 静态库会被整个链接到指定可执行文件,因此,当静态库的内容发生改变时,整个程序都必须重新进行编译
+   3. 在Windows下,静态链接库文件以.lib为后缀,在Linux下,以.a为后缀,即archive
+4. 静态库的相关操作:
+   1. 创建静态库: ar -crsv libmm.a tmp1.o tmp2.o
+	  1. cr: 创建静态库libmm.a并将tmp1.o和tmp2.o插入里面
+	  2. s: 写入符号表索引到库libmm.a中
+	  3. v: 显示操作信息
+	  4. 注意: cr必须同时使用,单独使用c是不会创建静态库的
+   2. 显示静态库中目标文件清单: ar -tv libmm.a
+   3. 打印静态库内容: ar -pv libmm.a 
+   4. 在静态库结尾不做检查的快速追加目标(不常用): ar -qv libmm.a tmp3.o
+   5. 检查并追加目标(常用): ar -rv libmm.a tmp3.o
+	  1. 首先在当前目录下查找libmm.a是否存在,如果不存在libmm.a则创建,并插入tmp3.o
+	  2. 如果存在libmm.a,则检查libmm.a里面是否存在tmp3.o,如果不存在,则在静态库的结尾插入tmp3.o
+	  3. 如果存在tmp3.o,则替换同名模块
+   6. 从静态库中删除目标: ar -dv libmm.a tmp2.o
+5. 使用静态库(链接阶段):
+   1. gcc -static main.o -lmm -L./static_library -o  main
+   2. -l: 后面接静态库的名字,但是由于前缀lib和后缀.a是linux默认识别的,因此只能写中间的名mm,例如,-lm表示将libm.a这个静态数学库链接进来
+   3. -L: 后面接静态库的路径,GCC在链接时,默认只会链接/usr/lib,/lib下面的C函数库,如果没有该参数的话,linux就会到/usr/lib以及/lib里面查找-l指定的静态库,如果找不到就报错/usr/bin/ld:cancont find -lstatic
+   4. 当查找库的目录下存在同名的静态库的和动态库,则优先使用动态库,除非强制加上-static
+   5. 备注:从3的描述中不难知道,可以将创建的静态库放到/usr/lib下面,就可以不指定-L,但是,这样会将自己的库和系统的库混合在一起,不建议这样干,还是使用-L指出路径比较好
+   6. 运行: ./main
+Blog creation time:[2017-11-10 五 10:39]
+** DONE [#D] Theme:动态库									:@Blog:@Makefile:
+    SCHEDULED:<2017-11-10 五>
+	- State "DONE"       from "WAITTING"   [2017-11-10 五 16:07]
+1. 特点:
+   1. 在链接阶段, 只将动态库中所有目标文件的名字以及所有函数的名字加入到链接的"队伍", 目标文件的内容(机器码)则不参与链接,因此,生成的可执行文件比较小
+   2. 由于动态库只是在链接阶段将所有目标名字以及函数名参与链接,因此,只要源文件的文件名以及函数名不发生改变,便不用重新编译,这也是动态库最大的优点: 动态库的更新独立于依赖它的运用程序
+   3. 在Windows下,态链接库文件以.dll为后缀,即Dynamic Link Library,在Linux下以.so为后缀
+2. 动态库最大的优点: 动态库的更新独立于使用到它的运用程序
+   在链接阶段,只是将动态库中所有目标文件的名字和所有函数原型封装到可执行文件中了,在以后调用可执行文件时会实时去动态库里面找具体的实现,这不就意味着,只要我们不改变动态库的名字和函数原型,我们可以随意更改构成动态库的源代码(比如用一个更好的算法来替换某一个函数中一般的算法),该完以后,重新生成一遍动态库,替换掉老的.那么当以前依赖该动态库的一些运用程序(比如test),当执行./test时,还是可以依据动态库名和函数原型去动态库(.so)找具体的实现,只不过现在的实现用了一个更加牛叉的算法来改善了程序的性能而已,所以,针对那些个依赖该动态库的运用来说,是感受不到影响的,当然了,你如果针对动态库的某个函数不是做优化,而是直接改变其功能(比如将gui运用程序所调用的动态库的某个描述颜色的函数的颜色值改变了),那么依赖该动态库的运用如果调用到该函数,则其主题颜色自然就发生改变,还有就是,以后也可以往该动态库中加入函数,由于是新加入的函数,以前依赖该动态库的运用程序肯定没有用到自然也不会受到影响,新加入的函数能可以用于从这一版本的动态库发布后开发其他的运用;显然,删除动态库内的函数就一定得谨慎了,因为如果你删除的这个函数如果恰好被某个运用程序调用过,那么,以后最新版本发布的动态库,如果那个运用进行了更新,那么基本上他的这个运用是不能运行了(故意删减功能).还有就是更改动态库的名字,更改源文件的名字,更改函数的名字都会引起重新编译
+3. 动态库的相关操作:
+   1. 创建动态库: gcc -fPIC -shared tmp1.o tmp2.o -o libnn.so
+	  1. fPIC: 位置独立,即生成的库可以存放在内存的任何位置
+	  2. shared: 指定生成动态链接库
+   2. 查看某可执行文件使用到的动态库: ldd main 
+4. 使用动态库(链接阶段):
+   1. 相比静态库,动态库的查找路径稍微有点麻烦,因为,对于动态库来说,需要将-L指定的动态库的绝对路径告知动态加载器才行,默认情况下,动态加载器只会到LD_LIBRARY_PATH、/etc/ld.so.cache文件列表、/usr/lib、/lib 这四个路径下查找-l指定的动态库,如果找不到就报错:./main: error while loading shared libraries: libnn.so: cannot open shared object file: No such file or directory 
+   2. gcc main.o -lnn -L./dynamic_library -o main
+   3. -l: 后面接动态库的名字,但是由于前缀lib和后缀.so是linux默认识别的,因此只能写中间的名nn,例如,-lm表示将libm.so这个动态数学库链接进来
+   4. -L: 后面接动态库的路径,这个路径一般是自己定义比较好,但是,定义以后还需要将其告知动态加载器
+   5. 注意,在链接过程中,即便-L指定的路径没有告知动态加载器,也能链接成功,但是在 ./main 时,就会提示找不到动态库
+   6. 将自定义动态库的路径告知动态加载器:
+	  1. 分析: 动态库加载器只会到LD_LIBRARY_PATH、/etc/ld.so.cache文件列表、/usr/lib、/lib这四个路径下查找动态库,-L指定的路径并不能被动态加载器承认,因此,不难给出下面的四个方案
+	  2. 方案一: 在 /usr/lib和/lib上做手脚(不太推荐)
+		 1. 既然动态加载器认定了/usr/lib和/lib目录,会到这两个目录下查找动态库,那么,一个显然的方法就是将用户自定义的动态库拷贝到这两个目录中的任意一个即可
+		 2. 优点: 链接时,直接使用 gcc main.o -lnn -o main即可,即省略-L选项
+		 3. 缺点: 用户自定义的动态库和系统的库混搭在一起,容易引起混乱
+	  3. 方案二: 在 LD_LIBRARY_PATH 中做手脚 (推荐)
+		 1. 在~/.profile下面添加:export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$MY_PATH (其中,MY_PATH为你所生成的libnn.so所在的目录的路径),执行 source ~/.profile
+		 2. 在/etc/profile下面添加:export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$MY_PATH (其中,MY_PATH为你所生成的libnn.so所在的目录的路径),执行source /etc/profile
+	  4. 方案三: 在 /etc/ld.so.cache文件列表 中做手脚 (极力推荐)
+		 1. 在/etc/ld.so.conf.d目录下新建一个文件my.conf,打开该文件,并在里面添加你之前制作的动态库libdynamic.so所在目录的路径,保存退出,执行sudo ldconfig即可运行
+		 2. 优点: 可以随意在任意路径下创建动态库,而且,在/etc/ld.so.conf.d下面还可以分类管理
+   7. 当查找的库路径下存在同名的静态库和动态库时,优先使用动态库
+Blog creation time:[2017-11-10 五 10:40]
+** DONE [#D] Theme:gcc基础									:@Blog:@Makefile:
     SCHEDULED:<2017-10-27 五>
-1. 预处理:  gcc -E test.c -o test.i  ---->  完成头文件展开,宏替换等工作之后,将源文件生成预处理文件
-2. 编译:    gcc -S test.i -o test.s  ---->  编译预处理文件,生成汇编文件
-3. 汇编:    gcc -c test.s -o test.o  ---->  将汇编文件汇编成机器码,即目标文件
-4. 链接:    gcc    test.o -o test    ---->  将机器码链接起来生成可执行文件(.ELF)
-5. 使用gcc命令处理源文件文件: gcc test.c -o test     备注: test.c后面加的参数一般有-O,-Wall,-g,-I,-l,-L,-Shared等
-6. 使用make命令和Makefile文件处理源文件: gcc -c test.c -o test.o      gcc test.o -o test
+	- State "DONE"       from "WAITTING"   [2017-11-10 五 16:08]
+1. 预处理:  		 gcc -E test.c -o test.i  				     ---->  完成头文件展开,宏替换等工作之后,将源文件生成预处理文件
+2. 编译:    	 gcc -S test.i -o test.s  				     ---->  编译预处理文件,生成汇编文件
+3. 汇编:    	 gcc -c test.s -o test.o  				     ---->  将汇编文件汇编成机器码,即目标文件
+4. 创建静态库:	 arr -crs libmm.a tmp1.o tmp2.o			     ---->  创建一个名为mm的静态库,并插入目标文件tmp1.o和tmp2.o
+5. 创建动态库:	 gcc -fPIC -shared tmp3.o tmp4.o -o libnn.so ---->  创建一个名为nn的动态库,并插入目标文件tmp3.o和tmp4.o
+6. 链接(含静态库): gcc    test.o -lmm -L ./lib/static -o test  ---->  将目标文件test.o以及静态库libmm.a链接起来生成可执行文件(.ELF)
+7. 链接(含动态库): gcc    test.o -lnn -L ./lib/dynamic -o test ---->  将目标文件test.o以及动态库libnn.so链接起来生成可执行文件文件(.ELF)
+备注:
+1. -crs: cr表示创建并插入(单独使用c是不会创建的),s表示写入符号表索引到库libmm.a中 
+2. -fPIC -shared: fPIC表示位置独立,即生成的库可以存放在内存的任何位置, shared指定生成动态链接库 
+3. -l: 指明库的名字,全名应当是libstatic.a,但是由于lib和.a是linux默认识别的,所以只用写static即可,比如在使用到数学库的场合,加入-lm即可,表示加入libm.a这个静态数学库
+4. -L: 指明库的路径,详情参见上面的静态库和动态库章节
 Blog creation time:[2017-10-27 五 09:10]
 ** WAITTING [#D] Theme: makefile基础 						:@Blog:@Makefile:
 1. makefile默认文件名: 
@@ -388,7 +464,7 @@ Blog creation time:[2017-10-27 五 09:04]
 	  2. 完成以后再继续当前 Makefile 的读取
 	  3. 具体搜索文件的过程参看下面4路径问题中3的描述
    4. 路径问题(已测试):
-	  1. 以当前Makefile所在的目录为根开始搜索指定文件
+	  1. 以当前Makefile所在的目录为根开始搜索指定文件(不是$(CURDIR)所在目录)
 	  2. 如果 foo 在上层目录(以当前makefile所在的目录为根)下的 src/,则可以这样写: include ../src/foo 找到 foo
 	  3. 如果没有使用全路径(src/foo)的形式,仅仅: include foo
 		 1. 首先在当前Makefile所在目录下搜索 foo, 找到,则读取其内容
@@ -564,23 +640,42 @@ Blog creation time:[2017-10-26 四 14:04]
    2. 返回值: 当存在*.o时,返回使用空格分开的文件列表,当不存在*.o时,返回空
    3. 使用场合: 通配符是不支持变量的定义和函数的引用的,而搭配该函数,便可使得变量的定义和函数支持通配符
    4. 经典用法: OBJS := $(patsubst %.c,%.o,$(wildcard *.c))
-8. $(call VARIABLE,PARAM,PARAM,...)
-   1. 示例: pathsearch = $(firstword $(wildcard $(addsuffix /$(1),$(substr :, ,$(PATH)))))  LS := $(call pathsearch,ls)
-   2. 返回值: ba
-9. $(if CONDITION,THEN-PART[,ELSE-PART])
-   1. 如果“CONDITION”的展开结果非空,则条件为真,就将第二个参数“THEN_PATR”作为函数的计算表达式;
-   2. 如果“CONDITION”的展开结果为空,将第三个参数“ELSE-PART”作为函数的表达式
-   3. 如果“CONDITION”的展开结果为空,但是不存在第三个参数“ELSE-PART”,函数返回空
-   4. 根据条件决定函数的返回值是第一个或者第二个参数表达式的计算结果
-   5. 函数的条件表达式“CONDITION”决定了函数的返回值只能是“THEN-PART”或者“ELSE-PART”两个之一的计算结果
-10. $(strip STRINT)
+8. $(call VARIABLE,xx,yy,zz,...)
+   1. 作用: 将参数“xx”赋值给变量VARIABLE中定义的临时变量“$(1)”、将参数"yy"赋值给变量“VARIABLE”中定义的临时变量"$(2)",依此类推到$(n)
+   2. 赋值完毕之后,对变量“VARIABLE”进行计算
+   4. 注意: 变量“VARIABLE”在定义时不能定义为直接展开式(:=)!只能定义为递归展开式(=)
+   5. 示例:
+	  1. cc-cross-prefix =  \
+	  2. $(word 1, $(foreach c,$(1), \
+	  3. $(shell set -e; \
+	  4. if (which $(strip $(c))$(CC)) > /dev/null 2>&1 ; then \
+	  5. echo $(c);                                    \
+	  6. fi)))
+	  7. 
+	  8. CROSS_COMPILE := $(call cc-cross-prefix, m68k-linux-gnu- m68k-linux-)
+	  9. 
+9. $(foreach VAR,LIST,TEXT)
+   1. 首先展开变量“VAR”和“LIST”的引用;而表达式“TEXT”中的变量引用不展开
+   2. 接着把“LIST”中使用空格分割的单词依次取出赋值给变量“VAR”,每取出一个单词,计算一次TEXT表达式,直到LIST的最后一个单词取出完毕
+   3. 返回值:空格分割的,多次表达式“TEXT”的计算的结果
+   4. 示例:
+	  1. dirs := a b c d
+	  2. files := $(foreach dir,$(dirs),$(wildcard $(dir)/*))
+	  3. 返回: a/* b/* c/* d/*
+10. $(if CONDITION,THEN-PART[,ELSE-PART])
+	1. 如果“CONDITION”的展开结果非空,则条件为真,就将第二个参数“THEN_PATR”作为函数的计算表达式;
+	2. 如果“CONDITION”的展开结果为空,将第三个参数“ELSE-PART”作为函数的表达式
+	3. 如果“CONDITION”的展开结果为空,但是不存在第三个参数“ELSE-PART”,函数返回空
+	4. 根据条件决定函数的返回值是第一个或者第二个参数表达式的计算结果
+	5. 函数的条件表达式“CONDITION”决定了函数的返回值只能是“THEN-PART”或者“ELSE-PART”两个之一的计算结果
+11. $(strip STRINT)
 	1. 函数功能: 去掉字串“STRINT”开头和结尾的空字符,并将其中多个连续空字符合并为一个空字符
 	2. 返回值: 无前导和结尾空字符、使用单一空格分割的多单词字符串
-11. $(sort LIST)
+12. $(sort LIST)
 	1. 给字串“LIST”中的单词以首字母为准进行排序(升序),并去掉重复的单词
 	2. 返回值:空格分割的没有重复单词的字串
 	3. 示例: $(sort foo bar lose foo),返回“bar foo lose”
-12. $(filter PATTERN...,TEXT)
+13. $(filter PATTERN...,TEXT)
 	1. 作用: 保留所有符合此模式的单词,过滤掉字串“TEXT”中所有不符合模式“PATTERN”的单词
 	2. 返回值: 空格分割的“TEXT”字串中所有符合模式“PATTERN”的字串
 	3. 说明: 可以使用多个模式。模式中一般需要包含模式字符“%”。存在多个模式时,模式表达式之间使用空格分割
@@ -588,7 +683,7 @@ Blog creation time:[2017-10-26 四 14:04]
 	   1. sources := foo.c bar.c baz.s ugh.h
 	   2. $(filter %.c %.s,$(sources))
 	   3. 返回: foo.c bar.c baz.s
-13. $(filter-out PATTERN...,TEXT)
+14. $(filter-out PATTERN...,TEXT)
 	1. 作用: 保留所有不符合此模式的单词,过滤掉字串“TEXT”中所有符合模式“PATTERN”的单词
 	2. 说明: 和“filter”函数实现的功能相反
 	3. 示例:
@@ -596,44 +691,48 @@ Blog creation time:[2017-10-26 四 14:04]
 	   2. mains=main1.o main2.o 
 	   3. $(filter-out $(mains),$(objects))
 	   4. 返回: foo.o bar.o
-14. $(words TEXT)
+15. $(words TEXT)
 	1. 作用: 计算字串“TEXT”中单词的数目
 	2. 返回值: “TEXT”字串中的单词数
 	3. 示例: $(words, foo bar)
 	4. 返回: 2
-15. $(word N,TEXT)
+16. $(word N,TEXT)
 	1. 作用: 取字串“TEXT”中第“N”个单词(“N”的值从 1 开始)
 	2. 返回值:返回字串“TEXT”中第“N”个单词
 	3. 说明: 如果“N”值大于字串“TEXT”中单词的数目,返回空字符串。如果“N”为 0,出错!
 	4. 示例: $(word 2, foo bar baz)
 	5. 返回 bar
-16. $(firstword NAMES...)
+17. $(firstword NAMES...)
 	1. 作用: 取字串“NAMES...”中的第一个单词
 	2. 字串“NAMES...”的第一个单词
 	3. 说明: 函数“firstword”实现的功能等效于“$(word 1, NAMES...)”
 	4. 提示: 取字串“NAMES...”中的最后一个单词: $(word $(words NAMES),NAMES)
 	5. 示例: $(firstword foo bar)
 	6. 返回: foo
-17. $(shell bash-cmd...)
+18. $(shell bash-cmd...)
 	1. 返回值: bash-cmd命令在bash中的执行结果
 	2. make将函数返回结果中的所有换行符“\n”或者一对“\n\r”替换为单空格;并去掉末尾的回车符号(“\n”)或者“\n\r”
 	3. 示例:
 	   1. KBUILD_OUTPUT := $(shell mkdir -p $(KBUILD_OUTPUT) && cd $(KBUILD_OUTPUT) \
 		  && /bin/pwd)
 	   2. 返回: 绝对路径
-18. $(dir NAMES...)
+19. $(dir NAMES...)
 	1. 从文件名序列“NAMES...”中取出各个文件名的目录部分(文件名的目录部分就是包含在文件名中的最后一个斜线(“/”)(包括斜线)之前的部分)
 	2. 返回值: 空格分割的文件名序列“NAMES...”中每一个文件的目录部分
 	3. 如果文件名中没有斜线,认为此文件为当前目录(“./”)下的文件,返回./
 	4. 示例:
 	   1. 
-19. $(error TEXT...)
+20. $(error TEXT...)
 	1. 功能: 产生致命错误,并提示“TEXT...”信息给用户,并退出 make 的执行
 	2. 说明: error”函数是在函数展开式(函数被调用时)才提示信息并结束 make 进程,只有包含“error”函数引用的命令被执行, 或者定义中引用此函数的递归变量被展开时,才会提示致命信息“TEXT...”同时退出 make
 	3. 返回值: 空
-20. 
-21. 
+21. $(basename NAMES...)
+	1. 从文件名序列“NAMES...”中取出各个文件名的前缀部分(前缀部分指的是文件名中最后一个点号之前的部分)
+	2. 返回值:空格分割的文件名序列“NAMES...”中各个文件的前缀序列,如果文件没有前缀,则返回空字串
+	3. 示例: $(basename src/foo.c src-1.0/bar.c /home/jack/.font.cache-1 hacks)
+	4. 返回: src/foo src-1.0/bar /home/jack/.font hacks
 22. 
+23. 
 Blog creation time:[2017-10-26 四 13:40]
 ** WAITTING [#D] Theme:注释								:@Blog:@Makefile:
     SCHEDULED:<2017-10-27 五>
@@ -839,344 +938,6 @@ m（makefile）
 --warn-undefined-variables
 
 Blog creation time:[2017-10-27 五 11:28]
-
-** tmp
-
-*** 模式规则
-	--Makefile中自己定义了一些隐含规则，但是有时候这些隐含规则不够我们使用，所以我们需要自己定义
-	一些隐含的规则，称用户自己定义的隐含规则为模式规则
-	
-	--模式规则的基本要求：模式规则的目标有且仅有一个%，用于匹配任意非空的字符串
-	
-	--定义一个自己的隐含规则：
-	%.o : %.c
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) $^ -o $@
-	备注：如此，便定义了一个用户的隐含规则，make会把该规则加入到自己的隐含规则里面，该规则
-	表示把任意一个%.c的文件都使用该规则描述的命令编译成%.o文件
-	
-	--任意模式匹配规则：
-	% ： %.c
-	touch $@
-	备注：该规则表示将任意一个目标都更新一下
-	任意模式匹配规则可以匹配任意一个target,但是，这种理解起来需要注意一点，比如:foo:foo.o bar.o,
-	由于默认隐含规则中指明foo.o是依赖于foo.c的，但是套用%：%.c得出的结果是foo.o:foo.o.c,这个就有问题，
-	在makefile中，有两种机制来解决这种问题的，第一种机制：先使用默认的隐含规则来寻找，找不到才会使用这种任意模式规则，
-	由于foo.o的默认隐含规则就匹配到foo.c了，所以，就不会再去理会用户自己定义的隐含规则：任意模式匹配规则，来解析
-	出foo.o.c这样的依赖；第二种机制：用户使用双冒号来定义任意模式规则而不是单冒号，称为terminal规则，如：
-	% :: %.c
-	touch $@
-	其中：双冒号对依赖进行了限制，只有依赖确实存在时，才会使用这种规则，比如，foo:foo.o,使用foo.o来套用这种
-	规则后是foo.o :: foo.o.c,双冒号规定了会对依赖文件的存在性进行检查，由于foo.o.c在当前目录下是找不到的，
-	所以，foo.o是不可以套用该规则的
-	
-	--取消隐含规则
-	有时候，我们会觉得makefile自带的隐含规则用不到，多余，或者对真实的情况造成麻烦，就需要取消这些隐含规则，
-	取消的方法就是重新定义来覆盖掉默认的隐含规则，其原理是，当用户自定义的目标和依赖同默认的隐含规则的相同时，
-	默认的隐含规则就会被覆盖
-	例如：使用%.o:%.s就可以将所有.s文件汇编成机器码.o的默认规则给取消掉
-*** 指令(编译+连接+运行)
-	情景一:
-	--test目录下:src inc两个目录 
-	--src目录下:hello thanks两个目录
-	--hello目录下:hello.c
-	--thanks目录下:thanks.c
-	--inc目录下:thanks.h
-	备注:hello.c文件中调用到thanks.c文件提供的一个函数thank_you(),所以thanks.h被hello.c文件和thank.c文件所依赖
-	
-	编译:(在test目录下执行下面指令)
-	--gcc -c ./src/hello/hello.c ./src/thanks/thanks.c -Wall -O -I ./inc ./src/
-	-->-c:编译
-	-->-Wall:编译过程信息
-	-->-O:优化
-	-->-I:指定头文件路径:./inc
-	-->./src:编译后产生的目标文件放置到哪
-	语义:在test目录下执行gcc命令,编译./src/hello这个路径下面的hello.c以及./src/thanks这个路径下面的thanks.c,要求实时显示
-	编译产生的信息,同时做一个-O1的优化,由于thanks.h被hello.c文件和thank.c文件所依赖,所以将thank.h的路径./inc告知gcc,以便能找到路径
-	备注：有一个比较奇怪的写法：gcc -c test.c -o xxx.o 其含义同gcc -c test.c是一样的，只不过gcc -c test.c编译的结果默认是test.o,而
-	在gcc -c test.c后面加上-o xxx.o则表示希望编译的结果是xxx.o而不是test.o 
-	
-	
-	链接:
-	--gcc -o  test test.o test1.o test2.o
-	-->-o:链接
-	-->test:链接之后生成的可执行文件
-	-->*.o:被链接的目标文件
-	
-	运行: ./test   -->  thank you very! hello world!
-*** 静态库和动态库
-**** 函数库:
-	 有若干源文件(.c),每个源文件里面都提供了一些独立的工具函数,比如一个好的算法策略,一个常用的数学函数公式的实现(标准偏差)等,
-	 如果这些源文件需要经常被使用,或者这些工具函数已经比较成熟了,那么可以考虑将它们编译成一个函数库并统一命名,然后提供出这个函数库中
-	 所有工具函数的函数原型如:void *malloc(size_t size),同时附上使用说明,以后如果使用到该函数库中的某一个函数时,只用在该函数库的说明文档
-	 中找到该函数,然后参照使用说明,在编译时,将函数库与用户程序建立起联系,即可使用该函数
-**** 静态库策略:
-	 --策略概述:
-	 -->制作出静态链接库文件
-	 -->编译用户源代码,生成用户的目标文件
-	 -->链接用户目标文件为可执行文件期间,将静态库.a链接进来,生成最终的可执行文件,其链接方式是:整个静态库被连接到了用户代码里面成了用户代码的一部分
-	 特点:整个函数库被链接到用户代码中,所以生成的可执行文件比较大,但是执行速度快(不过如今CPU的运算速度高速发展,这点速度的提升已经没有太大的追求价值,而文件的
-	 大小可能在嵌入式领域那种内存宝贵的情况下就比较看中,这也是静态连接没有动态连接火爆的原因吧)
-	 备注:当同时运行许多运用程序并且他们都使用来自同一个函数库的函数时,内存中就会有同一个函数的多份副本,而且在程序文件自身中也会有很多份副本,这样将会消耗很多宝贵的内存
-	 
-	 --细节:
-	 -->在.c文件中的工具函数实现应该是独立的,不可再引用其他函数库(没有头文件)
-	 -->函数库是在链接阶段(gcc -o main main.o -lstatic -L ./mylib)而不是编译阶段,被整合到用户的代码里面的
-	 -->静态函数库发生改变时,整个程序必须重新编译
-	 -->extern int a 和include "xxx.h"都是用来应付编译器的编译阶段,在编译源文件时,extern关键字告知编译器,a在其他文件定义了,虽然你现在找不到a,但是
-	 我跟你保证a是存在的,现在你不要因为找不到a而报错,接着编译即可;到了连接阶段,所有源文件都已经编译成了目标文件,这时所有文件的内容都可见了,编译器就会
-	 在所有的目标文件中查找有没有a,如果找到了a,那好,说明在编译阶段extern没有骗编译器,如果没有找到,那就报错;显然,include也有这样的功能,其目的就是解决编译器
-	 在编译阶段因为暂时找不到某个编译对象而终止编译的情况,连接阶段就是真正考究编译正确性的时刻
-	 --在Windows下,静态链接库文件以.lib为后缀,在Linux下,以.a为后缀,即archive
-	 
-	 --静态库操作命令:arr
-	 -->arr -cr libxxx.a yyy1.o yyy2.o:创建库libxxx.a并插入yyy1.o yyy2.o模块到该库(c,创建,r,c插入,注意,单独使用c是不会创建libxxx.a的,报错没有执行的操作,r就是一个操作)
-	 -->arr -pv libxxx.a yyy.o:打印出静态库libxxx.a中的yyy.o的内容(p,打印,v标识各个模块)
-	 -->arr -tv libxxx.a:显示库中的模块清单,只显示库名
-	 -->arr -rv libxxx.a yyy1.o yyy2.o:在静态库libxxx.a中所有模块的最后插入模块yyy1.o,yyy2.o,如果静态库libxxx.a不存在则创建,并插入模块yyy1.o,yyy2.o,如果存在静态库,并且静态库
-	 里面存在待插入的模块,则替换同名模块(r,插入,v显示操作信息:a - xx或者d - xx,即增加还是删除)
-	 -->arr -qv libxxx.a yyy4.o:在静态库libxxx.a的结尾处快速追加模块yyy4.o,而不去检查是否需要替换
-	 -->arr -dv libxxx.a yyy2.o:从静态库libxxx.a中删除模块yyy2.o(d,删除模块,v提示删除信息d - yyy2.o)
-	 -->arr -s libxxx.a:写入符号表索引到库libxxx.a中 
-	 备注:arr还有几个指令可以指定插入模块的位置,不过没有测试过,就不列举出来了,有需要时再man ar即可
-	 
-	 总结:创建静态库常规的指令:arr -crs libxxx.a ${objects}
-**** 动态库策略:
-	 --策略概述:
-	 -->制作出动态链接库文件
-	 -->编译用户源代码,生成用户的目标文件
-	 -->链接用户目标文件为可执行文件期间,将动态库.so链接进来,生成最终的可执行文件,其链接的方式是:动态链接库的名字以及库内部的所有函数名字被连接到用户代码里面
-	 成为用户代码的一部分,而动态库内部函数的实现代码不会被连接进入用户代码,即,用户代码只是引用了动态库,链接的结果形成可执行文件,当可执行文件被执行时,通过该执行文件
-	 内部在链接阶段加入的动态库名以及函数名,找到具体的动态库(.so)下面的具体的函数并调用,如果有必要的话才会将动态库加载到内存中去
-	 
-	 特点:动态库策略在制作的动态库文件体积比较小,同时动态库策略使用的是一种共享的原则,不会在内存中产生库的多份拷贝,另外,动态库的一个好处是动态库的更新可以独立于依赖
-	 它的运用程序,这句话有相当的份量,动态库在连接阶段只是将库名和所有函数原型封装到可执行文件中了,在以后调用可执行文件时会实时去动态库里面找具体的实现,这不就意味着,
-	 只要我们不改变动态库的名字和函数原型,我们可以随意更改构成动态库的源代码(比如用一个更好的算法来替换某一个函数中一般的算法),该完以后,重新生成一遍动态库,替换掉老的,
-	 那么当以前依赖该动态库的一些运用程序(比如test),当执行./test时,还是可以依据动态库名和函数原型去动态库(.so)找具体的实现,只不过现在的实现用了一个更加牛叉的算法来改善
-	 了程序的性能而已,所以,针对那些个依赖该动态库的运用来说,是感受不到影响的,当然了,你如果针对动态库的某个函数不是做优化,而是直接改变其功能(比如将gui运用程序所调用的动态库的
-	 某个描述颜色的函数的颜色值改变了),那么依赖该动态库的运用如果调用到该函数,则其主题颜色自然就发生改变,还有就是,以后也可以往该动态库中加入函数,由于是新加入的函数,以前依赖
-	 该动态库的运用程序肯定没有用到自然也不会受到影响,新加入的函数能可以用于从这一版本的动态库发布后开发其他的运用;显然,删除动态库内的函数就一定得谨慎了,因为如果你删除的
-	 这个函数如果恰好被某个运用程序调用过,那么,以后最新版本发布的动态库,如果那个运用进行了更新,那么基本上他的这个运用是不能运行了.
-	 
-	 总结:综上所述,动态库也叫共享库,该共享库的制作者(发布者)可以修改,添加该共享库的函数的实现,但是删除共享库中的某一函数需要慎重,除非你决定在这一版本中,或者以后将不再
-	 维护和支持该功能,明白你要做的事情之后才能进行删除,并且在产品发布的时候并告知用户不再支持某一项功能,基于这一个原因,为了避免程序更新而导致不能使用,当Linux启动运用程序时,
-	 会考虑运用程序需要的函数版本,以防止动态库的新版本导致某些旧的运用程序无法使用
-	 
-	 细节:
-	 --可以使用ldd命令查看动态库的使用情况:ldd main 
-	 --在Windows下,态链接库文件以.dll为后缀,即Dynamic Link Library,在Linux下以.so为后缀
-	 --LD_LIBRARRY_PATH:该环境变量指示动态连接器可以装载动态库的路径
-	 --静态库策略以空间换时间,动态库策略是以时间换空间
-*** 制作静态链接库文件libstatic.a
-	--环境:
-	-->工作目录:test,该目录下有一个库目录libstatic,以及两个文件main.c,libstatic.h
-	-->libstatic目录下面有add.c,sub.c,mul.c,div.c,Makefile四个文件
-	
-	--目的:
-	-->将libstatic目录下的.c文件生成静态库libstatic.a,在main.c中调用静态库中的工具函数
-	-->libstatic.h下面给出了静态库libstatic.a中的所有工具函数的原型
-	
-	--实现步骤:
-	-->在4个文件内里面分别编写add.c,sub.c,mul.c,div.c文件:
-	float add(int a,int b)
-	{
-	return (a+b);
-	}
-	float sub(int a,int b)
-	{
-	return (a-b);
-	}
-	float mul(int a,int b)
-	{
-	return (a*b);
-	}
-	float div(int a,int b)
-	{
-	return (a/b);
-	}
-	
-	-->编写库函数的头文件libstatic.h:
-	## libstatic.h
-	#ifndef _LIBSTATIC_H 
-	#define _LIBSTATIC_H
-	float add(int a,int b);
-	float sub(int a,int b);
-	float mul(int a,int b);
-	float div(int a,int b);
-	#endif
-	
-	-->编写Makefile文件
-	objects = add.o sub.o mul.o div.o
-	
-	libstatic.a : ${objects}
-	ar -rcs libstatic.a ${objects}    将目标文件(.o)归档入库libstatic.a
-	备注:
-	--ar:静态库操作命令,参见上面的介绍
-	--libstatic.a:linux中默认规定静态库文件需要以lib开头,以.a结尾;
-	--${objects}:有很多.c文件,每个.c文件里面都是一些组成库libstatic.a的独立的工具函数,这些.c文件编译后会生成.o文件,${objects}就是这些.o文件的集合
-	这种书写方式在makefile文件中称之为宏,定义的格式是:macro = xx xx xx,其中xx可以是命令如gcc,也可以是选项参数如-Wall,也可以是路径./inc;使用的格式是:$(macro)或者${macro}
-	
-	add.o : add.c
-	gcc -c add.c
-	
-	sub.o : sub.c
-	gcc -c sub.c
-	
-	mul.o : mul.c
-	gcc -c mul.c
-	
-	div.o : div.c
-	gcc -c div.c
-	
-	clean:
-	rm libstatic.a $(objects)
-	
-	-->生成静态库:make -f Makefile 
-	
-	-->使用静态函数库libstatic.a
-	## main.c
-	#include <stdio.h>
-	#include "libstatic.h"
-	
-	int main()
-	{
-	int a,b;
-	a = 10;
-	b = 3;
-	
-	printf("a+b = %f\n",add(a,b));
-	printf("a-b = %f\n",sub(a,b));
-	printf("a*b = %f\n",mul(a,b));
-	printf("a/b = %f\n",div(a,b));
-	return 0;
-	}
-	
-	-->编译mani.c:gcc -c main.c -I ./
-	
-	-->链接:gcc -o main main.o -lstatic -L ./libstatic 
-	-l:指明静态库的名字,全名应当是libstatic.a,但是由于lib和.a是linux默认识别的,所以只用写static即可,比如在使用到数学库的场合,加入-lm即可,表示加入libm.a这个静态数学库
-	-L:指明静态库的路径,GCC在链接时,默认只会链接/usr/lib下面的C函数库,如果没有该参数的话,linux就会到/usr/lib里面查找-l指定的静态库,如果找不到就报错/usr/bin/ld:cancont find -lstatic
-	备注:如果自己做了一个静态库libxxx.a,或者要使用第三方提供的静态库libxxx.a,只用将该静态库添加到/usr/lib目录下,链接时加上-lxxx即可,不用再指明路径
-	
-	-->运行:./main 
-	
-*** 制作动态链接库文件libdynamic.so
-	--环境:
-	-->工作目录:test,该目录下有一个库目录libdynamic,以及两个文件main.c,libdynamic.h
-	-->libdynamic目录下面有add.c,sub.c,mul.c,div.c,Makefile四个文件
-	
-	--目的:
-	-->将libdynamic目录下的.c文件生成动态库libdynamic.so,在main.c中调用动态库中的工具函数
-	-->libdynamic.h下面给出了动态库libdynamic.so中的所有工具函数的原型
-	
-	--实现步骤:
-	-->在4个文件内里面分别编写add.c,sub.c,mul.c,div.c文件: 见静态库制作
-	
-	-->编写库函数的头文件libstatic.h:见静态库制作
-	
-	-->编写Makefile文件:
-	objects = add.o sub.o mul.o div.o
-	
-	libdynamic.so: ${objects}
-	gcc -fPIC -shared -o libdynamic.so ${objects}
-	备注:
-	--fPIC:编译为位置独立的代码,即编译后的库可以存放在内存的任何位置
-	--shared:指定生成动态链接库
-	
-	add.o : add.c
-	gcc -c add.c
-	
-	sub.o : sub.c
-	gcc -c sub.c
-	
-	mul.o : mul.c
-	gcc -c mul.c
-	
-	div.o : div.c
-	gcc -c div.c
-	
-	clean:
-	rm libdynamic.so $(objects)
-	
-	-->编写库函数的头文件libdynamic.h:见静态函数制作
-	
-	-->使用动态函数库:libdynamic.so
-	## main.c
-	#include <stdio.h>
-	#include "libdynamic.h"
-	
-	int main()
-	{
-	int a,b;
-	a = 10;
-	b = 3;
-	
-	printf("a+b = %f\n",add(a,b));
-	printf("a-b = %f\n",sub(a,b));
-	printf("a*b = %f\n",mul(a,b));
-	printf("a/b = %f\n",div(a,b));
-	return 0;
-	}
-	-->编译mani.c:gcc -c main.c -I ./
-	
-	-->链接:gcc -o main main.o -L ./libdynamic -ldynamic 
-	
-	-->环境变量的处理:
-	方案一:将动态链接库拷贝到/usr/lib和/lib目录下,执行./main即可
-	方案二:在~/.profile下面添加:export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$MY_PATH (其中,MY_PATH为你所生成的libdynamic.so所在的目录的路径),执行. .profile 
-	方案三:在/etc/profile下面添加:export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$MY_PATH (其中,MY_PATH为你所生成的libdynamic.so所在的目录的路径),执行 . /etc/profile
-	方案四:在/etc/ld.so.conf.d目录下新建一个文件my.conf,打开该文件,并在里面添加你之前制作的动态库libdynamic.so所在目录的路径,保存退出,执行sudo ldconfig即可运行
-	
-	备注:方案一,方案三,方案四是全局有效的,方案二只针对当前用户有效,其中方案一的做法将自己的库和系统的库混合在一起,我不太喜欢,个人认为方案四是一种比较优雅的方案
-	对于linux来说,负责装载共享库并解析用户程序函数引用情况的程序是动态装载器ld.so,该装载器会在/etc/ld.so.conf.d/下面的文件中索引共享库的额外位置(/usr/lib是标准位置),
-	所以只用将你的动态库的路径写入到/etc/ld.so.conf.d/下面的某一文件中(通常是新建一个自己的文件mylib.conf),并调用sudo ldconfig,动态装载器ld.so就能找到你的动态库了,
-	可以使用运行工具ldd来查看一个运用程序所需要的共享库,如ldd test
-	
-	-->运行: ./main
-	
-	Blog creation time:[2017-09-05 二 08:36]	
-** 3. 
-4. 
-5. Linux下面的可执行文件的ELF格式
-6. 链接器的工作对象是.o文件，使用ld工具，最终生成elf可执行文件
-   
->> 一个简单的Makefile可能只包含规则，但是通常还会包含规则之外的许多东西
-
->> 
-
->>规则的触发：规则的触发决定着该规则是否能得到执行
-规则触发的基本原则就是任意规则中，依赖的时间戳比目标的时间戳新时，该规则一定被触发，在
-Makefile中有很多规则，一个规则的依赖一般都是(伪目标除外)另一个规则的目标，单就某一规则而言，它被触发可以
-理解为两种情况，第一：该规则依赖的时间戳比目标的时间戳新；第二：该规则的依赖是其他规则的目标，那该规则有被
-触发的“潜质”
-Makefile中第一条规则（默认规则）一定会被触发执行，无论其是目标文件，还是伪目标
-伪目标（非默认）必须通过外部调用才能触发
-小结：Makefile中规则能否被执行的依据是规则是否能被触发，即，不是所有只要写在Makefile中的规则都能被执行的，
-那得看其是否有被触发的条件（当然，只要写在Makefile中的变量都会被执行）
-
->> makefile程序的入口：如同C语言的入口是main函数，在run时，程序从main开始执行，makefile文件中的程序也
-有入口，当在终端下执行make命令时，系统会在当前目录下查找名字为Makefile的文件，然后从入口处开始解析规则，满足
-规则触发条件的规则，其下面的命令会得到执行，那么，Makefile中的入口是什么呢？应该是该Makefile中，从上到下，
-第一个出现的规则，也称其做默认规则，第一个规则无论如何都会被make执行，即使它是一个伪目标
-所以，一个Makefile中第一个出现的规则是至关重要的，一般情况下，该规则中的目标应当是终极目标，其他规则的目标
-均是从该规则的依赖文件中繁衍出去，一般而言，我们习惯用一个伪目标all来作为第一规则
-
->>伪目标：只是一个标识，一般没有依赖，一般被外部调用，伪目标规则被执行时，不会生成目标文件
-
->>可以将一个较长行使用反斜线(\)来分解为多行,但需要注意:反斜线之后不能有空格
-
->>规则的目标如果是文件：在执行make时，依照规则的触发条件，该文件会被重新生成
-
->>规则的命令，所完成的工作主要是如何根据依赖文件来更新目标文件，当然了，一些规则是可以没有命令行的，如利用隐式规则，
-还有，伪目标规则的命令的作用并非如此
-
->>make会将所有出现在第一条规则之后，所有以TAB开始的行当做命令行来处理
-
->> %.o: %.c 我们称这样的写法为“匹配”，既然是匹配，两个%自然要告知一个(niutou.o和mazui.c凑到一起是牛头不对马嘴)，
-如果告知了%.o中的%是stm32f7xx,立即就知道%.c应当匹配到stm32f7xx.c,这才对嘛，既然%.c是依赖，那么，就可以根据
-vpath到当前目录下找具体的stm32f7xx.c这个文件了，所以呢，目标%.o一般是需要明确在Makefile中使用变量告知的
-Blog creation time:[2017-09-02 六 10:12]
-
-
 ** DONE [#D] theme:专题2:linux开发stm32之Makefile			:@Blog:@Makefile:
    - State "DONE"       from "TODO"       [2017-09-04 一 23:00]
 *** 声明
@@ -1831,3 +1592,35 @@ make在执行规则的命令之前会做什么？
 在目录“/u/gnu/make”目录下执行“make -w”会有：make: Entering directory `/u/gnu/make'以及make: Leaving directory `/u/gnu/make'的提示
 2）通常,选项“-w”会被自动打开。在主控Makefile中当如果使用“-C”参数来为make指定一个目录或者使用“cd”进入一个目录时,“-w”选项会被自动打开
 3）那么，可以使用 -s 选项来禁止所有关于目录信息的打印
+** 模式规则
+   --Makefile中自己定义了一些隐含规则，但是有时候这些隐含规则不够我们使用，所以我们需要自己定义
+   一些隐含的规则，称用户自己定义的隐含规则为模式规则
+   
+   --模式规则的基本要求：模式规则的目标有且仅有一个%，用于匹配任意非空的字符串
+   
+   --定义一个自己的隐含规则：
+   %.o : %.c
+   $(CC) -c $(CFLAGS) $(CPPFLAGS) $^ -o $@
+   备注：如此，便定义了一个用户的隐含规则，make会把该规则加入到自己的隐含规则里面，该规则
+   表示把任意一个%.c的文件都使用该规则描述的命令编译成%.o文件
+   
+   --任意模式匹配规则：
+   % ： %.c
+   touch $@
+   备注：该规则表示将任意一个目标都更新一下
+   任意模式匹配规则可以匹配任意一个target,但是，这种理解起来需要注意一点，比如:foo:foo.o bar.o,
+   由于默认隐含规则中指明foo.o是依赖于foo.c的，但是套用%：%.c得出的结果是foo.o:foo.o.c,这个就有问题，
+   在makefile中，有两种机制来解决这种问题的，第一种机制：先使用默认的隐含规则来寻找，找不到才会使用这种任意模式规则，
+   由于foo.o的默认隐含规则就匹配到foo.c了，所以，就不会再去理会用户自己定义的隐含规则：任意模式匹配规则，来解析
+   出foo.o.c这样的依赖；第二种机制：用户使用双冒号来定义任意模式规则而不是单冒号，称为terminal规则，如：
+   % :: %.c
+   touch $@
+   其中：双冒号对依赖进行了限制，只有依赖确实存在时，才会使用这种规则，比如，foo:foo.o,使用foo.o来套用这种
+   规则后是foo.o :: foo.o.c,双冒号规定了会对依赖文件的存在性进行检查，由于foo.o.c在当前目录下是找不到的，
+   所以，foo.o是不可以套用该规则的
+   
+   --取消隐含规则
+   有时候，我们会觉得makefile自带的隐含规则用不到，多余，或者对真实的情况造成麻烦，就需要取消这些隐含规则，
+   取消的方法就是重新定义来覆盖掉默认的隐含规则，其原理是，当用户自定义的目标和依赖同默认的隐含规则的相同时，
+   默认的隐含规则就会被覆盖
+   例如：使用%.o:%.s就可以将所有.s文件汇编成机器码.o的默认规则给取消掉
