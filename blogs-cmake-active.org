@@ -1,11 +1,11 @@
 * blogs-cmake-active
 版本: 3.10.0-rc4
-** WAITTING [#D] Theme:cmake-something 						   :@Blog:@Cmake:
+** WAITTING [#D] Theme:cmake-something			       :@Blog:@Cmake:
     SCHEDULED:<2017-11-08 三>
 1. 网址: https://cmake.org/cmake/help/v3.10/ 
 2. 查看 cmake 版本: cmake --version
 Blog creation time:[2017-11-08 三 08:42]
-** WAITTING [#D] Theme:cmake-buildsystem					   :@Blog:@Cmake:
+** WAITTING [#D] Theme:cmake-buildsystem		       :@Blog:@Cmake:
     SCHEDULED:<2017-11-08 三>
 1. 简介:
    1. 一组target构成CMake的buildsystem
@@ -23,7 +23,7 @@ Blog creation time:[2017-11-08 三 08:42]
 	  4. 
 	  5. 
 Blog creation time:[2017-11-08 三 09:45]
-** WAITTING [#D] Theme:cmake-properties 					   :@Blog:@Cmake:
+** WAITTING [#D] Theme:cmake-properties			       :@Blog:@Cmake:
      SCHEDULED:<2017-11-09 四>
 1. Properties of Global Scope
    1. ALLOW_DUPLICATE_CUSTOM_TARGETS
@@ -408,7 +408,7 @@ Blog creation time:[2017-11-08 三 09:45]
 10. Deprecated Properties on Source Files
 	1. COMPILE_DEFINITIONS_<CONFIG>
 Blog creation time:[2017-11-09 四 15:16]
-** WAITTING [#D] Theme:cmake-language						   :@Blog:@Cmake:
+** WAITTING [#D] Theme:cmake-language			       :@Blog:@Cmake:
     SCHEDULED:<2017-11-08 三>
 1. Variables
    1. 在 cmake 的语法中,变量是基本的存储单元
@@ -417,23 +417,28 @@ Blog creation time:[2017-11-09 四 15:16]
    4. 变量名是大小写敏感的,建议使用_和-来组合变量
    5. 变量有动态的范围,每个使用set或者unset赋值的变量实际上是在当前范围内创建了一个绑定 
 Blog creation time:[2017-11-08 三 09:38]
-** WAITTING [#D] Theme:cmake-toolchains					   :@Blog:@Cmake:
+** WAITTING [#D] Theme:cmake-toolchains			       :@Blog:@Cmake:
     SCHEDULED:<2017-11-08 三>
 
 Blog creation time:[2017-11-08 三 09:40]
-** WAITTING [#D] Theme:cmake-env-variables				   :@Blog:@Cmake:
+** WAITTING [#D] Theme:cmake-env-variables 		       :@Blog:@Cmake:
     SCHEDULED:<2017-11-08 三>
-1. Environment Variables that Control the Build
+1. 设置环境变量set(ENV{CMAKE_C_FLAGS} "-O3 -Wall")
+2. 查看环境变量message(STATUS "CMAKE_C_FLAGS: " $ENV{CMAKE_C_FLAGS})
+3. Environment Variables that Control the Build
    1. CMAKE_CONFIG_TYPE
    2. CMAKE_MSVCIDE_RUN_PATH
    3. CMAKE_OSX_ARCHITECTURES
    4. LDFLAGS
    5. MACOSX_DEPLOYMENT_TARGET
-2. Environment Variables for Languages
+4. Environment Variables for Languages
    1. ASM<DIALECT>
    2. ASM<DIALECT>FLAGS
    3. CC
-   4. CFLAGS
+   4. <<CFLAGS>>
+      1. 如果CMAKE_C_FLAGS没有定义,则在编译c源文件时,该变量存储默认的编译flags
+      2. 如果CMAKE_C_FLAGS没有定义,仅仅在首次配置CC的默认编译状态时,该变量才被cmake使用,之后,这个值存储在CMAKE_C_FLAGS中
+      3. 如果定义了[[CMAKE_C_FLAGS]],不论是首次配置还是任意次配置CC的编译flags,该变量CFLAGS都会被忽略
    5. CSFLAGS
    6. CUDACXX
    7. CUDAFLAGS
@@ -444,7 +449,7 @@ Blog creation time:[2017-11-08 三 09:40]
    12. FFLAGS
    13. RC
    14. RCFLAGS
-3. Environment Variables for CTest
+5. Environment Variables for CTest
    1. CMAKE_CONFIG_TYPE
    2. CTEST_INTERACTIVE_DEBUG_MODE
    3. CTEST_OUTPUT_ON_FAILURE
@@ -488,13 +493,13 @@ Blog creation time:[2017-11-08 三 13:28]
    14. CMAKE_CTEST_COMMAND
    15. CMAKE_CURRENT_BINARY_DIR
    16. CMAKE_CURRENT_LIST_DIR
-	   1. 含义: 当前正在处理的列表文件(CMakelists.txt)所在的目录路径
-	   2. 动态变量
-	   3. 如: /home/ljj/workspace/test5/dir/
+       1. 含义: 当前正在处理的列表文件(CMakelists.txt)所在的目录路径
+       2. 动态变量
+       3. 如: /home/ljj/workspace/test5/dir/
    17. CMAKE_CURRENT_LIST_FILE
-	   1. 含义: 当前正在处理的列表文件(CMakeLists.txt)
-	   2. 动态变量
-	   3. 如:  /home/ljj/workspace/test5/dir/CMakeLists.txt
+       1. 含义: 当前正在处理的列表文件(CMakeLists.txt)
+       2. 动态变量
+       3. 如:  /home/ljj/workspace/test5/dir/CMakeLists.txt
    18. CMAKE_CURRENT_LIST_LINE
    19. CMAKE_CURRENT_SOURCE_DIR
    20. CMAKE_DIRECTORY_LABELS
@@ -558,30 +563,30 @@ Blog creation time:[2017-11-08 三 13:28]
    78. CMAKE_XCODE_GENERATE_SCHEME
    79. CMAKE_XCODE_PLATFORM_TOOLSET
    80. <PROJECT-NAME>_BINARY_DIR
-	   1. 作用: 该变量的值是命令project(<PROJECT-NAME> ......)中指定的项目名的顶层 binary directory 目录的路径
-	   2. 使用场合: 当使用add_subdirectory()命令来连接几个工程时,该变量就十分有用
-	   3. 个人建议: PROJECT_BINARY_DIR指代的对象没有该变量指代的清楚明了,建议使用该变量
+       1. 作用: 该变量的值是命令project(<PROJECT-NAME> ......)中指定的项目名的顶层 binary directory 目录的路径
+       2. 使用场合: 当使用add_subdirectory()命令来连接几个工程时,该变量就十分有用
+       3. 个人建议: PROJECT_BINARY_DIR指代的对象没有该变量指代的清楚明了,建议使用该变量
    81. <PROJECT-NAME>_SOURCE_DIR
-	   1. 作用: 该变量的值是命令project(<PROJECT-NAME> ......)中指定的项目名的顶层 source directory 目录的路径
-	   2. 使用场合: 当使用add_subdirectory()命令来连接几个工程时,该变量就十分有用
-	   3. 个人建议: PROJECT_SOURCE_DIR指代的对象没有该变量指代的清楚明了,建议使用该变量
+       1. 作用: 该变量的值是命令project(<PROJECT-NAME> ......)中指定的项目名的顶层 source directory 目录的路径
+       2. 使用场合: 当使用add_subdirectory()命令来连接几个工程时,该变量就十分有用
+       3. 个人建议: PROJECT_SOURCE_DIR指代的对象没有该变量指代的清楚明了,建议使用该变量
    82. <PROJECT-NAME>_VERSION
-	   1. 作用:  该变量用于存储命令project(<PROJECT-NAME>  [VERSION <major>[.<minor>[.<patch>[.<tweak>]]]]......)中指定的VERSION
-	   2. 备注: cmake_policy
+       1. 作用:  该变量用于存储命令project(<PROJECT-NAME>  [VERSION <major>[.<minor>[.<patch>[.<tweak>]]]]......)中指定的VERSION
+       2. 备注: cmake_policy
    83. <PROJECT-NAME>_VERSION_MAJOR
-	   1. 作用: 存储<PROJECT-NAME>_VERSION中的第1个号码<major>
+       1. 作用: 存储<PROJECT-NAME>_VERSION中的第1个号码<major>
    84. <PROJECT-NAME>_VERSION_MINOR
-	   1. 作用: 存储<PROJECT-NAME>_VERSION中的第2个号码<minor>
+       1. 作用: 存储<PROJECT-NAME>_VERSION中的第2个号码<minor>
    85. <PROJECT-NAME>_VERSION_PATCH
-	   1. 作用: 存储<PROJECT-NAME>_VERSION中的第3个号码<patch> 
+       1. 作用: 存储<PROJECT-NAME>_VERSION中的第3个号码<patch> 
    86. <PROJECT-NAME>_VERSION_TWEAK
-	   1. 作用: 存储<PROJECT-NAME>_VERSION中的第4个号码<tweak>
+       1. 作用: 存储<PROJECT-NAME>_VERSION中的第4个号码<tweak>
    87. PROJECT_BINARY_DIR
    88. PROJECT_DESCRIPTION
-	   1. 作用: 存储project命令中<DESCRIPTION>参数,项目描述信息
+       1. 作用: 存储project命令中<DESCRIPTION>参数,项目描述信息
    89. PROJECT_NAME
-	   1. 作用: 该变量的值是命令project(<PROJECT-NAME> ......)中指定的项目名<PROJECT-NAME>
-	   2. 使用场合: 可以通过查询该变量得知项目的名字
+       1. 作用: 该变量的值是命令project(<PROJECT-NAME> ......)中指定的项目名<PROJECT-NAME>
+       2. 使用场合: 可以通过查询该变量得知项目的名字
    90. PROJECT_SOURCE_DIR
    91. PROJECT_VERSION
    92. PROJECT_VERSION_MAJOR
@@ -590,8 +595,8 @@ Blog creation time:[2017-11-08 三 13:28]
    95. PROJECT_VERSION_TWEAK
 2. Variables that Change Behavior
    1. <<BUILD_SHARED_LIBS>>
-	  1. 该变量如果设置为ON,则在全局范围内,[[ add_library]]() 创建的所有库均是 SHARD 库,除非明确的指出要创建一个STATIC库
-	  2. 该变量经常在项目中最为一个 [[option]]() 以便项目的每一个用户能够决定它们是否想要使用静态库或者动态库构建系统
+      1. 该变量如果设置为ON,则在全局范围内,[[ add_library]]() 创建的所有库均是 SHARD 库,除非明确的指出要创建一个STATIC库
+      2. 该变量经常在项目中最为一个 [[option]]() 以便项目的每一个用户能够决定它们是否想要使用静态库或者动态库构建系统
    2. CMAKE_ABSOLUTE_DESTINATION_FILES
    3. CMAKE_APPBUNDLE_PATH
    4. CMAKE_AUTOMOC_RELAXED_MODE
@@ -633,16 +638,25 @@ Blog creation time:[2017-11-08 三 13:28]
    40. CMAKE_INCLUDE_PATH
    41. CMAKE_INSTALL_DEFAULT_COMPONENT_NAME
    42. CMAKE_INSTALL_MESSAGE
-   43. CMAKE_INSTALL_PREFIX
+   43. <<CMAKE_INSTALL_PREFIX>>
+       1. 该变量被命令[[install]]()使用到
+       2. 当 make install 被调用 或者 使用命令install()时,这个变量的目录所示的路径将会被安装路径的后面
+       3. 在UNIX下,这个变量默认是/usr/local,在window下,默认是c:/Program Files/${PROJECT_NAME}
+       4. 该变量的使用方法: cmake -DCMAKE_INSTALL_PREFIX=usr/ .. 此时 make DESTDIR=/home/john install 后,软件的安装路径就是usr/home/john
+       5. 备注: 当然了,该变量也可以在CMakeLists.txt中使用set进行配置,原则是如果用户在命令行使用-D定义了默认路径的话,就使用命令行的路径,否则就使用set设置的路径
+       6. 通过判断 [[CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT]] 的值实现该变量的配置:
+	  1. if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+   	  2. [[set]](CMAKE_INSTALL_PREFIX "/my/default" CACHE PATH "..." FORCE)
+	  3. endif()
    44. CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT
    45. CMAKE_LIBRARY_PATH
    46. CMAKE_MFC_FLAG
    47. CMAKE_MODULE_PATH
    48. CMAKE_NOT_USING_CONFIG_FLAGS
    49. CMAKE_POLICY_DEFAULT_CMP<NNNN>
-	   1. 作用: 存储某个policy的默认配置(OLD or NEW)
-	   2. 更改: cmake_policy(SET CMP0048 NEW)
-	   3. 说明: <NNNN>代表某个policy的编号,如0048,该编号具体是什么含义,参见cmake-policies
+       1. 作用: 存储某个policy的默认配置(OLD or NEW)
+       2. 更改: cmake_policy(SET CMP0048 NEW)
+       3. 说明: <NNNN>代表某个policy的编号,如0048,该编号具体是什么含义,参见cmake-policies
    50. CMAKE_POLICY_WARNING_CMP<NNNN>
    51. CMAKE_PREFIX_PATH
    52. CMAKE_PROGRAM_PATH
@@ -755,7 +769,9 @@ Blog creation time:[2017-11-08 三 13:28]
    44. CMAKE_<CONFIG>_POSTFIX
    45. CMAKE_DEBUG_POSTFIX
    46. CMAKE_ENABLE_EXPORTS
-   47. CMAKE_EXE_LINKER_FLAGS
+   47. <<CMAKE_EXE_LINKER_FLAGS>>
+       1. 作用: 存储创建可执行文件时用到的链接flags
+       2. 这个变量中的flags将会在创建一个可执行文件时被使用
    48. CMAKE_EXE_LINKER_FLAGS_<CONFIG>
    49. CMAKE_EXE_LINKER_FLAGS_<CONFIG>_INIT
    50. CMAKE_EXE_LINKER_FLAGS_INIT
@@ -803,7 +819,7 @@ Blog creation time:[2017-11-08 三 13:28]
    92. CMAKE_PDB_OUTPUT_DIRECTORY_<CONFIG>
    93. <<CMAKE_POSITION_INDEPENDENT_CODE>>
 	   1.该变量被用于初始化所有目标的  [[POSITION_INDEPENDENT_CODE]] 属性
-	   2. 该变量的值也被用于 [[try_compile]]()
+       1. 该变量的值也被用于 [[try_compile]]()
    94. CMAKE_RUNTIME_OUTPUT_DIRECTORY
    95. CMAKE_RUNTIME_OUTPUT_DIRECTORY_<CONFIG>
    96. CMAKE_SHARED_LINKER_FLAGS
@@ -826,8 +842,14 @@ Blog creation time:[2017-11-08 三 13:28]
    113. CMAKE_WIN32_EXECUTABLE
    114. CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS
    115. CMAKE_XCODE_ATTRIBUTE_<an-attribute>
-   116. EXECUTABLE_OUTPUT_PATH
+   116. <<EXECUTABLE_OUTPUT_PATH>>
+	1. 作用: 重新指定最终二进制目标的路径
+	2. 设置: set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
+	3. 备注: 一个重要的问题是,配置这个变量的这条指令应当写在哪个CMakeLists.txt中呢,其基本原则是在哪里 [[ADD_EXECUTABLE]] 或 [[ADD_LIBRARY]],如果需要改变目标存放路径,就在哪里加入上述的定义
+	4. 相关: [[add_subdirectory]]()
    117. LIBRARY_OUTPUT_PATH
+	1. 作用: 重新指定最终生成的共享库的路径
+	2. 设置: set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
 5. Variables for Languages
    1. CMAKE_COMPILER_IS_GNUCC
    2. CMAKE_COMPILER_IS_GNUCXX
@@ -869,7 +891,11 @@ Blog creation time:[2017-11-08 三 13:28]
    38. CMAKE_<LANG>_CREATE_SHARED_LIBRARY
    39. CMAKE_<LANG>_CREATE_SHARED_MODULE
    40. CMAKE_<LANG>_CREATE_STATIC_LIBRARY
-   41. CMAKE_<LANG>_FLAGS
+   41. <<CMAKE_<LANG>_FLAGS>>
+       1. <<CMAKE_C_FLAGS>>: 存储c编编译过程中的所有flags
+          1. 可以通过[[add_compile_options]]命令以及[[add_definitions]]设置flags,但是不推荐,因为这两个命令设置的值对所有的编译器都有效.推荐使用set,它只对指定的编译器有效
+	  2. 该变量一旦定义,则[[CFLAGS]]将会被忽略,因此该变量的值在没有赋值之前为空
+          3. 建议使用set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -Wall")这种方式将CMAKE_C_FLAGS 设置为 -O3 -Wall (注意不是追加)
    42. CMAKE_<LANG>_FLAGS_DEBUG
    43. CMAKE_<LANG>_FLAGS_DEBUG_INIT
    44. CMAKE_<LANG>_FLAGS_INIT
@@ -988,31 +1014,31 @@ Blog creation time:[2017-11-08 三 09:24]
    1. break
    2. cmake_host_system_information
    3. cmake_minimum_required
-	  1. 泛型: cmake_minimum_required(VERSION major.minor[.patch[.tweak]] [FATAL_ERROR])
-	  2. 如果当前cmake的版本比该命令设置的版本VERSION还低,则会停止处理该项目,然后报告一个错误
-	  3. 该命令会隐式调用cmake_policy(VERSION),用于指定当前工程是在哪个版本的cmake上进行搭建的,因此,最好在该命令中设置cmake --version显示的版本
-	  4. 建议使用cmake_minimum_required而不是cmake_policy,因为前者调用了后者,同时,cmake_minimum_required禁止了当前版本小于VERSION的情况,这对项目的维护是有利的
-	  5. 备注: cmake_minimum_required给出的版本会传递给 cmake_policy, 这就意味着在新版本的cmake中的相关的策略会unset掉,此时需要结合警告信息,以及当前版本的版本号,去查看在cmake_minimum_required以及当前版本之间给出的policy,然后调用cmake_policy(SET CMP[NNNN])
+      1. 泛型: cmake_minimum_required(VERSION major.minor[.patch[.tweak]] [FATAL_ERROR])
+      2. 如果当前cmake的版本比该命令设置的版本VERSION还低,则会停止处理该项目,然后报告一个错误
+      3. 该命令会隐式调用cmake_policy(VERSION),用于指定当前工程是在哪个版本的cmake上进行搭建的,因此,最好在该命令中设置cmake --version显示的版本
+      4. 建议使用cmake_minimum_required而不是cmake_policy,因为前者调用了后者,同时,cmake_minimum_required禁止了当前版本小于VERSION的情况,这对项目的维护是有利的
+      5. 备注: cmake_minimum_required给出的版本会传递给 cmake_policy, 这就意味着在新版本的cmake中的相关的策略会unset掉,此时需要结合警告信息,以及当前版本的版本号,去查看在cmake_minimum_required以及当前版本之间给出的policy,然后调用cmake_policy(SET CMP[NNNN])
    4. cmake_parse_arguments
    5. cmake-policy:
-	  1. cmake_policy: 详情参见cmake-policies
-	  2. Setting Policies by CMake Version
-		 1. cmake_policy(VERSION major.minor[.patch[.tweak]])
-		 2. 上述命令指定当前的CMakeLists.txt是为给定版本的CMake书写的
-		 3. 所有在指定的版本或更早的版本中引入的策略会被设置为使用“新行为”
-		 4. 所有在指定的版本之后引入的策略将会变为无效（unset）
-		 5. 命令中指定的策略版本必须至少是2.4，否则命令会报告一个错误,为了得到支持早于2.4版本的兼容性特性，查阅策略CMP0001的相关文档
-		 6. 备注: 通常不会去使用该命令,而是使用cmake_minimum_required命令
-	  3. Setting Policies Explicitly
-		 1. cmake_policy(SET CMP<NNNN> NEW/OLD)
-		 2. 对于某种给定的策略，该命令要求CMake使用新的或者旧的行为
-		 3. 该命令本质上是在配置变量CMAKE_POLICY_DEFAULT_CMP<NNNN>
-		 4. 到3.10版本为止,一共有71个策略,可以为每个策略设置新旧行为来让工程的兼容性更好
-		 5. 备注: 策略中,旧的行为是在将来的版本中可能会被丢弃的,因此,工程中应当尽量少使用旧的策略
-	  4. Checking Policy Settings
-		 1. cmake_policy(GET CMP<NNNN> <variable>)
-		 2. 检查一个策略使用了NEW还是OLD行为,如果该策略没有被配置过,那么返回空
-	  5. CMake Policy Stack: 待续
+      1. cmake_policy: 详情参见cmake-policies
+      2. Setting Policies by CMake Version
+	 1. cmake_policy(VERSION major.minor[.patch[.tweak]])
+	 2. 上述命令指定当前的CMakeLists.txt是为给定版本的CMake书写的
+	 3. 所有在指定的版本或更早的版本中引入的策略会被设置为使用“新行为”
+	 4. 所有在指定的版本之后引入的策略将会变为无效（unset）
+	 5. 命令中指定的策略版本必须至少是2.4，否则命令会报告一个错误,为了得到支持早于2.4版本的兼容性特性，查阅策略CMP0001的相关文档
+	 6. 备注: 通常不会去使用该命令,而是使用cmake_minimum_required命令
+      3. Setting Policies Explicitly
+	 1. cmake_policy(SET CMP<NNNN> NEW/OLD)
+	 2. 对于某种给定的策略，该命令要求CMake使用新的或者旧的行为
+	 3. 该命令本质上是在配置变量CMAKE_POLICY_DEFAULT_CMP<NNNN>
+	 4. 到3.10版本为止,一共有71个策略,可以为每个策略设置新旧行为来让工程的兼容性更好
+	 5. 备注: 策略中,旧的行为是在将来的版本中可能会被丢弃的,因此,工程中应当尽量少使用旧的策略
+      4. Checking Policy Settings
+	 1. cmake_policy(GET CMP<NNNN> <variable>)
+	 2. 检查一个策略使用了NEW还是OLD行为,如果该策略没有被配置过,那么返回空
+      5. CMake Policy Stack: 待续
    6. configure_file
    7. continue
    8. elseif
@@ -1031,37 +1057,37 @@ Blog creation time:[2017-11-08 三 09:24]
    21. find_program
    22. foreach
    23. function:
-	   1. 泛型: 
-		  1. function(<name> [arg1 [arg2 [arg3 ...]]])
-		  2. COMMAND1(ARGS ...)
-		  3. COMMAND2(ARGS ...)
-		  4. ...
-		  5. endfunction(<name>)
-	   2. 作用: 定义一个名为<name>的函数,并传递参数 arg1, arg2, arg3, (...)
-	   3. 注意: 除非函数 <name> 被调用,否则在function()以及endfunction()之间的命令不会被调用
+       1. 泛型: 
+	  1. function(<name> [arg1 [arg2 [arg3 ...]]])
+	  2. COMMAND1(ARGS ...)
+	  3. COMMAND2(ARGS ...)
+	  4. ...
+	  5. endfunction(<name>)
+       2. 作用: 定义一个名为<name>的函数,并传递参数 arg1, arg2, arg3, (...)
+       3. 注意: 除非函数 <name> 被调用,否则在function()以及endfunction()之间的命令不会被调用
    24. get_cmake_property
    25. get_directory_property
    26. get_filename_component
    27. get_property
-	   1. 泛型:
-		  1. get_property(
-		  2. <variable>
-		  3. <
-		  4. GLOBAL             |
-		  5. DIRECTORY [dir]    |
-		  6. TARGET    <target> |
-		  7. SOURCE    <source> |
-		  8. INSTALL   <file>   |
-		  9. TEST      <test>   |
-		  10. CACHE     <entry>  |
-		  11. VARIABLE
-		  12. >
-		  13. PROPERTY <name>
-		  14. [SET | DEFINED | BRIEF_DOCS | FULL_DOCS])
-	   2. 第一个参数<variable>: 该参数是一个变量,用于存储该命令获取属性的结果
-	   3. 第二个参数<...>: 决定了获取该属性的作用域
-	   4. 第三个参数PROPERTY是必须的,它后面紧跟要获取的属性名(在set_property中给出),如果该属性没有被设置，该命令将返回空值
-	   5. 第四个参数: 如果给定了SET选项，那么返回值会被设置为一个布尔值，用来指示该属性是否被设置过。如果给定了DEFINED选项，那么返回值会被设置为一个布尔值，用来指示该属性是否被类似于define_property的命令定义过。如果指定了BRIEF_DOCS或者FULL_DOCS选项，那么该变量将会被设置为被查询属性的文档的字符串。如果被请求的属性的文档没有被定义，将返回NOTFOUND。
+       1. 泛型:
+	  1. get_property(
+	  2. <variable>
+	  3. <
+	  4. GLOBAL             |
+	  5. DIRECTORY [dir]    |
+	  6. TARGET    <target> |
+	  7. SOURCE    <source> |
+	  8. INSTALL   <file>   |
+	  9. TEST      <test>   |
+	  10. CACHE     <entry>  |
+	  11. VARIABLE
+	  12. >
+	  13. PROPERTY <name>
+	  14. [SET | DEFINED | BRIEF_DOCS | FULL_DOCS])
+       2. 第一个参数<variable>: 该参数是一个变量,用于存储该命令获取属性的结果
+       3. 第二个参数<...>: 决定了获取该属性的作用域
+       4. 第三个参数PROPERTY是必须的,它后面紧跟要获取的属性名(在set_property中给出),如果该属性没有被设置，该命令将返回空值
+       5. 第四个参数: 如果给定了SET选项，那么返回值会被设置为一个布尔值，用来指示该属性是否被设置过。如果给定了DEFINED选项，那么返回值会被设置为一个布尔值，用来指示该属性是否被类似于define_property的命令定义过。如果指定了BRIEF_DOCS或者FULL_DOCS选项，那么该变量将会被设置为被查询属性的文档的字符串。如果被请求的属性的文档没有被定义，将返回NOTFOUND。
    28. if
    29. include
    30. include_guard
@@ -1070,116 +1096,131 @@ Blog creation time:[2017-11-08 三 09:24]
    33. mark_as_advanced
    34. math
    35. message:
-	   1. 泛型: message([<mode>] "message to display")
-	   2. 作用:显示一条信息给用户
-	   3. <mode>:
-		  1. (none)         = Important information
-		  2. STATUS         = Incidental information
-		  3. WARNING        = CMake Warning, continue processing
-		  4. AUTHOR_WARNING = CMake Warning (dev), continue processing
-		  5. SEND_ERROR     = CMake Error, continue processing,but skip generation
-		  6. FATAL_ERROR    = CMake Error, stop processing and generation
-		  7. DEPRECATION    = CMake Deprecation Error or Warning if variable CMAKE_ERROR_DEPRECATED or CMAKE_WARN_DEPRECATED is enabled, respectively, else no message
+       1. 泛型: message([<mode>] "message to display")
+       2. 作用:显示一条信息给用户
+       3. <mode>:
+	  1. (none)         = Important information
+	  2. STATUS         = Incidental information
+	  3. WARNING        = CMake Warning, continue processing
+	  4. AUTHOR_WARNING = CMake Warning (dev), continue processing
+	  5. SEND_ERROR     = CMake Error, continue processing,but skip generation
+	  6. FATAL_ERROR    = CMake Error, stop processing and generation
+	  7. DEPRECATION    = CMake Deprecation Error or Warning if variable CMAKE_ERROR_DEPRECATED or CMAKE_WARN_DEPRECATED is enabled, respectively, else no message
    36. option
    37. return
    38. separate_arguments
    39. set_directory_properties
    40. set_property
-	   1. 泛型:
-		  1. set_property(
-		  2. <
-		  3. GLOBAL                            |
-		  4. DIRECTORY [dir]                   |
-		  5. TARGET    [target1 [target2 ...]] |
-		  6. SOURCE    [src1 [src2 ...]]       |
-		  7. INSTALL   [file1 [file2 ...]]     |
-		  8. TEST      [test1 [test2 ...]]     |
-		  9. CACHE     [entry1 [entry2 ...]]
-		  10. >
-		  11. [APPEND] [APPEND_STRING]
-		  12. PROPERTY <name> [value1 [value2 ...]])
-	   2. 作用: 在一个给定作用域内设置一个<name>的属性
-	   3. 第一个参数<...>: 决定该<name>的属性可以影响的作用域,有以下几种选择:
-		  1. GLOBAL: 全局作用域，唯一，并且不接受名字
-		  2. DIRECTORY: 路径作用域，默认为当前路径，但是也可以用全路径或相对路径指定其他值
-		  3. TARGET: 目标作用域,可以命名0个或多个已有的目标
-		  4. SOURCE: 源文件作用域，可以命名0个或多个源文件。注意，源文件属性只对加到相同路径（CMakeLists.txt）中的目标是可见的
-		  5. INSTALL:  安装文件作用域, 可以命名0个或多个已经安装的文件的路径
-		  6. TEST:  测试作用域,可以命名0个或多个已有的测试
-		  7. CACHE: 作用域必须指定0个或多个cache中已有的条目
-	   4. 第二个参数APPEND
-	   5. 第三个参数PROPERTY: 该选项是必须的，其后面紧跟一个变量<name>,该变量之后是变量的值
-	   6. 使用场合: 该命令可以实现将子目录下的变量共享,让父目录能访问到
-	   7. 特点: 该方法设置的变量必须通过get_property才能访问到
-	   8. 典型用法: set_property(GLOBAL PROPERTY CURR_PATH_DIR "${CMAKE_CURRENT_LIST_DIR}/include/1.2")
-	   9. 引用: get_property(tmp GLOBAL PROPERTY CURR_PATH_DIR)  message(STATUS "${tmp}")
-   41. set: 
-	   1. 作用: 为 普通变量,cache变量,环境变量 赋值
-	   2. 特点: 使用set定义的变量可以从父目录传递到子目录,但是不能从子目录传递到父目录(实现变量共享的另外一个方法是使用 set_property 命令)
-	   3. 提示: 变量的值均是字符串类型,因此,推荐使用双引号将<value>包含
-	   4. 普通变量: set(<variable> <value>... [PARENT_SCOPE])
-		  1. 含义: 在[PARNET_SCOPE]给出的范围之内,为变量<variable>设置值<value>
-		  2. 注意,通常会省略[PARENT_SCOPE],表示在变量被设置的值在当前函数或者当前目录范围内有效
-		  3. 如果给出了[PARENT_SCOPE],那么,变量被设置的值在[PARENT_SCOPE]所示的范围内有效,此时该变量将会传递到父目录或者调用它的那个函数
-	   5. cache变量: set(<variable> <value>... CACHE <type> <docstring> [FORCE])
-	   6. 环境变量: set(ENV{<variable>} <value>...)
+       1. 泛型:
+	  1. set_property(
+	  2. <
+	  3. GLOBAL                            |
+	  4. DIRECTORY [dir]                   |
+	  5. TARGET    [target1 [target2 ...]] |
+	  6. SOURCE    [src1 [src2 ...]]       |
+	  7. INSTALL   [file1 [file2 ...]]     |
+	  8. TEST      [test1 [test2 ...]]     |
+	  9. CACHE     [entry1 [entry2 ...]]
+	  10. >
+	  11. [APPEND] [APPEND_STRING]
+	  12. PROPERTY <name> [value1 [value2 ...]])
+       2. 作用: 在一个给定作用域内设置一个<name>的属性
+       3. 第一个参数<...>: 决定该<name>的属性可以影响的作用域,有以下几种选择:
+	  1. GLOBAL: 全局作用域，唯一，并且不接受名字
+	  2. DIRECTORY: 路径作用域，默认为当前路径，但是也可以用全路径或相对路径指定其他值
+	  3. TARGET: 目标作用域,可以命名0个或多个已有的目标
+	  4. SOURCE: 源文件作用域，可以命名0个或多个源文件。注意，源文件属性只对加到相同路径（CMakeLists.txt）中的目标是可见的
+	  5. INSTALL:  安装文件作用域, 可以命名0个或多个已经安装的文件的路径
+	  6. TEST:  测试作用域,可以命名0个或多个已有的测试
+	  7. CACHE: 作用域必须指定0个或多个cache中已有的条目
+       4. 第二个参数APPEND
+       5. 第三个参数PROPERTY: 该选项是必须的，其后面紧跟一个变量<name>,该变量之后是变量的值
+       6. 使用场合: 该命令可以实现将子目录下的变量共享,让父目录能访问到
+       7. 特点: 该方法设置的变量必须通过get_property才能访问到
+       8. 典型用法: set_property(GLOBAL PROPERTY CURR_PATH_DIR "${CMAKE_CURRENT_LIST_DIR}/include/1.2")
+       9. 引用: get_property(tmp GLOBAL PROPERTY CURR_PATH_DIR)  message(STATUS "${tmp}")
+   41. <<set>>: 
+       1. 作用: 为 普通变量,cache变量,环境变量 赋值
+       2. 特点: 使用set定义的变量可以从父目录传递到子目录,但是不能从子目录传递到父目录(实现变量共享的另外一个方法是使用 set_property 命令)
+       3. 提示: 变量的值均是字符串类型,因此,推荐使用双引号将<value>包含
+       4. 普通变量: set(<variable> <value>... [PARENT_SCOPE])
+	  1. 含义: 在[PARNET_SCOPE]给出的范围之内,为变量<variable>设置值<value>
+	  2. 注意,通常会省略[PARENT_SCOPE],表示在变量被设置的值在当前函数或者当前目录范围内有效
+	  3. 如果给出了[PARENT_SCOPE],那么,变量被设置的值在[PARENT_SCOPE]所示的范围内有效,此时该变量将会传递到父目录或者调用它的那个函数
+       5. cache变量: set(<variable> <value>... CACHE <type> <docstring> [FORCE])
+       6. 环境变量: set(ENV{<variable>} <value>...)
+	  1. 作用: 为 
+	  2. 示例: set(ENV{[[CMAKE_C_FLAGS]]} "-O3 -Wall")
    42. site_name
    43. string
    44. unset
    45. variable_watch
    46. while
 2. Project Commands:
-   1. add_compile_options
-	  1. 
-	  2. 查阅 [[COMPILE_OPTIONS]]
+   1. <<add_compile_options>>
+      1. 泛型: add_compile_options(-std=c++11)
+      2. 备注: 该令添加的编译选项是针对所有编译器的(包括c和c++编译器)，而set命令设置[[CMAKE_C_FLAGS]]或[[CMAKE_CXX_FLAGS]]变量则是分别只针对c和c++编译器的
+      3. 使用set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")比使用add_compile_option好,因为set只针对CMAKE_CXX_FLAGS配置,而不会对CMKAE_C_FLAGS配置
+      4. 建议使用set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -Wall")这种方式将CMAKE_C_FLAGS 设置为 -O3 -Wall (注意不是追加)
+      6. 查阅 [[COMPILE_OPTIONS]]
    2. add_custom_command
    3. add_custom_target
-   4. add_definitions
-   5. add_dependencies
+   4. <<add_definitions>>
+      1. 泛型:add_definitions(-DFOO -DBAR ...)
+      2. 作用: 该命令可以用来增加任何flags,但是,主要是用它来增加预处理定义,增加其他flag的命令为 [[add_compile_options]]()
+      3. 那些以-D或/D开头的、看起来像预处理器定义的flag，会被自动加到当前路径的[[COMPILE_DEFINITIONS]]属性中
+      4. FOO以及BAR可以在源文件中使用,如ifdef FOO ...... endif
+      5. 备注: 该命令是针对所有编译器的
+   5. <<add_dependencies>>
    6. <<add_executable>>
-	  1. 泛型1: add_executable(<name> [WIN32] [MACOSX_BUNDLE] [EXCLUDE_FROM_ALL] source1 [source2 ...])
-		 1. 作用: 使用源文件列表中指定的源文件来构建可执行目标<name>
-		 2. <name>对应于逻辑目标名字，并且在工程范围内必须是全局唯一的
-		 3. 默认情况下，可执行文件将会在构建树的路径下被创建，对应于该命令被调用的源文件树的路径。如果要改变这个位置，查看[[RUNTIME_OUTPUT_DIRECTORY]]目标属性的相关文档
-		 4. 果要改变最终文件名的<name>部分，查看[[OUTPUT_NAME]]目标属性的相关文档
-		 5. 如果指定了WIN32选项,那么, WIN32_EXECUTABLE 这个属性将会在目标被创建的时候被设置
-		 6. 如果指定了MACOSX_BUNDLE选项，对应的属性会附加在创建的目标上,查看MACOSX_BUNDLE目标属性的文档可以找到更多的细节
-		 7. 如果指定了EXCLUDE_FROM_ALL选项，对应的属性将会设置在被创建的目标上。查看EXCLUDE_FROM_ALL目标属性的文档可以找到更多的细节
-		 8. 源文件列表source1 [source2 ...] 到 add_executable 可以使用语法为$<...> 的 “生成器表达式”,更多信息查看 [[cmake-generator-expressions]]
-	  2. 泛型2: add_executable(<name> IMPORTED [GLOBAL])
-		 1. 
-	  3. 泛型3: add_executable(<name> ALIAS <target>)
+      1. 泛型1: add_executable(<name> [WIN32] [MACOSX_BUNDLE] [EXCLUDE_FROM_ALL] source1 [source2 ...])
+	 1. 作用: 使用源文件列表中指定的源文件来构建可执行目标<name>
+	 2. <name>对应于逻辑目标名字，并且在工程范围内必须是全局唯一的
+	 3. 默认情况下，可执行文件将会在构建树的路径下被创建，对应于该命令被调用的源文件树的路径。如果要改变这个位置，查看[[RUNTIME_OUTPUT_DIRECTORY]]目标属性的相关文档
+	 4. 果要改变最终文件名的<name>部分，查看[[OUTPUT_NAME]]目标属性的相关文档
+	 5. 如果指定了WIN32选项,那么, WIN32_EXECUTABLE 这个属性将会在目标被创建的时候被设置
+	 6. 如果指定了MACOSX_BUNDLE选项，对应的属性会附加在创建的目标上,查看MACOSX_BUNDLE目标属性的文档可以找到更多的细节
+	 7. 如果指定了EXCLUDE_FROM_ALL选项，对应的属性将会设置在被创建的目标上。查看EXCLUDE_FROM_ALL目标属性的文档可以找到更多的细节
+	 8. 源文件列表source1 [source2 ...] 到 add_executable 可以使用语法为$<...> 的 “生成器表达式”,更多信息查看 [[cmake-generator-expressions]]
+      2. 泛型2: add_executable(<name> IMPORTED [GLOBAL])
+
+      3. 泛型3: add_executable(<name> ALIAS <target>)
    7. <<add_library>>
-	  1. Normal Libraries
-		 1. 泛型:
-			1. add_library(
-			2. <name> [STATIC | SHARED | MODULE]
-			3. [EXCLUDE_FROM_ALL]
-			4. source1 [source2 ...]
-			5. )
-		 2. 作用: 创建一个名为<name>的库,该库中的目标集合通过给出的源文件列表构建
-		 3. 参数<name>: 一个项目中全局且独一无二的终极目标
-		 4. [STATIC | SHARED | MODULE]: 指明被创建的库的类型
-			1. STATTIC 库是目标文件的归档文件,在链接其他目标的时候使用
-			2. SHARD 库被动态链接,在运行时加载
-			3. MODULE库是不会被链接到其它目标中的插件，但是可能会在运行时使用dlopen-系列的函数动态链接
-			4. 对于 SHARD 和 MODULE 库, [[POSITION_INDEPENDENT_CODE]] 目标属性会自动被设置为ON
-			5. 对于 SHARD 和 STATIC 库,为了创建 OS X Framework, [[FRAMEWORK]] 目标属性会被标记
-			6. 备注: 如果没有明确的给出类型参数,那么是 STATIC 还是 SHARD 取决于变量 [[BUILD_SHARD_LIBS]]
-			7. 如果一个库不导出任何符号,那么这个库一定不能声明为 SHARD ,这是因为CMake在Windows上希望一个SHARD 库总是有一个与之相关联的导入库
-		 5. [EXCLUDE_FROM_ALL]: 如果该选项被给出,相应的属性在目标被创建时将会被设置,细节参看 [[EXCLUDE_FROM_ALL]] 
-		 6. 默认情况下库文件将会在于源文件目录树的构建目录树的位置被创建，该命令也会在这里被调用
-		 7. 查阅[[ARCHIVE_OUTPUT_DIRECTORY]]，[[LIBRARY_OUTPUT_DIRECTORY]]，和[[RUNTIME_OUTPUT_DIRECTORY]]这三个目标属性的文档来改变创建库文件的位置
-		 8. 查阅[[OUTPUT_NAME]]目标属性的文档来改变最终文件名的<name>部分
-	  2. Imported Libraries
-	  3. Object Libraries
-	  4. Alias Libraries
-	  5. Interface Libraries
-   8. add_subdirectory
+      1. Normal Libraries
+	 1. 泛型:
+	    1. add_library(
+	    2. <name> [STATIC | SHARED | MODULE]
+	    3. [EXCLUDE_FROM_ALL]
+	    4. source1 [source2 ...]
+	    5. )
+	 2. 作用: 创建一个名为<name>的库,该库中的目标集合通过给出的源文件列表构建
+	 3. 参数<name>: 一个项目中全局且独一无二的终极目标
+	 4. [STATIC | SHARED | MODULE]: 指明被创建的库的类型
+	    1. STATTIC 库是目标文件的归档文件,在链接其他目标的时候使用
+	    2. SHARD 库被动态链接,在运行时加载
+	    3. MODULE库是不会被链接到其它目标中的插件，但是可能会在运行时使用dlopen-系列的函数动态链接
+	    4. 对于 SHARD 和 MODULE 库, [[POSITION_INDEPENDENT_CODE]] 目标属性会自动被设置为ON
+	    5. 对于 SHARD 和 STATIC 库,为了创建 OS X Framework, [[FRAMEWORK]] 目标属性会被标记
+	    6. 备注: 如果没有明确的给出类型参数,那么是 STATIC 还是 SHARD 取决于变量 [[BUILD_SHARD_LIBS]]
+	    7. 如果一个库不导出任何符号,那么这个库一定不能声明为 SHARD ,这是因为CMake在Windows上希望一个SHARD 库总是有一个与之相关联的导入库
+	 5. [EXCLUDE_FROM_ALL]: 如果该选项被给出,相应的属性在目标被创建时将会被设置,细节参看 [[EXCLUDE_FROM_ALL]] 
+	 6. 默认情况下库文件将会在于源文件目录树的构建目录树的位置被创建，该命令也会在这里被调用
+	 7. 查阅[[ARCHIVE_OUTPUT_DIRECTORY]]，[[LIBRARY_OUTPUT_DIRECTORY]]，和[[RUNTIME_OUTPUT_DIRECTORY]]这三个目标属性的文档来改变创建库文件的位置
+	 8. 查阅[[OUTPUT_NAME]]目标属性的文档来改变最终文件名的<name>部分
+      2. Imported Libraries
+      3. Object Libraries
+      4. Alias Libraries
+      5. Interface Libraries
+   8. <<add_subdirectory>>
+      1. 泛型: add_subdirectory(source_dir [binary_dir] [EXCLUDE_FROM_ALL])
+      2. 参数source_dir指定了子目录的文件名,每个子目录下面都有一个CMakeLists.txt
+      3. [binary_dir]指定中间二进制文件以及目标二进制文件存放的位置,比如指定为bin,那么存放的路径就是build/bin,这个选项一般不用,因为有更好的方法,那就是将目标文件单独存放在一个目录,即同中间文件分开
+      4. EXCLUDE_FROM_ALL 参数的含义是将这个目录从编译过程中排除
+      5. 备注: 通常只会使用第一个参数,第二个参数关于目标路径问题,参考 [[EXECUTABLE_OUTPUT_PATH]] 以及 [[LIBRARY_OUTPUT_PATH]] 
    9. add_test
-   10. aux_source_directory
-	   1. 泛型: aux_source_directory(<dir> <variable>)
-	   2. 作用: 在指定目录<dir>下收集所有的源文件,然后存储在<variable>中
+   10. <<aux_source_directory>>
+       1. 泛型: aux_source_directory(<dir> <variable>)
+       2. 作用: 在指定目录<dir>下收集所有的源文件,然后存储在<variable>中
    11. build_command
    12. create_test_sourcelist
    13. define_property
@@ -1191,34 +1232,69 @@ Blog creation time:[2017-11-08 三 09:24]
    19. get_target_property
    20. get_test_property
    21. include_directories
-	   1. 
-	   2. 
-	   3. 
+       1. 
+       2. 
+       3. 
    22. include_external_msproject
    23. include_regular_expression
-   24. install
+   24. <<install>>
+       1. Introduction
+	  1. 该命令为一个项目生成安装规则,安装的内容可以包括 目标、动态库、静态库以及文件、目录、脚本
+	  2. DESTINATION: 指定文件将被安装在磁盘上的哪个目录下,可以给出绝对路径,也可以给出相对路径,相对路径时会加上变量 [[CMAKE_INSTALL_PREFIX]] 给出的前缀
+	  3. PERMISSIONS: 指定待安装文件的权限: OWNER_READ, OWNER_WRITE, OWNER_EXECUTE, GROUP_READ, GROUP_WRITE, GROUP_EXECUTE, WORLD_READ, WORLD_WRITE, WORLD_EXECUTE, SETUID, and SETGID
+	  4. CONFIGURATIONS: Specify a list of build configurations for which the install rule applies (Debug, Release, etc.).
+	  5. COMPONENT: 
+       2. Installing Targets
+	  1. 泛型:
+	     1. install(
+	     2. TARGETS
+	     3. targets... [EXPORT <export-name>]
+	     4. [[ARCHIVE|LIBRARY|RUNTIME|FRAMEWORK|BUNDLE|
+	     5. PRIVATE_HEADER|PUBLIC_HEADER|RESOURCE]
+	     6. [DESTINATION <dir>]
+	     7. [PERMISSIONS permissions...]
+	     8. [CONFIGURATIONS [Debug|Release|...]]
+	     9. [COMPONENT <component>]
+	     10. [OPTIONAL] [NAMELINK_ONLY|NAMELINK_SKIP]
+	     11. ] [...]
+	     12. )
+	  2. 
+	  3. 
+       3. Installing Files
+       4. Installing Directories
+       5. Custom Installation Logic
+       6. Installing Exports
+       7. 作用: 用于定义安装规则,
+       8. 泛型:
+	  1. 
+	  2. 
+	  3. 
+	  4. 
+	  5. 
+	  6. 
+	  
    25. link_directories
    26. link_libraries
    27. load_cache
    28. project
-	   1. 泛型:
-		  1. 泛型1: project(<PROJECT-NAME> [LANGUAGES] [<language-name>...])
-		  2. 
-		  3. 泛型2: project(<PROJECT-NAME>
-		  4. [VERSION <major>[.<minor>[.<patch>[.<tweak>]]]]
-		  5. [DESCRIPTION <project-description-string>]
-		  6. [LANGUAGES <language-name>...])
-	   2. 作用: 为整个项目设置 名字, 版本, 描述, 语系
-	   3. 为项目设置名字: 该命令会将整个项目的名字设置为泛型中给出的<PROJECT-NAME>, 并将其存入变量PROJECT-NAME中
-	   4. 为项目设置版本号:
-		  1. 除非 policy CMP0048 is set to NEW ,不然的话,选项 VERSION 可能不会被使用到(使用cmake_policy(SET CMP0048 NEW)命令进行设置)
-		  2. 如果上面泛型2中需要指明 VERSION ,那么要求给出的版本号应当是一个非负整数
-		  3. 如果没有指定 VERSION, 那么默认的版本号将会是一个空字符串
-		  4. VERSION存入: <PROJECT-NAME>_VERSION, <PROJECT-NAME>_VERSION_MAJOR, <PROJECT-NAME>_VERSION_MINOR,<PROJECT-NAME>_VERSION_PATCH,<PROJECT-NAME>_VERSION_TWEAK中
-		  5. 备注: 当然了,PROJECT_VERSION,PROJECT_VERSION_MAJOR,PROJECT_VERSION_MINOR,PROJECT_VERSION_PATCH,PROJECT_VERSION_TWEAK中也会记录版本信息,但是不推荐
-	   5. 为项目设置描述信息: 该命令会将项目的描述信息设置为泛型中给出的DESCRIPTION,并将其存入变量PROJECT_DESCRIPTION中
-	   6. 为项目设置支持的语言: 如果没有给出该选项,默认支持C,CXX语言
-	   7. 顶层的CMakeLists.txt文件必须包含project命令
+       1. 泛型:
+	  1. 泛型1: project(<PROJECT-NAME> [LANGUAGES] [<language-name>...])
+	  2. 
+	  3. 泛型2: project(<PROJECT-NAME>
+	  4. [VERSION <major>[.<minor>[.<patch>[.<tweak>]]]]
+	  5. [DESCRIPTION <project-description-string>]
+	  6. [LANGUAGES <language-name>...])
+       2. 作用: 为整个项目设置 名字, 版本, 描述, 语系
+       3. 为项目设置名字: 该命令会将整个项目的名字设置为泛型中给出的<PROJECT-NAME>, 并将其存入变量PROJECT-NAME中
+       4. 为项目设置版本号:
+	  1. 除非 policy CMP0048 is set to NEW ,不然的话,选项 VERSION 可能不会被使用到(使用cmake_policy(SET CMP0048 NEW)命令进行设置)
+	  2. 如果上面泛型2中需要指明 VERSION ,那么要求给出的版本号应当是一个非负整数
+	  3. 如果没有指定 VERSION, 那么默认的版本号将会是一个空字符串
+	  4. VERSION存入: <PROJECT-NAME>_VERSION, <PROJECT-NAME>_VERSION_MAJOR, <PROJECT-NAME>_VERSION_MINOR,<PROJECT-NAME>_VERSION_PATCH,<PROJECT-NAME>_VERSION_TWEAK中
+	  5. 备注: 当然了,PROJECT_VERSION,PROJECT_VERSION_MAJOR,PROJECT_VERSION_MINOR,PROJECT_VERSION_PATCH,PROJECT_VERSION_TWEAK中也会记录版本信息,但是不推荐
+       5. 为项目设置描述信息: 该命令会将项目的描述信息设置为泛型中给出的DESCRIPTION,并将其存入变量PROJECT_DESCRIPTION中
+       6. 为项目设置支持的语言: 如果没有给出该选项,默认支持C,CXX语言
+       7. 顶层的CMakeLists.txt文件必须包含project命令
    29. qt_wrap_cpp  
    30. qt_wrap_ui
    31. remove_definitions

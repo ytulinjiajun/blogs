@@ -771,4 +771,9 @@ Blog creation time:[2017-09-18 一 15:28]
     SCHEDULED:<2017-10-17 二>
 
 Blog creation time:[2017-10-17 二 15:52]
+** WAITTING [#D] Theme:在shell下开启emacs		       :@Blog:@Emacs:
+        SCHEDULED:<2017-11-13 一>
+1. 命令: emacs -nw
+2. 设置别名: vi ~/.bashrc   alias em='emacs -nw'  source .bashrc
+Blog creation time:[2017-11-13 一 08:54]
 
