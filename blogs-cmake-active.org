@@ -1120,8 +1120,10 @@ Blog creation time:[2017-11-08 三 09:24]
       1. 参见 [[if]]
    9. <<else>>
       1. 参见 [[if]]
-   10. endforeach
-   11. endfunction
+   10. <<endforeach>>
+       1. 参见 [[foreach]]
+   11. <<endfunction>>
+       1. 参见 [[function]]
    12. <<endif>>
        1. 参见 [[if]]
    13. <<endmacro>>
@@ -1256,7 +1258,25 @@ Blog creation time:[2017-11-08 三 09:24]
    20. <<find_path>>
    21. <<find_program>>
    22. <<foreach>>
-       1. 
+       1. 泛型1：
+	  1) set(mylist arg1 arg2 arg3)
+	  2) foreach(loop_var ${mylist})
+	  3) message(STATUS “${loop_var}”)
+	  4) endforeach(loop_var)	  
+	  5) 
+	  6) 返回： arg1 arg2 arg3
+       2. 泛型2： 
+	  1) set(result 0)
+	  2) foreach(_var RANGE 0 100)
+	  3) math(EXPR result "${result}+${_var}")
+	  4) endforeach()
+	  5) message("from 0 plus to 100 is:${result}")
+	  6) 
+	  7) 返回： 5050
+	  8) 备注：如果是foreach(_var RANGE 30),则表示从0~30,如果是foreach(_var RANGE 4 10 2),则表示从4~10，步长为2
+       3. 泛型3：
+	  1) foreach(loop_var IN [LISTS [list1 [...]]] [ITEMS [item1 [...]]])
+	  2) 作用： 暂未研究
    23. <<function>>
        1. 泛型: 
           1. function(<name>  [arg1 [arg2 [arg3 ...]]])
@@ -1406,7 +1426,10 @@ Blog creation time:[2017-11-08 三 09:24]
        11. 注意: 宏参数不是变量,而if(<variabes>)要求一个变量,这意味着如果在宏内部想要使用if()而且要和宏参数做关联,需要先使用set()将宏参数赋值给一个变量,然后用这个变量去传递给if()
        12. macro()与[[function]]()的区别在于: 在宏中设置的的变量在外部被访问到,而在函数中设置的变量是局部的
    33. mark_as_advanced
-   34. math
+   34. <<math>>
+       1. 泛型： math(EXPR <output-variable> <math-expression>)
+       2. 作用： EXPR计算<math-expression>的值，将结果保存在<output_variable>中
+       3. <output_variable>支持的操作符有+, -, *, /, %, |, &, ^, ~, <<, >>, and (...)，他们与C里面的操作符有相同的意思
    35. <<message>>
        1. 泛型: message([<mode>] "message to display")
        2. 作用:显示一条信息给用户
