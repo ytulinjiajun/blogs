@@ -1,5 +1,5 @@
 * blogs-cmake-active
-版本: 3.10.0-rc4
+  版本: 3.10.0-rc4
 ** WAITTING [#D] Theme:cmake-something			       :@Blog:@Cmake:
     SCHEDULED:<2017-11-08 三>
 1. 网址: https://cmake.org/cmake/help/v3.10/ 
@@ -1085,14 +1085,18 @@ Blog creation time:[2017-11-08 三 09:24]
 ** WAITTING [#D] Theme:cmake-command 						   :@Blog:@Cmake:
     SCHEDULED:<2017-11-08 三>
 1. Scripting Commands:
-   1. break
+   1. <<break>>
+      1. 泛型: break()
+      2. 作用: 中断 [[while]]()循环或者 [[foreach]]() 循环,结束
+      3. 参考 [[continue]]()
    2. cmake_host_system_information
    3. <<cmake_minimum_required>>
       1. 泛型: cmake_minimum_required(VERSION major.minor[.patch[.tweak]] [FATAL_ERROR])
-      2. 如果当前cmake的版本比该命令设置的版本VERSION还低,则会停止处理该项目,然后报告一个错误
-      3. 该命令会隐式调用cmake_policy(VERSION),用于指定当前工程是在哪个版本的cmake上进行搭建的,因此,最好在该命令中设置cmake --version显示的版本
-      4. 建议使用cmake_minimum_required而不是cmake_policy,因为前者调用了后者,同时,cmake_minimum_required禁止了当前版本小于VERSION的情况,这对项目的维护是有利的
-      5. 备注: cmake_minimum_required给出的版本会传递给 cmake_policy, 这就意味着在新版本的cmake中的相关的策略会unset掉,此时需要结合警告信息,以及当前版本的版本号,去查看在cmake_minimum_required以及当前版本之间给出的policy,然后调用cmake_policy(SET CMP[NNNN])
+      2. 示例: cmake_minimum_require(VERSION 3.0 FATAL_ERROR)
+      3. 如果当前cmake的版本比该命令设置的版本VERSION还低,则会停止处理该项目,然后报告一个错误
+      4. 该命令会隐式调用cmake_policy(VERSION),用于指定当前工程是在哪个版本的cmake上进行搭建的,因此,最好在该命令中设置cmake --version显示的版本
+      5. 建议使用cmake_minimum_required而不是cmake_policy,因为前者调用了后者,同时,cmake_minimum_required禁止了当前版本小于VERSION的情况,这对项目的维护是有利的
+      6. 备注: cmake_minimum_required给出的版本会传递给 cmake_policy, 这就意味着在新版本的cmake中的相关的策略会unset掉,此时需要结合警告信息,以及当前版本的版本号,去查看在cmake_minimum_required以及当前版本之间给出的policy,然后调用[[cmake_policy]](SET CMP[NNNN])
    4. cmake_parse_arguments
    5. <<cmake-policy>>
       1. cmake_policy: 详情参见cmake-policies
@@ -1114,8 +1118,37 @@ Blog creation time:[2017-11-08 三 09:24]
 	 1. cmake_policy(GET CMP<NNNN> <variable>)
 	 2. 检查一个策略使用了NEW还是OLD行为,如果该策略没有被配置过,那么返回空
       5. CMake Policy Stack: 待续
-   6. configure_file
-   7. continue
+   6. <<configure_file>>
+      1. 泛型: configure_file(<input> <output> [COPYONLY] [ESCAPE_QUOTES] [@ONLY] [NEWLINE_STYLE [UNIX|DOS|WIN32|LF|CRLF] ])
+      2. 作用: 让普通文件(.h)也能使用CMake中的变量
+      3. <input>: 输入文件,可以带绝对路径或者相对路径,但是必须是一个文件而不能是目录,如果使用相对路径,则会参考 [[CMAKE_CURRENT_SOURCE_DIR]]
+      4. <output>: 输出文件,可以带绝对路径或者相对路径,也可以是一个目录,如果是相对路径,则会参考 [[CMAKE_CURRENT_BINARY_DIR]] ,如果是一个目录,文件名就等于输入文件名
+      5. [COPYONLY]: 复制文件而不替换任何变量引用或其他内容,此选项不能与 NEWLINE_STYLE 一起使用
+      6. [ESCAPE_QUOTES]: 所有被替换的变量将会按照C语言的规则被转义
+      7. [@ONLY]: 只有@VAR@格式的变量会被替换而${VAR}格式的变量则会被忽略,这对于配置使用$ {VAR}语法的脚本非常有用
+      8. [NEWLINE_STYLE [UNIX|DOS|WIN32|LF|CRLF]]: 指定输出文件的换行样式
+      9. 经典用法:
+	 1. # ${PROJECT_SOURCE_DIR}/cmake/CutCode_Config.h.in
+	 2. #cmakedefine EN_USART1 @tmp1@  
+	 3. #cmakedefine EN_UCOSIII @tmp2@
+	 4. 
+	 5. # CMakeLists.txt
+	 6. option(EN_USART1 "enable usart1" ON)
+	 7. if
+	 8. 
+	 9. 
+	 10. configure(${PROJECT_SOURCE_DIR}/cmake/CutCode_Config.h.in ${PROJECT_SOURCE_DIR}/bin/CutCode_Config.h)
+	 11. 
+	 12. 
+	 13. 
+	 14. 
+      10. 相似的命令 [[add_definitions]](-DFOO) 用于向源代码传递FOO是否定义,因此,在源代码中只能使用ifdef FOO ... endif来条件编译
+      11. [[configure_file]](config.h.in config.h)则可以参照config.h.in中的 #cmakedefine xx @tmp@ 语句生成config.h (define xx 1),源文件中include "config.h"以后可以使用条件编译裁剪内容
+      12. 总结: add_definitions()以及configure_file()搭配条件编译可以实现对源代码内容的裁剪,而cmake自身的语法又可以选择性编译某几个源文件,因此,cmake可以实现非常灵活的裁剪
+   7. <<continue>>
+      1. 泛型: continue()
+      2. 作用: 终止本次 [[while]]()循环或者[[foreach]]()循环,继续下一次循环
+      3. 参考 [[break]]()
    8. <<elseif>>
       1. 参见 [[if]]
    9. <<else>>
@@ -1295,7 +1328,7 @@ Blog creation time:[2017-11-08 三 09:24]
        5. 想要使得函数内部定义的变量可以被外部访问到也有可行的方法: function(T tmp)  set(${tmp} "hello" PARENT_SCOPE)  endfunction(T) 外部就可以 T(V2)message(STATUS "V2=${V2}"),返回hello,注意set(${tmp} ... PARENT_SCOPE)的写法(必须这样写),tmp想象成C语言中的函数传入指针和传入变量的问题就可以理解为什么是${tmp}而不是tmp了,使用 PARENT_SCOPE 是因为函数会构建一个局部作用域
        6. 说明: 除非函数 <name> 被调用,否则在function()以及endfunction()之间的命令不会被调用
        7. 注意: 函数内部的变量应当让他外部不可见,如果非要让外部可见,那么最好使用macro
-   24. get_cmake_property
+   24. <<get_cmake_property>>
    25. get_directory_property
    26. get_filename_component
    27. <<get_property>>
@@ -1381,7 +1414,71 @@ Blog creation time:[2017-11-08 三 09:24]
        6. 如果指定了模块而不是文件，则首先在CMAKE_MODULE_PATH中搜索名称<modulename> .cmake的文件，然后在CMake模块目录中搜索
        7. 有一个例外：如果调用include（）的文件位于CMake内置模块目录中，则首先搜索CMake内置模块目录，然后搜索[[CMAKE_MODULE_PATH]]。另见策略CMP0017。
    30. include_guard
-   31. list
+   31. <<list>>
+       1. 泛型1: list(LENGTH <list> <output variable>) 
+	  1. set(tmp a b c d e f)
+	  2. list(LENGTH tmp len)
+	  3. message(STATUS "len=${len}")
+	  4. 返回: 6
+       2. 泛型2: list(GET <list> <element index> [<element index> ...] <output variable>)
+	  1. set(tmp1 a b c d e f)
+	  2. list(GET tmp1 3 5 tmp2)
+	  3. message(STATUS "tmp2=${tmp2}")
+	  4. 返回: d;f
+	  5. 备注: 3 5代表元素的编号,含义为取列表中编号为3和5的元素,列表的编号从0开始
+       3. 泛型3: list(REVERSE <list>)
+	  1. set(tmp1 a b c d e f)
+	  2. message(STATUS "tmp1=${tmp1}")
+	  3. list(REVERSE tmp1)
+	  4. message(STATUS "tmp1=${tmp1}")
+	  5. 返回: tmp1=a b c d e f; tmp1=f e d c b a
+       4. 泛型4: list(FIND <list> <value> <output variable>)
+	  1. set(tmp1 a b c d e f)
+	  2. list(FIND tmp1 b tmp2)
+	  3. message(STATUS "tmp2=${tmp2}")
+	  4. 返回: 1
+	  5. 备注: <value>只能是一个元素; <output variabes>是<value>在列表中的位置; 列表中元素的编号从0开始; 当没有找到<value>时,返回-1
+       5. 泛型5: list(APPEND <list> [<element> ...])
+	  1. set(tmp1 a b c d e f)
+	  2. list(APPEND tmp1 3 h 7 m )
+	  3. message(STATUS "tmp1=${tmp1}")
+	  4. 返回: a b c d e f 3 h 7 m
+       6. 泛型6: list(INSERT <list> <element_index> <element> [<element> ...])
+	  1. 作用: 在编号为<element_index>的元素前面插入元素
+	  2. set(tmp1 a b c d e f)
+	  3. list(INSERT tmp1 3 f 7 9 0)
+	  4. message(STATUS "tmp1=${tmp1}")
+	  5. 返回: a b c f 7 9 0 d e f
+	  6. 备注: 元素编号从0开始
+       7. 泛型7: list(REMOVE_ITEM <list> <value> [<value> ...])
+	  1. set(tmp1 a b c d e f)
+	  2. list(REMOVE_ITEM tmp1 c d)
+	  3. message(STATUS "tmp1=${tmp1}")
+	  4. 返回: a b e f
+       8. 泛型8: list(REMOVE_AT <list> <index> [<index> ...])
+	  1. set(tmp1 a b c d e f)
+	  2. list(REMOVE_AT tmp1 2 4)
+	  3. message(STATUS "tmp1=${tmp1}")
+	  4. 返回: a b d f
+	  5. 备注: <index>可以为负数: list(REMOVE_AT tmp1 -2 -5),返回 a c d f
+	  6. 注意,如果为负数,则最后一个数的编号是-1
+       9. 泛型9: list(REMOVE_DUPLICATES <list>)
+	  1. 作用: 移除列表中重复的元素
+	  2. set(tmp1 a b a d a f)
+	  3. list(REMOVE_DUPLICATES tmp1)
+	  4. message(STATUS "tmp1=${tmp1}")
+	  5. 返回:  a b d f
+       10. 泛型10: list(SORT <list>)
+	   1. set(tmp1 e b 3 d c 2 a f 1)
+	   2. list(SORT tmp1)
+	   3. message(STATUS "tmp1=${tmp1}")
+	   4. 返回: 1 2 3 a b c d e f
+       11. 泛型11: list(FILTER <list> <INCLUDE|EXCLUDE> REGEX <regular_expression>)
+	   1. set(tmp1 e b 4 d c 2 a f 1)
+	   2. list(FILTER tmp1 INCLUDE REGEX [0-9])
+	   3. message(STATUS "tmp1=${tmp1}")
+	   4. 返回: 4 2 1
+	   5. 备注: <INCLUDE|EXCLUDE>给出过滤后保留哪一部分, REGEX标识后面接正则表达式,更多正则表达式的知识参考 [[string]]()
    32. <<macro>>
        1. 泛型:
           1. macro(<name>  [arg1 [arg2 [arg3 ...]]])
@@ -1441,7 +1538,16 @@ Blog creation time:[2017-11-08 三 09:24]
 	  5. SEND_ERROR     = CMake Error, continue processing,but skip generation
 	  6. FATAL_ERROR    = CMake Error, stop processing and generation
 	  7. DEPRECATION    = CMake Deprecation Error or Warning if variable CMAKE_ERROR_DEPRECATED or CMAKE_WARN_DEPRECATED is enabled, respectively, else no message
-   36. option
+   36. <<option>>
+       1. 泛型: option(<option_variable> "help string describing option" [initial value])
+       2. 示例:
+          1. option(FOO_ENABLE "Enable Foo" ON)
+	  2. if(FOO_ENABLE)
+	  3. set(FOO_STRING "foo")
+	  4. message(STATUS "${FOO_STRING}")
+	  5. endif()
+       3. 作用: 开关控制
+       4. [initial value]: ON, OFF
    37. return
    38. separate_arguments
    39. set_directory_properties
@@ -1473,22 +1579,131 @@ Blog creation time:[2017-11-08 三 09:24]
        6. 使用场合: 该命令可以实现将子目录下的变量共享,让父目录能访问到
        7. 特点: 该方法设置的变量必须通过get_property才能访问到
        8. 典型用法: set_property(GLOBAL PROPERTY CURR_PATH_DIR "${CMAKE_CURRENT_LIST_DIR}/include/1.2")
-       9. 引用: get_property(tmp GLOBAL PROPERTY CURR_PATH_DIR)  message(STATUS "${tmp}")
+       9. 引用: [[get_property]](tmp GLOBAL PROPERTY CURR_PATH_DIR)  message(STATUS "${tmp}")
    41. <<set>>: 
        1. 作用: 为 普通变量,cache变量,环境变量 赋值
-       2. 特点: 使用set定义的变量可以从父目录传递到子目录,但是不能从子目录传递到父目录(实现变量共享的另外一个方法是使用 set_property 命令)
+       2. 特点: 使用set定义的变量可以从父目录传递到子目录,以及子目录传递到父目录,但是不能从子目录传递到非父目录,(实现变量全局共享的另外一个方法是使用 [[set_property]] 命令)
        3. 提示: 变量的值均是字符串类型,因此,推荐使用双引号将<value>包含
        4. 普通变量: set(<variable> <value>... [PARENT_SCOPE])
 	  1. 含义: 在[PARNET_SCOPE]给出的范围之内,为变量<variable>设置值<value>
-	  2. 注意,通常会省略[PARENT_SCOPE],表示在变量被设置的值在当前函数或者当前目录范围内有效
-	  3. 如果给出了[PARENT_SCOPE],那么,变量被设置的值在[PARENT_SCOPE]所示的范围内有效,此时该变量将会传递到父目录或者调用它的那个函数
+	  2. 通常会省略PARENT_SCOPE关键字,表示在变量被设置的值在当前函数或者当前目录范围内有效,即,默认上层目录中设置的变量会传递到下层目录,而下层目录设置的变量值无法传递到上层
+	  3. 如果给出了PARENT_SCOPE关键字,那么,此时该变量将会传递到父目录(其他目录无效)或者调用它的那个函数(其他函数无效)
        5. cache变量: set(<variable> <value>... CACHE <type> <docstring> [FORCE])
        6. 环境变量: set(ENV{<variable>} <value>...)
 	  1. 作用: 为 
 	  2. 示例: set(ENV{[[CMAKE_C_FLAGS]]} "-O3 -Wall")
    42. site_name
-   43. string
-   44. unset
+   43. <<string>>
+       1. 泛型1: string(FIND <string> <substring> <output variable> [REVERSE])
+	  1. 作用: 从串<string>中找出子串<substring>的位置,将子串中第一个元素在串中首次出现的位置的编号存储在变量中
+	  2. string(FIND "li njim aj un" "ji" tmp)
+	  3. message(STATUS "tmp=${tmp}")
+	  4. 返回: 4
+	  5. 备注: 如果找不到子串,则返回-1,比如<substring>为in就会返回-1,为i n就会返回1
+       2. 泛型2: string(REPLACE <match_string> <replace_string> <output variable> <input> [<input>...])
+	  1. string(REPLACE "i n" "**" tmp "li njim aj un" " i nm pq")
+	  2. message(STATUS "tmp=${tmp}")
+	  3. 返回: l**jim aj un **m pq
+       3. 泛型3: string(REGEX MATCH <regular_expression> <output variable> <input> [<input>...])
+	  1. string(REGEX MATCH [b-f] tmp "a d" "b c")
+	  2. message(STATUS "tmp=${tmp}")
+	  3. 返回: d
+	  4. 注意: 匹配正则表达式中第一个遇到的字符
+       4. 泛型4: string(REGEX MATCHALL <regular_expression> <output variable> <input> [<input>...])
+	  1. string(REGEX MATCHALL [b-f] tmp "a de" "b c")
+	  2. message(STATUS "tmp=${tmp}")
+	  3. 返回: d;e;b;c
+       5. 泛型5: string(REGEX REPLACE <regular_expression> <replace_expression> <output variable> <input> [<input>...])
+	  1. string(REGEX REPLACE [b-f] "*" tmp "a de m" "h b c g")
+	  2. message(STATUS "tmp=${tmp}")
+	  3. 返回: a ** mh * * g
+       6. 泛型6: string(APPEND <string variable> [<input>...])
+	  1. set(tmp "hello world")
+	  2. string(APPEND tmp "lin" "jia jun")
+	  3. message(STATUS "tmp=${tmp}")
+	  4. 返回: hello worldlinjia jun
+       7. 泛型7: string(PREPEND <string variable> [<input>...])
+	  1. set(tmp "hello world")
+	  2. string(PREPEND tmp "lin" "jia jun")
+	  3. message(STATUS "tmp=${tmp}")
+	  4. 结果: 理论上是 linjia junhello world,但是该版本的cmake测试不支持PREPEND
+       8. 泛型8: string(CONCAT <output variable> [<input>...])
+	  1. string(CONCAT tmp "lin " "jia jun")
+	  2. message(STATUS "tmp=${tmp}")
+	  3. 返回: lin jia jun
+       9. 泛型9: string(TOLOWER <string1> <output variable>)
+	  1. string(TOLOWER "LIN JIA JUN" tmp)
+	  2. message(STATUS "tmp=${tmp}")
+	  3. 结果: lin jia jun
+       10. 泛型10: string(TOUPPER <string1> <output variable>)
+	   1. string(TOUPPER "lin jia jun" tmp)
+	   2. message(STATUS "tmp=${tmp}")
+	   3. 结果: LIN JIA JUN
+       11. 泛型11: string(LENGTH <string> <output variable>)
+	   1. string(LENGTH "lin jia jun" tmp)
+	   2. message(STATUS "tmp=${tmp}")
+	   3. 结果: 11
+       12. 泛型12: string(SUBSTRING <string> <begin> <length> <output variable>)
+	   1. string(SUBSTRING "lin jia jun" 2 4 tmp)
+	   2. message(STATUS "tmp=${tmp}")
+	   3. 返回: n ji
+	   4. 备注: 字符串编号从0开始
+       13. 泛型13: string(STRIP <string> <output variable>)
+	   1. string(STRIP "   lin     jia jun  " tmp)
+	   2. message(STATUS "tmp=${tmp}")
+	   3. 结果: "lin jia jun"
+       14. 泛型14: string(GENEX_STRIP <input string> <output variable>)
+	   1. 从输入字符串中去除任 [[generator expressions ]] 表达式并将结果存储在输出变量中
+       15. 泛型15: string(COMPARE LESS <string1> <string2> <output variable>)
+	   1. 比较字符串,然后将true或者false存储在输出变量当中
+       16. 泛型16: string(COMPARE GREATER <string1> <string2> <output variable>)
+	   1. 比较字符串,然后将true或者false存储在输出变量当中
+       17. 泛型17: string(COMPARE EQUAL <string1> <string2> <output variable>)
+	   1. 比较字符串,然后将true或者false存储在输出变量当中
+       18. 泛型18: string(COMPARE NOTEQUAL <string1> <string2> <output variable>)
+	   1. 比较字符串,然后将true或者false存储在输出变量当中
+       19. 泛型19: string(COMPARE LESS_EQUAL <string1> <string2> <output variable>)
+	   1. 比较字符串,然后将true或者false存储在输出变量当中
+       20. 泛型20: string(COMPARE GREATER_EQUAL <string1> <string2> <output variable>)
+	   1. 比较字符串,然后将true或者false存储在输出变量当中
+       21. 泛型16: string(<HASH> <output variable> <input>)
+	   1. 计算输入字符串的加密哈希
+	   2. 支持的<HASH>算法名称是: MD5, SHA1, SHA224, SHA256, SHA384, SHA512, SHA3_224, SHA3_256, SHA3_384, SHA3_512 
+       22. 泛型17: string(ASCII <number> [<number> ...] <output variable>)
+	   1. 将所有数字转换为相应的ASCII字符
+       23. 泛型18: string(CONFIGURE <string1> <output variable> [@ONLY] [ESCAPE_QUOTES])
+	   1. 像 [[configure_file]]() 转换一个文件那样,转换一个字符串
+       24. 泛型19: string(RANDOM [LENGTH <length>] [ALPHABET <alphabet>] [RANDOM_SEED <seed>] <output variable>)
+	   1. string(RANDOM LENGTH 6 tmp)
+	   2. message(STATUS "tmp=${tmp}")
+	   3. 生成一个6位数的随机数,随机数由大小写字母和数字构成
+       25. 泛型20: string(TIMESTAMP <output variable> [<format string>] [UTC])
+	   1. string(TIMESTAMP tmp "%Y年-%m月-%d日 %H:%M:%S")
+	   2. message(STATUS "tmp=${tmp}")
+	   3. 结果: 2017年-11月-17日 13:27:07
+	   4. <format string>:
+	      1. %%        A literal percent sign (%).
+	      2. %d        The day of the current month (01-31).
+	      3. %H        The hour on a 24-hour clock (00-23).
+	      4. %I        The hour on a 12-hour clock (01-12).
+	      5. %j        The day of the current year (001-366).
+	      6. %m        The month of the current year (01-12).
+	      7. %b        Abbreviated month name (e.g. Oct).
+	      8. %B        Full month name (e.g. October).
+	      9. %M        The minute of the current hour (00-59).
+	      10. %s        Seconds since midnight (UTC) 1-Jan-1970 (UNIX time).
+	      11. %S        The second of the current minute.60 represents a leap second. (00-60)
+	      12. %U        The week number of the current year (00-53).
+	      13. %w        The day of the current week. 0 is Sunday. (0-6)
+	      14. %a        Abbreviated weekday name (e.g. Fri).
+	      15. %A        Full weekday name (e.g. Friday).
+	      16. %y        The last two digits of the current year (00-99)
+	      17. %Y        The current year.
+       26. 泛型21: string(MAKE_C_IDENTIFIER <input string> <output variable>)
+       27. 泛型22: string(UUID <output variable> NAMESPACE <namespace> NAME <name> TYPE <MD5|SHA1> [UPPER])
+	   1. 根据RFC4122基于组合值<namespace> （其本身必须是有效的UUID）的哈希来创建一个唯一的唯一标识符（又名GUID）<name>
+	   2. 如果需要，可以用可选UPPER标志请求大写字母表示
+   44. <<unset>>
    45. variable_watch
    46. <<while>>
        1. 泛型:
@@ -1516,6 +1731,7 @@ Blog creation time:[2017-11-08 三 09:24]
       3. 那些以-D或/D开头的、看起来像预处理器定义的flag，会被自动加到当前路径的[[COMPILE_DEFINITIONS]]属性中
       4. FOO以及BAR可以在源文件中使用,如ifdef FOO ...... endif
       5. 备注: 该命令是针对所有编译器的
+      6. 参考 [[configure_file]]()
    5. <<add_dependencies>>
    6. <<add_executable>>
       1. 泛型1: add_executable(<name> [WIN32] [MACOSX_BUNDLE] [EXCLUDE_FROM_ALL] source1 [source2 ...])
