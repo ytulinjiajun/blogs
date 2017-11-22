@@ -1777,7 +1777,6 @@ Blog creation time:[2017-09-05 二 09:05]
 4.进入XMind_amd64,安装xmind思维导图:sudo ./XMind
 Blog creation time:[2017-09-05 二 09:10]
 ** DONE Theme:一键安装常用软件								   :@Blog:@Linux:
-    SCHEDULED:<2017-09-07 四>
 	- State "DONE"       from "WAITTING"   [2017-09-07 四 10:49]
 	主题的名字可能不是特别的恰当，这里，重新描述一下这篇博客所实现的功能。你可能积累了很多的
 常用的软件，而每当你更换操作系统时，你不得不重新一个接着一个的去安装这些软件，显得特别的麻烦，

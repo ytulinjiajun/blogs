@@ -119,7 +119,6 @@ Blog creation time:[2017-08-18 五 08:58]
 Blog creation time:[2017-08-28 一 08:27]
 
 ** DONE [#C] Theme:linux下开发stm32之安装stlink				 :@Blog:@Stm32f7:
-    SCHEDULED:<2017-09-06 三>
 	- State "DONE"       from "TODO"       [2017-09-06 三 20:26]
 (0)教程：http://www.stmcu.org/module/forum/thread-603753-1-1.html
 (1)下载stlink的源代码: https://github.com/texane/stlink 
@@ -157,7 +156,6 @@ $ ./autogen.sh    $ ./configure    $sudo  make install
 具体的使用方法，可以参阅 st-flash  --help。这个命令是下载使用的。如果想配合gdb调试使用，需要使用st-util
 Case creation time:[2017-09-06 三 16:57]
 ** DONE [#C] Theme:linux下开发stm32之安装串口工具			 :@Blog:@Stm32f7:
-    SCHEDULED:<2017-09-06 三>
 	- State "DONE"       from "TODO"       [2017-09-06 三 20:26]
 0)教程：http://www.stmcu.org/module/forum/thread-603753-1-1.html
 1.linux对串口的支持：(串口驱动)
@@ -176,7 +174,6 @@ Case creation time:[2017-09-06 三 16:57]
 使用sudo minicom -s 进行配置。
 Case creation time:[2017-09-06 三 16:59]
 ** DONE [#C] Theme:linux下开发stm32之安装arm-none-eabi-gcc	 :@Blog:@Stm32f7:
-    SCHEDULED:<2017-09-06 三>
 	- State "DONE"       from "TODO"       [2017-09-06 三 20:26]
 0)教程：http://www.stmcu.org/module/forum/thread-603753-1-1.html
 --arm-none-eabi-gcc，用于编译 ARM 架构的裸机系统（包括 ARM Linux 的 boot、kernel，不适用编译 Linux 应用 Application），一般适合 

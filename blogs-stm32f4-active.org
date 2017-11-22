@@ -544,7 +544,6 @@ Blog creation time:[2017-09-05 二 08:52]
 
 Blog creation time:[2017-09-05 二 08:53]
 ** WAITTING [#D] Theme:将linux-kernel架构移植stm32上		  :@Blog:@Kernel:
-   SCHEDULED:<2017-10-26 四>
 1. 基本要求:
    1. 精简
    2. 提供裁剪功能的实现机制
@@ -573,9 +572,7 @@ Blog creation time:[2017-09-05 二 08:53]
       2. ----@rm -f $(OBJS) blink.bin blink.elf
 Blog creation time:[2017-10-26 四 08:37]
 
-
 ** WAITTING [#D] Theme:内核目录架构							  :@Blog:@Kernel:
-    SCHEDULED:<2017-10-25 三>
 1. 顶层Makefile: torvalds-linux/linux/Makefile
    1. 决定torvalds-linux/linux/下面,哪些子目录被编译进内核
 2. 体系结构相关的Makefile: torvalds-linux/linux/$(ARCH)/Makefile

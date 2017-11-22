@@ -1,6 +1,5 @@
 * blogs-makefile-active
 ** DONE [#D] Theme:静态库									:@Blog:@Makefile:
-    SCHEDULED:<2017-11-10 五>
 	- State "DONE"       from "WAITTING"   [2017-11-10 五 16:07]
 1. 静态库的真实面目: 目标文件(.o)的集合(归档)
 2. 静态的含义: 生成的库被完全链接进运用程序,与运用程序"生死与共" 
@@ -36,7 +35,6 @@
    6. 运行: ./main
 Blog creation time:[2017-11-10 五 10:39]
 ** DONE [#D] Theme:动态库									:@Blog:@Makefile:
-    SCHEDULED:<2017-11-10 五>
 	- State "DONE"       from "WAITTING"   [2017-11-10 五 16:07]
 1. 动态的含义: 动态库被制作出来以后,存放在ROM中,外部程序只在运行时才将其加载进RAM
 2. 动态库的真实面目: 目标文件(.o)的集合(归档)
@@ -72,7 +70,6 @@ Blog creation time:[2017-11-10 五 10:39]
    7. 当查找的库路径下存在同名的静态库和动态库时,优先使用动态库
 Blog creation time:[2017-11-10 五 10:40]
 ** DONE [#D] Theme:gcc基础									:@Blog:@Makefile:
-    SCHEDULED:<2017-10-27 五>
 	- State "DONE"       from "WAITTING"   [2017-11-10 五 16:08]
 1. 预处理:  		 gcc -E test.c -o test.i  				     ---->  完成头文件展开,宏替换等工作之后,将源文件生成预处理文件
 2. 编译:    	 gcc -S test.i -o test.s  				     ---->  编译预处理文件,生成汇编文件
@@ -161,7 +158,6 @@ Blog creation time:[2017-10-27 五 09:10]
 	3. @: make 在执行命令行之前会把要执行的"命令"输出到标准输出设备,称之为命令的“回显”,如果"规则"的"命令"以字符“@”开始,则则不会回显
 	4. 加号+ : 使命令行可以通过指定 -n、-q 或 -t 选项来执行 
 ** WAITTING [#D] Theme:make如何解析makefile文件的? 			:@Blog:@Makefile:
-   SCHEDULED:<2017-10-26 四>
 1. 第一阶段:
    1. 读取所有的 makefile 文件(包括“MAKIFILES”变量指定的、指示符“include”指定的、以及命令行选项“-f(--file)”指定的 makefile 文件)
    2. 内建所有的变量,显示规则,隐含规则
@@ -182,7 +178,6 @@ Blog creation time:[2017-10-27 五 09:10]
    3. 当变量使用追加符(+=)时,如果此前这个变量是使用 = , ?= , define 定义的,则认为该变量是立即展开的
 Blog creation time:[2017-10-26 四 14:27]
 ** WAITTING [#D] Theme:make执行过程						:@Blog:@Makefile:
-    SCHEDULED:<2017-10-27 五>
 1. 依次读取变量“MAKEFILES”定义的 makefile 文件列表
 2. 读取工作目录下的 makefile 文件(根据命名的查找顺序“GNUmakefile”,“makefile”,“Makefile”,首先找到那个就读取那个)
 3. 依次读取工作目录 makefile 文件中使用指示符“include”包含的文件
@@ -193,14 +188,12 @@ Blog creation time:[2017-10-26 四 14:27]
 8. 执行“终极目标”所在的规则
 Blog creation time:[2017-10-27 五 15:38]
 ** WAITTING [#D] Theme:规则执行过程						:@Blog:@Makefile:
-    SCHEDULED:<2017-10-27 五>
 1. 首先,构建出该规则的所有依赖文件,并建立所有目标和依赖之间的依赖关系结构链表
 2. 然后,根据已经建立的依赖关系结构链表决定哪些目标需要更新,即比较目标文件和所有的依赖文件的时间戳
 6. 如果目标的时间戳比所有依赖文件的时间戳更新,那么什么也不做
 7. 如果依赖文件中的某一个或者全部在上一次执行make后已经被修改过,规则所定义的重建目标的命令将会被执行
 Blog creation time:[2017-10-27 五 15:38]
 ** WAITTING [#D] Theme:目录搜索							:@Blog:@Makefile:
-    SCHEDULED:<2017-10-28 六>
 1. 搜索的第一步首先会关注"目标"和"依赖"在"规则"中给出的路径(以Makefile文件所在路径为根)
 2. 目录搜索示例的已知条件:
    1. test目录下存在 inc/, src/, obj/
@@ -284,7 +277,6 @@ Blog creation time:[2017-10-27 五 15:38]
 		  7. 之后对于test.o的更新实际上是更新../obj/test.o
 Blog creation time:[2017-10-28 六 19:31]
 ** WAITTING [#D] Theme:显示规则							:@Blog:@Makefile:
-   SCHEDULED:<2017-10-27 五>
 1. 对"makefile文件"的重建: (该规则不是很常用,因为一般情况下都会明确的给出makefile文件)
    1. 通常接触的"重建"是"规则"中对目标的重建,在这里想说的是,makefile文件也能重建
    2. Makefile 可由其它文件生成,例如 RCS 或 SCCS 文件,此时,必然要用到makefile文件的重建机制,因为makefile文件不是固定的,而是由其他文件动态生成
@@ -456,7 +448,6 @@ Blog creation time:[2017-10-27 五 09:04]
    3. 如果直接使用命令“make”时,得到的提示信息如下:
 	  1. make: *** No targets specified and no makefile found. Stop.
 ** WAITTING [#D] Theme:指示符								:@Blog:@Makefile:
-   SCHEDULED:<2017-10-27 五>
 1. 作用: 指示符指明在 make 程序读取 makefile 文件过程中所要执行的一个动作
 2. makefile的指示符: "文件包含(include)", "条件执行(ifdef)", "多行定义(define)"
 3. "文件包含"指示符:include
@@ -545,7 +536,6 @@ Blog creation time:[2017-10-27 五 09:04]
    8. EXPORT_ALL_VARIABLES含义是将此 Makefile 中定义的所有变量传递给子 make 过程,如果不需要传递其中的某一个变量,可以单独使用指示符“unexport”来声明
 	  Blog creation time:[2017-10-27 五 08:53]
 ** WAITTING [#D] Theme:变量								:@Blog:@Makefile:
-    SCHEDULED:<2017-10-26 四>
 1. makefile中变量的特征:
    1. 在make读取makefile文件时才进行展开(规则命令行中的变量除外),包括了使用“=”定义和使用指示符“define”定义的
    2. 可以表征任何事物
@@ -615,7 +605,6 @@ Blog creation time:[2017-10-27 五 09:04]
 析。
 Blog creation time:[2017-10-26 四 14:04]
 ** WAITTING [#D] Theme:函数 								:@Blog:@Makefile:
-   SCHEDULED:<2017-10-26 四>
 1. makefile中函数的特征:
    1. 在make读取makefile文件时才进行展开(规则命令行中的函数除外)
 2. 函数的展开时机:
@@ -738,7 +727,6 @@ Blog creation time:[2017-10-26 四 14:04]
 23. 
 Blog creation time:[2017-10-26 四 13:40]
 ** WAITTING [#D] Theme:注释								:@Blog:@Makefile:
-    SCHEDULED:<2017-10-27 五>
 1. Makefile 中“#”字符后的内容被作为是注释内容
 2. 如果此行的第一个非空字符为“#”,那么此行为注释行
 3. 注释行的结尾如果存在反斜线(\),那么下一行也被作为注释行
@@ -747,7 +735,6 @@ Blog creation time:[2017-10-26 四 13:40]
 6. Makefile 中第一个规则之后的所有以[Tab]字符开始的的行, make 程序都会将其交给系统 shell 程序去解释执行,以[Tab]字符开始的注释行也会被交给 shell 来处理
 Blog creation time:[2017-10-27 五 09:04]
 ** WAITTING [#D] Theme:命令行参数							:@Blog:@Makefile:
-    SCHEDULED:<2017-10-27 五>
 1. “-t”选项用来更新所有目标的时间戳,而不执行任何规则的命令
 
 

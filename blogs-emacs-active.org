@@ -43,7 +43,6 @@ Blog creation time:[2017-09-05 二 08:46]
 7. 运行emacs
 Blog creation time:[2017-09-04 一 22:05]
 ** DONE [#D] Theme:emacs启动流程							   :@Blog:@Emacs:
-    SCHEDULED:<2017-09-19 二>
 	- State "DONE"       from "WAITTING"   [2017-09-20 三 10:51]
 	Link position:[[info:elisp.info.gz#Startup%20Summary][Operating System Interface (emacs lisp 38)]]
 emacs在启动时，会执行下面的操作：
@@ -128,7 +127,6 @@ emacs在启动时，会执行下面的操作：
        2. t:禁止在*scratch*缓冲区显示信息，为空
 Case creation time:[2017-09-19 二 15:00]
 ** DONE [#D] Theme:初始化文件								   :@Blog:@Emacs:
-    SCHEDULED:<2017-09-20 三>
 	- State "DONE"       from "WAITTING"   [2017-09-20 三 15:22]
 1. .emacs 或 ~/.emacs.d/init.el
 	  1. emacs启动完成后，会试图去加载位于家目录下的初始化配置文件，该文件要么是.emacs或者.emacs.el,要么是在.emacs.d目录下的一个名为init.el的文件
@@ -149,7 +147,6 @@ Case creation time:[2017-09-19 二 15:00]
    user-emacs-directory，保存.emacs.d目录的路径
 Blog creation time:[2017-09-20 三 10:52]
 ** DONE [#D] Theme:关于require、provide、load、load-file、 autoload、 load-path的解析 :@Blog:@Emacs:
-   SCHEDULED:<2017-09-18 一>
    - State "DONE"       from "WAITTING"   [2017-09-18 一 21:41]
 参考网址：http://ergoemacs.org/emacs/elisp_library_system.html
 *** features provide require
@@ -317,7 +314,6 @@ Blog creation time:[2017-09-04 一 22:10]
 -->查看绑定代码：C-x ESC ESC:(global-set-key [M-s-return] (quote org-insert-todo-heading))
 -->将这条源代码添加到自己的配置文件中去(不添加的话，刚刚绑定的快捷键只会在本次环境中生效)
 ** DONE [#D] Theme:插件(plugin-in)管理						   :@Blog:@Emacs:
-    SCHEDULED:<2017-09-17 日>
 	- State "DONE"       from "WAITTING"   [2017-09-18 一 09:16]
 *** 安装与卸载插件:
 方案一：(推荐)
@@ -596,13 +592,11 @@ Case creation time:[2017-08-07 一 14:06]
    14. 删除光标所在行: M-S-<down>: org-table-kill-row
    15. 删除光标所在列: M-S-<right>: org-table-delete-column
 ** DONE [#D] Theme:abbrev-mode								   :@Blog:@Emacs:
-    SCHEDULED:<2017-09-19 二>
 	- State "DONE"       from "WAITTING"   [2017-09-19 二 11:27]
 1. 功能：定制缩略词
 2. 使用方法：缩略词+空格
 Blog creation time:[2017-09-19 二 10:49]
 ** WAITTING [#D] Theme:evil-mode							   :@Blog:@Emacs:
-    SCHEDULED:<2017-09-22 五>
 *** vim基本概念
 1. vim的作者Bram Moolenaar
 2. vim是在vi的基础上改进，以及增加很多特性之后，发展而来的一个文本编辑器
@@ -768,11 +762,9 @@ Blog creation time:[2017-09-18 一 14:47]
 (global-set-key [f5] 'toggle-truncate-lines)
 Blog creation time:[2017-09-18 一 15:28]
 ** WAITTING [#D] Theme:解决org-mode下无法使用org-capture和org-agenda的问题 :@Blog:@Emacs:
-    SCHEDULED:<2017-10-17 二>
 
 Blog creation time:[2017-10-17 二 15:52]
 ** WAITTING [#D] Theme:在shell下开启emacs		       :@Blog:@Emacs:
-        SCHEDULED:<2017-11-13 一>
 1. 命令: emacs -nw
 2. 设置别名: vi ~/.bashrc   alias em='emacs -nw'  source .bashrc
 Blog creation time:[2017-11-13 一 08:54]

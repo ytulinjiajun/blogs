@@ -1,12 +1,10 @@
 * blogs-cmake-active
   版本: 3.10.0-rc4
 ** WAITTING [#D] Theme:cmake-something			       :@Blog:@Cmake:
-    SCHEDULED:<2017-11-08 三>
 1. 网址: https://cmake.org/cmake/help/v3.10/ 
 2. 查看 cmake 版本: cmake --version
 Blog creation time:[2017-11-08 三 08:42]
 ** WAITTING [#D] Theme:cmake-buildsystem		       :@Blog:@Cmake:
-    SCHEDULED:<2017-11-08 三>
 1. 简介:
    1. 一组target构成CMake的buildsystem
    2. 每个 target 对应一个 executable, 或者对应一个 library,或者对应一个包含自定义命令的自定义目标
@@ -24,7 +22,6 @@ Blog creation time:[2017-11-08 三 08:42]
 	  5. 
 Blog creation time:[2017-11-08 三 09:45]
 ** WAITTING [#D] Theme:cmake-properties			       :@Blog:@Cmake:
-     SCHEDULED:<2017-11-09 四>
 1. Properties of Global Scope
    1. ALLOW_DUPLICATE_CUSTOM_TARGETS
    2. AUTOGEN_SOURCE_GROUP
@@ -412,7 +409,6 @@ Blog creation time:[2017-11-08 三 09:45]
     1. COMPILE_DEFINITIONS_<CONFIG>
 Blog creation time:[2017-11-09 四 15:16]
 ** WAITTING [#D] Theme:cmake-language			       :@Blog:@Cmake:
-    SCHEDULED:<2017-11-08 三>
 1. Variables
    1. 在 cmake 的语法中,变量是基本的存储单元
    2. 变量的值总是字符串类型
@@ -421,7 +417,6 @@ Blog creation time:[2017-11-09 四 15:16]
    5. 变量有动态的范围,每个使用set或者unset赋值的变量实际上是在当前范围内创建了一个绑定 
 Blog creation time:[2017-11-08 三 09:38]
 ** WAITTING [#D] Theme:cmake-toolchains			       :@Blog:@Cmake:
-    SCHEDULED:<2017-11-08 三>
 1. <<Introduction>>
    1. CMake使用工具链来进行编译,链接库,创建归档，以及使用一些任务去进行构建
    2. 命令[[project]]()以及 [[enable_language]]()中给出的语言决定了采用何种工具链工具
@@ -460,7 +455,6 @@ Blog creation time:[2017-11-08 三 09:38]
    12. 变量[[CMAKE_FIND_ROOT_PATH]] 和 [[CMAKE_SYSROOT]] 指明了外部依赖的搜索路径,即所有find_*将在这两个变量指定的路径路径,以及宿主机相关的路径下搜索,当然了,可以限制只在某一路径下搜索,详情参考CMAKE_FIND_ROOT_PATH
 Blog creation time:[2017-11-08 三 09:40]
 ** WAITTING [#D] Theme:cmake-env-variables 		       :@Blog:@Cmake:
-    SCHEDULED:<2017-11-08 三>
 1. 设置环境变量set(ENV{CMAKE_C_FLAGS} "-O3 -Wall")
 2. 查看环境变量message(STATUS "CMAKE_C_FLAGS: " $ENV{CMAKE_C_FLAGS})
 3. Environment Variables that Control the Build
@@ -496,15 +490,12 @@ Blog creation time:[2017-11-08 三 09:40]
    6. DASHBOARD_TEST_FROM_CTEST
 Blog creation time:[2017-11-08 三 09:39]
 ** WAITTING [#D] Theme:cmake-compile-features				   :@Blog:@Cmake:
-    SCHEDULED:<2017-11-08 三>
 
 Blog creation time:[2017-11-08 三 09:41]
 ** WAITTING [#D] Theme:cmake-developer 					   :@Blog:@Cmake:
-    SCHEDULED:<2017-11-08 三>
 
 Blog creation time:[2017-11-08 三 09:42]
 ** WAITTING [#D] Theme:cmake-policies						   :@Blog:@Cmake:
-    SCHEDULED:<2017-11-08 三>
 1. introduction
    1. 开发中会遇到这样的事,使用cmake开发了一个项目,突然一不小心在系统升级时将cmake的版本也升级了
    2. 新版本的cmake相比于老版本的cmake,某些命令或者变量带来了行为上的改变,当前的项目在编译时会出现一些警告,甚至是行为不符的现象
@@ -513,7 +504,6 @@ Blog creation time:[2017-11-08 三 09:42]
    5. 在工程中可以设置各种policy来选择期望的行为
 Blog creation time:[2017-11-08 三 13:28]
 ** WAITTING [#D] Theme:cmake-variables 						   :@Blog:@Cmake:
-   SCHEDULED:<2017-11-08 三>
 1. Variables that Provide Information
    1. CMAKE_AR
    2. CMAKE_ARGC
@@ -1083,7 +1073,6 @@ Blog creation time:[2017-11-08 三 13:28]
    8. CPACK_WARN_ON_ABSOLUTE_INSTALL_DESTINATION
 Blog creation time:[2017-11-08 三 09:24]
 ** WAITTING [#D] Theme:cmake-command 						   :@Blog:@Cmake:
-    SCHEDULED:<2017-11-08 三>
 1. Scripting Commands:
    1. <<break>>
       1. 泛型: break()

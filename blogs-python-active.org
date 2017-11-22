@@ -1,17 +1,14 @@
 * blogs-python-active
 ** WAITTING [#D] Theme:python相关网站						  :@Blog:@Python:
-    SCHEDULED:<2017-10-15 日>
 1. 官网: http://www.python.org
 Blog creation time:[2017-10-15 日 13:52]
 ** WAITTING [#D] Theme:python简介							  :@Blog:@Python:
-   SCHEDULED:<2017-10-12 四>
 1. python 是一种解释型的,面向对象的,带有动态语义的高级语言
 2. 诞生时间1989年,起源ABC语言,由Guido van Rossum开发,他现在在谷歌工作
 3. python是一种解释性语言,但是,也可以将其编译成为.pyc的二进制文件进行执行,编译后执行的效率更高
 4. python被称为胶水语言,可以和c,c++嵌套使用
 Blog creation time:[2017-10-12 四 20:04]
 ** WAITTING [#D] Theme:python开发环境						  :@Blog:@Python:
-   SCHEDULED:<2017-10-12 四>
 1. 环境: linux的发行版基本上都默认提供了python解释器,因此,开箱即用; Debian: apt-get install python
 2. 开发模式: 交互式,脚本
 4. 交互模式进入: python
@@ -24,7 +21,6 @@ Blog creation time:[2017-10-12 四 20:04]
 11. 优化代码: 使用命令python -O -m py_compile a.py 生成a.pyo,运行a.pyo(python a.pyo)即可输出
 Blog creation time:[2017-10-12 四 20:27]
 ** WAITTING [#D] Theme:python运算 							  :@Blog:@Python:
-   SCHEDULED:<2017-10-14 六>
 1. 交互式和脚本:
    1. 交互式:
 	  1. 进入交互式环境: 在终端下面输入python,即可进入
@@ -167,7 +163,6 @@ Blog creation time:[2017-10-12 四 20:27]
 	  4. 123是int型,"123"是str型
 Blog creation time:[2017-10-14 六 20:26]
 ** WAITTING [#D] Theme:序列								  :@Blog:@Python:
-   SCHEDULED:<2017-10-16 一>
 1. 序列介绍:
    1. 序列是python中最基本的数据结构
    2. 序列中的每个元素都会被分配一个序号,即元素位置,也称为索引
@@ -269,13 +264,11 @@ Blog creation time:[2017-10-14 六 20:26]
 9. xrang对象
 Blog creation time:[2017-10-16 一 20:34]
 ** WAITTING [#D] Theme:容器								  :@Blog:@Python:
-   SCHEDULED:<2017-10-16 一>
 1. 容器介绍:
    1. 容器是python中的一种数据结构
    2. 序列和映射是两种主要的容器
 Blog creation time:[2017-10-16 一 20:42]
 ** WAITTING [#D] Theme:映射								  :@Blog:@Python:
-   SCHEDULED:<2017-10-16 一>
 1. 映射介绍:
    1. 字典是映射的一种
 Blog creation time:[2017-10-16 一 20:54]

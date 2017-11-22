@@ -1,7 +1,5 @@
 * blogs-linux-kernel
 ** WAITTING [#D] Theme:源码分析							  :@Blog:@Kernel:
-    SCHEDULED:<2017-11-02 四>
-
   all: vmlinux
   
   vmlinux: scripts/link-vmlinux.sh vmlinux_prereq $(vmlinux-deps) FORCE (999)
@@ -212,7 +210,6 @@
 5. +$(call if_changed,link-vmlinux)
 Blog creation time:[2017-11-02 四 16:51]
 ** WAITTING [#D] Theme:编译kernel							  :@Blog:@Kernel:
-    SCHEDULED:<2017-11-02 四>
 1. 配置系统的基本结构:
    1. Makefile：分布在 Linux 内核源代码根目录及各层目录中，定义 Linux 内核的编译规则；
    2. 配置文件（config.in(2.4内核，2.6内核)）：给用户提供配置选择的功能；
