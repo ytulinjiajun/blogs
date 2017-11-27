@@ -172,8 +172,69 @@
          1. 如果[[FIND_LIBRARY_USE_LIB32_PATHS]]全局属性被设置，所有的搜索路径将被正常测试，32 /附加，lib /所有匹配替换为lib32 /。如果至少启用了project（）命令支持的一种语言，则会自动为已知需要的平台设置此属性
          2. 如果[[FIND_LIBRARY_USE_LIB64_PATHS]]全局属性被设置，所有的搜索路径将被正常地测试，64 /追加，并且所有匹配的lib /替换为lib64 /。如果至少启用了project（）命令支持的一种语言，则会自动为已知需要的平台设置此属性
        * 变量CMAKE_FIND_LIBRARY_CUSTOM_LIB_SUFFIX将覆盖FIND_LIBRARY_USE_LIB32_PATHS，FIND_LIBRARY_USE_LIBX32_PATHS和FIND_LIBRARY_USE_LIB64_PATHS全局属性
-*** DONE Project Commands
-    CLOSED: [2017-11-27 一 16:59]
+*** Project Commands
+**** <<target_include_directories>>
+#+BEGIN_SRC 
+target_include_directories(<target> [SYSTEM] [BEFORE]
+  <INTERFACE|PUBLIC|PRIVATE> [items1...]
+  [<INTERFACE|PUBLIC|PRIVATE> [items2...] ...])
+#+END_SRC
+1. 作用： 当编译一个给定目标时，指定编译过程中使用到的 include directory
+2. 要求： <target> 必须是一个已经被 [[add_executable]]() 或者 [[add_library]]()创建的目标，同时，不能是一个 [[IMPORTED]] 目标
+3. [SYSTEM]: 如果指定了该选项，就等于告诉编译器，这个目录是作为 system include directory
+4. [BEFORE]： 如果指定该选项，则内容将被预置到属性而不是被追加
+5. <INTERFACE|PUBLIC|PRIVATE> [items1...]：指定参数的scope
+   1. PUBLIC和PRIVATE items 将会构成<target>的[[INCLUDE_DIRECTORIES]]属性
+   2. PUBLIC和INTERFACE items 将会构成<target>的[[INTERFACE_INCLUDE_DIRECTORIES]]属性
+6. 如果[SYSTEM] 同 PUBLIC 或者 INTERFACE 一起被指定，将会构成<target>的[[INTERFACE_SYSTEM_INCLUDE_DIRECTORIES]]属性
+6. 被指定的 include directory 可能是绝对路径或者是相对路径
+7. 该命令的参数可能会使用语法为$<...>的“generator expressions”，详情查阅[[cmake-generator-expressions(7)]]
+**** <<target_link_libraries>>
+作用： 当链接一个给定的目标时，指定使用到的library或者flags
+***** Overview
+#+BEGIN_SRC 
+target_link_libraries(<target> ... <item>... ...)
+#+END_SRC
+1. <target>： 必须已经在当前目录中使用 [[add_executable]]()或者[[add_library]]()完成创建
+2. <item>： 每个item可能是下面的情况
+   1. A library target name
+   2. A full path to a library file
+   3. A plain library name:
+   4. A link flag
+   5. A debug, optimized, or general keyword immediately followed by another <item>
+***** Libraries for a Target and/or its Dependents
+#+BEGIN_SRC 
+target_link_libraries(<target>
+                      <PRIVATE|PUBLIC|INTERFACE> <item>...
+                     [<PRIVATE|PUBLIC|INTERFACE> <item>...]...)
+#+END_SRC
+1. PUBLIC, PRIVATE and INTERFACE 关键字用于指明在一个命令中的 link dependencies 和 link interface
+2. 标识 PUBLIC 的Libraries and targets 会被链接到 link interface,并且成为link interface的一部分
+3. 标识 PRIVATE 的Libraries and targets 会被链接到 link interface,但是不会成为link interface的一部分
+4. 标识 INTERFACE 的 Libraries and targets 会被添附到 link interface,但是不用于链接<target>
+***** Libraries for both a Target and its Dependents
+#+BEGIN_SRC
+target_link_libraries(<target> <item>...)
+#+END_SRC
+说明： 从文档的说明中，该用法同 target_link_libraries(<target> LINK_PUBLIC <lib>...)貌似一致
+***** Libraries for a Target and/or its Dependents (Legacy)
+#+BEGIN_SRC 
+target_link_libraries(<target>
+                      <LINK_PRIVATE|LINK_PUBLIC> <lib>...
+                     [<LINK_PRIVATE|LINK_PUBLIC> <lib>...]...)
+#+END_SRC
+1. LINK_PUBLIC and LINK_PRIVATE modes 可以用于在一个命令中指明 the link dependencies and the link interface
+2. 标识LINK_PUBLIC的Libraries and targets会被链接到 [[INTERFACE_LINK_LIBRARIES]] 并成为其中的一部分
+3. 标识LINK_PRIVATE的Libraries and targets会被链接到 [[INTERFACE_LINK_LIBRARIES]] 但是不会成为其中的一部分
+4. 如果 policy CMP0022 的值不是NEW,他们也会成为 [[LINK_INTERFACE_LIBRARIES]] 的一部份
+***** Libraries for Dependents Only (Legacy)
+#+BEGIN_SRC 
+target_link_libraries(<target> LINK_INTERFACE_LIBRARIES <item>...)
+#+END_SRC
+1. LINK_INTERFACE_LIBRARIES模式添加这个库到[[INTERFACE_LINK_LIBRARY]]属性，而不是使用这个库来进行链接
+2. 此用法仅用于兼容性，优先选择INTERFACE模式
+***** Cyclic Dependencies of Static Libraries
+***** Creating Relocatable Packages
 *** CTest Commands
 *** Deprecated Commands
 ** WAITTING [#C] Theme:cmake-developer                              :@Cmake:
