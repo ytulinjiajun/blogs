@@ -1,7 +1,7 @@
 * blogs-cmake-active
   版本: 3.10.0
-  文档: https://cmake.org/documentation/
-
+  官网: https://cmake.org
+  文档: https://www.linuxjournal.com/article/6700?page=0,0
 ** WAITTING [#C] Theme:cmake-buildsystem                            :@Cmake:
 *** Introduction
 *** Binary Targets
@@ -97,24 +97,43 @@
 5. 像其他的目标一样,它被用作 [[target_link_libraries]]()的参数
 6. 一个 INTERFACE 导入的目标也可以用这个签名来创建, 一个IMPORTED库目标引用在项目外定义的库
 7. 目标名称的范围在创建它的目录中，但GLOBAL选项扩展了可见性, 它可以像在项目中构建的任何目标一样被引用,IMPORTED库对于像target_link_libraries（）这样的命令的方便引用很有用
-**** <<find_library>>
-**** 命令:
+**** <<add_executable>>
 #+BEGIN_SRC 
-     find_library (
-     1. <VAR>
-     2. name | NAMES name1 [name2 ...] [NAMES_PER_DIR]
-     3. [HINTS path1 [path2 ... ENV var]]
-     4. [PATHS path1 [path2 ... ENV var]]
-     5. [PATH_SUFFIXES suffix1 [suffix2 ...]]
-     6. [DOC "cache documentation string"]
-     7. [NO_DEFAULT_PATH]
-     8. [NO_CMAKE_PATH]
-     9. [NO_CMAKE_ENVIRONMENT_PATH]
-     10. [NO_SYSTEM_ENVIRONMENT_PATH]
-     11. [NO_CMAKE_SYSTEM_PATH]
-     12. [CMAKE_FIND_ROOT_PATH_BOTH | ONLY_CMAKE_FIND_ROOT_PATH | NO_CMAKE_FIND_ROOT_PATH]
-     15. )
+泛型1: add_executable(<name> [WIN32] [MACOSX_BUNDLE] [EXCLUDE_FROM_ALL] source1 [source2 ...])
 #+END_SRC
+- 作用: 使用源文件列表中指定的源文件来构建可执行目标<name>
+- <name>对应于逻辑目标名字，并且在工程范围内必须是全局唯一的
+- 默认情况下，可执行文件将会在构建树的路径下被创建，对应于该命令被调用的源文件树的路径。如果要改变这个位置，查看[[RUNTIME_OUTPUT_DIRECTORY]]目标属性的相关文档
+- 果要改变最终文件名的<name>部分，查看[[OUTPUT_NAME]]目标属性的相关文档
+- 如果指定了WIN32选项,那么, WIN32_EXECUTABLE 这个属性将会在目标被创建的时候被设置
+- 如果指定了MACOSX_BUNDLE选项，对应的属性会附加在创建的目标上,查看MACOSX_BUNDLE目标属性的文档可以找到更多的细节
+- 如果指定了EXCLUDE_FROM_ALL选项，对应的属性将会设置在被创建的目标上。查看EXCLUDE_FROM_ALL目标属性的文档可以找到更多的细节
+- 源文件列表source1 [source2 ...] 到 add_executable 可以使用语法为$<...> 的 “生成器表达式”,更多信息查看 [[cmake-generator-expressions]]
+#+BEGIN_SRC 
+泛型2: add_executable(<name> IMPORTED [GLOBAL])
+#+END_SRC
+
+#+BEGIN_SRC 
+泛型3: add_executable(<name> ALIAS <target>)
+#+END_SRC
+**** <<find_library>>
+***** 命令:
+ #+BEGIN_SRC 
+      find_library (
+      1. <VAR>
+      2. name | NAMES name1 [name2 ...] [NAMES_PER_DIR]
+      3. [HINTS path1 [path2 ... ENV var]]
+      4. [PATHS path1 [path2 ... ENV var]]
+      5. [PATH_SUFFIXES suffix1 [suffix2 ...]]
+      6. [DOC "cache documentation string"]
+      7. [NO_DEFAULT_PATH]
+      8. [NO_CMAKE_PATH]
+      9. [NO_CMAKE_ENVIRONMENT_PATH]
+      10. [NO_SYSTEM_ENVIRONMENT_PATH]
+      11. [NO_CMAKE_SYSTEM_PATH]
+      12. [CMAKE_FIND_ROOT_PATH_BOTH | ONLY_CMAKE_FIND_ROOT_PATH | NO_CMAKE_FIND_ROOT_PATH]
+      15. )
+ #+END_SRC
 ***** 参数解析:
 1. <VAR>: 存储查找结果,如果找到了库文件,则将该文件(带绝对路径)存储在该变量内,如果没找到,该变量的值为<VAR>-NOTFOUND
 2. name | NAMES name1 [name2 ...] [NAMES_PER_DIR] 
@@ -172,6 +191,179 @@
          1. 如果[[FIND_LIBRARY_USE_LIB32_PATHS]]全局属性被设置，所有的搜索路径将被正常测试，32 /附加，lib /所有匹配替换为lib32 /。如果至少启用了project（）命令支持的一种语言，则会自动为已知需要的平台设置此属性
          2. 如果[[FIND_LIBRARY_USE_LIB64_PATHS]]全局属性被设置，所有的搜索路径将被正常地测试，64 /追加，并且所有匹配的lib /替换为lib64 /。如果至少启用了project（）命令支持的一种语言，则会自动为已知需要的平台设置此属性
        * 变量CMAKE_FIND_LIBRARY_CUSTOM_LIB_SUFFIX将覆盖FIND_LIBRARY_USE_LIB32_PATHS，FIND_LIBRARY_USE_LIBX32_PATHS和FIND_LIBRARY_USE_LIB64_PATHS全局属性
+**** <<macro>> 
+#+BEGIN_SRC 
+    1. macro(<name>  [arg1 [arg2 [arg3 ...]]])
+    2. COMMAND1(... arg1 ...)
+    3. COMMAND1(... arg2 ...)
+    4. COMMAND1(... arg3 ...)
+    5. COMMAND1(... ARGC ...)
+    6. COMMAND2(... ARGV1 ...)
+    7. COMMAND3(... ARGV2 ...)
+    8. ......
+    9. COMMAND4(... ARGVN ...)
+   10. endmacro(<name>)
+#+END_SRC         
+1. 作用: 定义一个名为<name>的宏
+
+2. 调用宏示例:
+#+BEGIN_SRC 
+   1. 在cmake/xxx.make中给出如下宏定义
+   2. macro(macro_test arg1 arg2)
+   3. message(STATUS "ARGC=${ARGC}")                                               
+   4. message(STATUS "ARGV0=${ARGV0}")                                             
+   5. message(STATUS "ARGV1=${ARGV1}")                                             
+   6. message(STATUS "ARGV2=${ARGV2}")                                             
+   7. message(STATUS "ARGN=${ARGN}")                                               
+   8. endmacro(macro_test)     
+   9. 
+   10. 在CMakeLists.txt中给出如下代码
+   11. include(cmake/xxx.make)
+   12. macro_test("hello" "word" "hi")
+#+END_SRC
+结果: 
+   1. ARGC = 3
+   2. ARGV0 = hello
+   3. ARGV1 = world
+   4. ARGV2 = hi
+   5. ARGV =  hello;world;hi
+   6. ARGN = hi
+
+参数说明: 假设存在宏定义 macro(T arg1 arg2), 调用 T("t1" "t2" "t3" "t4"),
+   1. ARGC 记录传入参数的个数: 4
+   2. ARGV0: 记录第1个传入参数的值: t1 
+   3. ARGV1: 记录第2个传入参数的值: t2
+   4. ARGV2: 记录第3个传入参数的值: t3
+   5. ARGV3: 记录第4个传入参数的数值: t4
+   6. ARGV: 记录传入的所有参数列表: t1;t2;t3;t4
+   7. ARGN: 记录超出宏定义参数的那些参数: t3;t4
+
+   宏参数(如ARGV,ARGC)不是变量,而if(<variabes>)要求一个变量,这意味着if(DEFINED ARGV1)的写法是错误的,
+可以书写为if(DEFINED ${ARGV1}),通常的做法是先使用set(list_var "${ARGV1}")将宏参数赋值给一个变量,然后用这个变量去传递给if(DEFINED list_var)
+
+   宏不等同于编程语言里面的函数,宏不允许递归调用  
+
+6. macro() 与 [[function]]() 的区别在于: 在宏中设置的的变量在外部被访问到,而在函数中设置的变量是局部的
+**** <<function>>
+#+BEGIN_SRC 
+          1. function(<name>  [arg1 [arg2 [arg3 ...]]])
+      	  2. COMMAND1(... arg1 ...)
+      	  3. COMMAND1(... arg2 ...)
+      	  4. COMMAND1(... arg3 ...)
+          5. COMMAND1(... ARGC ...)
+          6. COMMAND2(... ARGV1 ...)
+          7. COMMAND3(... ARGV2 ...)
+	        8. ......
+       	  9. COMMAND4(... ARGVN ...)
+          10. endfunction(<name>)
+#+END_SRC
+作用: 定义一个名为<name>的函数
+
+function()与[[macro]]()的区别: 在宏中设置的的变量在可以在外部被访问到,而在函数中设置的变量是局部的,外部无法访问
+
+函数的语法以及参数的传递同macro()别无二致,参考它即可
+
+	想要使得函数内部定义的变量可以被外部访问到也有可行的方法: function(T tmp)  set(${tmp} "hello" PARENT_SCOPE)  endfunction(T) 
+外部就可以 T(V2)message(STATUS "V2=${V2}"),返回hello,注意set(${tmp} ... PARENT_SCOPE)的写法(必须这样写),tmp想象成C语言中的函数
+传入指针和传入变量的问题就可以理解为什么是${tmp}而不是tmp了,使用 PARENT_SCOPE 是因为函数会构建一个局部作用域
+
+说明: 除非函数 <name> 被调用,否则在function()以及endfunction()之间的命令不会被调用
+
+注意: 函数内部的变量应当让他外部不可见,如果非要让外部可见,那么最好使用macro
+**** <<set>>
+作用: 为 普通变量,cache变量,环境变量 赋值,请参阅 [[cmake-language(7)]] 变量 文档以了解正常变量和缓存条目的范围和交互
+说明: <value>...标识此命令需要零个或者多个参数,若给出多个参数(set(tmp 2 GREATER 1)),则这些参数被连接成一个list的形式(2;GREATER;1),零个参数将会导致正常的变量被隐式的 [[unset]] 掉
+***** Set Normal Variable
+ #+BEGIN_SRC 
+ set(<variable> <value>... [PARENT_SCOPE])
+ #+END_SRC
+1. 不使用 PARENT_SCOPE 的情况下: 当前目录中定义的变量只能在: 当前目录, 子目录, 子目录的子目录...  中使用,无法传递到其父目录中使用
+2. 使用 PARENT_SCOPE 的情况下:  当前目录中定义的变量有且只能在其直接父目录中使用(注意:在当前目录无法使用,在其子目录无法使用,在其子目录的子目录无法使用,在其父目录的父目录无法使用 
+
+备注: 实现变量全局共享的另外一个方法是使用 [[set_property]] 命令
+***** Set Environment Variable
+#+BEGIN_SRC 
+set(ENV{<variable>} <value>...)
+#+END_SRC 
+作用: 将当前进程环境变量设置为给定值
+示例: set(ENV{[[CC]]} "gcc")
+***** Set Cache Entry
+#+BEGIN_SRC 
+set(<variable> <value>... CACHE <type> <docstring> [FORCE])
+#+END_SRC
+- 持久缓存的有关知识可参考 [[Cache]]
+
+- 作用: 设置给定的缓存<变量>（缓存条目）
+
+- 由于缓存条目旨在提供用户可设置的值，因此默认情况下不会覆盖现有的缓存条目,使用 FORCE 选项覆盖现有条目
+
+- <type> 必须是下面指定中的一个:
+- BOOL: 布尔ON / OFF值, cmake-gui（1）提供了一个复选框
+- FILEPATH: 磁盘上文件的路径。 cmake-gui（1）提供了一个文件对话框
+- PATH: 磁盘上目录的路径。 cmake-gui（1）提供了一个文件对话框
+- STRING: 一行文字。如果设置了STRINGS缓存条目属性，cmake-gui（1）将提供一个文本字段或一个下拉选择
+- INTERNAL: 一行文字。 cmake-gui（1）不显示内部条目。它们可能被用来在变量间持久地存储变量。这种类型的使用意味着FORCE。
+
+- 必须将<docstring>指定为一行文本，提供cmake-gui（1）用户呈现选项的快速摘要
+
+- 如果缓存条目在调用之前不存在，或者给出FORCE选项，则缓存条目将被设置为给定值。而且，当前作用域中的任何正常变量绑定都将被删除，以将新缓存的值显示给任何紧随其后的计算
+
+- 高速缓存条目可能在调用之前存在，但如果用户通过-D <var> = <value>选项在cmake（1）命令行上创建，而没有指定类型，则不会设置类型集。
+在这种情况下，set命令将添加类型。此外，如果<type>是PATH或FILEPATH，并且命令行上提供的<value>是相对路径，则set命令将把路径视为相对于当前工作目录并将其转换为绝对路径。
+**** <<set_property>>
+**** <<set_directory_properties>>
+**** <<get_property>>
+**** <<get_cmake_property>>
+**** <<get_directory_property>>
+**** <<foreach>>
+#+BEGIN_SRC 
+foreach(loop_var arg1 arg2 ...)
+  COMMAND1(ARGS ...)
+  COMMAND2(ARGS ...)
+  ...
+endforeach(loop_var)
+#+END_SRC
+    在foreach和匹配endforeach之间的所有命令都被记录而不被调用,一旦计算到了endforeach，
+在foreach命令中列出的每个参数都会调用记录的命令列表一次,在循环的每次迭代之前，${loop_var} 将被设置为一个具有列表中当前值的变量
+
+示例:
+#+BEGIN_SRC 
+    1) set(mylist arg1 arg2 arg3)
+    2) foreach(loop_var ${mylist})
+    3) message(STATUS “${loop_var}”)
+    4) endforeach(loop_var)	  
+#+END_SRC
+返回： arg1 arg2 arg3
+
+
+#+BEGIN_SRC 
+foreach(loop_var RANGE total)
+foreach(loop_var RANGE start stop [step])
+#+END_SRC
+Foreach也可以迭代生成的数字范围。这个迭代有三种类型：
+- 指定单个数字时，范围将包含0到“total”的元素
+- 指定两个数字时，范围将包含从第一个数字到第二个数字的元素
+- 第三个可选数字是用于从第一个数字迭代到第二个数字的增量
+
+示例:
+#+BEGIN_SRC 
+     1) set(result 0)
+     2) foreach(_var RANGE 0 100)
+     3) math(EXPR result "${result}+${_var}")
+     4) endforeach()
+     5) message("from 0 plus to 100 is:${result}")
+     6) 
+#+END_SRC
+返回： 5050
+备注：如果是foreach(_var RANGE 30),则表示从0~30,如果是foreach(_var RANGE 4 10 2),则表示从4~10，步长为2
+
+#+BEGIN_SRC 
+foreach(loop_var IN [LISTS [list1 [...]]]
+                    [ITEMS [item1 [...]]])
+#+END_SRC
+- 迭代 items 的精确列表
+- LISTS 选项列出要被遍历的列表值变量,包括空元素（一个空字符串是一个零长度列表）。 （注意宏参数不是变量。）
+- ITEMS 选项结束参数解析并在迭代中包含其后面的所有参数
 *** Project Commands
 **** <<target_include_directories>>
 #+BEGIN_SRC 
@@ -235,6 +427,29 @@ target_link_libraries(<target> LINK_INTERFACE_LIBRARIES <item>...)
 2. 此用法仅用于兼容性，优先选择INTERFACE模式
 ***** Cyclic Dependencies of Static Libraries
 ***** Creating Relocatable Packages
+**** <<define_property>>
+**** <<set_source_files_properties>>
+#+BEGIN_SRC 
+set_source_files_properties([file1 [file2 [...]]]
+                            PROPERTIES prop1 value1
+                            [prop2 value2 [...]])
+#+END_SRC
+- 源文件有一些影响它们如何构建的属性,这些属性可以在 [[Properties on Source Files]] 下面查阅
+
+- 该命令使用键/值配对列表来设置这些源文件相应的属性
+
+- 源文件属性仅对在同一目录（CMakeLists.txt）中添加的目标可见
+
+- 示例:
+#+BEGIN_SRC 
+set_source_files_properties(hello.c world.c
+                           PROPERTIES COMPILE_FLAGS -DDEBUG
+)
+#+END_SRC
+**** <<set_target_properties>>
+**** <<get_source_file_property>>
+**** <<get_target_property>>
+
 *** CTest Commands
 *** Deprecated Commands
 ** WAITTING [#C] Theme:cmake-developer                              :@Cmake:
@@ -276,14 +491,51 @@ target_link_libraries(<target> LINK_INTERFACE_LIBRARIES <item>...)
 ***** Visual Studio Generators
 ***** Other Generators
 *** TExtra Generators
-** WAITTING [#C] Theme:cmake-language                               :@Cmake:
-*** Variables
-    1. 在 cmake 的语法中,变量是基本的存储单元
-    2. 变量的值总是字符串类型
-    3. set 和 unset 命令用于设置以及清除变量的值(当然了,也有其他的一些命令含有修改变量值的语义)
-    4. 变量名是大小写敏感的,建议使用_和-来组合变量
-    5. 变量有动态的范围,每个使用set或者unset赋值的变量实际上是在当前范围内创建了一个绑定 
- Blog creation time:[2017-11-08 三 09:38]
+** WAITTING [#C] Theme:cmake-language(7)                            :@Cmake:
+*** Organization
+**** Directories
+**** Scripts
+**** Modules
+*** Syntax
+**** Encoding
+**** Source Files
+**** Command Invocations
+**** Command Arguments
+***** Bracket Argument
+***** Quoted Argument
+***** Unquoted Argument
+**** Escape Sequences
+**** <<Variable References>>
+- 变量引用的格式为$ {variable_name}，并在引用的参数或非引用的参数中进行评估
+
+- 变量引用被变量的值替换，或者如果变量未被设置，则由空字符串替换
+
+- 变量引用可嵌套，并从内向外进行计算，例如， ${outer_${inner_variable}_variable}
+
+- 环境变量引用的形式为$ENV {VAR}，并在与普通变量引用相同的上下文中进行计算
+**** Comments
+***** Bracket Comment
+***** Line Comment
+*** Control Structures
+**** Conditional Blocks
+**** Loops
+**** Command Definitions
+*** <<Variables>>
+1. 在 cmake 的语法中,变量是基本的存储单元
+2. 变量的值总是字符串类型
+3. [[set]]() 和 [[unset]]() 命令用于设置以及清除变量的值(当然了,也有其他的一些命令含有修改变量值的语义)
+4. 变量名是大小写敏感的,几乎可以由任何文本组成,但是建议只使用_和-来组合变量
+5. 变量有动态的范围,每个使用set或者unset赋值的变量实际上是在当前范围内创建了一个绑定,当前范围指:
+   1. Function Scope: 由 [[function]]() 命令定义的一个函数, 这个函数内部涉及的变量,只在函数内部以及函数的嵌套调用中可见
+   2. Directory Scope: 源码树中的每个目录都有自己的变量绑定,在处理当前目录的CMakeLists.txt文件之前，CMake会复制其父目录中定义的所有变量绑定
+   3. Persistent <<Cache>>(持久缓存):
+      1. CMake存储一组单独的“缓存”变量或“缓存条目”，它们的值在项目构建树中的多个运行中保持不变。
+      2. 高速缓存条目具有仅由显式请求修改的独立绑定范围，例如由[[set]]（）和unset（）命令的CACHE选项修改
+6. 变量的引用过程:
+   1. 当计算 [[Variable References]] 时，CMake首先搜索函数调用堆栈（如果有的话）进行绑定，然后回退到当前目录范围中的绑定（如果有的话）
+   2. 如果找到“set”绑定，则使用它的值。如果找到“unset”绑定，或者没有找到绑定，CMake就会搜索一个缓存条目
+   3. 如果找到缓存条目，则使用其值。否则，变量引用计算为空字符串。
+*** <<Lists>>
 ** WAITTING [#C] Theme:cmake-server(7)                              :@Cmake:
 ** WAITTING [#C] Theme:cmake-modules(7)                             :@Cmake:
 ** WAITTING [#C] Theme:cmake-packages(7)                            :@Cmake:
@@ -296,20 +548,51 @@ target_link_libraries(<target> LINK_INTERFACE_LIBRARIES <item>...)
    5. 在工程中可以设置各种policy来选择期望的行为
 Blog creation time:[2017-11-08 三 13:28]
 ** WAITTING [#C] Theme:cmake-properties                             :@Cmake:
-*** Properties of Global Scope
+*** <<Properties of Global Scope>>
     1. <<ENABLED_LANGUAGES>>
         1. 存储当前使能的语言列表
         2. 由命令[[enable_language]]配置
         3. 只读
-*** Properties on Directories
-*** Properties on Targets
+*** <<Properties on Targets>>
 **** <<POSITION_INDEPENDENT_CODE>>
 1. 该变量的属性决定了将要创建的可执行文件或者共享库是否位置独立
 2. 如果一个库是 SHARD 和 MODULE,那么这个属性自动设置为true
 3. 该属性值被变量 [[CMAKE_POSITION_INDEPENDENT_CODE]] 的值初始化
 4. 参考 [[add_library]]()
+*** <<Properties on Directories>>
+*** <<Properties on Source Files>>
+备注: 使用命令 [[set_source_files_properties]]() 以及 [[get_source_files_properties]]() 来操作这些源文件的属性
+**** <<COMPILE_FLAGS>>
+1. 当编译这个源文件时,该属性的 flags 会被添加到 compile flags 中
+2. 使用 [[COMPILE_DEFINITIONS]] 属性来传递额外的预处理器定义
+3. 该属性的内容可能使用语法为 $<...> 的“generator expressions”, 详情查阅 [[cmake-generator-expressions(7)]]
+4. Xcode不支持per-config per-source设置，所以依赖于生成配置的表达式不被该 generator 所允许
+**** <<GENERATED>>
+1. 这个源文件是否是作为构建过程的一部分生成的?
+2. 如果源文件是由构建过程生成的，CMake将在依赖性检查等方面进行不同的处理,否则，有一个不存在的源文件可能会产生问题
+**** <<LABELS>>
+- 指定与源文件关联的文本标签列表
+- 只有当源文件列在其LABELS属性也被设置的目标中时，该属性才有意义,目前没有指定其他的语义
+**** <<COMPILE_DEFINITIONS>>
+- 用于编译源文件的预处理器定义
+- COMPILE_DEFINITIONS属性可以使用语法VAR或VAR = value设置为以分号分隔的预处理器定义列表
+- 函数式定义不受支持
+- CMake会自动为本地构建系统正确地转义值（注意，CMake语言语法可能需要转义才能指定一些值）
+- 可以使用名称COMPILE_DEFINITIONS_ <CONFIG>在每个配置的基础上设置此属性，其中<CONFIG>是大写名称（例如“COMPILE_DEFINITIONS_DEBUG”）
+- CMake会自动删除一些原生构建工具不支持的定义
+- Xcode不支持源文件的预配置定义
+
+- 大多数本地构建工具对逃脱某些值的支持很差。 CMake在许多情况下都有解决方法，但有些值可能无法正确传递。
+如果某个值似乎没有正确转义，则不要试图通过向该值添加转义序列来解决该问题。 
+CMake的未来版本可能会打破您的解决方案，从而改善了逃生支持。应该考虑在（配置的）头文件中定义宏。然后报告限制。已知的限制包括：
+#          - broken almost everywhere
+;          - broken in VS IDE 7.0 and Borland Makefiles
+,          - broken in VS IDE
+%          - broken in some cases in NMake
+& |        - broken in some cases on MinGW
+^ < > \"   - broken in most Make tools on Windows
+CMake不会完全拒绝这些值，因为它们在某些情况下有效。谨慎使用。
 *** Properties on Tests
-*** Properties on Source Files
 *** Properties on Cache Entries
 *** Properties on Installed Files
 *** Deprecated Properties on Directories
