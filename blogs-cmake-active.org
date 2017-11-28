@@ -98,7 +98,7 @@
 6. 一个 INTERFACE 导入的目标也可以用这个签名来创建, 一个IMPORTED库目标引用在项目外定义的库
 7. 目标名称的范围在创建它的目录中，但GLOBAL选项扩展了可见性, 它可以像在项目中构建的任何目标一样被引用,IMPORTED库对于像target_link_libraries（）这样的命令的方便引用很有用
 **** <<find_library>>
-***** 命令:
+**** 命令:
 #+BEGIN_SRC 
      find_library (
      1. <VAR>
