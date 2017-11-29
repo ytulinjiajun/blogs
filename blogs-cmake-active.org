@@ -295,6 +295,10 @@ set(<variable> <value>... CACHE <type> <docstring> [FORCE])
 
 - 作用: 设置给定的缓存<变量>（缓存条目）
 
+- 作用域: 持久缓存变量在: 当前目录,子目录,子目录的子目录... 父目录,父目录的父目录中都是可见的,但是一定得在递归调用点之后才有效
+(比如当前目录tt中add_subdirectory(subdir)命令会引起工作目录转移到subdir中,如果在subdir中的CMakeLists.txt中定义的CACHE变量,在tt目录中想要使用
+该变量,只能在add_subdirectory命令之后才有效,在其之前无效)
+
 - 由于缓存条目旨在提供用户可设置的值，因此默认情况下不会覆盖现有的缓存条目,使用 FORCE 选项覆盖现有条目
 
 - <type> 必须是下面指定中的一个:
@@ -308,8 +312,8 @@ set(<variable> <value>... CACHE <type> <docstring> [FORCE])
 
 - 如果缓存条目在调用之前不存在，或者给出FORCE选项，则缓存条目将被设置为给定值。而且，当前作用域中的任何正常变量绑定都将被删除，以将新缓存的值显示给任何紧随其后的计算
 
-- 高速缓存条目可能在调用之前存在，但如果用户通过-D <var> = <value>选项在cmake（1）命令行上创建，而没有指定类型，则不会设置类型集。
-在这种情况下，set命令将添加类型。此外，如果<type>是PATH或FILEPATH，并且命令行上提供的<value>是相对路径，则set命令将把路径视为相对于当前工作目录并将其转换为绝对路径。
+- 高速缓存条目可能在调用之前存在，但如果用户通过-D <var> = <value>选项在cmake（1）命令行上创建，而没有指定类型，则不会设置类型集
+在这种情况下，set命令将添加类型。此外，如果<type>是PATH或FILEPATH，并且命令行上提供的<value>是相对路径，则set命令将把路径视为相对于当前工作目录并将其转换为绝对路径
 **** <<set_property>>
 **** <<set_directory_properties>>
 **** <<get_property>>
@@ -381,6 +385,55 @@ target_include_directories(<target> [SYSTEM] [BEFORE]
 6. 如果[SYSTEM] 同 PUBLIC 或者 INTERFACE 一起被指定，将会构成<target>的[[INTERFACE_SYSTEM_INCLUDE_DIRECTORIES]]属性
 6. 被指定的 include directory 可能是绝对路径或者是相对路径
 7. 该命令的参数可能会使用语法为$<...>的“generator expressions”，详情查阅[[cmake-generator-expressions(7)]]
+**** <<link_directories>>
+#+BEGIN_SRC 
+link_directories(directory1 directory2 ...)
+#+END_SRC
+- 指定链接器应该搜索库的路径
+
+- 该命令仅适用于调用后创建的目标
+
+- 这个命令的相对路径被解释为相对于 current source directory ，见CMP0015。
+
+备注: 
+	官方文档上说该命令很少需要,推荐使用 [[find_library]]() 这两个命令  [[find_package]](), 我当时很执着,一定非得使用这两个命令来替代 link_directories, 可是,
+我显然进入了一个误区, 人家说很少需要, 并没说该命令是一个将要丢弃的命令,于是乎, 我走错了方向:
+	库, 可以是一个外部库,这样的库的特点是: 已经存在, 当然, 也可以是一个在CMakeLists.txt中使用 [[add_library]]() 创建的库. 对于外部库来说, 使用 find_library()命令 
+来查找自然是没有什么问题的, 返回该外部库的绝对路径, 可是对于 CMakeLists.txt 中使用 add_library() 创建的库来说,这是有问题的:
+  - sept1: 使用 cmake -H. -B_builds 这一命令生成 Makefile 文件
+  - sept2: 使用 make --build _builds 来处理 Makefile 文件
+
+  想想这两个过程有什么问题: 在CMakeLists.txt中使用 add_library(tmp STATIC hello.c) 命令创建的库 libtmp.a 是在 make --build _builds 之后才生成的, 然而,
+命令 find_library(mytmp NAMES tmp PATH ...) 在 cmake -H. -B_builds 时就会在指定路径下查找 libtmp.a 这个库, 显然是找不到的, 因此 mytmp 的值是 tmp-NOFOUND,
+此时, 如果在CMakeLists.txt中有使用 target_link_libraries(main ${mytmp})来引用 libtmp.a 这个库的话, 在 sept1 阶段就会产生一个错误:
+  CMake Error: The following variables are used in this project, but they are set to NOTFOUND 
+
+总结: link_directories() 命令用于内部库查找, find_library() 用于一个已经存在了的外部库   
+
+测试小插曲: 
+#+BEGIN_SRC 
+当前目录下的CMakeLists.txt:
+...
+
+add_subdirectory(dir)
+
+find_library(mytmp NAMES tmp HINTS  /home/ljj/workspace/tmp/find_library/lib)
+
+message(STATUS "mytmp=${mytmp}")
+
+if(EXISTS ${mytmp})
+  add_executable(main main.c)
+  target_link_libraries(main ${mytmp})
+endif()
+#+END_SRC
+#+BEGIN_SRC 
+子目录dir目录下面的CMakeLists.txt:
+
+add_library(tmp STATIC hello.c)
+#+END_SRC
+   这一个有意思的测试,能帮助更好的理解link_directories()和find_library()之间的微妙关系:
+   第一次使用 cmake -H. -B_builds是不会报错,但是,mytmp=mytmp-NOFOUND, 接着使用 cmake --build _builds时,会生成libtmp.a,
+接着再次重复一遍第一次的两个命令,就可以生成可执行文件 main 了
 **** <<target_link_libraries>>
 作用： 当链接一个给定的目标时，指定使用到的library或者flags
 ***** Overview
