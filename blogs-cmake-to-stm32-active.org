@@ -1,0 +1,609 @@
+* blogs-cmake-to-stm32-active
+** DONE Theme:工具网站                                         :@CmakeStm32:
+   CLOSED: [2017-11-25 六 19:10]
+1. [[http:www.stmcu.org/module/forum/thread-603753-1-1.html][使用Makefile开发STM32的基础范例]] 
+2. [[https:launchpad.net/gcc-arm-embedded/+download][arm-none-eabi-gcc 源码包]]
+3. [[https:www.vtk.org/Wiki/CMake_Cross_Compiling][CMake Cross Compiling of WiKi]]
+ Blog creation time:[2017-11-23 四 11:19]
+** TODO [#C] Theme: CMake Cross Compiling                      :@CmakeStm32:
+备注: 该章节的内容取自 https://www.vtk.org/Wiki/CMake_Cross_Compiling 
+1. CMake从 2.6.0 版本以后开始支持跨平台编译
+2. 跨平台编译意味着:
+   1. CMake不能够自动检测到目标系统
+   2. 生成的可执行文件不能运行在宿主机上面
+   3. 构建程序过程中不得不使用一组不同的 include file 以及 libraries 来进行编译
+3. 跨平台编译时,CMake不会去猜测目标系统,因此,必须预设一些 CMake 变量,这些变量在 toolchain file 中进行设置,下面的变量是必须进行设置的:
+   1. CMAKE_SYSTEM_NAME
+      1. 该变量是强制要求设置的
+      2. 该变量的值是目标系统上使用的操作系统的名字
+      3. 这个变量用于构建平台文件的名,比如: Linux.cmake 或者 Windows-gcc.cmake
+      4. 典型的值是 Linux, Windows, Andrios
+      5. 如果目标系统是一个不带OS的嵌入式系统,那么,可以设置该变量的值为Generic
+      6. 如果该变量被预设了相应的值,那么 CMAKE_CROSSCOMPILING 将会被自动设置为TRUE, 因此,可以根据这一特性,在CMake文件中进行测试 是否预设CMAKE_SYSYTEM_NAME这个变量
+   2. CMAKE_SYSTEM_VERSION: 可选, 存储目标系统的版本,不是特别常用
+   3. CMAKE_SYSTEM_PROCESSOR
+      1. 目标系统的处理器或者硬件
+      2. 可选,不是特别常用,一个运用是用于加载  CMAKE_SYSTEM_NAME-compiler-CMAKE_SYSTEM_PROCESSOR.cmake 这个文件可以用于修改像Compiler flag这样的设置项
+      3. 如果您正在使用交叉编译器，而且这个交叉编译器对于每个目标硬件都需要特殊的编译设置，则可能只需要设置该变量
+   4. CMAKE_C_COMPILER
+      1. 因为CMake不会猜测目标系统,它也不会猜测应该使用哪个编译器来进行编译,因此,该变量也必须进行设置
+      2. 可以是交叉编译器的全路径,也可以是交叉编译器的文件名
+      3. 如果指定了全路径,当搜索c++ 编译器以及其他工具(binutils, linker)等等,那么,这个路径将会是首选
+      4. 如果被指定的编译器是一个带前缀名(如arm-elf-gcc)的 gcc-cross compiler,CMake将会自动的检测这个前缀,然后自动的查找相应的c++编译器(arm-elf-c++)
+      5. 这个变量的值也可以在一个名为CC的环境变量中进行设置
+   5. CMAKE_CXX_COMPILER
+      1. C++编译器,可以是交叉编译器的全路径,也可以是交叉编译器的文件名
+      2. 其处理方法同CMAKE_C_COMPILER一致
+      3. 如果toolchain是一个GNU toolchain,你只需要设置其中的一个
+   6. 一旦系统名和编译器被CMake检测到,它就会载入下面条目中相应的文件:
+      1. Platform/${CMAKE_SYSTEM_NAME}.cmake (optional, but issues a stern warning)
+      2. Platform/${CMAKE_SYSTEM_NAME}-<compiler>.cmake (optional)
+      3. Platform/${CMAKE_SYSTEM_NAME}-<compiler>-${CMAKE_SYSTEM_PROCESSOR}.cmake (optional)
+      4. 备注: <compiler>既不是编译器的basename如gcc,也不是"cl",编译器id,而是被编译器检测到的一个测试源文件
+   7. 对于宿主机上的testing,有一组相应的变量,它们自动的被CMake设置,这组变量是:
+      1. CMAKE_HOST_SYSTEM_NAME
+      2. CMAKE_HOST_SYSTEM_VERSION
+      3. CMAKE_HOST_SYSTEM_PROCESSORCMAKE_HOST_SYSTEM
+   8. 没有进行交叉编译时,宿主系统和目标系统的变量是相同的,大多数情况下,你会想要测试目标系统,那么与没有交叉编译的方式一样，使用CMAKE_SYSTEM_xxx变量，这对于交叉编译和本地构建都是有效的
+   9. 通过正确设置这些变量，CMake现在将使用交叉编译工具链进行构建，而在CMakeLists.txt中，您仍然可以使用CMAKE_SYSTEM_XXX变量来测试您正在构建的系统
+   10. 这些变量的设置已经足以使用CMake来交叉编译简单的（构建系统）项目
+4. Searching and finding external software:
+   1. 大多数项目都会依赖于外部的库或者工具,CMake提供了: find_program(), find_library(), find_file(), find_path(), find_package() 这五个命令来实现这个目的
+   2. 这5个命令在文件系统中搜索文件并返回结果,find_package（）有点不同，因为它实际上不搜索自己，但是“只”执行FindXXX.cmake模块，然后通常调用find_program（），find_library（），find_file（）和find_path（）命令
+   3. 当交叉编译例如对于具有ARM处理器的目标，作为find_package（JPEG）的结果而获得/usr/lib/libjpeg.so并不是很有帮助，因为这将是主机系统的JPEG库,例如，一个x86 Linux机器
+   4. 所以你需要告诉CMake在其他地方搜索,这可以通过设置以下变量来完成：
+      1. CMAKE_FIND_ROOT_PATH
+         1. 默认该变量的值是空
+         2. 如果设置了该变量的值,首先搜索以CMAKE_FIND_ROOT_PATH中给定的目录为前缀的目录,之后,搜索目录的去掉前缀后的目录将会被搜索
+         3. 这种行为可以单独修改每个 find_xxx()命令的NO_CMAKE_FIND_ROOT_PATH，ONLY_CMAKE_FIND_ROOT_PATH和CMAKE_FIND_ROOT_PATH_BOTH选项
+         4. 这种行为也可以将所有find_xxx()命令按默认设置,然后调整变量 CMAKE_FIND_ROOT_PATH_MODE_PROGRAM，CMAKE_FIND_ROOT_PATH_MODE_LIBRARY和CMAKE_FIND_ROOT_PATH_MODE_INCLUDE变量进行调整
+         5. 如果您不想仅使用工具链附带的库，而是为目标平台构建和使用其他库，则应该为这些包创建一个安装目录,例如,$HOME/eldk-ppc_74xx-inst/增加到该变量,此时,find_xxx()命令也会到该路径下面进行搜索
+         6. 如果您为目标平台构建软件包，则应将这些软件包安装到此目录中
+         7. 该变量的值是一个目录列表
+         8. 在这里列出的每个目录都会被添附到每个 find_xxx() 命令的每一个搜索目录
+         9. 例如,如果你的目标环境被安装在/opt/eldk/ppc_74xx下面,那么,可以设置CMAKE_FIND_ROOT_PATH为这个目录
+         10. 然后,如果给出 find_library(BZ2_LIB bz2), 那么,将会在 /opt/eldk/ppc_74xx/lib, /opt/eldk/ppc_74xx/usr/lib, /lib, /usr/lib 这里个路径下面进行搜索
+         11. 可能会返回 /opt/eldk/ppc_74xx/usr/lib/libbz2.so 作为结果
+         12. 
+      2. CMAKE_FIND_ROOT_PATH_MODE_PROGRAM
+         1. 该变量约束了find_program()命令的默认行为
+         2. 该变量可以设置为 NEVER, ONLY or BOTH (default)
+         3. 如果设置为 NEVER，find_program()命令将不会到 CMAKE_FIND_ROOT_PATH 所示的路径下进行搜索（除非明确地启用它）
+         4. 如果设置为 ONLY, 那么,find_program()命令只会使用 CMAKE_FIND_ROOT_PATH 所示的目录前缀来进行搜索
+         5. 默认值是 BOTH, 这意味着, find_program()命令首先会在 CMAKE_FIND_ROOT_PATH所示的前缀目录下搜索,然后在没有前缀的目录下搜索
+         6. 在大多数情况下，find_program()用来搜索一个可执行文件，然后执行(例如,使用 execute_process()命令或add_custom_command()命令)
+         7. 所以,在大多数情况下，来自 build host 的一个可执行文件将会被 require,因此,通常将 CMAKE_FIND_ROOT_PATH_MODE_PROGRAM设置为NEVER
+      3. CMAKE_FIND_ROOT_PATH_MODE_LIBRARY
+         1. 用于约束 find_library()命令
+         2. 大多数情况下,该命令用于查找一个库,然后查找到的库将会用于链接,因此一个目标的库将会被require,因此,通常情况下将其设置为为ONLY
+      4. CMAKE_FIND_ROOT_PATH_MODE_INCLUDE
+         1. 用于约束find_path()以及find_file()命令
+         2. 在许多情况下，这用于查找include directory，因此目标环境应该被搜索,因此,通常设置为ONLY
+         3. 您可能必须使用NO_CMAKE_FIND_ROOT_PATH，ONLY_CMAKE_FIND_ROOT_PATH和CMAKE_FIND_ROOT_PATH_BOTH选项来调整某些FIND_PATH（）或FIND_FILE（）调用的行为
+5. The toolchain file:
+   1. 使用-DCMAKE_SYSTEM_NAME等定义上面提到的所有变量将是相当单调和容易出错的,为了使事情变得简单，你可以设置另一个cmake变量CMAKE_TOOLCHAIN_FILE 
+   2. 将所有上面定义的变量写到CMAKE_TOOLCHAIN_FILE给出的文件下面,然后使用一次-DCMAKE_TOOLCHAIN_FILE就可以实现将上面定义的所有变量传递给CMake的目的,CMake将会首先处理传递进去的那些个变量
+   3. 您不必为每一个您要构建的软件都编写一个工具链文件，工具链文件是针对每个目标平台的，也就是说，如果您要为同一个目标平台构建多个软件包，则只​​需编写一个工具链文件，你可以使用它的所有包
+   4. 如果你的编译器不能在没有特殊标志或文件（例如链接器脚本或内存布局文件）的情况下默认构建一个简单的程序，那么上面显示的工具链文件不起作用。那么你必须强制编译器:
+      1. INCLUDE(CMakeForceCompiler)
+      2. 
+      3. # this one is important
+      4. SET(CMAKE_SYSTEM_NAME eCos)
+      5. 
+      6. # specify the cross compiler
+      7. CMAKE_FORCE_C_COMPILER(arm-elf-gcc GNU)
+      8. CMAKE_FORCE_CXX_COMPILER(arm-elf-g++ GNU)
+      9. 
+      10. # where is the target environment
+      11. SET(CMAKE_FIND_ROOT_PATH  /home/alex/src/ecos/install )
+      12. 
+      13. # search for programs in the build host directories
+      14. SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+      15. # for libraries and headers in the target directories
+      16. SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+      17. SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+      18. 备注: 这是使用CMAKE_FORCE_XXX_COMPILER（）宏完成的。第二个参数是编译器ID，CMake用它来识别编译器。
+6. 系统自检:
+   1. 许多软件项目都有一套系统内省测试来查找（目标）系统的属性,在CMake中,也有宏提供了这样的功能
+   2. 比如 CHECK_INCLUDE_FILES() or CHECK_C_SOURCE_RUNS(),大多数这些测试将在内部使用TRY_COMPILE（）或TRY_RUN（）CMake命令
+   3. TRY_COMPILE（）命令在交叉编译时也可以正常工作，他们会尝试使用交叉编译工具链来编译这段代码，这会得到预期的结果
+   4. 所有使用TRY_RUN（）的测试都无法运行，因为创建的可执行文件无法在构建主机系统上运行。起初，TRY_RUN（）试图编译软件，在交叉编译时它将以相同的方式工作。
+** TODO [#C] Theme: CMake Compiler 
+*** ASM
+*** C
+**** <<CMAKE_BUILD_TYPE>>
+1. 指定 在 single-configuration generators 上的 build type 
+2. 可能的值有: empty, Debug, Release, RelWithDebInfo, MinSizeRel
+3. 这个变量的值仅仅在 single-configuration generators(诸如: Makefile Generators and Ninja)上才有意义
+4. 在multi-config generators 上的配置参考 [[CMAKE_CONFIGURATION_TYPES]]
+**** <<CC>>
+1. 该变量是一个环境变量
+
+2. CMake在第一次配置时会使用它,在决定了编译器之后,将它的值作为 [[CMAKE_C_COMPILER]] 存储在高速缓存中
+
+3. 对于任何配置运行（包括第一个），如果定义了 CMAKE_C_COMPILER 变量，则该环境变量的默认值将被忽略
+**** <<CMAKE_C_COMPILER>>   请设置
+1. c 编译器的全路径
+2. 这是用于设置 c 编译器的命令,一旦设置，你不能改变这个变量
+**** <<CMAKE_C_COMPILER_AR>>  请设置
+1. 设置创建静态库的工具,比如 arm-none-eabi-gcc-ar
+2. [[CMAKE_AR]] 记录了该信息
+**** <<CMAKE_AR>>
+1. 该变量提供了创建归档或静态库的程序的名称,供查询
+2. 配置在变量 [[CMAKE_C_COMPILER_AR]] 中完成
+**** <<CMAKE_C_COMPILER_RANLIB>>  请设置
+1. 设置 ranlib 工具,比如 arm-none-eabi-gcc-ranlib
+2. [[CMAKE_RANLIB]] 记录了该信息
+**** <<CMAKE_RANLIB>>
+1. 该变量提供了 randlib 程序的名称,供查询
+2. 配置在变量 [[CMAKE_C_COMPILER_RABLIB]] 中完成
+**** 不常用 
+CMAKE_ <LANG>_CLANG_TIDY
+CMAKE_ <LANG> _COMPILER_LAUNCHER
+CMAKE_ <LANG> _CPPCHECK
+CMAKE_ <LANG> _CPPLINT
+CMAKE_ <LANG> _INCLUDE_WHAT_YOU_USE
+CMAKE_ <LANG> _VISIBILITY_PRESET
+CMAKE_ <LANG> _ANDROID_TOOLCHAIN_MACHINE
+CMAKE_ <LANG> _ANDROID_TOOLCHAIN_PREFIX
+CMAKE_ <LANG> _ANDROID_TOOLCHAIN_SUFFIX
+CMAKE_ <LANG> _ARCHIVE_APPEND
+CMAKE_ <LANG> _ARCHIVE_CREATE
+CMAKE_ <LANG> _ARCHIVE_FINISH
+
+CMAKE_ <LANG> _COMPILER_ABI
+CMAKE_ <LANG> _COMPILER_ARCHITECTURE_ID
+CMAKE_ <LANG> _COMPILER_EXTERNAL_TOOLCHAIN
+CMAKE_ <LANG> _COMPILER_ID
+CMAKE_ <LANG> _COMPILER_LOADED
+CMAKE_ <LANG> _COMPILER_PREDEFINES_COMMAND
+CMAKE_ <LANG> _COMPILER_TARGET
+CMAKE_ <LANG> _COMPILER_VERSION
+CMAKE_ <LANG> _COMPILER_VERSION_INTERNAL
+CMAKE_ <LANG> _COMPILE_OBJECT
+
+CMAKE_ <LANG> _CREATE_SHARED_LIBRARY
+CMAKE_ <LANG> _CREATE_SHARED_MODULE
+CMAKE_ <LANG> _CREATE_STATIC_LIBRARY
+
+
+CMAKE_ <LANG> _IGNORE_EXTENSIONS
+CMAKE_ <LANG> _IMPLICIT_INCLUDE_DIRECTORIES
+CMAKE_ <LANG> _IMPLICIT_LINK_DIRECTORIES
+CMAKE_ <LANG> _IMPLICIT_LINK_FRAMEWORK_DIRECTORIES
+CMAKE_ <LANG> _IMPLICIT_LINK_LIBRARIES
+CMAKE_ <LANG> _LIBRARY_ARCHITECTURE
+CMAKE_ <LANG> _LINKER_PREFERENCE
+CMAKE_ <LANG> _LINKER_PREFERENCE_PROPAGATES
+CMAKE_ <LANG> _LINK_EXECUTABLE
+CMAKE_ <LANG> _OUTPUT_EXTENSION
+CMAKE_ <LANG> _PLATFORM_ID
+CMAKE_ <LANG> _SIMULATE_ID
+CMAKE_ <LANG> _SIMULATE_VERSION
+CMAKE_ <LANG> _SIZEOF_DATA_PTR
+CMAKE_ <LANG> _SOURCE_FILE_EXTENSIONS
+CMAKE_ <LANG> _STANDARD_INCLUDE_DIRECTORIES
+CMAKE_ <LANG> _STANDARD_LIBRARIES
+CMAKE_Swift_LANGUAGE_VERSION
+CMAKE_USER_MAKE_RULES_OVERRIDE_ <LANG>
+*** C++
+*** C#
+*** Fortran
+** TODO [#C] Theme: CMake Flags 
+*** ASM
+**** ASM<DIALECT>
+**** ASM<DIALECT>FLAGS
+*** C 
+**** <<CFLAGS>>
+ 1. 该变量是一个环境变量,CMake在第一次配置时才会使用它来确定 [[CC]] 默认的编译 flags，之后将 CFLAGS 的值作为 [[CMAKE_C_FLAGS]] 存储在高速缓存(CACHE)中
+
+ 2. 对于任何配置运行（包括第一个），如果定义了 CMAKE_C_FLAGS 变量，则环境变量将被忽略
+
+ 3. 显然,应当将 CMAKE_C_FLAGS  在 ToolChain.cmake 中进行显式定义来忽略掉该环境变量
+**** <<CMAKE_C_FLAGS_INIT>>   请配置
+1. 第一次为语言C配置 build tree 时, 该变量的值用于初始化 [[CMAKE_C_FLAGS]] 高速缓存条目
+2. 这个变量可由工具链文件 toolchain 设置, CMake可以根据环境和目标平台向该变量预加或者附加内容
+**** <<CMAKE_C_FLAGS>>
+1. 所有 build type 的 flags
+2. 不管 [[CMAKE_BUILD_TYPE]] 为何值, C flags 都会被使用,该变量的值被 [[CMAKE_C_FLAGS_INIT]] 在 toolchain 中初始化
+3. 汇编: ${CC} -c test.s ${CMAKE_C_FLAGS} -o test.o
+4. 这里的${CMAKE_C_FLAGS} = "-Wall -O2"
+**** <<CMAKE_C_FLAGS_RELEASE_INIT>>   请配置
+1. 第一次为语言C配置 build tree 时, 该变量的值用于初始化 [[CMAKE_C_FLAGS_RELEASE]] 高速缓存条目
+2. 这个变量可由工具链文件 toolchain 设置, CMake可以根据环境和目标平台向该变量预加或者附加内容
+**** <<CMAKE_C_FLAGS_RELEASE>>
+1. release build type 或 configuration 的标志
+2. 不同于 [[CMAKE_C_FLAGS]] 该变量的值只当 [[CMAKE_BUILD_TYPE]] 为 Release 时才会被使用
+3. 该变量的值被 [[CMAKE_C_FLAGS_RELEASE_INIT]] 在 toolchain中初始化
+**** <<CMAKE_C_GHS_KERNEL_FLAGS_RELEASE>>    不常用
+1. release build type 或 configuration 的 GHS Kernel 标志
+2. 不同于 [[CMAKE_C_FLAGS]] 该变量的值只当 [[CMAKE_BUILD_TYPE]] 为 Release 时才会被使用
+**** <<CMAKE_C_FLAGS_DEBUG_INIT>>   请配置
+1. 第一次为语言C配置 build tree 时, 该变量的值用于初始化 [[CMAKE_C_FLAGS_DEBUG]] 高速缓存条目
+2. 这个变量可由工具链文件 toolchain 设置, CMake可以根据环境和目标平台向该变量预加或者附加内容
+**** <<CMAKE_C_FLAGS_DEBUG>>
+1. debug build type 或 configuration 的标志
+2. 不同于 [[CMAKE_C_FLAGS]] 该变量的值只当 [[CMAKE_BUILD_TYPE]] 为 Debug 时才会被使用
+3. 该变量的值被 [[CMAKE_C_FLAGS_DEBUG_INIT]] 在 toolchain中初始化
+**** <<CMAKE_C_GHS_KERNEL_FLAGS_DEBUG>>   不常用
+1. debug build type 或 configuration 的 GHS Kernel 标志
+2. 不同于 [[CMAKE_C_FLAGS]] 该变量的值只当 [[CMAKE_BUILD_TYPE]] 为 Debug 时才会被使用
+**** <<CMAKE_C_FLAGS_MINSIZEREL_INIT>>  请配置
+1. 第一次为语言C配置 build tree 时, 该变量的值用于初始化 [[CMAKE_C_FLAGS_MINSIZEREL]] 高速缓存条目
+2. 这个变量可由工具链文件 toolchain 设置, CMake可以根据环境和目标平台向该变量预加或者附加内容
+**** <<CMAKE_C_FLAGS_MINSIZEREL>>
+1. MinSizeRel build tree 或 configuration 的标志
+2. 不同于 [[CMAKE_C_FLAGS]] 该变量的值只当 [[CMAKE_BUILD_TYPE]] 为 MinSizeRel(short for minimum size release,即最小尺寸发布) 时才会被使用
+3. 该变量的值被 [[CMAKE_C_FLAGS_MINSIZEREL_INIT]] 在 toolchain中初始化
+**** <<CMAKE_C_GHS_KERNEL_FLAGS_MINSIZEREL>>   不常用
+1. MinSizeRel type 或 configuration 的 GHS Kernel 标志
+2. 不同于 [[CMAKE_C_FLAGS]] 该变量的值只当 [[CMAKE_BUILD_TYPE]] 为 MinSizeRel 时才会被使用
+**** <<CMAKE_C_FLAGS_RELWITHDEBINFO_INIT>>   请配置
+1. 第一次为语言C配置 build tree 时, 该变量的值用于初始化 [[CMAKE_C_FLAGS_RELWITHDEBINFO]] 高速缓存条目
+2. 这个变量可由工具链文件 toolchain 设置, CMake可以根据环境和目标平台向该变量预加或者附加内容
+**** <<CMAKE_C_FLAGS_RELWITHDEBINFO>>
+1. RelWithDebInfo type 或 configuration 的标志
+2. 不同于 [[CMAKE_C_FLAGS]] 该变量的值只当 [[CMAKE_BUILD_TYPE]] 为 RelWithDebInfo (short for Release With Debug Information) 时才会被使用
+3. 该变量的值被 [[CMAKE_C_FLAGS_RELWITHDEBINFO_INIT]] 在 toolchain中初始化
+**** <<CMAKE_C GHS_KERNEL_FLAGS_RELWITHDEBINFO>>   不常用
+1. RelWithDebInfo build type 或 configuration 的 GHS Kernel 标志
+2. 不同于 [[CMAKE_C_FLAGS]] 该变量的值只当 [[CMAKE_BUILD_TYPE]] 为 RelWithDebInfo 时才会被使用
+
+**** <<LDFLAGS>>
+ 1. 该变量是一个环境变量, CMake只在第一次配置时使用它来确定默认的链接器 flags, 之后将LDFLAGS的值作为
+ [[CMAKE_EXE_LINKER_FLAGS_INIT]]，[[CMAKE_SHARED_LINKER_FLAGS_INIT]] 和 [[CMAKE_MODULE_LINKER_FLAGS_INIT]] 存储在高速缓存(CACHE)中
+
+ 2. 对于任何配置运行（包括第一个配置），如果定义了等效的 CMAKE_ <TYPE> _LINKER_FLAGS_INIT 变量(上面3个中的任意)，则该环境变量将被忽略
+
+ 3. 显然,应当将 CMAKE_ <TYPE> _LINKER_FLAGS_INIT 在 ToolChain.cmake 中进行显式定义来忽略掉该环境变量
+**** <<CMAKE_EXE_LINKER_FLAGS_INIT>>  请配置
+1. 第一次配置 build tree 时, 该变量的值用于初始化 [[CMAKE_EXE_LINKER_FLAGS]] 高速缓存条目
+2. 这个变量可由工具链文件 toolchain 设置, CMake可以根据环境和目标平台向该变量预加或者附加内容
+**** <<CMAKE_EXE_LINKER_FLAGS>>
+1. 当创建可执行文件时,该变量记录的 flags 会被链接器使用
+2. 链接: gcc test.o ${CMAKE_EXE_LINKER_FLAGS} -o test
+**** <<CMAKE_EXE_LINKER_FLAGS_RELEASE_INIT>>  请配置
+**** <<CMAKE_EXE_LINKER_FLAGS_RELEASE>>
+**** <<CMAKE_STATIC_LINKER_FLAGS_INIT>>   请配置
+1. 第一次配置 build tree 时, 该变量的值用于初始化 [[CMAKE_STATIC_LINKER_FLAGS]] 高速缓存条目
+2. 这个变量可由工具链文件 toolchain 设置, CMake可以根据环境和目标平台向该变量预加或者附加内容
+**** <<CMAKE_STATIC_LINKER_FLAGS>>
+1. 当创建静态库时,该变量记录的 flags 会被链接器使用
+2. 创建静态库: arr ${CMAKE_STATIC_LINKER_FLAGS} libmm.a tmp1.o tmp2.o     ----- 创建一个名为mm的静态库,并插入目标文件 tmp1.o, tmp2.o
+3. 这里的${CMAKE_STATIC_LINKER_FLAGS} = "-crs"
+**** <<CMAKE_STATIC_LINKER_FLAGS_RELEASE_INIT>>  请配置
+备注: 对应于 [[CMAKE_BUILD_TYPE]] 的四种取值 empty, Debug, Release, RelWithDebInfo, MinSizeRel 中的 Release
+**** <<CMAKE_STATIC_LINKER_FLAGS_RELEASE>>
+**** <<CMAKE_SHARED_LINKER_FLAGS_INIT>>  请配置
+1. 第一次配置 build tree 时, 该变量的值用于初始化 [[CMAKE_SHARED_LINKER_FLAGS]] 高速缓存条目
+2. 这个变量可由工具链文件 toolchain 设置, CMake可以根据环境和目标平台向该变量预加或者附加内容
+**** <<CMAKE_SHARED_LINKER_FLAGS>>
+1. 当创建共享库时,该变量记录的 flags 会被链接器使用
+2. ${CC} ${CMAKE_SHARED_LINKER_FLAGS} tmp1.o tmp2.o -o libnn.so
+2. 这里的 ${CMAKE_SHARED_LINKER_FLAGS} = "-fPIC -shared"
+**** <<CMAKE_SHARED_LINKER_FLAGS_RELEASE_INIT>>  请配置
+备注: 对应于 [[CMAKE_BUILD_TYPE]] 的四种取值 empty, Debug, Release, RelWithDebInfo, MinSizeRel 中的 Release
+**** <<CMAKE_SHARED_LINKER_FLAGS_RELEASE>>
+**** <<CMAKE_MODULE_LINKER_FLAGS_INIT>>  请配置
+1. 第一次配置 build tree 时, 该变量的值用于初始化 [[CMAKE_MODULE_LINKER_FLAGS]] 高速缓存条目
+2. 这个变量可由工具链文件 toolchain 设置, CMake可以根据环境和目标平台向该变量预加或者附加内容
+**** <<CMAKE_MODULE_LINKER_FLAGS>>
+     当创建 MODULE 时,该变量记录的 flags 会被链接器使用
+**** <<CMAKE_MODULE_LINKER_FLAGS_RELEASE_INIT>> 请配置
+备注: 对应于 [[CMAKE_BUILD_TYPE]] 的四种取值 empty, Debug, Release, RelWithDebInfo, MinSizeRel 中的 Release
+**** <<CMAKE_MODULE_LINKER_FLAGS_RELEASE>>
+**** <<CMAKE_LIBRARY_PATH_FLAG>>   请配置
+1. 该 flag 用于将库搜索路径添加到编译器
+2. 在大多数编译器上,该flag 的值是 -L
+**** <<CMAKE_LINK_LIBRARY_FLAG>>   请配置
+1. 该 flag 用于指定将一个 library 链接进入一个可执行文件
+2. 在大多数编译器上,这个值是 -l
+**** <<CMAKE_LINK_DEF_FILE_FLAG>>    只用于windows
+**** <<CMAKE_LINK_LIBRARY_FILE_FLAG>>  只在很少的平台上使用
+1. 该 flag 用于链接一个由一个路径指定的 library 到它的文件
+2. 该 flag 在库文件路径被提供给链接器之前使用
+*** C++
+**** CXX
+**** CXXFLAGS
+*** C# 
+**** CSFLAGS
+*** Fortran 
+**** FC
+**** FFLAGS
+**** CMAKE_Fortran_MODDIR_FLAG
+**** CMAKE_Fortran_MODOUT_FLAG
+*** resource file
+**** RC
+**** RCFLAGS
+
+*** rare flags
+**** CMAKE_MFC_FLAG
+1. 告诉cmake使用MFC的可执行文件或DLL,这用于Visual Studio项目文件
+2. 这可以在一个CMakeLists.txt文件中设置，并将在应用程序中启用MFC
+3. 它应该被设置1为静态MFC库和2 共享MFC库
+**** CMAKE_NOT_USING_CONFIG_FLAGS
+1. 该变量如果为 true, 则忽略 _BUILD_TYPE 
+2. 这是一个在CMake内部被 generators 使用的 flag, 用来告诉 CMAKE 忽略 _BUILD_TYPE
+** DONE [#C] Theme: arm-none-eabi-gcc                          :@CmakeStm32:
+*** 介绍
+ 1. arm-none-eabi-gcc
+    1. 用于编译 ARM 架构的裸机系统（包括 ARM Linux 的 boot、kernel，不适用编译 Linux 应用 Application）
+    2. 一般适合ARM7、Cortex-M 和 Cortex-R 内核的芯片使用,所以不支持那些跟操作系统关系密切的函数，比如fork(2)
+    3. 他使用的是 newlib 这个专用于嵌入式系统的C库
+ 2. arm-none-linux-gnueabi-gcc
+    1. 主要用于基于ARM架构的Linux系统，可用于编译 ARM 架构的 u-boot、Linux内核、linux应用等
+    2. arm-none-linux-gnueabi基于GCC，使用Glibc库，经过 Codesourcery 公司优化过推出的编译器
+    3. arm-none-linux-gnueabi-xxx 交叉编译工具的浮点运算非常优秀,一般ARM9、ARM11、Cortex-A 内核，带有 Linux 操作系统的会用到
+ 3. armcc
+    1. ARM 公司推出的编译工具，功能和 arm-none-eabi 类似，可以编译裸机程序（u-boot、kernel），但是不能编译 Linux 应用程序
+    2. armcc一般和ARM开发工具一起，Keil MDK、ADS、RVDS和DS-5中的编译器都是armcc，所以 armcc 编译器都是收费的（爱国版除外，呵呵~~）
+ 4. 由于stm32f7属于arm的cortex-m系列，所以使用arm-none-eabi-gcc作为gcc
+*** 使用方法
+GNU Tools for ARM Embedded Processors
+Version: 5
+
+**** Installing executables on Linux *
+   Unpack the tarball to the install directory, like this:
+   $ cd $install_dir && tar xjf gcc-arm-none-eabi-*-yyyymmdd-linux.tar.bz2
+
+   For 64 bit system, 32 bit libc and libncurses are required to run the tools.
+   In addition, if you want to use gdb python build (arm-none-eabi-gdb-py), you'd
+   install 32 bit python2.7. Please refer
+   https://answers.launchpad.net/gcc-arm-embedded/+faq/2601
+
+   For some Ubuntu releases, the toolchain can also be installed via
+   Launchpad PPA at https://launchpad.net/~team-gcc-arm-embedded/+archive/ubuntu/ppa.
+
+**** Installing executables on Mac OS X *
+   Unpack the tarball to the install directory, like this:
+   $ cd $install_dir && tar xjf gcc-arm-none-eabi-*-yyyymmdd-mac.tar.bz2
+
+**** Installing executables on Windows *
+   Run the installer (gcc-arm-none-eabi-*-yyyymmdd-win32.exe) and follow the
+   instructions.
+
+   The toolchain in windows zip package is a backup to windows installer for
+   those who cannot run installer.  We need decompress the zip package
+   in a proper place and then invoke it following instructions in next section.
+
+   To use gdb python build (arm-none-eabi-gdb-py), you need install 32 bit
+   python2.7 no matter 32 or 64 bit Windows. Please get the package from
+   https://www.python.org/download/.
+
+**** Invoking GCC *
+   On Linux and Mac OS X, either invoke with the complete path like this:
+   $ $install_dir/gcc-arm-none-eabi-*/bin/arm-none-eabi-gcc
+
+   Or set path like this:
+   $ export PATH=$PATH:$install_dir/gcc-arm-none-eabi-*/bin
+   $ arm-none-eabi-gcc
+
+   On Windows (although the above approaches also work), it can be more
+   convenient to either have the installer register environment variables, or run
+   INSTALL_DIR\bin\gccvar.bat to set environment variables for the current cmd.
+
+   For windows zip package, after decompression we can invoke toolchain either with
+   complete path like this:
+   TOOLCHAIN_UNZIP_DIR\bin\arm-none-eabi-gcc
+   or run TOOLCHAIN_UNZIP_DIR\bin\gccvar.bat to set environment variables for the
+   current cmd.
+
+**** Architecture options usage *
+
+   This toolchain is built and optimized for Cortex-A/R/M bare metal development.
+   the following table shows how to invoke GCC/G++ with correct command line
+   options for variants of Cortex-A/R and Cortex-M architectures.
+
+   --------------------------------------------------------------------------
+   |   ARM core | Command Line Options                       | multilib     |
+   | / ARM arch |                                            |              |
+   |------------|--------------------------------------------|--------------|
+   | Cortex-M0+ | -mthumb -mcpu=cortex-m0plus                | armv6-m      |
+   | Cortex-M0  | -mthumb -mcpu=cortex-m0                    |              |
+   | Cortex-M1  | -mthumb -mcpu=cortex-m1                    |              |
+   |            |--------------------------------------------|              |
+   |            | -mthumb -march=armv6-m                     |              |
+   |------------|--------------------------------------------|--------------|
+   | Cortex-M3  | -mthumb -mcpu=cortex-m3                    | armv7-m      |
+   |            |--------------------------------------------|              |
+   |            | -mthumb -march=armv7-m                     |              |
+   |------------|--------------------------------------------|--------------|
+   | Cortex-M4  | -mthumb -mcpu=cortex-m4                    | armv7e-m     |
+   | (No FP)    |--------------------------------------------|              |
+   |            | -mthumb -march=armv7e-m                    |              |
+   |------------|--------------------------------------------|--------------|
+   | Cortex-M4  | -mthumb -mcpu=cortex-m4 -mfloat-abi=softfp | armv7e-m     |
+   | (Soft FP)  | -mfpu=fpv4-sp-d16                          | /softfp      |
+   |            |--------------------------------------------|              |
+   |            | -mthumb -march=armv7e-m -mfloat-abi=softfp |              |
+   |            | -mfpu=fpv4-sp-d16                          |              |
+   |------------|--------------------------------------------|--------------|
+   | Cortex-M4  | -mthumb -mcpu=cortex-m4 -mfloat-abi=hard   | armv7e-m     |
+   | (Hard FP)  | -mfpu=fpv4-sp-d16                          | /fpu         |
+   |            |--------------------------------------------|              |
+   |            | -mthumb -march=armv7e-m -mfloat-abi=hard   |              |
+   |            | -mfpu=fpv4-sp-d16                          |              |
+   |------------|--------------------------------------------|--------------|
+   | Cortex-M7  | -mthumb -mcpu=cortex-m7                    | armv7e-m     |
+   | (No FP)    |--------------------------------------------|              |
+   |            | -mthumb -march=armv7e-m                    |              |
+   |------------|--------------------------------------------|--------------|
+   | Cortex-M7  | -mthumb -mcpu=cortex-m7 -mfloat-abi=softfp | armv7e-m     |
+   | (Soft FP)  | -mfpu=fpv5-sp-d16                          | /softfp      |
+   |            |--------------------------------------------| /fpv5-sp-d16 |
+   |            | -mthumb -march=armv7e-m -mfloat-abi=softfp |              |
+   |            | -mfpu=fpv5-sp-d16                          |              |
+   |            |--------------------------------------------|--------------|
+   |            | -mthumb -mcpu=cortex-m7 -mfloat-abi=softfp | armv7e-m     |
+   |            | -mfpu=fpv5-d16                             | /softfp      |
+   |            |--------------------------------------------| /fpv5-d16    |
+   |            | -mthumb -march=armv7e-m -mfloat-abi=softfp |              |
+   |            | -mfpu=fpv5-d16                             |              |
+   |------------|--------------------------------------------|--------------|
+   | Cortex-M7  | -mthumb -mcpu=cortex-m7 -mfloat-abi=hard   | armv7e-m     |
+   | (Hard FP)  | -mfpu=fpv5-sp-d16                          | /fpu         |
+   |            |--------------------------------------------| /fpv5-sp-d16 |
+   |            | -mthumb -march=armv7e-m -mfloat-abi=hard   |              |
+   |            | -mfpu=fpv5-sp-d16                          |              |
+   |            |--------------------------------------------|--------------|
+   |            | -mthumb -mcpu=cortex-m7 -mfloat-abi=hard   | armv7e-m     |
+   |            | -mfpu=fpv5-d16                             | /fpu         |
+   |            |--------------------------------------------| /fpv5-d16    |
+   |            | -mthumb -march=armv7e-m -mfloat-abi=hard   |              |
+   |            | -mfpu=fpv5-d16                             |              |
+   |------------|--------------------------------------------|--------------|
+   | ARMv8-M    | -mthumb -march=armv8-m.base                | armv8-m.base |
+   | Baseline   |                                            |              |
+   |------------|--------------------------------------------|--------------|
+   | ARMv8-M    | -mthumb -march=armv8-m.main                | armv8-m.main |
+   | Mainline   |                                            |              |
+   | (No FP)    |                                            |              |
+   |------------|--------------------------------------------|--------------|
+   | ARMv8-M    | -mthumb -march=armv8-m.main                | armv8-m.main |
+   | Mainline   | -mfloat-abi=softfp -mfpu=fpv5-sp-d16       | /softfp      |
+   | (Soft FP)  |                                            | /fpv5-sp-d16 |
+   |            |--------------------------------------------|--------------|
+   |            | -mthumb -march=armv8-m.main                | armv8-m.main |
+   |            | -mfloat-abi=softfp -mfpu=fpv5-d16          | /softfp      |
+   |            |                                            | /fpv5-d16    |
+   |------------|--------------------------------------------|--------------|
+   | ARMv8-M    | -mthumb -march=armv8-m.main                | armv8-m.main |
+   | Mainline   | -mfloat-abi=hard -mfpu=fpv5-sp-d16         | /fpu         |
+   | (Hard FP)  |                                            | /fpv5-sp-d16 |
+   |            |--------------------------------------------|--------------|
+   |            | -mthumb -march=armv8-m.main                | armv8-m.main |
+   |            | -mfloat-abi=hard -mfpu=fpv5-d16            | /fpu         |
+   |            |                                            | /fpv5-d16    |
+   |------------|--------------------------------------------|--------------|
+   | Cortex-R4  | [-mthumb] -march=armv7-r                   | armv7-ar     |
+   | Cortex-R5  |                                            | /thumb       |
+   | Cortex-R7  |                                            |              |
+   | Cortex-R8  |						  |		 |
+   | (No FP)    |                                            |              |
+   |------------|--------------------------------------------|--------------|
+   | Cortex-R4  | [-mthumb] -march=armv7-r -mfloat-abi=softfp| armv7-ar     |
+   | Cortex-R5  | -mfpu=vfpv3-d16                            | /thumb       |
+   | Cortex-R7  |                                            | /softfp      |
+   | Cortex-R8  |						  |		 |
+   | (Soft FP)  |                                            |              |
+   |------------|--------------------------------------------|--------------|
+   | Cortex-R4  | [-mthumb] -march=armv7-r -mfloat-abi=hard  | armv7-ar     |
+   | Cortex-R5  | -mfpu=vfpv3-d16                            | /thumb       |
+   | Cortex-R7  |                                            | /fpu         |
+   | Cortex-R8  |						  |		 |
+   | (Hard FP)  |                                            |              |
+   |------------|--------------------------------------------|--------------|
+   | Cortex-A*  | [-mthumb] -march=armv7-a                   | armv7-ar     |
+   | (No FP)    |                                            | /thumb       |
+   |------------|--------------------------------------------|--------------|
+   | Cortex-A*  | [-mthumb] -march=armv7-a -mfloat-abi=softfp| armv7-ar     |
+   | (Soft FP)  | -mfpu=vfpv3-d16                            | /thumb       |
+   |            |                                            | /softfp      |
+   |------------|--------------------------------------------|--------------|
+   | Cortex-A*  | [-mthumb] -march=armv7-a -mfloat-abi=hard  | armv7-ar     |
+   | (Hard FP)  | -mfpu=vfpv3-d16                            | /thumb       |
+   |            |                                            | /fpu         |
+   --------------------------------------------------------------------------
+
+**** C Libraries usage *
+
+   This toolchain is released with two prebuilt C libraries based on newlib:
+   one is the standard newlib and the other is newlib-nano for code size.
+   To distinguish them, we rename the size optimized libraries as:
+
+     libc.a --> libc_nano.a
+     libg.a --> libg_nano.a
+
+   To use newlib-nano, users should provide additional gcc compile and link time
+   option:
+    --specs=nano.specs
+
+   At compile time, a 'newlib.h' header file especially configured for newlib-nano
+   will be used if --specs=nano.specs is passed to the compiler.
+
+   Nano.specs also handles two additional gcc libraries: libstdc++_nano.a and
+   libsupc++_nano.a, which are optimized for code size.
+
+   For example:
+   $ arm-none-eabi-gcc src.c --specs=nano.specs $(OTHER_OPTIONS)
+
+   This option can also work together with other specs options like
+   --specs=rdimon.specs
+
+   Please note that, unlike previous versions of this toolchain, --specs=nano.specs
+   is now both a compiler and linker option.  Be sure to include in both compiler
+   and linker options if compiling and linking are separated.
+
+***** additional newlib-nano libraries usage
+
+   Newlib-nano is different from newlib in addition to the libraries' name.
+   Formatted input/output of floating-point number are implemented as weak symbol.
+   If you want to use %f, you have to pull in the symbol by explicitly specifying
+   "-u" command option.
+
+     -u _scanf_float
+     -u _printf_float
+
+   e.g. to output a float, the command line is like:
+   $ arm-none-eabi-gcc --specs=nano.specs -u _printf_float $(OTHER_LINK_OPTIONS)
+
+   For more about the difference and usage, please refer the README.nano in the
+   source package.
+
+   Users can choose to use or not use semihosting by following instructions.
+***** semihosting
+   If you need semihosting, linking like:
+   $ arm-none-eabi-gcc --specs=rdimon.specs $(OTHER_LINK_OPTIONS)
+
+***** non-semihosting/retarget
+   If you are using retarget, linking like:
+   $ arm-none-eabi-gcc --specs=nosys.specs $(OTHER_LINK_OPTIONS)
+
+**** Linker scripts & startup code *
+
+   Latest update of linker scripts template and startup code is available on
+   http://www.arm.com/cmsis
+
+**** Samples *
+   Examples of all above usages are available at:
+   $install_dir/gcc-arm-none-eabi-*/share/gcc-arm-none-eabi/samples
+
+   Read readme.txt under it for further information.
+
+**** GDB Server for CMSIS-DAP based hardware debugger *
+   CMSIS-DAP is the interface firmware for a Debug Unit that connects
+   the Debug Port to USB.  More detailed information can be found at
+   http://www.keil.com/support/man/docs/dapdebug/.
+
+   A software GDB server is required for GDB to communicate with CMSIS-DAP based
+   hardware debugger.  The pyOCD is an implementation of such GDB server that is
+   written in Python and under Apache License.
+
+   For those who are using this toolchain and have board with CMSIS-DAP based
+   debugger, the pyOCD is our recommended gdb server.  More information can be
+   found at https://github.com/mbedmicro/pyOCD.
+
+    Case creation time:[2017-09-06 三 17:00]
+*** 使用步骤
+ 1. 下载  [[https:launchpad.net/gcc-arm-embedded/+download][arm-none-eabi-gcc 源码包]]  
+ 2. 解压：tar -xjvf gcc-arm-none-eabi-5_4-2016q3-20160926-linux.tar.bz2
+ 3. 根据上述"使用方法"中给出的方式进行配置
+ 4. 在gcc和其他package里面的一些shell脚本与dash shell是不兼容的,而linux默认bin/sh就是指向dash,需要将其改变为指向 bash
+ 5. 使用命令 sudo dpkg-reconfigure -plow dash 做出修改, 此时 ls -l /bin/sh 可以看到指向 bash
+** TODO [#C] Theme: JLink                                      :@CmakeStm32:
+
+** TODO [#C] Theme: FAQ                                        :@CmakeStm32:
+*** arm-none-eabi-gcc is not able to compile a simple test program
+1. 引发错误的原因:
+   1. CMake可以跨平台,可是不同的平台使用不同的编译器,这意味着CMake需要识别编译器的标识
+   2. 当使用交叉编译时，如果没有 special flags 或者 custom linker scripts，则无法链接二进制文件
+   3. 基于上面两个原因,因此,在跨平台交叉编译环境下,CMake会去检查正在工作的编译器,当CMake不能自动的检测到该编译器标识时,就会产生该错误
+2. 解决错误的方法:
+   1. 一个已经丢弃的方法是引入模块 CMakeForceCompiler, 该模块会忽略CMake对工作编译器的检查 (该模块的详细用法参照官方文档的cmake-modules文档)
+   2. 一个 CMakeForceCompiler 的替代是变量 CMAKE_TRY_COMPILE_TARGET_TYPE, 该方案是目前CMake官方推荐的处理该错误的方案
+   3. CMAKE_TRY_COMPILE_TARGET_TYPE 介绍
+      1. 使用源文件签名为try_compile（）调用生成的目标类型
+      2. 该变量的有效值是: 
+         1. EXECUTABLE: 使用add_executable（）命名生成的项目中的源文件, 如果没有对该变量进行设置的话,该值是默认值
+         2. STATIC_LIBRARY: 使用add_library（）和STATIC选项来命名生成的项目中的源文件,这样可以避免运行链接器，在交叉编译时，也就解决了没有 special flags 或者 custom linker scripts 而无法链接二进制文件的情况
+      3. 细节: 在 toolchain file 中给出 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY) 
