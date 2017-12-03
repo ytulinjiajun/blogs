@@ -111,7 +111,7 @@
 ** TODO [#C] Theme: CMake Compiler 
 *** ASM
 *** C
-**** <<CMAKE_BUILD_TYPE>>
+**** <<CMAKE_BUILD_TYPE>>   请设置
 1. 指定 在 single-configuration generators 上的 build type 
 2. 可能的值有: empty, Debug, Release, RelWithDebInfo, MinSizeRel
 3. 这个变量的值仅仅在 single-configuration generators(诸如: Makefile Generators and Ninja)上才有意义
@@ -607,3 +607,23 @@ Version: 5
          1. EXECUTABLE: 使用add_executable（）命名生成的项目中的源文件, 如果没有对该变量进行设置的话,该值是默认值
          2. STATIC_LIBRARY: 使用add_library（）和STATIC选项来命名生成的项目中的源文件,这样可以避免运行链接器，在交叉编译时，也就解决了没有 special flags 或者 custom linker scripts 而无法链接二进制文件的情况
       3. 细节: 在 toolchain file 中给出 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY) 
+*** sys.c:(.text+0x146): undefined reference to `HAL_RCC_OscConfig' 
+引发 undefined reference 错误的几种原因及解决方案:
+
+1. 原因一: 在链接时找不到函数 HAL_RCC_OscConfig() 的定义, 一个可能的原因是该函数所在的源文件未参与可执行文件的链接过程
+解决方案: 在 add_executable()时将该函数所在的源文件添加进来参与链接
+
+2. 原因二: 在链接时找不到函数 HAL_RCC_OscConfig() 的定义, 另一个可能的原因是该函数所在的源文件未参与库的创建,或者该参与创建了但是
+生成的库未参与可执行文件的链接过程
+解决方案: 在 add_library()时将该函数所在的源文件添加进来参与创建库,同时在使用target_link_directories()时将其加入到可执行文件的链接列表中
+
+3. 原因三: 多个库的链接顺序问题引起 (这是最常见且最隐蔽而不容易被发现的问题)
+   在库 BBB 里面的某个源文件中用到该函数,但是该函数却在另一个库 AAA 的某个源文件中定义,在 target_link_libraries命令中却是这样书写,
+target_link_libraries(EEE AAA BBB), 就会引发该错误,正确的写法是 target_link_libraries(EEE BBB AAA), 总结一下就是:
+依赖其他库的库一定要放到被依赖库的前面，这样才能真正避免undefined reference的错误，完成编译链接
+** TODO [#C] Theme: Tips 
+*** Multiple configurations
+    CMake 允许在同一个工程中同时拥有多份配置, 这样的一个重量级的功能能在实际工程中是十分有用的, 其功能与 git 中
+分支的作用基本一致, 同 git 中分支所不同的是, CMake 中的多配置有相应的命令或者内置变量来支持,比如, [[CMAKE_BUILD_TYPE]],
+以及一些个描述编译标志的如 [[CMAKE_EXE_LINK_FLAGS_RELEASE_INIT]] 等, 因此, 它比与工程的耦合性更加强一些, 相对与中小型工程,
+ 使用 CMake 自带的多配置功能还是挺不错的选择, 在大型工程中, git 做版本控制管理可能会比较好,因为它不至于让工程变得臃肿
