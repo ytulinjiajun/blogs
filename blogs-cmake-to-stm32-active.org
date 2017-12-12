@@ -2,7 +2,7 @@
 ** DONE Theme:工具网站                                         :@CmakeStm32:
    CLOSED: [2017-11-25 六 19:10]
 1. [[http:www.stmcu.org/module/forum/thread-603753-1-1.html][使用Makefile开发STM32的基础范例]] 
-2. [[https:launchpad.net/gcc-arm-embedded/+download][arm-none-eabi-gcc 源码包]]
+2. [[https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads][arm-none-eabi-gcc 源码包]]
 3. [[https:www.vtk.org/Wiki/CMake_Cross_Compiling][CMake Cross Compiling of WiKi]]
  Blog creation time:[2017-11-23 四 11:19]
 ** TODO [#C] Theme: CMake Cross Compiling                      :@CmakeStm32:
@@ -627,3 +627,30 @@ target_link_libraries(EEE AAA BBB), 就会引发该错误,正确的写法是 tar
 分支的作用基本一致, 同 git 中分支所不同的是, CMake 中的多配置有相应的命令或者内置变量来支持,比如, [[CMAKE_BUILD_TYPE]],
 以及一些个描述编译标志的如 [[CMAKE_EXE_LINK_FLAGS_RELEASE_INIT]] 等, 因此, 它比与工程的耦合性更加强一些, 相对与中小型工程,
  使用 CMake 自带的多配置功能还是挺不错的选择, 在大型工程中, git 做版本控制管理可能会比较好,因为它不至于让工程变得臃肿
+** TODO [#C] Theme: How to build packages such as rpms, debs, OSX packages, etc
+link: https://github.com/jordansissel/fpm
+*** install
+1. apt-get install ruby ruby-dev rubygems build-essential
+
+2. gem install --no-ri --no-rdoc fpm
+
+3. fpm --version
+*** Single-file package
+#+BEGIN_SRC 
+NAME=jenkins
+VERSION=2.80
+
+.PHONY: package
+package:
+  rm -f jenkins.war
+  wget https://updates.jenkins-ci.org/download/war/$(VERSION)/jenkins.war
+  fpm -s dir -t deb -n $(NAME) -v $(VERSION) --prefix /opt/jenkins jenkins.war
+#+END_SRC
+
+“Source type” is what your package is coming from; a directory (dir), a rubygem (gem), an rpm (rpm), 
+a python package (python), a php pear module (pear), etc.
+
+“Target type” is what your output package form should be. Most common are “rpm” and “deb” but others exist (solaris, etc)
+
+detail information: fpm -help
+*** multiple packages

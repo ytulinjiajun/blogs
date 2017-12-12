@@ -367,6 +367,13 @@ Blog creation time:[2017-09-17 日 16:15]
 ***** smartparens
 功能：当输入“ ’ （ { 等符号时，会自动补全 ” ‘ ） } 
 触发：输入符号
+***** helm-ag
+1. 安装: linux用户需要安装 apt-get install silversearcher-ag,然后安装helm-ag插件
+
+2. 搜索:
+-- 基础搜索: helm-do-ag-project-root: init pack  (基于git仓库,搜索所有含有关键字init以及pack的行)
+-- 过滤搜索: helm-do-ag-project-root: init pack !set  (基于git仓库,搜索所有含有关键字init以及pack,但是不含有set的行)
+-- 编辑搜索结果: C-c C-e 进入 helm-ag-edit 模式, 结合 M-s e 的标记功能,可以进行批量修改
 ** DONE [#D] Theme:org-mode									   :@Blog:@Emacs:
 	- State "DONE"       from "TODO"       [2017-09-05 二 09:27]
 *** org-mode快捷键
