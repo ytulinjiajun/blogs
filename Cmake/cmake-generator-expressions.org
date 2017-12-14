@@ -1,0 +1,6 @@
+* WAITTING [#C] Theme:cmake-generator-expressions(7)                 :@Cmake:
+** Introduction
+** Logical Expressions
+** Informational Expressions
+** Output Expressions
+

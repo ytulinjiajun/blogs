@@ -1,0 +1,8 @@
+* WAITTING [#C] Theme:cmake-policies                                 :@Cmake:
+1. introduction
+   1. 开发中会遇到这样的事,使用cmake开发了一个项目,突然一不小心在系统升级时将cmake的版本也升级了
+   2. 新版本的cmake相比于老版本的cmake,某些命令或者变量带来了行为上的改变,当前的项目在编译时会出现一些警告,甚至是行为不符的现象
+   3. 在cmake中,为了解决这样的情况,提供了一种称为policy的机制,cmake的设计者每次发布新版本时,如果发现新版本相对老版本带来了某些行为上的改变,就会顺带发布一个CMP_<NNNN>的policy
+   4. 每个CMP_<NNNN>中都会"旧行为"和"新行为",以及引入该policy的原因
+   5. 在工程中可以设置各种policy来选择期望的行为
+Blog creation time:[2017-11-08 三 13:28]
