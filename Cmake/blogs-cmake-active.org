@@ -1,0 +1,396 @@
+* blogs-cmake-active
+  版本: 3.10.0
+  官网: https://cmake.org
+  文档: https://www.linuxjournal.com/article/6700?page=0,0
+** WAITTING [#C] Theme:cmake-buildsystem                            :@Cmake:
+*** Introduction
+*** Binary Targets
+*** Binary Executables
+*** Binary Library Types
+*** Normal Libraries
+*** Apple Frameworks
+*** Object Libraries
+*** Build Specification and Usage Requirements
+*** Target Properties
+*** Transitive Usage Requirements
+*** Compatible Interface Properties
+*** Property Origin Debugging
+*** Build Specification with Generator Expressions
+*** Include Directories and Usage Requirements
+*** Link Libraries and Generator Expressions
+*** Output Artifacts
+*** Runtime Output Artifacts
+*** Library Output Artifacts
+*** Archive Output Artifacts
+*** Directory-Scoped Commands
+*** Pseudo Targets
+*** Imported Targets
+*** Alias Targets
+*** Interface Libraries
+** WAITTING [#C] Theme:cmake-compile-features                       :@Cmake:
+*** Introduction
+*** Compile Feature Requirements
+*** Requiring Language Standards
+*** Availability of Compiler Extensions
+*** Optional Compile Features
+*** Conditional Compilation Options
+*** Supported Compilers
+** WAITTING [#C] Theme:cmake-developer                              :@Cmake:
+*** Introduction
+*** Adding Compile Features
+*** Help
+**** T Markup Constructs
+**** TCMake Domain
+**** TCross-References
+**** TStyle
+***** TStyle: Section Headers
+***** TStyle: Whitespace
+***** TStyle: Line Length
+***** TStyle: Prose
+***** TStyle: Starting Literal Blocks
+***** TStyle: CMake Command Signatures
+***** TStyle: Boolean Constants
+***** TStyle: Inline Literals
+***** TStyle: Cross-References
+***** TStyle: Referencing CMake Concepts
+***** TStyle: Referencing CMake Domain Objects
+*** TModules
+**** Module Documentation
+**** TFind Modules
+***** TStandard Variable Names
+***** TA Sample Find Module
+** WAITTING [#C] Theme:cmake-generator-expressions(7)               :@Cmake:
+*** Introduction
+*** T Logical Expressions
+*** T Informational Expressions
+*** TOutput Expressions
+** WAITTING [#C] Theme:cmake-generators(7)                          :@Cmake:
+*** Introduction
+*** CMake Generators
+**** Command-Line Build Tool Generators
+***** Makefile Generators
+***** Ninja Generator
+**** IDE Build Tool Generators
+***** Visual Studio Generators
+***** Other Generators
+*** TExtra Generators
+** WAITTING [#C] Theme:cmake-language(7)                            :@Cmake:
+*** Organization
+**** Directories
+**** Scripts
+**** Modules
+*** Syntax
+**** Encoding
+**** Source Files
+**** Command Invocations
+**** Command Arguments
+***** Bracket Argument
+***** Quoted Argument
+***** Unquoted Argument
+**** Escape Sequences
+**** <<Variable References>>
+- 变量引用的格式为$ {variable_name}，并在引用的参数或非引用的参数中进行评估
+
+- 变量引用被变量的值替换，或者如果变量未被设置，则由空字符串替换
+
+- 变量引用可嵌套，并从内向外进行计算，例如， ${outer_${inner_variable}_variable}
+
+- 环境变量引用的形式为$ENV {VAR}，并在与普通变量引用相同的上下文中进行计算
+**** Comments
+***** Bracket Comment
+***** Line Comment
+*** Control Structures
+**** Conditional Blocks
+**** Loops
+**** Command Definitions
+*** <<Variables>>
+1. 在 cmake 的语法中,变量是基本的存储单元
+2. 变量的值总是字符串类型
+3. [[set]]() 和 [[unset]]() 命令用于设置以及清除变量的值(当然了,也有其他的一些命令含有修改变量值的语义)
+4. 变量名是大小写敏感的,几乎可以由任何文本组成,但是建议只使用_和-来组合变量
+5. 变量有动态的范围,每个使用set或者unset赋值的变量实际上是在当前范围内创建了一个绑定,当前范围指:
+   1. Function Scope: 由 [[function]]() 命令定义的一个函数, 这个函数内部涉及的变量,只在函数内部以及函数的嵌套调用中可见
+   2. Directory Scope: 源码树中的每个目录都有自己的变量绑定,在处理当前目录的CMakeLists.txt文件之前，CMake会复制其父目录中定义的所有变量绑定
+   3. Persistent <<Cache>>(持久缓存):
+      1. CMake存储一组单独的“缓存”变量或“缓存条目”，它们的值在项目构建树中的多个运行中保持不变。
+      2. 高速缓存条目具有仅由显式请求修改的独立绑定范围，例如由[[set]]（）和unset（）命令的CACHE选项修改
+6. 变量的引用过程:
+   1. 当计算 [[Variable References]] 时，CMake首先搜索函数调用堆栈（如果有的话）进行绑定，然后回退到当前目录范围中的绑定（如果有的话）
+   2. 如果找到“set”绑定，则使用它的值。如果找到“unset”绑定，或者没有找到绑定，CMake就会搜索一个缓存条目
+   3. 如果找到缓存条目，则使用其值。否则，变量引用计算为空字符串。
+*** <<Lists>>
+** WAITTING [#C] Theme:cmake-server(7)                              :@Cmake:
+** WAITTING [#C] Theme:cmake-modules(7)                             :@Cmake:
+** WAITTING [#C] Theme:cmake-packages(7)                            :@Cmake:
+** WAITTING [#C] Theme:cmake-policies                               :@Cmake:
+1. introduction
+   1. 开发中会遇到这样的事,使用cmake开发了一个项目,突然一不小心在系统升级时将cmake的版本也升级了
+   2. 新版本的cmake相比于老版本的cmake,某些命令或者变量带来了行为上的改变,当前的项目在编译时会出现一些警告,甚至是行为不符的现象
+   3. 在cmake中,为了解决这样的情况,提供了一种称为policy的机制,cmake的设计者每次发布新版本时,如果发现新版本相对老版本带来了某些行为上的改变,就会顺带发布一个CMP_<NNNN>的policy
+   4. 每个CMP_<NNNN>中都会"旧行为"和"新行为",以及引入该policy的原因
+   5. 在工程中可以设置各种policy来选择期望的行为
+Blog creation time:[2017-11-08 三 13:28]
+** WAITTING [#C] Theme:cmake-properties                             :@Cmake:
+*** <<Properties of Global Scope>>
+    1. <<ENABLED_LANGUAGES>>
+        1. 存储当前使能的语言列表
+        2. 由命令[[enable_language]]配置
+        3. 只读
+*** <<Properties on Targets>>
+**** <<POSITION_INDEPENDENT_CODE>>
+1. 该变量的属性决定了将要创建的可执行文件或者共享库是否位置独立
+2. 如果一个库是 SHARD 和 MODULE,那么这个属性自动设置为true
+3. 该属性值被变量 [[CMAKE_POSITION_INDEPENDENT_CODE]] 的值初始化
+4. 参考 [[add_library]]()
+*** <<Properties on Directories>>
+*** <<Properties on Source Files>>
+备注: 使用命令 [[set_source_files_properties]]() 以及 [[get_source_files_properties]]() 来操作这些源文件的属性
+**** <<COMPILE_FLAGS>>
+1. 当编译这个源文件时,该属性的 flags 会被添加到 compile flags 中
+2. 使用 [[COMPILE_DEFINITIONS]] 属性来传递额外的预处理器定义
+3. 该属性的内容可能使用语法为 $<...> 的“generator expressions”, 详情查阅 [[cmake-generator-expressions(7)]]
+4. Xcode不支持per-config per-source设置，所以依赖于生成配置的表达式不被该 generator 所允许
+**** <<GENERATED>>
+1. 这个源文件是否是作为构建过程的一部分生成的?
+2. 如果源文件是由构建过程生成的，CMake将在依赖性检查等方面进行不同的处理,否则，有一个不存在的源文件可能会产生问题
+**** <<LABELS>>
+- 指定与源文件关联的文本标签列表
+- 只有当源文件列在其LABELS属性也被设置的目标中时，该属性才有意义,目前没有指定其他的语义
+**** <<COMPILE_DEFINITIONS>>
+- 用于编译源文件的预处理器定义
+- COMPILE_DEFINITIONS属性可以使用语法VAR或VAR = value设置为以分号分隔的预处理器定义列表
+- 函数式定义不受支持
+- CMake会自动为本地构建系统正确地转义值（注意，CMake语言语法可能需要转义才能指定一些值）
+- 可以使用名称COMPILE_DEFINITIONS_ <CONFIG>在每个配置的基础上设置此属性，其中<CONFIG>是大写名称（例如“COMPILE_DEFINITIONS_DEBUG”）
+- CMake会自动删除一些原生构建工具不支持的定义
+- Xcode不支持源文件的预配置定义
+
+- 大多数本地构建工具对逃脱某些值的支持很差。 CMake在许多情况下都有解决方法，但有些值可能无法正确传递。
+如果某个值似乎没有正确转义，则不要试图通过向该值添加转义序列来解决该问题。 
+CMake的未来版本可能会打破您的解决方案，从而改善了逃生支持。应该考虑在（配置的）头文件中定义宏。然后报告限制。已知的限制包括：
+#          - broken almost everywhere
+;          - broken in VS IDE 7.0 and Borland Makefiles
+,          - broken in VS IDE
+%          - broken in some cases in NMake
+& |        - broken in some cases on MinGW
+^ < > \"   - broken in most Make tools on Windows
+CMake不会完全拒绝这些值，因为它们在某些情况下有效。谨慎使用。
+*** Properties on Tests
+*** Properties on Cache Entries
+*** Properties on Installed Files
+*** Deprecated Properties on Directories
+    1. COMPILE_DEFINITIONS_<CONFIG>
+    2. TEST_INCLUDE_FILE
+*** Deprecated Properties on Targets
+    1. COMPILE_DEFINITIONS_<CONFIG>
+    2. POST_INSTALL_SCRIPT
+    3. PRE_INSTALL_SCRIPT
+*** Deprecated Properties on Source Files
+     1. COMPILE_DEFINITIONS_<CONFIG>
+ Blog creation time:[2017-11-09 四 15:16]
+** WAITTING [#C] Theme:cmake-qt(7)                                  :@Cmake:
+** WAITTING [#C] Theme:cmake-toolchains                             :@Cmake:
+*** <<Introduction>>
+    1. CMake使用工具链来进行编译,链接库,创建归档，以及使用一些任务去进行构建
+    2. 命令[[project]]()以及 [[enable_language]]()中给出的语言决定了采用何种工具链工具
+    3. 在常规构建中，CMake基于系统自检和缺省自动为宿主构建决定工具链
+    4. 在交叉编译的情况下，可以通过相关的编译器和工具路径来指定工具链文件
+*** <<Languages>>
+    1. 在使用[[project]]()命令时,如果设置了LANGUAGE参数,或者使用[[enable_language]](),则内置变量[[CMAKE_C_COMPILER]]就会被设置为指定的语言,如果没有做出任何设置,则会默认隐式使用缺省的C以及CXX
+    2. 采用的语言决定了一些信息，如编译器的供应商和版本，目标架构和位宽，相应工具的位置等
+    3. 当语言被确定好以后，相应的就确定了使用 何种编译器,链接器
+    4. 全局属性[[ENABLED_LANGUAGES]]包含当前启用的语言
+    5. 通过目标中源文件的语言来计算采用的链接器,在静态库的情况下，也通过依赖库的语言来计算,CMake做出的选择可能被目标属性 [[LINKER_LANGUAGE]] 重写
+*** <<Variables and Properties>>
+    1. 几个关于工具链的语言组件变量会被使用
+    2. [[CMAKE_TOOLCHIAIN_FILE]] 提供一个交叉编译的脚本
+    3. [[CMAKE_SYSTEM_NAME]] 目标机上运行的操作系统的名称
+    4. [[CMAKE_SYSTEM_PROCESSOR]] 目标机的硬件架构，例如ARM，X86
+    5. [[CMAKE_C_COMPILER]] 指明了<LANG>语言的编译器所在的路径
+    6. [[CMAKE_C_COMPILER_ID]] 作为编译器的标识
+    7. [[CMAKE_C_COMPILER_VERSION]] 标识编译器的版本
+    8. [[CMAKE_C_FLAGS]] 当编译一个特定语言的文件时,该变量中给出的选项将会被作为编译时的选项
+    9. [[CMAKE_FIND_ROOT_PATH]] 搜索路径
+    10. [[CMAKE_SYSROOT]]  搜索路径
+*** Toolchain Features
+*** Cross Compiling
+    1. <<CMAKE_TOOLCHIAIN_FILE>> 这应当是CMake交叉编译中最重要的概念了,CMake不知道你的目标平台是什么、用什么编译器、如何编译等等，所以你需要提供预设一些变量到CMake
+    2. 其中最为方便的一个方法就是将相关的变量设置都放进一个文件(cmake脚本)中去，然后将该文件通过CMAKE_TOOLCHIAIN_FILE传递给CMake 
+    3. 传递交叉编译脚本的方法: cmake -D CMAKE_TOOLCHIAIN_FILE="/path/to/my-cmake-toolchain-file" ..   (当然,也可以在CMakeList.txt中直接给出)
+    4. <<目标机>>: 运行代码的实体机,比如stm32f407zgt6 
+    5. <<宿主即>>: 也叫开发平台,比如linux,windows
+    6. 交叉编译: 在宿主机上开发程序,烧录到目标机上运行
+    7. cmake是无法自动判断出目标机的上运行的系统的,因此必须需要我们通过变量 [[CMAKE_SYSTEM_NAME]] 指定
+    8. 在宿主机上交叉编译出来的可执行文件通常不能直接运行在宿主机上
+    9. 交叉编译过程中不能使用宿主机上的原生头文件和库，而是需要用到一套专门针对目标机的头文件和库,如embi-arm-linux-xx
+    10. 在交叉编译时(即指定了[[CMAKE_SYSTEM_NAME]]), [[CMAKE_CROSSCOMPILING]]变量将被设置为真值
+    11. 稍微大一点的项目都会用到一些外部依赖库或者tool,CMake提供了 [[find_library]]() [[find_package]]() [[find_file]]() [[find_program]]() [[find_path]]()来进行外部依赖的搜索查找
+    12. 变量[[CMAKE_FIND_ROOT_PATH]] 和 [[CMAKE_SYSROOT]] 指明了外部依赖的搜索路径,即所有find_*将在这两个变量指定的路径路径,以及宿主机相关的路径下搜索,当然了,可以限制只在某一路径下搜索,详情参考CMAKE_FIND_ROOT_PATH
+ Blog creation time:[2017-11-08 三 09:40]
+** WAITTING [#C] Theme:cmake-env-variables                          :@Cmake:
+1. 设置环境变量set(ENV{CMAKE_C_FLAGS} "-O3 -Wall")
+2. 查看环境变量message(STATUS "CMAKE_C_FLAGS: " $ENV{CMAKE_C_FLAGS})
+3. Environment Variables that Control the Build
+   1. CMAKE_CONFIG_TYPE
+   2. CMAKE_MSVCIDE_RUN_PATH
+   3. CMAKE_OSX_ARCHITECTURES
+   4. LDFLAGS
+   5. MACOSX_DEPLOYMENT_TARGET
+4. Environment Variables for Languages
+   1. ASM<DIALECT>
+   2. ASM<DIALECT>FLAGS
+   3. CC
+   4. <<CFLAGS>>
+      1. 如果CMAKE_C_FLAGS没有定义,则在编译c源文件时,该变量存储默认的编译flags
+      2. 如果CMAKE_C_FLAGS没有定义,仅仅在首次配置CC的默认编译状态时,该变量才被cmake使用,之后,这个值存储在CMAKE_C_FLAGS中
+      3. 如果定义了[[CMAKE_C_FLAGS]],不论是首次配置还是任意次配置CC的编译flags,该变量CFLAGS都会被忽略
+   5. CSFLAGS
+   6. CUDACXX
+   7. CUDAFLAGS
+   8. CUDAHOSTCXX
+   9. CXX
+   10. CXXFLAGS
+   11. FC
+   12. FFLAGS
+   13. RC
+   14. RCFLAGS
+5. Environment Variables for CTest
+   1. CMAKE_CONFIG_TYPE
+   2. CTEST_INTERACTIVE_DEBUG_MODE
+   3. CTEST_OUTPUT_ON_FAILURE
+   4. CTEST_PARALLEL_LEVEL
+   5. CTEST_USE_LAUNCHERS_DEFAULT
+   6. DASHBOARD_TEST_FROM_CTEST
+Blog creation time:[2017-11-08 三 09:39]
+** WAITTING [#C] Theme:cmake-variables                              :@Cmake:
+*** Variables that Provide Information
+    1. <<CMAKE_CURRENT_LIST_DIR>>
+       1. 含义: 当前正在处理的列表文件(CMakelists.txt)所在的目录路径
+       2. 动态变量
+       3. 如: /home/ljj/workspace/test5/dir/
+    2. <<CMAKE_CURRENT_LIST_FILE>>
+       1. 含义: 当前正在处理的列表文件(CMakeLists.txt)
+       2. 动态变量
+       3. 如:  /home/ljj/workspace/test5/dir/CMakeLists.txt
+    3. <<PROJECT-NAME_BINARY_DIR>>
+       1. 作用: 该变量的值是命令project(<PROJECT-NAME> ......)中指定的项目名的顶层 binary directory 目录的路径
+       2. 使用场合: 当使用add_subdirectory()命令来连接几个工程时,该变量就十分有用
+       3. 个人建议: PROJECT_BINARY_DIR指代的对象没有该变量指代的清楚明了,建议使用该变量
+    4. <<PROJECT-NAME_SOURCE_DIR>>
+       1. 作用: 该变量的值是命令project(<PROJECT-NAME> ......)中指定的项目名的顶层 source directory 目录的路径
+       2. 使用场合: 当使用add_subdirectory()命令来连接几个工程时,该变量就十分有用
+       3. 个人建议: PROJECT_SOURCE_DIR指代的对象没有该变量指代的清楚明了,建议使用该变量
+    5. <<PROJECT-NAME_VERSION>>
+       1. 作用:  该变量用于存储命令project(<PROJECT-NAME>  [VERSION <major>[.<minor>[.<patch>[.<tweak>]]]]......)中指定的VERSION
+       2. 备注: cmake_policy
+    6. <<PROJECT-NAME>_VERSION_MAJOR>>
+       1. 作用: 存储<PROJECT-NAME>_VERSION中的第1个号码<major>
+    7. <<PROJECT-NAME_VERSION_MINOR>>
+       1. 作用: 存储<PROJECT-NAME>_VERSION中的第2个号码<minor>
+    8. <<PROJECT-NAME>_VERSION_PATCH>>
+       1. 作用: 存储<PROJECT-NAME>_VERSION中的第3个号码<patch> 
+    9. <<PROJECT-NAME>_VERSION_TWEAK>>
+       1. 作用: 存储<PROJECT-NAME>_VERSION中的第4个号码<tweak>
+    10. <<PROJECT_DESCRIPTION>>
+        1. 作用: 存储project命令中<DESCRIPTION>参数,项目描述信息
+    11. <<PROJECT_NAME>>
+        1. 作用: 该变量的值是命令project(<PROJECT-NAME> ......)中指定的项目名<PROJECT-NAME>
+        2. 使用场合: 可以通过查询该变量得知项目的名字
+*** Variables that Change Behavior
+**** <<BUILD_SHARED_LIBS>>
+   1. 该变量如果设置为ON,则在全局范围内,[[ add_library]]() 默认创建的所有库均是 SHARD 库,除非明确的指出要创建一个STATIC库
+   2. 该变量经常在项目中最为一个 [[option]]() 以便项目的每一个用户能够决定它们是否想要使用静态库或者动态库构建系统
+**** <<CMAKE_BUILD_TYPE>>
+   1. 作用: 指定 build tree 的 build type 
+   2. 可能的值是: empty, Debug, Release, RelWithDebInfo and MinSizeRel
+   3. 这个变量仅仅在 single-configuration generators 时才有意义
+   4. 有很多预配置属性和变量,诸如 [[CMAKE_C_FLAGS_<CONFIG>]] , CMAKE_C_FLAGS_[DEBUG|RELEASE|RELWITHDEBINFO|MINSIZEREL]
+   5. 例如,如果配置了某 build tree 的 build type 为Debug, CMake 会将 CMAKE_C_FLAGS_DEBUG 添加到 [[CMAKE_C_FLAGS]] 中去
+**** <<CMAKE_FIND_ROOT_PATH>>
+     1. 在交叉编译时,该变量是十分有用的,比如,在给一个ARM处理器的移动设备做交叉编译，其中需要寻找libjpeg.so
+     2. 假如使用find_package(JPEG) 在没有设置该变量的前提下,返回的是/usr/lib/libjpeg.so
+     3. 这是有问题的，因为找到的这个so库只是给你的宿主机系统(例如一个x86的Ubuntu主机)服务的，不能用于arm系统
+     4. 所以你需要告诉CMake去其它地方去查找,该变量就是干这个事的,它在文件系统层次给出了一个用于搜索的根
+     5. 实际上, 该变量提供的是一个搜索路径的前缀,对于 find_path 来说,最终的搜索路径是 前缀/include, 对于find_package来说,最终的搜索路径是 前缀/lib
+     6. 比如 [[set]](CMAKE_FIND_ROOT_PATH /home/ljj/stm32/embi-arm-linux-xx)
+     7. 默认情况下,CMake首先会到/home/ljj/stm32/embi-arm-linux-xxx/usr/lib或者/home/ljj/stm32/embi-arm-linux-xx/lib等子目录下面搜索所有find_*命令给出的条目
+     8. 如果没有找到(且设置了 [[find_package(BOTH)]] 的情况下),可以接着到 [[CMAKE_SYSROOT]] 列出的路径下搜索, 如果还是没有找到的话就到宿主机的相关目录下搜索
+     9. 默认这个变量是空,交叉编译中应当对该变量进行设置
+     10. 配置该变量的同时还应配置[[CMAKE_FIND_ROOT_PATH_MODE_PROGRAM]] , [[CMAKE_FIND_ROOT_PATH_MODE_LIBRARY]] , [[CMAKE_FIND_ROOT_PATH_MODE_INCLUDE]] , [[CMAKE_FIND_ROOT_PATH_MODE_PACKAGE]]
+     11. 参考 [[Cross Compiling]]  [[CMAKE_SYSROOT]] 
+**** <<CMAKE_FIND_ROOT_PATH_MODE_LIBRARY>>
+   1. 该变量用于控制 [[find_library]]()命令是否可以在 [[CMAKE_FIND_ROOT_PATH]] , [[CMAKE_SYSROOT]]给出的路径下面搜索
+   2. 如果设置为ONLY,那么,find_library() 仅仅只能在 CMAKE_FIND_ROOT_PATH  下面给出的路径中进行搜索
+   3. 如果设置为NEVER,那么, find_library() 将无法在 CMAKE_FIND_ROOT_PATH 下面给出的路径中搜索,只能在宿主机相应的目录下进行搜索
+   4. 如果设置为BOTH,那么,find_library() 可以在 CMAKE_FIND_ROOT_PATH 下面以及宿主机相应的目录下面进行搜索
+**** <<CMAKE_FIND_ROOT_PATH_MODE_INCLUDE>>
+     1. 该变量用于控制 [[find_file]](), [[find_path]]() 命令是否可以在 [[CMAKE_FIND_ROOT_PATH]] , [[CMAKE_SYSROOT]] 给出的路径下面搜索
+     2. 如果设置为ONLY,那么,find_file(),find_path() 仅仅只能在 CMAKE_FIND_ROOT_PATH  下面给出的路径中进行搜索
+     3. 如果设置为NEVER,那么, find_file(),find_path() 将无法在 CMAKE_FIND_ROOT_PATH 下面给出的路径中搜索,只能在宿主机相应的目录下进行搜索
+     4. 如果设置为BOTH,那么,find_file(),find_path() 可以在 CMAKE_FIND_ROOT_PATH 下面以及宿主机相应的目录下面进行搜索
+**** <<CMAKE_FIND_ROOT_PATH_MODE_PACKAGE>>
+   1. 该变量用于控制 [[find_package]]()命令是否可以在 [[CMAKE_FIND_ROOT_PATH]] , [[CMAKE_SYSROOT]]给出的路径下面搜索
+   2. 如果设置为ONLY,那么,find_package() 仅仅只能在 CMAKE_FIND_ROOT_PATH  下面给出的路径中进行搜索
+   3. 如果设置为NEVER,那么, find_package() 将无法在 CMAKE_FIND_ROOT_PATH 下面给出的路径中搜索,只能在宿主机相应的目录下进行搜索
+   4. 如果设置为BOTH,那么,find_package() 可以在 CMAKE_FIND_ROOT_PATH 下面以及宿主机相应的目录下面进行搜索
+**** <<CMAKE_FIND_ROOT_PATH_MODE_PROGRAM>>
+   1. 该变量用于控制 [[find_program]]()命令是否可以在 [[CMAKE_FIND_ROOT_PATH]] , [[CMAKE_SYSROOT]]给出的路径下面搜索
+   2. 如果设置为ONLY,那么,find_program() 仅仅只能在 CMAKE_FIND_ROOT_PATH  下面给出的路径中进行搜索
+   3. 如果设置为NEVER,那么, find_program() 将无法在 CMAKE_FIND_ROOT_PATH 下面给出的路径中搜索,只能在宿主机相应的目录下进行搜索
+   4. 如果设置为BOTH,那么,find_program() 可以在 CMAKE_FIND_ROOT_PATH 下面以及宿主机相应的目录下面进行搜索
+**** <<CMAKE_INCLUDE_PATH>>
+**** <<CMAKE_INSTALL_PREFIX>>
+   1. 该变量被命令[[install]]()使用到
+   2. 当 make install 被调用 或者 使用命令install()时,这个变量的目录所示的路径将会被安装路径的后面
+   3. 在UNIX下,这个变量默认是/usr/local,在window下,默认是c:/Program Files/${PROJECT_NAME}
+   4. 该变量的使用方法: cmake -DCMAKE_INSTALL_PREFIX=usr/ .. 此时 make DESTDIR=/home/john install 后,软件的安装路径就是usr/home/john
+   5. 备注: 当然了,该变量也可以在CMakeLists.txt中使用set进行配置,原则是如果用户在命令行使用-D定义了默认路径的话,就使用命令行的路径,否则就使用set设置的路径
+   6. 通过判断 [[CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT]] 的值实现该变量的配置:
+   7. if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+   8. [[set]](CMAKE_INSTALL_PREFIX "/my/default" CACHE PATH "..." FORCE)
+**** <<CMAKE_POLICY_DEFAULT_CMP_NNNN>>
+         1. 作用: 存储某个policy的默认配置(OLD or NEW)
+         2. 更改: cmake_policy(SET CMP0048 NEW)
+         3. 说明: <NNNN>代表某个policy的编号,如0048,该编号具体是什么含义,参见cmake-policies
+*** Variables that Describe the System
+    1. <<CMAKE_SYSTEM_NAME>>
+       1. [[目标机]]上运行的操作系统的名称,比如Linux,Android,如果你的嵌入式平台没有相关OS你即需要写成”Generic”
+       2. 这是在toolchain脚本中必须要设置的变量,只有当CMAKE_SYSTEM_NAME这个变量被设置了，CMake才认为此时正在交叉编译
+       3. 它会额外设置一个变量[[CMAKE_CROSSCOMPILING]]为TRUE
+       4. 参考 [[CMAKE_TOOLCHIAIN_FILE]] 
+    2. <<CMAKE_SYSTEM_PROCESSOR>>
+       1. 代表[[目标机]]的硬件架构，例如ARM，X86
+       2. 这个是可选项，但是在移动开发中很重要
+*** Variables that Control the Build
+    1. <<CMAKE_EXE_LINKER_FLAGS>>
+       1. 作用: 存储创建可执行文件时用到的链接flags
+       2. 这个变量中的flags将会在创建一个可执行文件时被使用
+    2. <<CMAKE_POSITION_INDEPENDENT_CODE>>
+	     1.该变量被用于初始化所有目标的  [[POSITION_INDEPENDENT_CODE]] 属性
+       1. 该变量的值也被用于 [[try_compile]]()
+    3. <<EXECUTABLE_OUTPUT_PATH>>
+       1. 作用: 重新指定最终二进制目标的路径
+       2. 设置: set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
+       3. 备注: 一个重要的问题是,配置这个变量的这条指令应当写在哪个CMakeLists.txt中呢,其基本原则是在哪里 [[ADD_EXECUTABLE]] 或 [[ADD_LIBRARY]],如果需要改变目标存放路径,就在哪里加入上述的定义
+       4. 相关: [[add_subdirectory]]()
+    4. <<LIBRARY_OUTPUT_PATH>>
+       1. 作用: 重新指定最终生成的共享库的路径
+       2. 设置: set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
+*** Variables for Languages
+    1. <<CMAKE_<LANG>_COMPILER>>
+       1. <<CMAKE_C_COMPILER>>
+       2. 参考 [[Languages]]
+    2. <<CMAKE_<LANG>_COMPILER_ID>>
+       1. <<CMAKE_C_COMPILER_ID>>
+       2. A short string unique to the compiler vendor
+       3. 比如: set(CMAKE_C_COMPILER "ARMCC = ARM Compiler (arm.com)")
+       4. 参考 [[Variables and Properties]]
+    3. <<CMAKE_<LANG>_FLAGS>>
+       1. <<CMAKE_C_FLAGS>>: 存储c编编译过程中的所有flags
+          1. 可以通过[[add_compile_options]]命令以及[[add_definitions]]设置flags,但是不推荐,因为这两个命令设置的值对所有的编译器都有效.推荐使用set,它只对指定的编译器有效
+       2. 该变量一旦定义,则[[CFLAGS]]将会被忽略,因此该变量的值在没有赋值之前为空
+       3. 建议使用set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -Wall")这种方式将CMAKE_C_FLAGS 设置为 -O3 -Wall (注意不是追加)
+       4. 参考 [[Variables and Properties]]
+*** Variables for CTest
+*** Variables for CPack
+ Blog creation time:[2017-11-08 三 09:24]

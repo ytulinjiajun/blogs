@@ -636,3 +636,4 @@ vsftpd_log_file=/var/log/vsftpd.log
 	1. 命令: rsync -av -e ssh test@192.168.19.10:~ /tmp
 	2. 注意:该功能是将服务器上的~复制到本地客户端的/tmp中
 Blog creation time:[2017-09-05 二 09:06]
+
