@@ -48,7 +48,7 @@ Blog creation time:[2017-09-04 一 22:05]
 emacs在启动时，会执行下面的操作：
 1. 执行subdirs.el文件，给load-path变量赋值
    1. Emacs在安装完成后，会自动生成一个叫做subdirs.el的文件
-   2. 在emacs启动的时候，会去执行这个subdirs.el文件
+   2. 在emacs启动的时候,会去执行这个subdirs.el文件
    3. 该文件里的代码会将与emacs有关的文件路径(包括.emacs.d/*,/etc/emacs,/usr/local/share/..,/usr/share/emacs/..等等)，全部加载至load-path中
    4. 该步骤本质上是将emacs正常工作时可能加载到的文件的路径事先写进load-path这个变量中，在工作过程中用到相应的文件时，直接到load-path这个变量列表中提取该文件的绝对路径，就能找到该文件的物理位置并加载了
 2. 遍历load-path变量，查找文件leim-list.el，并加载
@@ -126,7 +126,7 @@ emacs在启动时，会执行下面的操作：
 	   1. non-nil: 给定一个字符串，在开机后进入*scratch*缓冲区时显示
        2. t:禁止在*scratch*缓冲区显示信息，为空
 Case creation time:[2017-09-19 二 15:00]
-** DONE [#D] Theme:初始化文件								   :@Blog:@Emacs:
+ QrDONE [#D] Theme:初始化文件								   :@Blog:@Emacs:
 	- State "DONE"       from "WAITTING"   [2017-09-20 三 15:22]
 1. .emacs 或 ~/.emacs.d/init.el
 	  1. emacs启动完成后，会试图去加载位于家目录下的初始化配置文件，该文件要么是.emacs或者.emacs.el,要么是在.emacs.d目录下的一个名为init.el的文件

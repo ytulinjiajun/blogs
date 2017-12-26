@@ -591,7 +591,6 @@ Version: 5
  4. 在gcc和其他package里面的一些shell脚本与dash shell是不兼容的,而linux默认bin/sh就是指向dash,需要将其改变为指向 bash
  5. 使用命令 sudo dpkg-reconfigure -plow dash 做出修改, 此时 ls -l /bin/sh 可以看到指向 bash
 ** TODO [#C] Theme: JLink                                      :@CmakeStm32:
-
 ** TODO [#C] Theme: FAQ                                        :@CmakeStm32:
 *** arm-none-eabi-gcc is not able to compile a simple test program
 1. 引发错误的原因:

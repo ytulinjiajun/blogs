@@ -384,7 +384,7 @@ Archived entries from file /home/ljj/.my-agenda/blogs-cmake-active.org
        6. 环境变量: set(ENV{<variable>} <value>...)
 	        1. 作用: 为 
 	        2. 示例: set(ENV{[[CMAKE_C_FLAGS]]} "-O3 -Wall")
-
+             
    33. <<unset>>
    34. <<while>>
        1. 泛型:
