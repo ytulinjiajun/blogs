@@ -1,0 +1,126 @@
+* CMake-properties
+** Commands 
+*** <<get_property>>                                                  :scipt:
+*** <<set_property>>                                                  :scipt:
+*** <<get_cmake_property>>                                            :scipt:
+*** <<get_directory_property>>                                        :scipt:
+*** <<set_directory_properties>>                                      :scipt:
+*** <<get_source_file_property>>                                      :scipt:
+*** <<set_source_files_properties>>                                    :proj:
+*** <<get_target_property>>                                            :proj:
+#+BEGIN_SRC 
+get_target_property(VAR target property)
+#+END_SRC
+属性通常用于控制目标的构建方式,但有些则是用于查询目标
+
+作用: 从一个目标获取一个属性, 获取到的属性值存储在变量 VAR 当中,如果属性没有找到, VAR 的值被设置为
+NOTFOUND
+
+该命令可以获取迄今为止创建的任何目标的属性,而且目标不需要在当前CMakeLists.txt文件中
+
+可以使用 [[set_target_properties]]() 命令来设置目标的属性值
+
+另请参阅更一般的 [[get_property]]() 命令
+
+参数说明:
+VAR: 存储获取到的属性
+target: 某个目标的名称
+property: 该目标的属性名,如 [[COMPILE_DEFINITIONS]]
+
+示例: 
+#+BEGIN_SRC 
+add_executable(tt main.c)
+get_target_property(mm tt COMPILE_DEFINITIONS)
+message(STATUS "mm=${mm}")
+#+END_SRC
+*** <<set_target_properties>>                                          :proj:
+#+BEGIN_SRC 
+set_target_properties(target1 target2 ...
+                      PROPERTIES prop1 value1 prop2 value2 ...)
+#+END_SRC
+目标可以具有影响它们如何构建的属性
+
+作用: 在目标上设置属性,该命令的语法是列出要更改的所有文件,然后提供您要设置的值
+
+您可以使用任何您想要的prop值对,之后使用 [[get_property]]()或 [[get_target_property]]()命令提取它的值
+
+参数说明:
+target1 target2 ...: 待设置的目标/目标序列
+PROPERTIES: 关键字,标识后面设置的是属性
+prop1 value1 prop2 value2 ...: prop value 值对
+备注: prop 指代的是一个具体的属性变量,如 [[COMPILE_DEFINITIONS]]
+
+示例:
+#+BEGIN_SRC 
+set(TARGET_DEFS "STM32F4;STM32F407")
+set_target_properties(mm PROPERTIES COMPILE_DEFINITIONS ${TARGET_DEFS})
+#+END_SRC 
+*** <<get_test_property>>                                              :proj:
+*** <<define_property>>                                                :proj:
+*** <<set_tests_properties>>                                           :proj:
+** Properties of Global Scope
+   1. <<ENABLED_LANGUAGES>>
+       1. 存储当前使能的语言列表
+       2. 由命令[[enable_language]]配置
+       3. 只读
+** Properties on Targets
+*** <<POSITION_INDEPENDENT_CODE>>
+1. 该变量的属性决定了将要创建的可执行文件或者共享库是否位置独立
+2. 如果一个库是 SHARD 和 MODULE,那么这个属性自动设置为true
+3. 该属性值被变量 [[CMAKE_POSITION_INDEPENDENT_CODE]] 的值初始化
+4. 参考 [[add_library]]()
+*** <<COMPILE_DEFINITIONS>>
+作用: 用于编译目标的源的预处理器定义
+
+该属性可以使用 VAR 或 VAR=value 的语法设置为以分号分隔的预处理器定义列表
+函数式的定义不受支持.CMake会自动为本地构建系统正确地转义值（注意，CMake语言语法可能需要转义才能指定一些值)
+
+CMake会自动删除一些原生构建工具不支持的定义
+
+
+** Properties on Directories
+** Properties on Source Files
+备注: 使用命令 [[set_source_files_properties]]() 以及 [[get_source_files_properties]]() 来操作这些源文件的属性
+*** <<COMPILE_FLAGS>>
+1. 当编译这个源文件时,该属性的 flags 会被添加到 compile flags 中
+2. 使用 [[COMPILE_DEFINITIONS]] 属性来传递额外的预处理器定义
+3. 该属性的内容可能使用语法为 $<...> 的“generator expressions”, 详情查阅 [[cmake-generator-expressions(7)]]
+4. Xcode不支持per-config per-source设置，所以依赖于生成配置的表达式不被该 generator 所允许
+*** <<GENERATED>>
+1. 这个源文件是否是作为构建过程的一部分生成的?
+2. 如果源文件是由构建过程生成的，CMake将在依赖性检查等方面进行不同的处理,否则，有一个不存在的源文件可能会产生问题
+*** <<LABELS>>
+- 指定与源文件关联的文本标签列表
+- 只有当源文件列在其LABELS属性也被设置的目标中时，该属性才有意义,目前没有指定其他的语义
+*** <<COMPILE_DEFINITIONS>>
+- 用于编译源文件的预处理器定义
+- COMPILE_DEFINITIONS属性可以使用语法VAR或VAR = value设置为以分号分隔的预处理器定义列表
+- 函数式定义不受支持
+- CMake会自动为本地构建系统正确地转义值（注意，CMake语言语法可能需要转义才能指定一些值）
+- 可以使用名称COMPILE_DEFINITIONS_ <CONFIG>在每个配置的基础上设置此属性，其中<CONFIG>是大写名称（例如“COMPILE_DEFINITIONS_DEBUG”）
+- CMake会自动删除一些原生构建工具不支持的定义
+- Xcode不支持源文件的预配置定义
+
+- 大多数本地构建工具对逃脱某些值的支持很差。 CMake在许多情况下都有解决方法，但有些值可能无法正确传递。
+如果某个值似乎没有正确转义，则不要试图通过向该值添加转义序列来解决该问题。 
+CMake的未来版本可能会打破您的解决方案，从而改善了逃生支持。应该考虑在（配置的）头文件中定义宏。然后报告限制。已知的限制包括：
+#          - broken almost everywhere
+;          - broken in VS IDE 7.0 and Borland Makefiles
+,          - broken in VS IDE
+%          - broken in some cases in NMake
+& |        - broken in some cases on MinGW
+^ < > \"   - broken in most Make tools on Windows
+CMake不会完全拒绝这些值，因为它们在某些情况下有效。谨慎使用。
+** Properties on Tests
+** Properties on Cache Entries
+** Properties on Installed Files
+** Deprecated Properties on Directories
+   1. COMPILE_DEFINITIONS_<CONFIG>
+   2. TEST_INCLUDE_FILE
+** Deprecated Properties on Targets
+   1. COMPILE_DEFINITIONS_<CONFIG>
+   2. POST_INSTALL_SCRIPT
+   3. PRE_INSTALL_SCRIPT
+** Deprecated Properties on Source Files
+    1. COMPILE_DEFINITIONS_<CONFIG>
+Blog creation time:[2017-11-09 四 15:16]
