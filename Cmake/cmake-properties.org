@@ -1,17 +1,85 @@
-* WAITTING [#C] Theme:cmake-properties                               :@Cmake:
-** <<Properties of Global Scope>>
+* CMake-properties
+** Commands 
+*** <<get_property>>                                                  :scipt:
+*** <<set_property>>                                                  :scipt:
+*** <<get_cmake_property>>                                            :scipt:
+*** <<get_directory_property>>                                        :scipt:
+*** <<set_directory_properties>>                                      :scipt:
+*** <<get_source_file_property>>                                      :scipt:
+*** <<set_source_files_properties>>                                    :proj:
+*** <<get_target_property>>                                            :proj:
+#+BEGIN_SRC 
+get_target_property(VAR target property)
+#+END_SRC
+属性通常用于控制目标的构建方式,但有些则是用于查询目标
+
+作用: 从一个目标获取一个属性, 获取到的属性值存储在变量 VAR 当中,如果属性没有找到, VAR 的值被设置为
+NOTFOUND
+
+该命令可以获取迄今为止创建的任何目标的属性,而且目标不需要在当前CMakeLists.txt文件中
+
+可以使用 [[set_target_properties]]() 命令来设置目标的属性值
+
+另请参阅更一般的 [[get_property]]() 命令
+
+参数说明:
+VAR: 存储获取到的属性
+target: 某个目标的名称
+property: 该目标的属性名,如 [[COMPILE_DEFINITIONS]]
+
+示例: 
+#+BEGIN_SRC 
+add_executable(tt main.c)
+get_target_property(mm tt COMPILE_DEFINITIONS)
+message(STATUS "mm=${mm}")
+#+END_SRC
+*** <<set_target_properties>>                                          :proj:
+#+BEGIN_SRC 
+set_target_properties(target1 target2 ...
+                      PROPERTIES prop1 value1 prop2 value2 ...)
+#+END_SRC
+目标可以具有影响它们如何构建的属性
+
+作用: 在目标上设置属性,该命令的语法是列出要更改的所有文件,然后提供您要设置的值
+
+您可以使用任何您想要的prop值对,之后使用 [[get_property]]()或 [[get_target_property]]()命令提取它的值
+
+参数说明:
+target1 target2 ...: 待设置的目标/目标序列
+PROPERTIES: 关键字,标识后面设置的是属性
+prop1 value1 prop2 value2 ...: prop value 值对
+备注: prop 指代的是一个具体的属性变量,如 [[COMPILE_DEFINITIONS]]
+
+示例:
+#+BEGIN_SRC 
+set(TARGET_DEFS "STM32F4;STM32F407")
+set_target_properties(mm PROPERTIES COMPILE_DEFINITIONS ${TARGET_DEFS})
+#+END_SRC 
+*** <<get_test_property>>                                              :proj:
+*** <<define_property>>                                                :proj:
+*** <<set_tests_properties>>                                           :proj:
+** Properties of Global Scope
    1. <<ENABLED_LANGUAGES>>
        1. 存储当前使能的语言列表
        2. 由命令[[enable_language]]配置
        3. 只读
-** <<Properties on Targets>>
+** Properties on Targets
 *** <<POSITION_INDEPENDENT_CODE>>
 1. 该变量的属性决定了将要创建的可执行文件或者共享库是否位置独立
 2. 如果一个库是 SHARD 和 MODULE,那么这个属性自动设置为true
 3. 该属性值被变量 [[CMAKE_POSITION_INDEPENDENT_CODE]] 的值初始化
 4. 参考 [[add_library]]()
-** <<Properties on Directories>>
-** <<Properties on Source Files>>
+*** <<COMPILE_DEFINITIONS>>
+作用: 用于编译目标的源的预处理器定义
+
+该属性可以使用 VAR 或 VAR=value 的语法设置为以分号分隔的预处理器定义列表
+函数式的定义不受支持.CMake会自动为本地构建系统正确地转义值（注意，CMake语言语法可能需要转义才能指定一些值)
+
+CMake会自动删除一些原生构建工具不支持的定义
+
+
+** Properties on Directories
+** Properties on Source Files
 备注: 使用命令 [[set_source_files_properties]]() 以及 [[get_source_files_properties]]() 来操作这些源文件的属性
 *** <<COMPILE_FLAGS>>
 1. 当编译这个源文件时,该属性的 flags 会被添加到 compile flags 中

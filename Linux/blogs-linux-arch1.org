@@ -1648,9 +1648,10 @@ Blog creation time:[2017-09-05 二 08:09]
 Blog creation time:[2017-09-05 二 08:10]
 ** DONE [#D] theme:版本与系统升级							   :@Blog:@Linux:
 	- State "DONE"       from "TODO"       [2017-09-05 二 09:28]
-
-apt-get update && apt-get upgrade -y && apt-get dist-upgrade -y
 apt-get clean 
+apt-get update && apt-get upgrade -y && apt-get dist-upgrade -y
+
+内核升级: apt-get install linux-header-${uname -r}
 Blog creation time:[2017-09-05 二 08:11]
 ** DONE [#D] theme:安装有道词典								   :@Blog:@Linux:
 	- State "DONE"       from "TODO"       [2017-09-05 二 09:28]

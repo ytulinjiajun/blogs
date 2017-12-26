@@ -698,12 +698,6 @@ find_package(<package> [version] [EXACT] [QUIET]
          2. 如果[[FIND_LIBRARY_USE_LIB64_PATHS]]全局属性被设置，所有的搜索路径将被正常地测试，64 /追加，并且所有匹配的lib /替换为lib64 /。如果至少启用了project（）命令支持的一种语言，则会自动为已知需要的平台设置此属性
        * 变量CMAKE_FIND_LIBRARY_CUSTOM_LIB_SUFFIX将覆盖FIND_LIBRARY_USE_LIB32_PATHS，FIND_LIBRARY_USE_LIBX32_PATHS和FIND_LIBRARY_USE_LIB64_PATHS全局属性
 *** <<find_program>> :Scripting Commands:
-*** <<get_property>> :Scripting Commands:
-asd
-*** <<set_property>> :Scripting Commands:
-*** <<get_cmake_property>> :Scripting Commands:
-*** <<get_directory_property>> :Scripting Commands:
-*** <<set_directory_properties>> :Scripting Commands:
 *** <<add_custom_command>> :Project Commands:
 作用: 增加自定义的 "构建规则" 来生成构建系统
 **** Generating Files
@@ -993,31 +987,33 @@ target_link_libraries(<target> LINK_INTERFACE_LIBRARIES <item>...)
 2. 此用法仅用于兼容性，优先选择INTERFACE模式
 **** Cyclic Dependencies of Static Libraries
 **** Creating Relocatable Packages
-*** <<define_property>> :Project Commands:
-*** <<get_source_file_property>> :Project Commands:
-*** <<set_source_files_properties>> :Project Commands:
+*** <<configure_file>>
 #+BEGIN_SRC 
-set_source_files_properties([file1 [file2 [...]]]
-                            PROPERTIES prop1 value1
-                            [prop2 value2 [...]])
-#+END_SRC
-- 源文件有一些影响它们如何构建的属性,这些属性可以在 [[Properties on Source Files]] 下面查阅
-
-- 该命令使用键/值配对列表来设置这些源文件相应的属性
-
-- 源文件属性仅对在同一目录（CMakeLists.txt）中添加的目标可见
-
-- 示例:
+configure_file(<input> <output>
+               [COPYONLY] [ESCAPE_QUOTES] [@ONLY]
+               [NEWLINE_STYLE [UNIX|DOS|WIN32|LF|CRLF] ])
+#+END_SRC    
+2. 作用: 将文件复制到其他位置并修改其内容, 一个典型的用法是让普通文件(.h)也能使用CMake中的变量
+3. 意义: 实现 CMAKE 语法同源代码之间的交互
+3. <input>: 输入文件,可以带绝对路径或者相对路径(注意这句话,必须是一个带路径的文件),但是必须是一个文件而不能是目录,如果使用相对路径,则会参考 [[CMAKE_CURRENT_SOURCE_DIR]]
+4. <output>: 输出文件,该文件可以不存在,在执行时创建,可以带绝对路径或者相对路径,也可以是一个目录, 如果是相对路径,则会参考 [[CMAKE_CURRENT_BINARY_DIR]] ,如果是一个目录,
+文件名就等于输入文件名
+5. [COPYONLY]: 只是将<input>文件中的内容原原本本的复制到<>复制文件而不替换任何变量引用或其他内容,此选项不能与 NEWLINE_STYLE 一起使用
+6. [ESCAPE_QUOTES]: 这是 configure_file(<input> <output>) 的默认行为, 所有被替换的变量将会按照C语言的规则被转义,如<input>中定义了
+set(tmp "${PROJECT_NAME"}),复制到<output>中以后就会展开为 set(tmp "STM32F407ZGT6"), 如果定义了 project(STM32F407ZGT6) 的话
+7. [@ONLY]: 只有@VAR@格式的变量会被替换而${VAR}格式的变量则会被忽略,这对于配置使用${VAR}语法的脚本非常有用
+8. [NEWLINE_STYLE [UNIX|DOS|WIN32|LF|CRLF]]: 指定输出文件的换行样式
+9. 经典用法:
 #+BEGIN_SRC 
-set_source_files_properties(hello.c world.c
-                           PROPERTIES COMPILE_FLAGS -DDEBUG
-)
+	 1. # ${PROJECT_SOURCE_DIR}/cmake/CutCode_Config.h.in
+	 2. #cmakedefine EN_USART1 @EN_USART1@  
+	 3. 
+	 4. # CMakeLists.txt
+   5. #set(EN_USART1 1)
+	 6. 
+   7. configure_file(${PROJECT_SOURCE_DIR}/cmake/CutCode_Config.h.in ${PROJECT_SOURCE_DIR}/bin/CutCode_Config.h) 
 #+END_SRC
-*** <<get_target_property>> :Project Commands:
-*** <<set_target_properties>> :Project Commands:
-*** <<get_test_property>> :Project Commands:
-*** <<set_tests_properties>> :Project Commands:
-** CTest Commands
-** Deprecated Commands
-
-
+结果: 在${PROJECT_SOURCE_DIR}/bin 目录下创建 CutCode_Config.h 头文件, 内容是 #define EN_USART1 1
+10. 相似的命令 [[add_definitions]](-DFOO) 用于向源代码传递FOO是否定义,因此,在源代码中只能使用ifdef FOO ... endif来条件编译
+11. [[configure_file]](config.h.in config.h)则可以参照config.h.in中的 #cmakedefine xx @tmp@ 语句生成config.h (define xx 1),源文件中include "config.h"以后可以使用条件编译裁剪内容
+12. 总结: add_definitions()以及configure_file()搭配条件编译可以实现对源代码内容的裁剪,而cmake自身的语法又可以选择性编译某几个源文件,因此,cmake可以实现非常灵活的裁剪

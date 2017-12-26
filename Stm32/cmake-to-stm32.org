@@ -590,8 +590,34 @@ Version: 5
  3. 根据上述"使用方法"中给出的方式进行配置
  4. 在gcc和其他package里面的一些shell脚本与dash shell是不兼容的,而linux默认bin/sh就是指向dash,需要将其改变为指向 bash
  5. 使用命令 sudo dpkg-reconfigure -plow dash 做出修改, 此时 ls -l /bin/sh 可以看到指向 bash
-** TODO [#C] Theme: JLink                                      :@CmakeStm32:
+** TODO [#C] Theme: STLink                                     :@CmakeStm32:
+*** Debian编译和安装
+1. Debian 下安装stlink稍微显得有些麻烦,其根源在于 stlink 使用到了一个库 libusb 而且版本最低为 v1.0.9,然而debian
+对第三方软件的把关一向很苛刻,因此,系统中已存在的 libusb 版本只是 v1.0.0,所以,在编译 stlink 时必然出错
 
+2. 卸载 libusb-1.0.0: sudo apt autoremove --purge libusb-1.0.0
+
+3. 克隆libusb: git clone https://github.com/libusb/libusb
+
+4. 安装libusb:
+(1) 安装这个库需要依赖autoreconf工具，所以在执行之前先查看是否安装了autoreconf: which autoreconf 
+(2) 如果没有安装需要执行如下命令安装autoreconf工具: apt-get install dh-autoreconf
+(3) 运行配置脚本: ./autogen.sh
+(4) 脚本执行过程中会提示一些未安装的依赖库,比如：libudev库, 如果出现该错误,则安装依赖库即可: apt-get install libudev-dev 
+(5) 编译 libusb: make
+(6) 安装: make install
+
+5. 安装stlink
+(1) 克隆: https://github.com/texane/stlink
+(2) 编译: make release
+(3*) 出错: 编译过程中有可能出错,基本上出错的原因就是因为 libusb 这个库,比如我在编译时就遇到一个错误: error: libusb_set_debug is deprecated ...
+探究其原因, 想想我们在克隆 libusb 时克隆的肯定是最新版,也就是 libusb 的作者最新push 到 github 上的版本,这样的版本基本上就是一个正在开发中的版本,
+出错也是很自然的,因此重新去编译 Libusb
+(4*) 重新编译 libusb: 首先使用 git log 查看libusb的版本库,然后找到最近一个打上了tag的版本,然后使用 git reset --hard ID 回滚到该版本,
+这么做的原因是,一般情况下,一个程序测试一定程度后,就会打上tag,这个版本应当是稳定的.之后按照上面 libusb 编译的步骤进行编译,安装
+(5*) 重新 make release, 没有任何错误 (注意,此处可能出现一个错误: Could not found PkgConfig, 需要安装 pkg-config这个软件 )
+(6) 安装stlink: cd build/Release && sudo make install
+(7) 注意: 有可能提示 libstlink-shared.so.1 找不到,可是该动态库确实在/usr/local/lib下面存在, 此时,需要调用 sudo ldconfig 来更新一下动态链接器 
 ** TODO [#C] Theme: FAQ                                        :@CmakeStm32:
 *** arm-none-eabi-gcc is not able to compile a simple test program
 1. 引发错误的原因:
