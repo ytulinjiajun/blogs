@@ -1,1 +1,0 @@
-* WAITTING [#C] Theme:cmake-server(7)                                :@Cmake:

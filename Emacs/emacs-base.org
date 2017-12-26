@@ -1,0 +1,205 @@
+** DONE [#D] theme:emacs相关网站
+	- State "DONE"       from "TODO"       [2017-09-04 一 22:53]
+1. Emacs 世界级大师 : Steve Purcell  http://www.sanityinc.com/
+2. Emacs 官网 : www.gnu.org/software/emacs/
+3. MELPA：http://melpa.org/#/
+4. 陈斌 : https://github.com/redguardtoo/mastering-emacs-in-one-year-guide/blob/master/guide-zh.org
+5. 陈斌的配置 : https://github.com/redguardtoo/emacs.d
+6. 国外的emacs视频：http://emacsrocks.com/
+7. 大牛的配置：https://github.com/tuhdo/tuhdo.github.io
+8. 子龙山人的配置: https://github.com/zilongshanren
+9. 经典社区 : https://www.reddit.com/r/emacs/
+10. 官方手册：https://www.gnu.org/software/emacs/manual/
+11. 牛0的博客 : https://github.com/search?p=1&q=stars%3A%3E20+extension%3Ael+language%3Aelisp&ref=searchresults&type=Repositories
+12. 牛1的博客 : http://planet.emacsen.org/
+13. 牛2的博客 ： https://www.lunaryorn.com/posts/autoloads-in-emacs-lisp
+14. 牛3的博客 ：http://ergoemacs.org/
+15. 牛4的博客(超级棒)：https://tuhdo.github.io/
+16. melpa镜像源：http://www.4gamers.cn/
+17. emacs中国社区：https://github.com/emacs-china
+18. 21天学会emacs: https://emacs-china.org/t/21-emacs/55
+19. 入门elisp语法：https://learnxinyminutes.com/docs/elisp/
+20. evil:https://www.emacswiki.org/emacs/Evil
+Blog creation time:[2017-09-04 一 22:04]
+** DONE [#D] theme:spacemacs相关网站
+	- State "DONE"       from "TODO"       [2017-09-05 二 09:27]
+1. 官网：http://spacemacs.org
+2. github:https://github.com/syl20bnr/spacemacs
+Blog creation time:[2017-09-05 二 08:46]
+** DONE [#D] theme:安装emacs
+	- State "DONE"       from "TODO"       [2017-09-04 一 22:53]
+1. ubuntu16.04使用apt install emacs安装的emacs是emacs24,而我希望能使用emacs25,因为里面有一些高级的函数可以实现，所以采用下面的方式来安装emacs25.2
+2. 首先安装核心依赖文件：
+	1. sudo apt install build-essential
+	2. sudo apt-get build-dep emacs24
+	3. 备注:安装build-dep可能会出错，显示E：You must put some 'source' URIs in your source.list此时，我们需要到设置-->软件和更新下面勾选：源代码
+3. 下载emacs25.2版本：sudo wget -P 下载/ http://ftp.gnu.org/gnu/emacs/emacs-25.2.tar.xz
+4. 解压：由于下载包的格式为.tar.xz,所以:
+	1. xz -d emacs-25.2.tar.xz
+	2. tar -xvf emacs-25.2.tar
+5. 切换到root，进入解压后的包，运行配置文件，且指定安装目录：./configure --prefix=/usr/local
+6. 安装emacs：make && make install
+7. 运行emacs
+Blog creation time:[2017-09-04 一 22:05]
+** DONE [#D] theme:emacs启动流程
+	- State "DONE"       from "WAITTING"   [2017-09-20 三 10:51]
+	Link position:[[info:elisp.info.gz#Startup%20Summary][Operating System Interface (emacs lisp 38)]]
+emacs在启动时，会执行下面的操作：
+1. 执行subdirs.el文件，给load-path变量赋值
+   1. Emacs在安装完成后，会自动生成一个叫做subdirs.el的文件
+   2. 在emacs启动的时候,会去执行这个subdirs.el文件
+   3. 该文件里的代码会将与emacs有关的文件路径(包括.emacs.d/*,/etc/emacs,/usr/local/share/..,/usr/share/emacs/..等等)，全部加载至load-path中
+   4. 该步骤本质上是将emacs正常工作时可能加载到的文件的路径事先写进load-path这个变量中，在工作过程中用到相应的文件时，直接到load-path这个变量列表中提取该文件的绝对路径，就能找到该文件的物理位置并加载了
+2. 遍历load-path变量，查找文件leim-list.el，并加载
+   1. 该文件是为注册输入法而准备的
+   2. 该搜索仅仅是针对你已经创建了的私有文件leim-list.el,因此，会略过standard Emacs libraries目录
+   3. 该文件应该是唯一的，它会被编译进Emacs executable中去
+   4. 系统保证emacs相关的配置文件(.elc，.el等等)，以及一些系统用到的库文件能被找到，而所做的一个操作，这就保证了
+3. 设置时间
+   1. 会将变量before-init-time的值设置成current-time
+   2. 将after-init-time的值设置成nil,该操作会发信号给lisp programs，然后Emacs将会进行初始化
+4. 设置语言环境和终端的编码系统
+5. 解析命令行参数的基础语法
+6. 初始化窗口系统
+   1. 如果不是运行在batch模式，那么，变量initial-window-system的值将会用来初始化窗口系统
+   2. 每一个被窗口系统所支持的初始化函数都是由window-system-initialization-alist来指定
+   3. 如果initial-window-system的值是WINDOWSYSTEM,则，一个合适的初始化函数在term/WINDOWSYSTEM-win.el中定义
+   4. 当进行build时，该文件会被编译进Emacs executable中去
+7. 运行一个标准的钩子函数：before-init-hook
+8. 创建graphical frame
+   1. 如果条件满足，那么会创建一个graphical frame
+   2. 如果指定了‘--batch’ or ‘--daemon’就不会创建
+9. 初始化字体，菜单栏，工具栏
+   1. 如果需要的话，会初始化frame的字体，设置菜单栏，工具栏
+   2. 如果支持graphical frame的话，那么即使当前的frame不是一个graphical,也会设置一个工具栏，因为graphical frame在稍后也会被创建
+10. 使用custom-reevaluate-setting来重新初始化列表成员custom-delayed-init-variables
+11. 加载site-start这个库，如果指定了‘-Q’ or ‘--no-site-file’，该库不会被加载
+12. 加载初始化文件init.el
+	1. 如果指定了‘-q’, ‘-Q’, or ‘--batch’ ，则不会去加载
+13. 加载default这个库
+	1. 如果inhibit-default-init是non-nil,或者， ‘-q’, ‘-Q’,or ‘--batch’被指定，这个库就不会去加载
+14. 从abbrev-file-name指定的路径加载abbrevs，如果指定了--batch就不会去加载
+15. 调用函数：package-initialize来激活任何已经被安装了的package
+	1. 当package-enable-at-startup是nil或者指定了选项 ‘-q’, ‘-Q’, or ‘--batch’时，Emacs不会去初始化package，package-initialize这个函数应当明确的被调用
+16. 设置after-init-time的值为current-time
+	1. 在第3步中，这个变量的值是被设置为nil的,设置该变量为current-time表明初始化已经完成
+17. 运行一个标准的钩子函数：after-init-hook
+18. 根据initial-major-mode来设置Fundamental mode为major mode
+19. 加载terminal-specific Lisp library
+	1. 如果开启了一个text terminal，将会加载 terminal-specific Lisp library,然后运行tty-setup-hook这个钩子函数
+	2. 如果指定--batch或者term-file-prefix为nil将不会加载
+20. 显示初始化过程中打印的区域信息
+21. 处理命令行的选项部分
+22. 如果指定了--batch，那启动过程到此为止
+23. 如果scratch buffer存在，而且是空的，那么将会在该buffer里面插入(substitute-command-keys initial-scratch-message)
+24. 解析initial-buffer-choice
+	1. 如果initial-buffer-choice是一个字符串，那么会将这个字符串作为文件或者目录来访问
+	2. 如果是一个函数，那么将会不传入参数的调用这个函数，并且将该函数的返回值作为选中的缓冲区
+	3. 如果一个文件作为命令行参数的形式而给出，那么该文件将会被访问，并且该文件的buffer会显示在initial-buffer-choice里面
+	4. 如果超过一个文件被给出，那么所有的文件都会被访问，然后*Buffer List*会被显示在initial-buffer-choice中
+25. 运行钩子函数：emacs-startup-hook
+26. 调用frame-notice-user-settings，该函数根据初始化文件所指出的内容来修改被选中的frame的参数
+27. 运行钩子函数：window-setup-hook
+	1. 该函数与emacs-startup-hook唯一的不同之处在于该函数在上面26条提及的对frame参数的修改之后才进行的调用
+28. 运行startup screen
+	1. 这是一个特殊的buffer，里面包含版权以及emacs的一些基础信息
+	2. 如果，inhibit-startup-screen以及initial-buffer-choice设置为non-nil,或者如果‘--no-splash’ or ‘-Q’被指定，将不会去运行
+29. 调用server-start
+	1. 如果选项--daemon被指定，那么会调用server-start
+30. 调用 emacs-session-restore 
+	1. 如果开启了X会话管理，那么会调用该函数，并传递上一个会话的ID作为参数
+31. 下面的一些选项会影响启动序列的一些方面：
+	1. inhibit-startup-screen
+	   1. non-nil: 抑制 startup screen ，在该情况下，Emacs会显示*scratch*缓冲区
+	   2. inhibit-startup-message’ and ‘inhibit-splash-screen是这个变量的别名
+    2. initial-buffer-choice
+	   1. non-nil: 该变量是一个字符串，这个字符串指定了一个文件或者目录,这个文件里面所存放的是在Emacs启动之后所显示的内容(替代正常情况下的欢迎界面)
+	   2. 函数：该变量的值可以是一个函数，emacs会调用这个函数，这个函数需要返回一个buffer，然后显示这个buffer里面的内容
+	   3. t: 显示*scratch*缓冲区
+    3. inhibit-startup-echo-area-message
+	   1. 该变量控制startup echo area message的显示
+	   2. 可以通过添加下面的配置来抑制startup echo area message的显示：
+	   (setq inhibit-startup-echo-area-message
+       "YOUR-LOGIN-NAME")
+    4. initial-scratch-message
+	   1. non-nil: 给定一个字符串，在开机后进入*scratch*缓冲区时显示
+       2. t:禁止在*scratch*缓冲区显示信息，为空
+Case creation time:[2017-09-19 二 15:00]
+ QrDONE [#D] theme:初始化文件								   :@Blog:@Emacs:
+	- State "DONE"       from "WAITTING"   [2017-09-20 三 15:22]
+1. .emacs 或 ~/.emacs.d/init.el
+	  1. emacs启动完成后，会试图去加载位于家目录下的初始化配置文件，该文件要么是.emacs或者.emacs.el,要么是在.emacs.d目录下的一个名为init.el的文件
+	  2. 命令行‘-q’, ‘-Q’, and ‘-u’控制是否加载emacs的初始化文件以及到哪里加载，-q ,-Q,标识，不加载配置文件，-u USER,标识，加载USER的配置文件来替代自己的
+	  3. 如果什么选项都没有指定，emacs会使用：LOGNAME环境变量，或者USER(大多数系统常用)，或者USERNAME(MS系统),来查找家目录下面的初始化文件 
+2. default.el
+	Emacs在安装之后，有一个默认的初始化文件：default.el，这是一个lisp library文件,Emacs会通过load来找到该文件。emacs的distribution没有这个文件，它有意让本地进行定制。如果这个默认的初始化文件存在，那么在emacs启动之后,随便什么时候去加载该文件都可以，但是，如果你自己的初始化文件存在，那么优先加载自己的初始化文件，可以在自己的初始化文件里面将inhibit-default-init设置为non-nil，那么，emacs在这之后都不会去加载default.el文件了，如果指定了-q选项，那么，emacs在启动之后，既不会加载自己的初始化文件，也不会加载default.el
+
+3. site-start.el
+   Emacs在加载1所示的用户初始化文件之前，会先加载该文件。可以使用--no-site-file选项来加载该文件,该文件是一个site-customization文件，与该文件相关的有：
+   site-run-file，该变量指定了在用户初始化文件之前要加载的site-customization文件，该变量的值一般就是site-start，即指定site-start.el作为site-customization文件
+   inhibit-default-init,该变量如果为non-nil，表示阻止emacs加载default initialization library file，默认为nil
+   before-init-hook,在所有加载初始化文件（site-start.el，init.el，default.el）之前运行的一个钩子函数
+   after-init-hook，在所有加载初始化文件（site-start.el，init.el，default.el）之后运行的一个钩子函数
+   emacs-startup-hook,处理完毕命令行参数之后运行的一个钩子函数
+   window-setup-hook，同emacs-startup-hook相似，不同之处在于该函数在frame参数设置完毕之后才被调用，调用的时机比emacs-startup-hook晚
+   user-init-file,保存用户的初始化文件的路径
+   user-emacs-directory，保存.emacs.d目录的路径
+Blog creation time:[2017-09-20 三 10:52]
+** DONE [#D] theme:关于require、provide、load、load-file、 autoload、 load-path的解析
+   - State "DONE"       from "WAITTING"   [2017-09-18 一 21:41]
+参考网址：http://ergoemacs.org/emacs/elisp_library_system.html
+*** features provide require
+1. 三者之间的关系
+	require函数在被调用时，传递一个参数symbal_name，拿到该symbal_name之后,会到features变量列表中查找是否有symbal_name的存在如果没有，则调用load函数(依据load-path变量中的提供的路径列表),去加载symbal_name.el，并解析该文件的内容，当解析到provide函数时，就将provide后面的标识符(一般就是symbal_name),加入到features这个变量中去；如果有，则直接解析该文件的内容(因为既然在features变量列表中查询到了该symbal_name，那就意味着之前已经调用过load函数，因此也必然是在load-path变量列表的路径下找到的该symbal_name.el,所以路径问题也就不用在考虑了)；
+
+2. provide函数原型：(provide FEATURE &optional SUBFEATURES),其中，SUBFEATURES是FEATURE所支持的比较特别的子特性
+
+3. require函数原型：(require FEATURE &optional FILENAME NOERROR),其中，如果提供了FILENAME，当FEATURE没有在features列表中时，就去加载FILENAME，而如果FILENAME被忽略，则FEATURE被用于作为待加载的文件名，并依附上.el或者.elc后缀，从load-path变量列表中加载FEATURE.el
+
+5. features是一个全局变量列表，其值是elisp符号列表
+
+6. elisp的package通常都会在末尾位置给出(provide 'symbal_name)的形式，当解析器解析到provide这个关键字时，会将symbal_name加入到features这个列表中去
+
+7. 可以使用C-h v来查看该变量的值，里面的很多features是emacs内置的features，还有一些是用户定制的symbal_name
+
+8. 当解析器解析到(require symbal_name)这句语句的时候，会去查询features这个变量列表是否有该symbal_name,如果没有在该列表中，emacs将会基于symbal_name,来猜测文件的名字为symbal_name.elc或者symbal_name.el，然后使用load加载该文件；如果symbal_name在列表中，require函数可能会在第二个参数中指定文件名
+
+9. features的目的是让emacs知道，是否一个package已经被加载
+
+10. features变量和函数{provide,require}时相辅相成的，一个emacs的FEATURE想要加入features这个变量列表，首先必须有FEATURE.el这个文件，且该文件里有语句(provide FEATURE.el),其次，必须有语句(require FEATURE),缺少前者语句，则启动emacs时会报错，缺少后者语句，则FEATURE.el是无法被加载解析的
+
+11. 执行到require函数时，总是先去检查features列表，查看symbal_name是否已经在里面了，如果没有在里面，则调用load函数加载该文件，当然了，load函数会去查找load_path这个变量列表，该列表里面提供了symabl_name.el这个文件的绝对路径
+*** load-path
+1. 这是一个变量而非函数，该变量里面存放以空格分隔的目录列表或者为nil（这意味着为默认目录:default-directory）
+2. load一个文件时，会到该目录列表下面进行搜索
+3. 该变量会被require咨询
+4. 使用directory-file-name可以增加一个条目到该列表
+5. 实例1：(add-to-list 'load-path "~/.emacs.d/lisp")  备注：因为load-path是一个变量列表，所以，往里面添加内容需要使用add-to-list
+Blog creation time:[2017-09-18 一 13:49]
+*** load-file
+1. load-file的函数原型：(load-file FILE)
+2. 加载一个名为FILE的Lisp文件
+3. 该函数是指定一个具体的.el， .elc文件让emacs来加载，而不是让emacs去猜
+*** load
+1. load的函数原型：(load FILE &optional NOERROR NOMESSAGE NOSUFFIX MUST-SUFFIX)
+2. 该函数会去加载并执行一个名为FILE的文件.首先FILE会被附加.elc或者.el后缀，然后在load-path给定的目录列表中进行搜索
+3. 第二个参数 NOERROR 如果设置为non-nil,那么，那么当FILE不存在时，也不会报错
+4. 第三个参数 NOMESSAGE 如果设置为non-nil,那么，将不会在加载过程的开始和结束打印信息，但是，force-load-message会覆盖这个参数的设置
+5. 第四个参数 NOSUFFIX 如果设置为non-nil，那么，将不会试图为FILE增加.elc或者.el的后缀
+6. 第五个参数 MUST-SUFFIX 如果设置为non-nil，那么，一定要为FILE增加.elc或者.el的后缀
+7. require，autoload本质上最终都是调用该函数进行工作
+8. 该函数查找文件，打开文件，执行文件中的所有代码，最后关闭这个文件
+*** autoload
+1. 原理：
+	当调用package-initialize时,emacs的解析器会遍历elpa目录下面的所有的.el文件,然后提取出注释里面带有autoload关键字的函数声明，然后将这些函数声明写到packagename-autoloads.el中，同时还会将所有路径加到load-path中去(这一步骤的源代码也在packagename-autoloads.el中体现)，emacs在解析packagename-autoloads.el时，文件中有函数路径定义，有函数声明，通过这两个条件，就能实现：当一个autoload的函数被调用时，能根据函数路径以及函数声明立即定位到函数的定义（函数源代码所在的文件）处去执行函数
+2. autoload是一个函数
+3. 函数的原型：(autoload FUNCTION FILE &optional DOCSTRING INTERACTIVE TYPE)
+4. 第一个参数FUNCTION，是一个函数名，该函数在FILE.el或者FILE.elc中定义
+5. 第二个参数FILE,是FUNCTION这个函数定义所在的源文件名，这个文件名会传递给load函数
+6. 第三个参数DOCSTRINGS,是有关该函数的一些文档信息
+7. 第四个参数INTERACTIVE,如果为t,表示该函数是interactive的
+8. 第五个参数TYPE,标明FUNCTION的类型：如果为nil或者忽略，则表示FUNCTION是一个函数，如果为keymap,则表明是一个keymap,如果为macro或者t,则表明是一个macro
+9. autoload是一个函数，最终该函数调用的还是load函数
+10. 有两种方法可以将一个函数标识为autoload类型的函数，第一种是直接调用autoload;第二种是在函数定义处的源文件位置的上一行用魔法注释;;###autoload进行标识，第二种是最常用的方法
+11. 一个函数的定义处，如果其前面一行被注释了###autoload，那么，就表示该函数是一个autoload的函数
+12. 被标记为autoload类型的函数，能够在第一次被调用时自动加载

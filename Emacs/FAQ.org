@@ -1,0 +1,18 @@
+** DONE [#C] case:YCM-Generator/fake-toolchain/Unix/clang" is not able to compile a simple test program :@YCM:Generator:
+   CLOSED: [2017-12-26 二 15:18]
+1. 平台: kali, cmake, arm-none-embi-gcc 
+2. 问题描述: 使用 YCM-Generator 生成 .ycm_extra_conf.py 的过程中产生的错误
+3. 原因: 该问题很有可能是因为在 CMakeLists.txt 维护的工程中使用了一些影响编译器硬编码路径
+比如:
+(1) set(CMAKE_C_COMPILER "XXX")
+(2) set(CMAKE_CXX_COMPILER "XXX")
+(3) set(CMAKE_TRY_COMPILER_TARGET_TYPE STATIC_LIBRARY)
+目前测试中主要发现上面的三个设置会引起该错误, 具体的原因参考 https://github.com/rdnetto/YCM-Generator/issues/40
+4. 解决方案: 上面给出的三个变量,在命令行中以-D的形式传入 CMAKE
+
+备注: 我使用的 CMAKE 管理工程, 因此该解决方案仅仅局限于 CMAKE
+** DONE [#C] case:ERROR: No Commands were logged to the build logs. Your build system may not be compatible :@YCM:Generator:
+   CLOSED: [2017-12-26 二 15:19]
+1. 问题描述: 使用 YCM-Generator 生成 .ycm_extra_conf.py 的过程中产生的错误
+2. 原因: 你的工程不完整,不能完成一次正确的编译
+3. 解决方案: 完善你的工程,确保使用 cmake -H. -B_builds 命令 以及 cmake --build _builds 命令能够生成最终的目标文件,换句话说,你的工程中需要有 add_executable()命令

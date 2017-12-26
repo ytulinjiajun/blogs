@@ -1,9 +1,8 @@
-* WAITTING [#C] Theme:cmake-compile-features                         :@Cmake:
-** Introduction
-** Compile Feature Requirements
-** Requiring Language Standards
-** Availability of Compiler Extensions
-** Optional Compile Features
-** Conditional Compilation Options
-** Supported Compilers
+* Introduction
+* Compile Feature Requirements
+* Requiring Language Standards
+* Availability of Compiler Extensions
+* Optional Compile Features
+* Conditional Compilation Options
+* Supported Compilers
 

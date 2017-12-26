@@ -1,5 +1,60 @@
-* blogs-linux-active
-** DONE Theme:curl命令                                        :@Blog:@Linux:
+* DONE [#C] theme:apt-get命令
+	- State "DONE"       from "TODO"       [2017-09-05 二 09:29]
+--查询某软件在系统中的基本信息：
+dpkg -s xxx
+(1)是否安装
+(2)安装包大小
+(3)32位还是64位
+(4)版本号
+(5)依赖
+(6)配置文件
+
+--查询当前apt-source下面，可供安装的指定软件xxx的信息（xxx必须是待安装软件在仓库中的真实名）
+apt-cache show xxx
+结果：列出源仓库中，软件xxx不同版本的基本信息
+
+--查询当前apt-source下面,与可供安装的指定软件xxx相关的软件（xxx不必是准确的名）
+apt-cache search xxx
+结果：列出源仓库中，所有与xxx沾边的软件
+
+--安装：
+1)dpkg -i xxx.deb
+2)apt-get -f install 
+3)dpkg -i xxx.deb
+备注：上面的这两个语句经常用来解决软件安装过程的存在的依赖关系，首先下载xxx.deb,然后使用dpkg -i xxx.deb
+安装，此时，一般情况下会显示有依赖文件找不到，接着在使用apt-get -f install,系统就会去安装那些个找不到
+依赖的文件，之后，再使用dpkg -i xxx.deb就能顺利完成xxx.deb的安装了
+
+--删除：
+apt-get autoremove --purge xxx
+备注：删除，软件包+依赖软件包+配置文件
+
+--更新：
+apt-get update && apt-get upgrade && apt-get dist-upgrade
+备注：更新源+更新已安装的软件+系统升级
+
+--了解安装包的依赖关系
+apt-cache depends xxx
+
+--清理下载文件的存档 && 只清理过时的包
+apt-get clean && apt-get autoclean
+
+--检查是否有损坏的依赖
+apt-get check
+
+--查看系统中与xxx相关联的包
+dpkg -l |grep -i xxx
+
+--查询系统中已安装的软件xxx在系统中的所有路径
+dpkg -L xxx
+
+源码包安装
+   apt-cache showsrc 查找看源码包的文件信息(在下载之前)
+   apt-get source 下载源码包.
+   apt-get build-dep +"包名" 构建源码包的编译环境.
+Blog creation time:[2017-09-05 二 09:07]
+
+* DONE [#C] Theme:curl命令
 	- State "DONE"       from "WAITTING"   [2017-09-11 一 15:30]
 --curl命令是一个利用URL规则在命令行下工作的文件传输工具
 
@@ -16,132 +71,7 @@ Ubuntu下，只需一条命令即可安装curl：
 
 
 Blog creation time:[2017-09-11 一 15:24]
-** WAITTING Theme:kali bugs                                   :@Blog:@Linux:
---C-L键按下之后，无法跳转到terminal的底部，使用鼠标滑轮手动滚动到 底部时，再次使用
-C-L想将光标当前位置置顶时，terminal卡死，需要杀死进程才行
-
---在普通用户下，使用sudo emacs /etc/xxx进行编辑时，无法使用中文输入法，而直接
-切换到root后使用emacs /etc/xxx进行编辑时，就可以使用中文输入法
-
-Blog creation time:[2017-09-13 三 10:16]
-** WAITTING Theme:netstat                                     :@Blog:@Linux:
---功能：用于打印linux系统网络的状态信息,列出系统上所有的网络套接字连接情况，包括 
-tcp, udp 以及 unix 套接字，另外它还能列出处于监听状态（即等待接入请求）的套接字
-
---参数：
-(1) -a:显示侦听和未侦听的套接字，即列出当前所有的连接
-输出：
->> Proto:被套接字使用的协议，有tcp, udp, udpl, raw四种
->> Recv-Q:没有被连接到这个套接字的用户程序复制的字节数
->> Send-Q:没有被远程主机认可的字节数
-
-备注：该命令列出 tcp, udp 和 unix 协议下所有套接字的所有连接，然而这些信息还不够详细，管理员往往需要查看某个协议或端口的具体连接情况
-
-
-Blog creation time:[2017-09-14 四 15:20]
-** DONE Theme:安装Debian                                      :@Blog:@Linux:
-	- State "DONE"       from "WAITTING"   [2017-09-15 五 10:24]
-(1)安装：
---Debian官网:https://www.debian.org/
---CD/USB ISO映像(在第三行第二列，比较小，仔细找)
---选择：通过 BitTorrent 下载 CD/DVD 映像文件
---选择：Official jigdo files for the stable release --->DVD amd64或者i386
---选择：debian-9.1.0-amd64-DVD-1.iso.torrent   
-备注：还有debian-9.1.0-amd64-DVD-2.iso.torrent 和 debian-9.1.0-amd64-DVD-3.iso.torrent  
-这两个是软件包，可以自己下载
---制作U盘启动盘，工具：rufus-2.16.exe(网址：http://rufus.akeo.ie/)
---使用U盘安装
-
-(2)配置：
---优化工具：下载扩展插件：workspace to dock
-Blog creation time:[2017-09-14 四 21:27]
-** DONE Theme:解决软件安装过程中的依赖关系的心得              :@Blog:@Linux:
-	- State "DONE"       from "WAITTING"   [2017-09-16 六 20:39]
-(1)正常途径：
->> dpkg -i xxx.deb
->> apt -f install 
->> dpkg -i xxx.deb
-	上面的三条指令几乎就是所有.deb类型的包安装的泛型，其原理如下：
-	一般情况下，拿到一个.deb的包之后，可以使用dpkg -i xxx.deb来安装，此时，有百分之90
-以上的情况都会提示说缺少依赖，但是呢，该软件xxx的状态信息已经存放在/var/lib/dpkg/status
-文件里面了，那紧接着使用apt -f install来强制安装，其原理是下面的包管理机制所述，apt去
-遍历分析整个/var/lib/dpkg/status的过程中自然会发现 xxx 这个软件的依赖中有软件包没有安装，
-自然会去安装这些检测到的包了
-	如此依赖，卸载命令sudo apt autoremove xxx --purge的原理也就很明了了，显然，系统会去
-将/var/lib/dpkg/status中软件xxx登记的信息给抹除掉，之后安装其他软件时才不会报错！
-
-(2)存放软件状态信息的文件：/var/lib/dpkg/status
->> 当使用dpkg -s xxx时，该命令会从该文件中找到xxx这个软件，然后原封不动的将里面的信息
-输出到屏幕，使用该命令，不难发现会显示该软件xxx的所有依赖关系
->> 这个文件很重要，因为每次使用apt安装软件时，apt会事先去遍历这个文件，分析文件中各个
-软件的依赖信息，这样做的原因不难猜测，你想啊，如果你现在安装的软件包当中依赖到了一个包，
-暂且记为pack.xx,而这个pack.xx在你过去某个时刻，安装某一个软件时作为依赖安装过一次，
-那么，现在你正在安装的这个软件用到这个包pack.xx的时候，你是再安装一遍呢，还是不要安装，
-答案是显然的，肯定是不用安装的，那么，apt又如何知道pack.xx以前安装过呢？
-
-(3)包管理机制：
-包管理器提供一种机制：每个软件在安装之后，都会在/var/lib/dpkg/status这个文件下登记状态，
-这里面记录了每个软件包的名称，大小，版本，依赖关系，描述信息等等，在安装一个软件之前，
-首先去遍历这个文件下所有软件的依赖关系这一部分，确定以前从没有安装过该软件以及其所依赖的包
-之后，才会去安装，否则就略过
-
-(3)缺什么补什么：
-	理想很丰满，现实很残酷，实际在安装过程中（1）所述的方法80%都会成功，有15%从原理上说
-压根就不可能（比如兼容性问题），有5%还是值得争取一下的，其失败的原因通常是因为源仓库
-里面无法满足待安装软件内部依赖包的版本，或者是源仓库里面没有某些依赖包等，针对后者，通常，
-可以想办法从外部获取缺少的依赖包进行安装即可。对于前者，得动一番手脚，下面以安装网易云音乐
-为例进行阐述：
->> dpkg -i netease-cloud-music_1.0.0-2_amd64_Ubuntu16.04.deb
-备注：
-缺少几个依赖包，其中，有一个叫做libfontconfig1 (>=2.11.94)的比较特殊，该条目明确
-说明netease-cloud-music这个软件依赖于libfontconfig1 (>=2.11.94)，但是系统的源仓库中
-只有libfontconfig1 2.11.0-6.7+b1，原因已经告诉用户了，针对依赖包libfontconfig1，安装
-过程中需要其版本(>=2.11.94)，知道了原因，就好解决问题了
-
->> 安装缺少的依赖：
-sudo aptitude install xxx yyy zzz ...  libfontconfig1
-备注：
---在此处一定要使用aptitude,测试发现apt-get好像无法处理，至于原因嘛，查资料得知，aptitude 
-解决依赖关系比 apt-get 更智能，它有一个优点就是会自动记录哪些包是"自动安装"
-(即因依赖关系而安装)的, 总之，试一下就知道了
---一个依赖可能会引出其他依赖，新出现的依赖也将其添加进来，知道不再有新的依赖时，就算完事了
---这一步骤最后还是会显示上面说的那个比较特殊的libfontconfig1，版本太新，找不到，没关系，
-那安装时忽略版本就是了
-
->> 解决 libfontconfig1 的版本问题
-sudo dpkg --ignore-depends=libfontconfig1 -i netease-cloud-music_1.0.0-2_amd64_Ubuntu16.04.deb
-
->> 安装完成了吗？
-到目前为止，网易音乐安装并可以正常使用了，在终端下输入netease-cloud-music,就能启动网易音乐
-的界面并播放音乐，然而，事情真的结束了吗？你在使用apt install xxx安装另一个软件试试，会报告
-一个关于libfontconfig1的错，还是说版本不对，聪明的你大概已经想到了，我们前面说，apt以及
-aptitude在使用时，首先会去遍历/var/lib/dpkg/status这个文件中的依赖信息，OK，我们来理一下
-关于libfontconfig1的思路：
-第一个“>>”条目中，使用了dpkg安装网易音乐，结果，在/var/lib/dpkg/status中登记了该软件的
-信息，而信息中有个依赖信息中出现了libfontconfig1 (>=2.11.94)；
-第二个“>>”条目中，使用了aptitude安装缺少的依赖，其中，安装了libfontconfig1，不用说，安装的
-肯定是源仓库中唯一有的2.11.0-6.7+b1版本
-第三个“>>”条目中，使用 dpkg --ignore-depends=libfontconfig1 -i xxx在忽略libfontconfig1
-依赖问题的前提安装了网易音乐，之后就可以使用该软件了
-然而，矛盾在于：系统中实际安装了2.11.0-6.7+b1版本的libfontconfig1，而/var/lib/dpkg/status
-中登记的还是libfontconfig1 (>=2.11.94)，再次使用apt时，遍历/var/lib/dpkg/status的时候，
-apt是会发现这个问题的，所以就输出一条错误信息：
-netease-cloud-music：Depends:libfontconfig1 (>=2.11.94) but 2.11.0-6.7+b1 is 
-installed
-
->> 修改依赖文件
-知道了问题的根源就在于/var/lib/dpkg/status中登记的还是libfontconfig1 (>=2.11.94)，
-那么，将 (>=2.11.94) 从该文件中去掉，问题就解决了，完毕！
-
-Blog creation time:[2017-09-15 五 16:37]
-** DONE Theme:解决Debian使用apt安装软件时要求插入光盘的问题   :@Blog:@Linux:
-	- State "DONE"       from "WAITTING"   [2017-09-15 五 10:24]
---原因：Debian安装后，/etc/apt/sources.list中开头几行默认优先从dvd光盘安装软件,而非从网上下载
-
---解决方案：
-Debian系统自带一个叫做Software update的软件，专门用来管理源，打开该软件配置一下即可
-Blog creation time:[2017-09-15 五 09:10]
-** DONE Theme:diff详解(生成补丁文件)                          :@Blog:@Linux:
+* DONE [#C] theme:diff命令
    - State "DONE"       from "WAITTING"   [2017-10-01 日 18:14]
 1. 基础框架
    1. 范式：diff OPTIONS... TAG1  TAG2
@@ -314,7 +244,7 @@ Blog creation time:[2017-09-15 五 09:10]
 	  4. -N: 在比较目录时，若文件A仅出现在某个目录中，预设会显示：Only in目录，文件A 若使用-N参数，则diff会将文件A 与一个空白的文件比较；该选项能确保补丁文件能正确地处理已经创建或删除文件的情况
    3. 生成补丁文件的最终命令： diff -u -Nr old-package/ new-package/ 
 Blog creation time:[2017-10-01 日 08:48]
-** DONE Theme:patch详解(打补丁)                               :@Blog:@Linux:
+* DONE [#C] theme:patch命令
    - State "DONE"       from "WAITTING"   [2017-10-01 日 18:13]
 1. 当patch的对象是一个文件
    1. 打补丁命令，版本升级：patch old-version.txt <diff.patch  
@@ -375,72 +305,8 @@ Blog creation time:[2017-10-01 日 08:48]
 	  2. -R: 给新对象打补丁，将其还原为旧对象
 	  3. -E: 如果发现空文件，就删除它
 Blog creation time:[2017-10-01 日 09:46]
-** WAITTING Theme:正则表达式                                  :@Blog:@Linux:
-1. 知识点
-   1. 处理字符串的手段 = 支持正则表达式的工具 +  正则表达式
-   2. 正则表达式给出字符串的表示法, 它的作用只是以行为单位表示出指定字符串
-   3. 支持正则表达式的工具给出处理字符串的方法, 它的作用是处理正则表达式给出的字符串
-   4. 正则表达式是字符串处理的标准依据
-   5. 正则表达式不是通配符,通配符代表的是bash接口的一个功能,而正则表达式是字符串的表示法
-   6. 常见的支持正则表达式的工具: grep,awk,sed
-   7. 支持通配符的工具: ls,cd等bash的接口命令均支持通配符
-   8. 语系直接影响正则表达式的结果:
-	  1. LANG=C: 0 1 2 3 ... 8 9 A B C D ... X Y Z a b c d ... x y z
-	  2. LANG=zh_CN: 0 2 3 4 ... 8 9 a A b B c C d D ... x X y Y z Z
-	  3. 针对LANG=C使用正则表达式: [A-Z] = A B C D ... X Y Z
-	  4. 针对LANG=zh_CN使用正则表达式: [A-z] = A b B c C ...x X y Y z Z
-	  5. 备注: 可以使用export LANG=C来设置语系
-   9. 为了免疫语系对正则表达式结果的影响,给出了一些特殊的符号来代表特定的集合:
-	  1. [:digit:]: 代表数字的集合: [0-9]
-	  2. [:lower:]: 代表小写字母集合: [a-z]
-	  3. [:upper:]: 代表大写字母集合: [A-Z]
-	  4. [:alpha:]: 代表小写字母,大写字母的集合: [a-z] | [A-Z]
-	  5. [:alnum:]: 小写字符,大写字母,数字的集合: [0-9] | [a-z] | [A-Z]
-2. 正则表达式泛型: '元字符'
-3. 正则表达式的元字符
-   1. 关于元字符的重要说明:
-      1. 元字符是对字符串的一种描述(更像一种范式),每个元字符规范一种类型的串
-	  2. 元字符不带任何"感情色彩",仅仅是刻画符合这个元字符规范的串
-	  3. 元字符描绘的对象是字符(包括回车,空格,换行等),不是单词,不是串,搞清楚这一点这是非常重要,大多数文档为了好看,经常以单词来示范,这是一个误区,下面的解释中特别以键盘随便敲击的asdf来强调这一点
-	  4. 元字符描绘哪个目标文件中的串? 在目标文件中匹配到符合元字符范式的串以行为单位输出? 这两个重要的问题跟元字符无关,只跟正则表达式查找工具(如:grep,awk,sed等)相关
-   2. asdf: (非元字符),拿整个 'asdf', 去和目标文件匹配,若匹配成功,则称目标文件中匹配点处的串(在grep中,这里说的串被解释成行), 则满足该范式
-	  1. 示例: grep -n 'hello world' a.txt
-	  2. 解释: 在a.txt中,所有存在hello world的行都会被匹配, 然后以带行号的形式,将这些行输出
-   3. [asdf]: 依次拿[]中的字符, 去逐字符匹配目标文件,若匹配成功,则称目标文件中匹配点处的串(在grep中,这里说的串被解释成行), 则满足该范式
-      1. 示例: grep -n 'a[df]g' a.txt
-	  2. 解释: 在a.txt中,所有存在adg和afg的行都会被匹配,然后以带行号的形式,将这些行输出
-   4. [^a.sD!f]: 从效果上理解, 拿着整个'a.sD!f' 去和目标文件匹配, 若没有匹配成功(在grep中,这里说的串被解释成行), 则满足该范式;
-      1. 示例: grep -n 'I like dog!' a.txt
-	  2. 解释: 在a.txt中, 所有不存在I like dog!的行被锁定,然后以带行号的形式,将这些行输出
-	  3. ^在此处有取反的意思
-   5. ^asdf: 拿着整个 'asdf' , 去和目标文件匹配, 若匹配成功,而恰好 asdf  又在串的开始位置(在grep中,这里说的开始位置被解释为行首), 则满足该范式;
-      1. 示例: grep -n '^#' a.txt
-	  2. 解释: 在a.txt中, 所有以#开头的行都会被匹配,然后以带行号的形式,将这些行输出
-   6. $asdf: 拿着整个 'asdf' , 去和目标文件匹配, 若匹配成功,而恰好 asdf  又在串的结束位置(在grep中,结束位置定义为行尾),则满足该范式;
-      1. 示例: grep -n '$!' a.txt
-	  2. 解释: 在a.txt中,所有以!结尾的行都会被匹配,然后以带行号的形式,将这些行输出
-   7. \x: 拿着x(代表任意字符的转义), 去和目标文件匹配, 若匹配成功,则称目标文件中匹配点处的串(在grep中,这里说的串被解释成行),则满足该范式
-      1. 示例: grep -n '\"' a.txt
-	  2. 解释: 在a.txt中,所有含有双引号的行都会被匹配,然后以带行号的形式,将这些行输出
-	  3. 备注: grep -n '\'' a.txt是错误的,此时应当写为 grep -n \' a.txt
-   8. ess*: 依次拿着 es,ess,esss ... 去和目标文件匹配,若匹配成功,则称目标文件中匹配点处的串(在grep中,这里说的串被解释成行), 则满足该范式
-	  1. 重点: * 代表可以重复*前面的字符s任意次数(0次,1次...),上面的es是重复0次时匹配到的,注意,e不能被匹配
-      2. 示例: grep -n 'es*' a.txt
-	  3. 解释: 在a.txt中,所有存在e,es,ess,esss...的行都会被匹配,然后以带行号的形式,将这些行输出
-   9. ess+: 依次拿着 ess,esss ... 去和目标文件匹配,若匹配成功,则称目标文件中匹配点处的串(在grep中,这里说的串被解释成行), 则满足该范式
-	  1. 重点: + 代表可以重复+前面的字符s大于等于1次(1次,2次...),上面的ess是重复1次时匹配到的,注意,es不能被匹配
-   10. o\{2\}: 目标文件中,2个o连续出现(oo)的串将被匹配
- 	   1. 注意,对于grep来说,o\{2\}的含义是2个及以上的o连续出现(oo,ooo,oooo ...)
-	   2. eo\{2\}中,同样也只关注o连续出现的次数,不用关注e连续出现的次数
-   11. o\{2,\}: 目标文件中,2或者2个以上的o连续出现(oo,ooo,oooo)的串将被匹配
-   12. o\{1,3\}: 目标文件中,连续出现o的个数最少为1个,最多为3个的串将被匹配
-   13. do\(es)?: 依次拿着 do 或者 does 去和目标文件匹配,若匹配成功,则称目标文件中匹配点处的串(在grep中,这里说的串被解释成行), 则满足该范式
-   14. e.e : 在目标文件中, 匹配 'e任何单个字符e',  若匹配成功,,则称目标文件中匹配点处的串(在grep中,这里说的串被解释成行), 则满足该范式
-	   1. 重点: 点 . 有且仅有单个字符,注意了,一定有一个字符,而且仅仅只有一个字符 edfe是不会匹配的
-	   2. 示例: grep -n 'o.o' a.txt
-	   3. 解释: 在a.txt中,所有存在o字符o的行都会被匹配,然后以带行号的形式,将这些行输出
-Blog creation time:[2017-10-17 二 13:32]
-** WAITTING Theme:grep命令                             :@Blog:@Linux:ATTACH:
+* DONE [#C] theme:grep命令
+  CLOSED: [2017-12-26 二 14:53]
 1. 文本搜索工
 2. 以行为单位
 3. 具支持正则表达式
@@ -462,9 +328,9 @@ Blog creation time:[2017-10-17 二 13:32]
 	  1. 从文件序列a.txt,b.txt,c.txt ... 中,不区分大小写的匹配含有关键字符串'the'的所有行
 	  2. 以带行号的形式将除匹配到的行之外的所有行打印到标准输出
 Blog creation time:[2017-10-17 二 15:33]
-** DONE theme:sed命令                                         :@Blog:@Linux:
-	- State "DONE"       from "TODO"       [2017-09-04 一 22:40]
-*** sed介绍
+* DONE [#C] theme:sed命令
+ - State "DONE"       from "TODO"       [2017-09-04 一 22:40]
+** sed介绍
 >> sed英文全称是stream editor,流编辑器，它是一个简单而强大的文本解析转换工具
 
 >>在1973-1974年期间由贝尔实验室的Lee E. McMahon开发，今天，它已经运行在所有的主流操作系统上了，
@@ -483,7 +349,7 @@ Blog creation time:[2017-10-17 二 15:33]
 
 >>用于：文本替换，选择性的输出文本文件，从文本文件的某处开始编辑，无交互式的对文本文件进行
 编辑，自动编辑一个或多个文件，简化对文件的反复操作，编写转换程序等
-*** sed的工作原理
+** sed的工作原理
 sed的内部实现遵循简单的工作流：读取，执行和显示
 --读取：sed从输入流(标准输入流，文件，管道)读取一行，并存储在专用buff中
 --执行：sed命令对专用的buff中的执行命令
@@ -491,7 +357,7 @@ sed的内部实现遵循简单的工作流：读取，执行和显示
 结论：
 >> 行，是sed处理的基本单位
 >> sed相关的命令作用于专用buff中的行，对输入流中的数据没有影响
-*** sed命令的两种调用形式
+** sed命令的两种调用形式
 >> 命令模式：sed [option] 'sed_command' target_filename
 >> 脚本模式：sed [option] -f command_script_files target_filename
 其中，命令模式使用单引号指定要执行的命令，而脚本模式则指定了包含sed命令的脚本文件
@@ -504,3 +370,19 @@ sed的内部实现遵循简单的工作流：读取，执行和显示
 -i ：直接修改目标文件的内容，而不是输出到终端 
 
 Blog creation time:[2017-09-01 五 10:39]
+* DONE [#C] theme:netstat命令
+  CLOSED: [2017-12-26 二 14:54]
+--功能：用于打印linux系统网络的状态信息,列出系统上所有的网络套接字连接情况，包括 
+tcp, udp 以及 unix 套接字，另外它还能列出处于监听状态（即等待接入请求）的套接字
+
+--参数：
+(1) -a:显示侦听和未侦听的套接字，即列出当前所有的连接
+输出：
+>> Proto:被套接字使用的协议，有tcp, udp, udpl, raw四种
+>> Recv-Q:没有被连接到这个套接字的用户程序复制的字节数
+>> Send-Q:没有被远程主机认可的字节数
+
+备注：该命令列出 tcp, udp 和 unix 协议下所有套接字的所有连接，然而这些信息还不够详细，管理员往往需要查看某个协议或端口的具体连接情况
+
+
+Blog creation time:[2017-09-14 四 15:20]

@@ -1,5 +1,4 @@
-* WAITTING [#C] Theme:cmake-command                                  :@Cmake:
-*** <<get_filename_component>>  :Scripting Commands:
+* <<get_filename_component>>  :Scripting Commands:
 #+BEGIN_SRC 
 get_filename_component(<VAR> <FileName> <COMP> [CACHE])
 #+END_SRC
@@ -19,10 +18,10 @@ message("STM32_CMAKE_DIR=${STM32_CMAKE_DIR}")
 #+END_SRC
 如果 <COMP> 是 DIRECTORY,则 <VAR> 的值(STM32_CMAKE_DIR)就是: /home/ljj/workspace/project/stm32/system/
 如果 <COMP> 是 NAME, 则 <VAR> 的值就是(STM32_CMAKE_DIR)就是: CMakeLists.txt
-*** <<set>> :Scripting Commands:
+* <<set>> :Scripting Commands:
 作用: 为 普通变量,cache变量,环境变量 赋值,请参阅 [[cmake-language(7)]] 变量 文档以了解正常变量和缓存条目的范围和交互
 说明: <value>...标识此命令需要零个或者多个参数,若给出多个参数(set(tmp 2 GREATER 1)),则这些参数被连接成一个list的形式(2;GREATER;1),零个参数将会导致正常的变量被隐式的 [[unset]] 掉
-**** Set Normal Variable
+** Set Normal Variable
  #+BEGIN_SRC 
  set(<variable> <value>... [PARENT_SCOPE])
  #+END_SRC
@@ -30,13 +29,13 @@ message("STM32_CMAKE_DIR=${STM32_CMAKE_DIR}")
 2. 使用 PARENT_SCOPE 的情况下:  当前目录中定义的变量有且只能在其直接父目录中使用(注意:在当前目录无法使用,在其子目录无法使用,在其子目录的子目录无法使用,在其父目录的父目录无法使用 
 3. 如果<value>的值有多个,如 set(t a.c b.c c.c d.c),则t会自动变为一个list
 备注: 实现变量全局共享的另外一个方法是使用 [[set_property]] 命令
-**** Set Environment Variable
+** Set Environment Variable
 #+BEGIN_SRC 
 set(ENV{<variable>} <value>...)
 #+END_SRC 
 作用: 将当前进程环境变量设置为给定值
 示例: set(ENV{[[CC]]} "gcc")
-**** Set Cache Entry
+** Set Cache Entry
 #+BEGIN_SRC 
 set(<variable> <value>... CACHE <type> <docstring> [FORCE])
 #+END_SRC
@@ -63,185 +62,185 @@ set(<variable> <value>... CACHE <type> <docstring> [FORCE])
 
 - 高速缓存条目可能在调用之前存在，但如果用户通过-D <var> = <value>选项在cmake（1）命令行上创建，而没有指定类型，则不会设置类型集
 在这种情况下，set命令将添加类型。此外，如果<type>是PATH或FILEPATH，并且命令行上提供的<value>是相对路径，则set命令将把路径视为相对于当前工作目录并将其转换为绝对路径
-*** <<list>> :Scripting Commands:
-    1. 泛型1: list(LENGTH <list> <output variable>) 
-	     1. set(tmp a b c d e f)
-	     2. list(LENGTH tmp len)
-	     3. message(STATUS "len=${len}")
-	     4. 返回: 6
-    2. 泛型2: list(GET <list> <element index> [<element index> ...] <output variable>)
-	     1. set(tmp1 a b c d e f)
-	     2. list(GET tmp1 3 5 tmp2)
-	     3. message(STATUS "tmp2=${tmp2}")
-	     4. 返回: d;f
-	     5. 备注: 3 5代表元素的编号,含义为取列表中编号为3和5的元素,列表的编号从0开始
-    3. 泛型3: list(REVERSE <list>)
-	     1. set(tmp1 a b c d e f)
-	     2. message(STATUS "tmp1=${tmp1}")
-       3. list(REVERSE tmp1)
-	     4. message(STATUS "tmp1=${tmp1}")
-	     5. 返回: tmp1=a b c d e f; tmp1=f e d c b a
-    4. 泛型4: list(FIND <list> <value> <output variable>)
-	     1. set(tmp1 a b c d e f)
-       2. list(FIND tmp1 b tmp2)
-       3. message(STATUS "tmp2=${tmp2}")	
-       4. 返回: 1  
-       5. 备注: <value>只能是一个元素; <output variabes>是<value>在列表中的位置; 列表中元素的编号从0开始; 当没有找到<value>时,返回-1
-    5. 泛型5: list(APPEND <list> [<element> ...])
-       1. set(tmp1 a b c d e f)
-       2. list(APPEND tmp1 3 h 7 m )
-       3. message(STATUS "tmp1=${tmp1}")
-       4. 返回: a b c d e f 3 h 7 m
-    6. 泛型6: list(INSERT <list> <element_index> <element> [<element> ...])
-       1. 作用: 在编号为<element_index>的元素前面插入元素
-       2. set(tmp1 a b c d e f)
-       3. list(INSERT tmp1 3 f 7 9 0)
-       4. message(STATUS "tmp1=${tmp1}")
-       5. 返回: a b c f 7 9 0 d e f
-       6. 备注: 元素编号从0开始
-    7. 泛型7: list(REMOVE_ITEM <list> <value> [<value> ...])
-       1. set(tmp1 a b c d e f)
-       2. list(REMOVE_ITEM tmp1 c d)
-       3. message(STATUS "tmp1=${tmp1}")
-       4. 返回: a b e f
-    8. 泛型8: list(REMOVE_AT <list> <index> [<index> ...])
-       1. set(tmp1 a b c d e f)
-       2. list(REMOVE_AT tmp1 2 4)
-       3. message(STATUS "tmp1=${tmp1}")
-       4. 返回: a b d f
-       5. 备注: <index>可以为负数: list(REMOVE_AT tmp1 -2 -5),返回 a c d f
-       6. 注意,如果为负数,则最后一个数的编号是-1
-    9. 泛型9: list(REMOVE_DUPLICATES <list>)
-       1. 作用: 移除列表中重复的元素
-       2. set(tmp1 a b a d a f)
-       3. list(REMOVE_DUPLICATES tmp1)
-       4. message(STATUS "tmp1=${tmp1}")
-       5. 返回:  a b d f
-    10. 泛型10: list(SORT <list>)
-       1. set(tmp1 e b 3 d c 2 a f 1)
-       2. list(SORT tmp1)
-       3. message(STATUS "tmp1=${tmp1}")
-       4. 返回: 1 2 3 a b c d e f
-    11. 泛型11: list(FILTER <list> <INCLUDE|EXCLUDE> REGEX <regular_expression>)
-          1. set(tmp1 e b 4 d c 2 a f 1)
-          2. list(FILTER tmp1 INCLUDE REGEX [0-9])
-          3. message(STATUS "tmp1=${tmp1}")
-          4. 返回: 4 2 1
-          5. 备注: <INCLUDE|EXCLUDE>给出过滤后保留哪一部分, REGEX标识后面接正则表达式,更多正则表达式的知识参考 [[string]]()
-*** <<string>> :Scripting Commands:
-    1. 泛型1: string(FIND <string> <substring> <output variable> [REVERSE])
-       1. 作用: 从串<string>中找出子串<substring>的位置,将子串中第一个元素在串中首次出现的位置的编号存储在变量中
-       2. string(FIND "li njim aj un" "ji" tmp)
-       3. message(STATUS "tmp=${tmp}")
-       4. 返回: 4
-       5. 备注: 如果找不到子串,则返回-1,比如<substring>为in就会返回-1,为i n就会返回1
-    2. 泛型2: string(REPLACE <match_string> <replace_string> <output variable> <input> [<input>...])
-       1. string(REPLACE "i n" "**" tmp "li njim aj un" " i nm pq")
-       2. message(STATUS "tmp=${tmp}")
-       3. 返回: l**jim aj un **m pq
-    3. 泛型3: string(REGEX MATCH <regular_expression> <output variable> <input> [<input>...])
-       1. string(REGEX MATCH [b-f] tmp "a d" "b c")
-       2. message(STATUS "tmp=${tmp}")
-       3. 返回: d
-       4. 注意: 匹配正则表达式中第一个遇到的字符
-    4. 泛型4: string(REGEX MATCHALL <regular_expression> <output variable> <input> [<input>...])
-       1. string(REGEX MATCHALL [b-f] tmp "a de" "b c")
-       2. message(STATUS "tmp=${tmp}")
-       3. 返回: d;e;b;c
-    5. 泛型5: string(REGEX REPLACE <regular_expression> <replace_expression> <output variable> <input> [<input>...])
-       1. string(REGEX REPLACE [b-f] "*" tmp "a de m" "h b c g")
-       2. message(STATUS "tmp=${tmp}")
-       3. 返回: a ** mh * * g
-    6. 泛型6: string(APPEND <string variable> [<input>...])
-       1. set(tmp "hello world")
-       2. string(APPEND tmp "lin" "jia jun")
-       3. message(STATUS "tmp=${tmp}")
-       4. 返回: hello worldlinjia jun
-    7. 泛型7: string(PREPEND <string variable> [<input>...])
-       1. set(tmp "hello world")
-       2. string(PREPEND tmp "lin" "jia jun")
-       3. message(STATUS "tmp=${tmp}")
-       4. 结果: 理论上是 linjia junhello world,但是该版本的cmake测试不支持PREPEND
-    8. 泛型8: string(CONCAT <output variable> [<input>...])
-       1. string(CONCAT tmp "lin " "jia jun")
-       2. message(STATUS "tmp=${tmp}")
-       3. 返回: lin jia jun
-    9. 泛型9: string(TOLOWER <string1> <output variable>)
-       1. string(TOLOWER "LIN JIA JUN" tmp)
-       2. message(STATUS "tmp=${tmp}")
-       3. 结果: lin jia jun
-    10. 泛型10: string(TOUPPER <string1> <output variable>)
-        1. string(TOUPPER "lin jia jun" tmp)
-        2. message(STATUS "tmp=${tmp}")
-        3. 结果: LIN JIA JUN
-    11. 泛型11: string(LENGTH <string> <output variable>)
-        1. string(LENGTH "lin jia jun" tmp)
-        2. message(STATUS "tmp=${tmp}")
-        3. 结果: 11
-    12. 泛型12: string(SUBSTRING <string> <begin> <length> <output variable>)
-        1. string(SUBSTRING "lin jia jun" 2 4 tmp)
-        2. message(STATUS "tmp=${tmp}")
-        3. 返回: n ji
-        4. 备注: 字符串编号从0开始
-    13. 泛型13: string(STRIP <string> <output variable>)
-        1. string(STRIP "   lin     jia jun  " tmp)
-        2. message(STATUS "tmp=${tmp}")
-        3. 结果: "lin jia jun"
-    14. 泛型14: string(GENEX_STRIP <input string> <output variable>)
-        1. 从输入字符串中去除任 [[generator expressions ]] 表达式并将结果存储在输出变量中
-    15. 泛型15: string(COMPARE LESS <string1> <string2> <output variable>)
-        1. 比较字符串,然后将true或者false存储在输出变量当中
-    16. 泛型16: string(COMPARE GREATER <string1> <string2> <output variable>)
-        1. 比较字符串,然后将true或者false存储在输出变量当中
-    17. 泛型17: string(COMPARE EQUAL <string1> <string2> <output variable>)
-        1. 比较字符串,然后将true或者false存储在输出变量当中
-    18. 泛型18: string(COMPARE NOTEQUAL <string1> <string2> <output variable>)
-        1. 比较字符串,然后将true或者false存储在输出变量当中
-    19. 泛型19: string(COMPARE LESS_EQUAL <string1> <string2> <output variable>)
-        1. 比较字符串,然后将true或者false存储在输出变量当中
-    20. 泛型20: string(COMPARE GREATER_EQUAL <string1> <string2> <output variable>)
-        1. 比较字符串,然后将true或者false存储在输出变量当中
-    21. 泛型16: string(<HASH> <output variable> <input>)
-        1. 计算输入字符串的加密哈希
-        2. 支持的<HASH>算法名称是: MD5, SHA1, SHA224, SHA256, SHA384, SHA512, SHA3_224, SHA3_256, SHA3_384, SHA3_512 
-    22. 泛型17: string(ASCII <number> [<number> ...] <output variable>)
-        1. 将所有数字转换为相应的ASCII字符
-    23. 泛型18: string(CONFIGURE <string1> <output variable> [@ONLY] [ESCAPE_QUOTES])
-        1. 像 [[configure_file]]() 转换一个文件那样,转换一个字符串
-    24. 泛型19: string(RANDOM [LENGTH <length>] [ALPHABET <alphabet>] [RANDOM_SEED <seed>] <output variable>)
-        1. string(RANDOM LENGTH 6 tmp)
-        2. message(STATUS "tmp=${tmp}")
-        3. 生成一个6位数的随机数,随机数由大小写字母和数字构成
-    25. 泛型20: string(TIMESTAMP <output variable> [<format string>] [UTC])
-        1. string(TIMESTAMP tmp "%Y年-%m月-%d日 %H:%M:%S")
-        2. message(STATUS "tmp=${tmp}")
-        3. 结果: 2017年-11月-17日 13:27:07
-        4. <format string>:
-           1. %%        A literal percent sign (%).
-           2. %d        The day of the current month (01-31).
-           3. %H        The hour on a 24-hour clock (00-23).
-           4. %I        The hour on a 12-hour clock (01-12).
-           5. %j        The day of the current year (001-366).
-           6. %m        The month of the current year (01-12).
-           7. %b        Abbreviated month name (e.g. Oct).
-           8. %B        Full month name (e.g. October).
-           9. %M        The minute of the current hour (00-59).
-           10. %s        Seconds since midnight (UTC) 1-Jan-1970 (UNIX time).
-           11. %S        The second of the current minute.60 represents a leap second. (00-60)
-           12. %U        The week number of the current year (00-53).
-           13. %w        The day of the current week. 0 is Sunday. (0-6)
-           14. %a        Abbreviated weekday name (e.g. Fri).
-           15. %A        Full weekday name (e.g. Friday).
-           16. %y        The last two digits of the current year (00-99)
-           17. %Y        The current year.
-    26. 泛型21: string(MAKE_C_IDENTIFIER <input string> <output variable>)
-        1. string(MAKE_C_IDENTIFIER hello.c tmp)
-        2. message(STATUS "tmp=${tmp}")
-        3. 结果: hello_c 
-    27. 泛型22: string(UUID <output variable> NAMESPACE <namespace> NAME <name> TYPE <MD5|SHA1> [UPPER])
-        1. 根据RFC4122基于组合值<namespace> （其本身必须是有效的UUID）的哈希来创建一个唯一的唯一标识符（又名GUID）<name>
-        2. 如果需要，可以用可选UPPER标志请求大写字母表示
-*** <<foreach>> :Scripting Commands:
+* <<list>> :Scripting Commands:
+  1. 泛型1: list(LENGTH <list> <output variable>) 
+	   1. set(tmp a b c d e f)
+	   2. list(LENGTH tmp len)
+	   3. message(STATUS "len=${len}")
+	   4. 返回: 6
+  2. 泛型2: list(GET <list> <element index> [<element index> ...] <output variable>)
+	   1. set(tmp1 a b c d e f)
+	   2. list(GET tmp1 3 5 tmp2)
+	   3. message(STATUS "tmp2=${tmp2}")
+	   4. 返回: d;f
+	   5. 备注: 3 5代表元素的编号,含义为取列表中编号为3和5的元素,列表的编号从0开始
+  3. 泛型3: list(REVERSE <list>)
+	   1. set(tmp1 a b c d e f)
+	   2. message(STATUS "tmp1=${tmp1}")
+     3. list(REVERSE tmp1)
+	   4. message(STATUS "tmp1=${tmp1}")
+	   5. 返回: tmp1=a b c d e f; tmp1=f e d c b a
+  4. 泛型4: list(FIND <list> <value> <output variable>)
+	   1. set(tmp1 a b c d e f)
+     2. list(FIND tmp1 b tmp2)
+     3. message(STATUS "tmp2=${tmp2}")	
+     4. 返回: 1  
+     5. 备注: <value>只能是一个元素; <output variabes>是<value>在列表中的位置; 列表中元素的编号从0开始; 当没有找到<value>时,返回-1
+  5. 泛型5: list(APPEND <list> [<element> ...])
+     1. set(tmp1 a b c d e f)
+     2. list(APPEND tmp1 3 h 7 m )
+     3. message(STATUS "tmp1=${tmp1}")
+     4. 返回: a b c d e f 3 h 7 m
+  6. 泛型6: list(INSERT <list> <element_index> <element> [<element> ...])
+     1. 作用: 在编号为<element_index>的元素前面插入元素
+     2. set(tmp1 a b c d e f)
+     3. list(INSERT tmp1 3 f 7 9 0)
+     4. message(STATUS "tmp1=${tmp1}")
+     5. 返回: a b c f 7 9 0 d e f
+     6. 备注: 元素编号从0开始
+  7. 泛型7: list(REMOVE_ITEM <list> <value> [<value> ...])
+     1. set(tmp1 a b c d e f)
+     2. list(REMOVE_ITEM tmp1 c d)
+     3. message(STATUS "tmp1=${tmp1}")
+     4. 返回: a b e f
+  8. 泛型8: list(REMOVE_AT <list> <index> [<index> ...])
+     1. set(tmp1 a b c d e f)
+     2. list(REMOVE_AT tmp1 2 4)
+     3. message(STATUS "tmp1=${tmp1}")
+     4. 返回: a b d f
+     5. 备注: <index>可以为负数: list(REMOVE_AT tmp1 -2 -5),返回 a c d f
+     6. 注意,如果为负数,则最后一个数的编号是-1
+  9. 泛型9: list(REMOVE_DUPLICATES <list>)
+     1. 作用: 移除列表中重复的元素
+     2. set(tmp1 a b a d a f)
+     3. list(REMOVE_DUPLICATES tmp1)
+     4. message(STATUS "tmp1=${tmp1}")
+     5. 返回:  a b d f
+  10. 泛型10: list(SORT <list>)
+     1. set(tmp1 e b 3 d c 2 a f 1)
+     2. list(SORT tmp1)
+     3. message(STATUS "tmp1=${tmp1}")
+     4. 返回: 1 2 3 a b c d e f
+  11. 泛型11: list(FILTER <list> <INCLUDE|EXCLUDE> REGEX <regular_expression>)
+        1. set(tmp1 e b 4 d c 2 a f 1)
+        2. list(FILTER tmp1 INCLUDE REGEX [0-9])
+        3. message(STATUS "tmp1=${tmp1}")
+        4. 返回: 4 2 1
+        5. 备注: <INCLUDE|EXCLUDE>给出过滤后保留哪一部分, REGEX标识后面接正则表达式,更多正则表达式的知识参考 [[string]]()
+* <<string>> :Scripting Commands:
+  1. 泛型1: string(FIND <string> <substring> <output variable> [REVERSE])
+     1. 作用: 从串<string>中找出子串<substring>的位置,将子串中第一个元素在串中首次出现的位置的编号存储在变量中
+     2. string(FIND "li njim aj un" "ji" tmp)
+     3. message(STATUS "tmp=${tmp}")
+     4. 返回: 4
+     5. 备注: 如果找不到子串,则返回-1,比如<substring>为in就会返回-1,为i n就会返回1
+  2. 泛型2: string(REPLACE <match_string> <replace_string> <output variable> <input> [<input>...])
+     1. string(REPLACE "i n" "**" tmp "li njim aj un" " i nm pq")
+     2. message(STATUS "tmp=${tmp}")
+     3. 返回: l**jim aj un **m pq
+  3. 泛型3: string(REGEX MATCH <regular_expression> <output variable> <input> [<input>...])
+     1. string(REGEX MATCH [b-f] tmp "a d" "b c")
+     2. message(STATUS "tmp=${tmp}")
+     3. 返回: d
+     4. 注意: 匹配正则表达式中第一个遇到的字符
+  4. 泛型4: string(REGEX MATCHALL <regular_expression> <output variable> <input> [<input>...])
+     1. string(REGEX MATCHALL [b-f] tmp "a de" "b c")
+     2. message(STATUS "tmp=${tmp}")
+     3. 返回: d;e;b;c
+  5. 泛型5: string(REGEX REPLACE <regular_expression> <replace_expression> <output variable> <input> [<input>...])
+     1. string(REGEX REPLACE [b-f] "*" tmp "a de m" "h b c g")
+     2. message(STATUS "tmp=${tmp}")
+     3. 返回: a ** mh * * g
+  6. 泛型6: string(APPEND <string variable> [<input>...])
+     1. set(tmp "hello world")
+     2. string(APPEND tmp "lin" "jia jun")
+     3. message(STATUS "tmp=${tmp}")
+     4. 返回: hello worldlinjia jun
+  7. 泛型7: string(PREPEND <string variable> [<input>...])
+     1. set(tmp "hello world")
+     2. string(PREPEND tmp "lin" "jia jun")
+     3. message(STATUS "tmp=${tmp}")
+     4. 结果: 理论上是 linjia junhello world,但是该版本的cmake测试不支持PREPEND
+  8. 泛型8: string(CONCAT <output variable> [<input>...])
+     1. string(CONCAT tmp "lin " "jia jun")
+     2. message(STATUS "tmp=${tmp}")
+     3. 返回: lin jia jun
+  9. 泛型9: string(TOLOWER <string1> <output variable>)
+     1. string(TOLOWER "LIN JIA JUN" tmp)
+     2. message(STATUS "tmp=${tmp}")
+     3. 结果: lin jia jun
+  10. 泛型10: string(TOUPPER <string1> <output variable>)
+      1. string(TOUPPER "lin jia jun" tmp)
+      2. message(STATUS "tmp=${tmp}")
+      3. 结果: LIN JIA JUN
+  11. 泛型11: string(LENGTH <string> <output variable>)
+      1. string(LENGTH "lin jia jun" tmp)
+      2. message(STATUS "tmp=${tmp}")
+      3. 结果: 11
+  12. 泛型12: string(SUBSTRING <string> <begin> <length> <output variable>)
+      1. string(SUBSTRING "lin jia jun" 2 4 tmp)
+      2. message(STATUS "tmp=${tmp}")
+      3. 返回: n ji
+      4. 备注: 字符串编号从0开始
+  13. 泛型13: string(STRIP <string> <output variable>)
+      1. string(STRIP "   lin     jia jun  " tmp)
+      2. message(STATUS "tmp=${tmp}")
+      3. 结果: "lin jia jun"
+  14. 泛型14: string(GENEX_STRIP <input string> <output variable>)
+      1. 从输入字符串中去除任 [[generator expressions ]] 表达式并将结果存储在输出变量中
+  15. 泛型15: string(COMPARE LESS <string1> <string2> <output variable>)
+      1. 比较字符串,然后将true或者false存储在输出变量当中
+  16. 泛型16: string(COMPARE GREATER <string1> <string2> <output variable>)
+      1. 比较字符串,然后将true或者false存储在输出变量当中
+  17. 泛型17: string(COMPARE EQUAL <string1> <string2> <output variable>)
+      1. 比较字符串,然后将true或者false存储在输出变量当中
+  18. 泛型18: string(COMPARE NOTEQUAL <string1> <string2> <output variable>)
+      1. 比较字符串,然后将true或者false存储在输出变量当中
+  19. 泛型19: string(COMPARE LESS_EQUAL <string1> <string2> <output variable>)
+      1. 比较字符串,然后将true或者false存储在输出变量当中
+  20. 泛型20: string(COMPARE GREATER_EQUAL <string1> <string2> <output variable>)
+      1. 比较字符串,然后将true或者false存储在输出变量当中
+  21. 泛型16: string(<HASH> <output variable> <input>)
+      1. 计算输入字符串的加密哈希
+      2. 支持的<HASH>算法名称是: MD5, SHA1, SHA224, SHA256, SHA384, SHA512, SHA3_224, SHA3_256, SHA3_384, SHA3_512 
+  22. 泛型17: string(ASCII <number> [<number> ...] <output variable>)
+      1. 将所有数字转换为相应的ASCII字符
+  23. 泛型18: string(CONFIGURE <string1> <output variable> [@ONLY] [ESCAPE_QUOTES])
+      1. 像 [[configure_file]]() 转换一个文件那样,转换一个字符串
+  24. 泛型19: string(RANDOM [LENGTH <length>] [ALPHABET <alphabet>] [RANDOM_SEED <seed>] <output variable>)
+      1. string(RANDOM LENGTH 6 tmp)
+      2. message(STATUS "tmp=${tmp}")
+      3. 生成一个6位数的随机数,随机数由大小写字母和数字构成
+  25. 泛型20: string(TIMESTAMP <output variable> [<format string>] [UTC])
+      1. string(TIMESTAMP tmp "%Y年-%m月-%d日 %H:%M:%S")
+      2. message(STATUS "tmp=${tmp}")
+      3. 结果: 2017年-11月-17日 13:27:07
+      4. <format string>:
+         1. %%        A literal percent sign (%).
+         2. %d        The day of the current month (01-31).
+         3. %H        The hour on a 24-hour clock (00-23).
+         4. %I        The hour on a 12-hour clock (01-12).
+         5. %j        The day of the current year (001-366).
+         6. %m        The month of the current year (01-12).
+         7. %b        Abbreviated month name (e.g. Oct).
+         8. %B        Full month name (e.g. October).
+         9. %M        The minute of the current hour (00-59).
+         10. %s        Seconds since midnight (UTC) 1-Jan-1970 (UNIX time).
+         11. %S        The second of the current minute.60 represents a leap second. (00-60)
+         12. %U        The week number of the current year (00-53).
+         13. %w        The day of the current week. 0 is Sunday. (0-6)
+         14. %a        Abbreviated weekday name (e.g. Fri).
+         15. %A        Full weekday name (e.g. Friday).
+         16. %y        The last two digits of the current year (00-99)
+         17. %Y        The current year.
+  26. 泛型21: string(MAKE_C_IDENTIFIER <input string> <output variable>)
+      1. string(MAKE_C_IDENTIFIER hello.c tmp)
+      2. message(STATUS "tmp=${tmp}")
+      3. 结果: hello_c 
+  27. 泛型22: string(UUID <output variable> NAMESPACE <namespace> NAME <name> TYPE <MD5|SHA1> [UPPER])
+      1. 根据RFC4122基于组合值<namespace> （其本身必须是有效的UUID）的哈希来创建一个唯一的唯一标识符（又名GUID）<name>
+      2. 如果需要，可以用可选UPPER标志请求大写字母表示
+* <<foreach>> :Scripting Commands:
 #+BEGIN_SRC 
 foreach(loop_var arg1 arg2 ...)
   COMMAND1(ARGS ...)
@@ -290,7 +289,7 @@ foreach(loop_var IN [LISTS [list1 [...]]]
 - 迭代 items 的精确列表
 - LISTS 选项列出要被遍历的列表值变量,包括空元素（一个空字符串是一个零长度列表）。 （注意宏参数不是变量。）
 - ITEMS 选项结束参数解析并在迭代中包含其后面的所有参数
-*** <<function>> :Scripting Commands:
+* <<function>> :Scripting Commands:
 #+BEGIN_SRC 
           1. function(<name>  [arg1 [arg2 [arg3 ...]]])
       	  2. COMMAND1(... arg1 ...)
@@ -316,7 +315,7 @@ function()与[[macro]]()的区别: 在宏中设置的的变量在可以在外部
 说明: 除非函数 <name> 被调用,否则在function()以及endfunction()之间的命令不会被调用
 
 注意: 函数内部的变量应当让他外部不可见,如果非要让外部可见,那么最好使用macro
-*** <<macro>>  :Scripting Commands:
+* <<macro>>  :Scripting Commands:
 #+BEGIN_SRC 
     1. macro(<name>  [arg1 [arg2 [arg3 ...]]])
     2. COMMAND1(... arg1 ...)
@@ -369,7 +368,7 @@ function()与[[macro]]()的区别: 在宏中设置的的变量在可以在外部
    宏不等同于编程语言里面的函数,宏不允许递归调用  
 
 6. macro() 与 [[function]]() 的区别在于: 在宏中设置的的变量在外部被访问到,而在函数中设置的变量是局部的
-*** <<execute_process>> :Scripting Commands:
+* <<execute_process>> :Scripting Commands:
 #+BEGIN_SRC 
 execute_process(COMMAND <cmd1> [args1...]]
                 [COMMAND <cmd2> [args2...] [...]]
@@ -412,68 +411,68 @@ execute_process()命令是exec_program()的一个更新的更强大的版本，�
 #+END_SRC
 结果: CMake回去调用系统的shell,执行unzip命令解压指定的文件到指定的目录
 
-*** <<file>> :Scripting Commands:
-    1. 泛型1: file(WRITE | APPEND <filename> <content>...)
-       1. 作用: 写/追加<content>所示的内容到指定文件<filename> 
-	     2. WRITE: 写内容到文件<filename>,如果<filename>不存在,则创建并写入内容,如果<filename>已经存在,则覆盖
-	     3. APPEND: 追加内容到文件<filename>,如果如果<filename>不存在,则创建并写入内容,如果<filename>已经存在,则追加在其后面
-	     4. <filename>: 指定的文件,如果该文件是一个带路径的文件如 test/a.txt 如果目录test不存在,则创建
-	     5. 备注: 如果这个文件是一个 build input, 则当这个文件的内容改变时,使用[[configure_file]]()来更新这个文件
-    2. 泛型2: file(READ <filename> <variable> [OFFSET <offset>] [LIMIT <max-in>] [HEX])
-	     1. 作用: 从文件<filename>中读内容,存储在该变量<variabes>内
-	     2. 可以从给定的<offset>个字节开始，最多读取<max-in>个字节
-	     3. HEX选项会将数据转换为十六进制表示（对二进制数据有用）
-    3. 泛型3: file(STRINGS <filename> <variable> [<options>...])
-	     1. 作用: 从文件<filename>解析ASCII字符串的列表,然后存储在变量<variabes>内
-	     2. 文件中的二进制数据将会被忽略,回车（\ r，CR）字符被忽略
-	     3. 注意: 解析的是ASCII,有UNICOUDE编码的中文等是无法解析的,解析的意思就是遍历文件中的所有ASCII字符,读取出来存在指定变量内
-	     4. <options>:
-	        1. LENGTH_MAXIMUM <max-len>: 只考虑至多给定长度的字符串
-	        2. LENGTH_MINIMUM <min-len>: 只考虑最少给定长度的字符串
-          3. LIMIT_COUNT <max-num>: 限制要提取的不同字符串的数量
-	        4. LIMIT_INPUT <max-in>: 限制从文件读取的输入字节数
-          5. LIMIT_OUTPUT <max-out>: 限制要存储在<变量>中的总字节数
-	        6. NEWLINE_CONSUME: 将换行符（\ n，LF）作为字符串内容的一部分，而不是终止于它们
-          7. NO_HEX_CONVERSION: 除非给出此选项，否则Intel Hex和Motorola S-record文件将在读取时自动转换为二进制文件
-	        8. REGEX <regex>: 只考虑匹配给定正则表达式的字符串
-          9. ENCODING <encoding-type>: 考虑给定编码的字符串。目前支持的编码是：UTF-8，UTF-16LE，UTF-16BE，UTF-32LE，UTF-32BE。如果没有提供ENCODING选项，并且文件有一个字节顺序标记，那么ENCODING选项将被默认为遵守字节顺序标记
-    4. 泛型4: file(<HASH> <filename> <variable>)
-	     1. 作用: 计算<filename>内容的加密散列并将其存储在<variable>中
-	     2. 支持的<HASH>算法名称是由字符串（<HASH>）命令列出的
-    5. 泛型5: file(GLOB <variable> [LIST_DIRECTORIES true|false] [RELATIVE <path>] [<globbing-expressions>...])
-	     1. 作用: 生成匹配<globbing-expressions>的文件列表并将其存储到<variable>中
-       2. Globbing表达式与正则表达式类似，但要简单得多
-       3. 默认情况下，GLOB列出目录,如果LIST_DIRECTORIES设置为false，则结果中的目录将被忽略
-       4. 如果指定了RELATIVE标志，结果将作为给定路径的相对路径返回,结果将按照字典顺序排列
-       5. 不建议使用GLOB从源代码树中收集源文件列表。如果在添加或删除源时没有更改CMakeLists.txt文件，则生成的生成系统无法知道何时要求CMake重新生成。
-       6. Globbing表达式的几个例子:
-	        1. *.cxx: 匹配所有扩展名为cxx的文件
-          2. *.vt?: 匹配所有扩展名为vta,...,vtz的文件
-          3. f[3-5].txt: 匹配f3.txt, f4.txt, f5.txt
-    6. 泛型6: file(GLOB_RECURSE <variable> [FOLLOW_SYMLINKS] [LIST_DIRECTORIES true|false] [RELATIVE <path>] [<globbing-expressions>...])
-	     1. GLOB_RECURSE模式将遍历匹配目录的所有子目录并匹配文件
-       2. 只有在给定FOLLOW_SYMLINKS或策略CMP0009未设置为NEW的情况下才会遍历符号链接的子目录
-       3. 默认情况下，GLOB_RECURSE从结果列表中省略目录,将LIST_DIRECTORIES设置为true将目录添加到结果列表中
-       4. 如果给定FOLLOW_SYMLINKS或策略CMP0009未设置为OLD，则LIST_DIRECTORIES将符号链接视为目录
-       5. Globbing表达式: /dir/*.py: 匹配/ dir和子目录中的所有python文件
-    7. 泛型7: file(RENAME <oldname> <newname>)
-	     1. 作用: 在从<oldname>到<newname>的文件系统中删除文件或目录，以原子方式替换目标
-    8. 泛型8: file(REMOVE [<files>...])
-    9. 泛型9: file(REMOVE_RECURSE [<files>...])
-    10. 泛型10: file(MAKE_DIRECTORY [<directories>...])
-    11. 泛型11: file(RELATIVE_PATH <variable> <directory> <file>)
-    12. 泛型12: file(TO_CMAKE_PATH "<path>" <variable>)
-        1. 作用: 将<path>转换为cmake风格的path
-        2. 示例: file(TO_CMAKE_PATH "/usr/bin/" mypath)
-        3. 结果: message("mypath=${mypath}") ---->  /usr/bin
-    13. 泛型13: file(TO_NATIVE_PATH "<path>" <variable>)
-    14. 泛型14: file(DOWNLOAD <url> <file> [<options>...])
-    15. 泛型15: file(UPLOAD   <file> <url> [<options>...])
-    16. 泛型16: file(TIMESTAMP <filename> <variable> [<format>] [UTC])
-    17. 泛型17: file(GENERATE OUTPUT output-file  <INPUT input-file|CONTENT content> [CONDITION expression])
-    18. 泛型18: file(<COPY|INSTALL> <files>... DESTINATION <dir> [FILE_PERMISSIONS <permissions>...] [DIRECTORY_PERMISSIONS <permissions>...] [NO_SOURCE_PERMISSIONS] [USE_SOURCE_PERMISSIONS] [FILES_MATCHING] [[PATTERN <pattern> | REGEX <regex>] [EXCLUDE] [PERMISSIONS <permissions>...]] [...])
-    19. 泛型19: file(LOCK <path> [DIRECTORY] [RELEASE] [GUARD <FUNCTION|FILE|PROCESS>] [RESULT_VARIABLE <variable>] [TIMEOUT <seconds>])
-*** <<find_file>> :Scripting Commands:
+* <<file>> :Scripting Commands:
+  1. 泛型1: file(WRITE | APPEND <filename> <content>...)
+     1. 作用: 写/追加<content>所示的内容到指定文件<filename> 
+	   2. WRITE: 写内容到文件<filename>,如果<filename>不存在,则创建并写入内容,如果<filename>已经存在,则覆盖
+	   3. APPEND: 追加内容到文件<filename>,如果如果<filename>不存在,则创建并写入内容,如果<filename>已经存在,则追加在其后面
+	   4. <filename>: 指定的文件,如果该文件是一个带路径的文件如 test/a.txt 如果目录test不存在,则创建
+	   5. 备注: 如果这个文件是一个 build input, 则当这个文件的内容改变时,使用[[configure_file]]()来更新这个文件
+  2. 泛型2: file(READ <filename> <variable> [OFFSET <offset>] [LIMIT <max-in>] [HEX])
+	   1. 作用: 从文件<filename>中读内容,存储在该变量<variabes>内
+	   2. 可以从给定的<offset>个字节开始，最多读取<max-in>个字节
+	   3. HEX选项会将数据转换为十六进制表示（对二进制数据有用）
+  3. 泛型3: file(STRINGS <filename> <variable> [<options>...])
+	   1. 作用: 从文件<filename>解析ASCII字符串的列表,然后存储在变量<variabes>内
+	   2. 文件中的二进制数据将会被忽略,回车（\ r，CR）字符被忽略
+	   3. 注意: 解析的是ASCII,有UNICOUDE编码的中文等是无法解析的,解析的意思就是遍历文件中的所有ASCII字符,读取出来存在指定变量内
+	   4. <options>:
+	      1. LENGTH_MAXIMUM <max-len>: 只考虑至多给定长度的字符串
+	      2. LENGTH_MINIMUM <min-len>: 只考虑最少给定长度的字符串
+        3. LIMIT_COUNT <max-num>: 限制要提取的不同字符串的数量
+	      4. LIMIT_INPUT <max-in>: 限制从文件读取的输入字节数
+        5. LIMIT_OUTPUT <max-out>: 限制要存储在<变量>中的总字节数
+	      6. NEWLINE_CONSUME: 将换行符（\ n，LF）作为字符串内容的一部分，而不是终止于它们
+        7. NO_HEX_CONVERSION: 除非给出此选项，否则Intel Hex和Motorola S-record文件将在读取时自动转换为二进制文件
+	      8. REGEX <regex>: 只考虑匹配给定正则表达式的字符串
+        9. ENCODING <encoding-type>: 考虑给定编码的字符串。目前支持的编码是：UTF-8，UTF-16LE，UTF-16BE，UTF-32LE，UTF-32BE。如果没有提供ENCODING选项，并且文件有一个字节顺序标记，那么ENCODING选项将被默认为遵守字节顺序标记
+  4. 泛型4: file(<HASH> <filename> <variable>)
+	   1. 作用: 计算<filename>内容的加密散列并将其存储在<variable>中
+	   2. 支持的<HASH>算法名称是由字符串（<HASH>）命令列出的
+  5. 泛型5: file(GLOB <variable> [LIST_DIRECTORIES true|false] [RELATIVE <path>] [<globbing-expressions>...])
+	   1. 作用: 生成匹配<globbing-expressions>的文件列表并将其存储到<variable>中
+     2. Globbing表达式与正则表达式类似，但要简单得多
+     3. 默认情况下，GLOB列出目录,如果LIST_DIRECTORIES设置为false，则结果中的目录将被忽略
+     4. 如果指定了RELATIVE标志，结果将作为给定路径的相对路径返回,结果将按照字典顺序排列
+     5. 不建议使用GLOB从源代码树中收集源文件列表。如果在添加或删除源时没有更改CMakeLists.txt文件，则生成的生成系统无法知道何时要求CMake重新生成。
+     6. Globbing表达式的几个例子:
+	      1. *.cxx: 匹配所有扩展名为cxx的文件
+        2. *.vt?: 匹配所有扩展名为vta,...,vtz的文件
+        3. f[3-5].txt: 匹配f3.txt, f4.txt, f5.txt
+  6. 泛型6: file(GLOB_RECURSE <variable> [FOLLOW_SYMLINKS] [LIST_DIRECTORIES true|false] [RELATIVE <path>] [<globbing-expressions>...])
+	   1. GLOB_RECURSE模式将遍历匹配目录的所有子目录并匹配文件
+     2. 只有在给定FOLLOW_SYMLINKS或策略CMP0009未设置为NEW的情况下才会遍历符号链接的子目录
+     3. 默认情况下，GLOB_RECURSE从结果列表中省略目录,将LIST_DIRECTORIES设置为true将目录添加到结果列表中
+     4. 如果给定FOLLOW_SYMLINKS或策略CMP0009未设置为OLD，则LIST_DIRECTORIES将符号链接视为目录
+     5. Globbing表达式: /dir/*.py: 匹配/ dir和子目录中的所有python文件
+  7. 泛型7: file(RENAME <oldname> <newname>)
+	   1. 作用: 在从<oldname>到<newname>的文件系统中删除文件或目录，以原子方式替换目标
+  8. 泛型8: file(REMOVE [<files>...])
+  9. 泛型9: file(REMOVE_RECURSE [<files>...])
+  10. 泛型10: file(MAKE_DIRECTORY [<directories>...])
+  11. 泛型11: file(RELATIVE_PATH <variable> <directory> <file>)
+  12. 泛型12: file(TO_CMAKE_PATH "<path>" <variable>)
+      1. 作用: 将<path>转换为cmake风格的path
+      2. 示例: file(TO_CMAKE_PATH "/usr/bin/" mypath)
+      3. 结果: message("mypath=${mypath}") ---->  /usr/bin
+  13. 泛型13: file(TO_NATIVE_PATH "<path>" <variable>)
+  14. 泛型14: file(DOWNLOAD <url> <file> [<options>...])
+  15. 泛型15: file(UPLOAD   <file> <url> [<options>...])
+  16. 泛型16: file(TIMESTAMP <filename> <variable> [<format>] [UTC])
+  17. 泛型17: file(GENERATE OUTPUT output-file  <INPUT input-file|CONTENT content> [CONDITION expression])
+  18. 泛型18: file(<COPY|INSTALL> <files>... DESTINATION <dir> [FILE_PERMISSIONS <permissions>...] [DIRECTORY_PERMISSIONS <permissions>...] [NO_SOURCE_PERMISSIONS] [USE_SOURCE_PERMISSIONS] [FILES_MATCHING] [[PATTERN <pattern> | REGEX <regex>] [EXCLUDE] [PERMISSIONS <permissions>...]] [...])
+  19. 泛型19: file(LOCK <path> [DIRECTORY] [RELEASE] [GUARD <FUNCTION|FILE|PROCESS>] [RESULT_VARIABLE <variable>] [TIMEOUT <seconds>])
+* <<find_file>> :Scripting Commands:
 #+BEGIN_SRC 
 find_file (<VAR> name1 [path1 path2 ...])
 #+END_SRC
@@ -532,7 +531,7 @@ message(STATUS "tmp_src=${tmp_src})
 #+END_SRC
 结果: tmp_src = ${STM32_TOP_DIR}/STM32Cube_FW_F4_V1.18.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_eth.c
 备注: 如果没有找到该文件,则tmp_src=tmp_src-NOTFOUND
-*** <<find_path>> :Scripting Commands:
+* <<find_path>> :Scripting Commands:
 理论知识同 [[find_file]]()
 
 示例:
@@ -546,7 +545,7 @@ message(STATUS "tmp_inc=${tmp_inc})
 #+END_SRC
 结果: tmp_inc = ${STM32_TOP_DIR}/STM32Cube_FW_F4_V1.18.0/Drivers/STM32F4xx_HAL_Driver/Inc/
 备注: 如果没有找到该文件,则tmp_inc=tmp_inc-NOTFOUND
-*** <<find_package>> :Scripting Commands:
+* <<find_package>> :Scripting Commands:
 Module模式:
 #+BEGIN_SRC 
 find_package(<package> 
@@ -622,8 +621,8 @@ find_package(<package> [version] [EXACT] [QUIET]
               ONLY_CMAKE_FIND_ROOT_PATH |
               NO_CMAKE_FIND_ROOT_PATH])
 #+END_SRC
-*** <<find_library>> :Scripting Commands:
-**** 命令:
+* <<find_library>> :Scripting Commands:
+** 命令:
 #+BEGIN_SRC 
      find_library (
      1. <VAR>
@@ -640,7 +639,7 @@ find_package(<package> [version] [EXACT] [QUIET]
      12. [CMAKE_FIND_ROOT_PATH_BOTH | ONLY_CMAKE_FIND_ROOT_PATH | NO_CMAKE_FIND_ROOT_PATH]
      15. )
 #+END_SRC
-**** 参数解析:
+** 参数解析:
 1. <VAR>: 存储查找结果,如果找到了库文件,则将该文件(带绝对路径)存储在该变量内,如果没找到,该变量的值为<VAR>-NOTFOUND
 2. name | NAMES name1 [name2 ...] [NAMES_PER_DIR] 
    1. name: 指定查找一个库
@@ -697,10 +696,10 @@ find_package(<package> [version] [EXACT] [QUIET]
          1. 如果[[FIND_LIBRARY_USE_LIB32_PATHS]]全局属性被设置，所有的搜索路径将被正常测试，32 /附加，lib /所有匹配替换为lib32 /。如果至少启用了project（）命令支持的一种语言，则会自动为已知需要的平台设置此属性
          2. 如果[[FIND_LIBRARY_USE_LIB64_PATHS]]全局属性被设置，所有的搜索路径将被正常地测试，64 /追加，并且所有匹配的lib /替换为lib64 /。如果至少启用了project（）命令支持的一种语言，则会自动为已知需要的平台设置此属性
        * 变量CMAKE_FIND_LIBRARY_CUSTOM_LIB_SUFFIX将覆盖FIND_LIBRARY_USE_LIB32_PATHS，FIND_LIBRARY_USE_LIBX32_PATHS和FIND_LIBRARY_USE_LIB64_PATHS全局属性
-*** <<find_program>> :Scripting Commands:
-*** <<add_custom_command>> :Project Commands:
+* <<find_program>> :Scripting Commands:
+* <<add_custom_command>> :Project Commands:
 作用: 增加自定义的 "构建规则" 来生成构建系统
-**** Generating Files
+** Generating Files
 #+BEGIN_SRC 
 add_custom_command(OUTPUT output1 [output2 ...]
                    COMMAND command1 [ARGS] [args1...]
@@ -740,7 +739,7 @@ COMMAND: "命令", "规则"被"触发","命令" 将会得到执行, 如果指定
 如果要运行一个完整的脚本，可使用 [[configure_file]]() 命令或 [[file]](GENERATE) 命令来创建它，然后指定一个COMMAND来启动它; 可选的ARGS参数是为了向后兼容性，通常将被忽略
 
 COMMENT: 在构建时,执行命令之前显示给定的消息
-**** Build Events
+** Build Events
 #+BEGIN_SRC 
 add_custom_command(TARGET <target>
                    PRE_BUILD | PRE_LINK | POST_BUILD
@@ -760,7 +759,7 @@ TARGET: 该关键字后面的参数指明添加该自定义命令到哪个目标
 PRE_BUILD: 指明该命令在目标执行任何其他规则之前运行, 这仅在Visual Studio 8或更高版本上受支持。对于所有其他生成器，PRE_BUILD将被视为PRE_LINK
 PRE_LINK: 指明该命令在编译源代码之后，在链接二进制文件或运行静态库的库管理器或归档工具之前运行,对于由 [[add_custom_target]]()创建的目标,该选项不会被定义
 POST_BUILD: 在目标内的所有其他规则执行后运行
-*** <<add_custom_target>> :Project Commands:
+* <<add_custom_target>> :Project Commands:
      :LOGBOOK:
      CLOCK: [2017-12-10 日 21:11]--[2017-12-10 日 21:51] =>  0:40
      :END:
@@ -789,7 +788,7 @@ COMMAND: "命令", "规则"被"触发","命令" 将会得到执行, 如果指定
 如果COMMAND指定了一个由 [[add_executable]]() 创建的可执行目标名,它会自动被在构建时创建的可执行文件的位置替换。此外，还将添加目标级依赖项，以便在此自定义目标之前构建可执行目标
 该选项是可选的，如果没有指定，将会创建一个空目标。
 COMMENT: 在构建时执行命令之前显示给定的消息
-*** <<add_dependencies>>  :Project Commands:
+* <<add_dependencies>>  :Project Commands:
 #+BEGIN_SRC 
 add_dependencies(<target> [<target-dependency>]...)
 #+END_SRC
@@ -797,8 +796,8 @@ add_dependencies(<target> [<target-dependency>]...)
 top-level 是由 [[add_executable]]()，[[add_library]]() 或 [[add_custom_target]]() 等命令创建的目标。
 
 说明: 这意味着该命令中的<target> 是在 [[add_executable]]()，[[add_library]]() 或 [[add_custom_target]]() 创建的目标之后进行创建的
-*** <<add_library>> :Project Commands:
-**** Normal Libraries
+* <<add_library>> :Project Commands:
+** Normal Libraries
 1. 命令: add_library(<name> [STATIC | SHARED | MODULE] [EXCLUDE_FROM_ALL] source1 [source2 ...])
 2. 作用: 将上述命令中列出的源文件编译到到一个名为<name>的库里面
 3. <name> 是全局唯一的,假定name为tmp,则最终生成libtmp.a或者libtmp.so,具体生成静态库还是动态库依赖于选项, 请参阅 [[OUTPUT_NAME]] 目标属性的文档以更改最终文件名<name>
@@ -814,14 +813,14 @@ top-level 是由 [[add_executable]]()，[[add_library]]() 或 [[add_custom_targe
 13. source1 [source2 ...]: 加入库的源文件列表,该参数可以使用 $<...> 这样的  “generator expressions” ,详情参考 [[ cmake-generator-expressions(7)]]
 14. 有关定义生成系统属性的更多信息，请参阅 [[cmake-buildsystem（7）]]手册
 15. 另请参阅 [[HEADER_FILE_ONLY]]，了解在某些源被预处理的情况下如何处理，以及想要在IDE中使用原始源又该如何处理
-**** Imported Libraries
+** Imported Libraries
 1. 命令: add_library(<name> <SHARED|STATIC|MODULE|OBJECT|UNKNOWN> IMPORTED [GLOBAL])
 2. 一个 [[IMPORTED library target]] 引用一个位于项目外部的库文件,不会生成规则来构建它, 并且 [[IMPORTED]] 目标属性是 true 
 3. <name>的范围只在创建它的目录中，但GLOBAL选项扩展了它的可见性, 以至于它可以像在项目中构建的任何目标一样被引用
 4. 导入库对于像 [[target_link_libraries]]（）这样的命令的方便引用很有用
 5. 有关导入的库的详细信息通过设置名称以IMPORTED_和INTERFACE_开头的属性指定
 6. 最重要的属性是 [[IMPORTED_LOCATION]]（及其预配置变体[[IMPORTED_LOCATION_ <CONFIG>]]），它指定主库文件在磁盘上的位置。有关更多信息，请参阅 IMPORTED_ * 和 INTERFACE_ * 属性的文档
-**** Object Libraries
+** Object Libraries
 1. 命令: add_library(<name> OBJECT <src>...)
 2. 对象库的特点是,对象库编译源文件，但不会将其对象文件存档或链接到库中,即,对象库不能被链接
 3. 相反，由add_library（）或add_executable（）创建的其他目标可以使用形式为$ <TARGET_OBJECTS：objlib>的表达式引用对象作为源,其中,objlib是一个对象库的名
@@ -834,7 +833,7 @@ top-level 是由 [[add_executable]]()，[[add_library]]() 或 [[add_custom_targe
 1. 对象库可能只包含编译，头文件和其他不会影响正常库链接的源文件（例如.txt）
 2. 它们可能包含生成此类源的自定义命令，但不包含PRE_BUILD，PRE_LINK或POST_BUILD命令
 3. 一些本地构建系统可能不喜欢只有对象文件的目标，所以考虑将至少一个真实的源文件添加到任何引用$ <TARGET_OBJECTS：objlib>的目标
-**** Alias Libraries
+** Alias Libraries
 1. 命令: add_library(<name> ALIAS <target>)
 2. 创建一个 [[Alias Target]] 使得<name>可以用于在后续命令中引用<target>
 3. <name>不会作为一个 make target 出现在 generated buildsystem 中
@@ -843,7 +842,7 @@ top-level 是由 [[add_executable]]()，[[add_library]]() 或 [[add_custom_targe
 6. 可以使用 if(TARGET) 子命令测试 Alias_Target的存在性
 7. <name>不能用来修改<target>的属性，也就是说，它不能用作 [[set_property]]（），[[set_target_properties]]（），[[target_link_libraries]]（）等的操作数
 8. 一个ALIAS目标可能不能被安装或导出
-**** Interface Libraries
+** Interface Libraries
 1. 命令: add_library(<name> INTERFACE [IMPORTED [GLOBAL]])
 2. 作用: 创建一个 [[Interface Library]]
 3. 一个 INTERFACE 库目标不会直接创建构建输出，尽管它可能具有设置的属性，并且可以安装，导出和导入
@@ -857,7 +856,7 @@ top-level 是由 [[add_executable]]()，[[add_library]]() 或 [[add_custom_targe
 5. 像其他的目标一样,它被用作 [[target_link_libraries]]()的参数
 6. 一个 INTERFACE 导入的目标也可以用这个签名来创建, 一个IMPORTED库目标引用在项目外定义的库
 7. 目标名称的范围在创建它的目录中，但GLOBAL选项扩展了可见性, 它可以像在项目中构建的任何目标一样被引用,IMPORTED库对于像target_link_libraries（）这样的命令的方便引用很有用
-*** <<add_executable>> :Project Commands:
+* <<add_executable>> :Project Commands:
 #+BEGIN_SRC 
 泛型1: add_executable(<name> [WIN32] [MACOSX_BUNDLE] [EXCLUDE_FROM_ALL] source1 [source2 ...])
 #+END_SRC
@@ -876,7 +875,7 @@ top-level 是由 [[add_executable]]()，[[add_library]]() 或 [[add_custom_targe
 #+BEGIN_SRC 
 泛型3: add_executable(<name> ALIAS <target>)
 #+END_SRC
-*** <<target_include_directories>> :Project Commands:
+* <<target_include_directories>> :Project Commands:
 #+BEGIN_SRC 
 target_include_directories(<target> [SYSTEM] [BEFORE]
   <INTERFACE|PUBLIC|PRIVATE> [items1...]
@@ -892,7 +891,7 @@ target_include_directories(<target> [SYSTEM] [BEFORE]
 6. 如果[SYSTEM] 同 PUBLIC 或者 INTERFACE 一起被指定，将会构成<target>的[[INTERFACE_SYSTEM_INCLUDE_DIRECTORIES]]属性
 6. 被指定的 include directory 可能是绝对路径或者是相对路径
 7. 该命令的参数可能会使用语法为$<...>的“generator expressions”，详情查阅[[cmake-generator-expressions(7)]]
-*** <<link_directories>> :Project Commands:
+* <<link_directories>> :Project Commands:
 #+BEGIN_SRC 
 link_directories(directory1 directory2 ...)
 #+END_SRC
@@ -941,9 +940,9 @@ add_library(tmp STATIC hello.c)
    这一个有意思的测试,能帮助更好的理解link_directories()和find_library()之间的微妙关系:
    第一次使用 cmake -H. -B_builds是不会报错,但是,mytmp=mytmp-NOFOUND, 接着使用 cmake --build _builds时,会生成libtmp.a,
 接着再次重复一遍第一次的两个命令,就可以生成可执行文件 main 了
-*** <<target_link_libraries>> :Project Commands:
+* <<target_link_libraries>> :Project Commands:
 作用： 当链接一个给定的目标时，指定使用到的library或者flags
-**** Overview
+** Overview
 #+BEGIN_SRC 
 target_link_libraries(<target> ... <item>... ...)
 #+END_SRC
@@ -954,7 +953,7 @@ target_link_libraries(<target> ... <item>... ...)
    3. A plain library name:
    4. A link flag
    5. A debug, optimized, or general keyword immediately followed by another <item>
-**** Libraries for a Target and/or its Dependents
+** Libraries for a Target and/or its Dependents
 #+BEGIN_SRC 
 target_link_libraries(<target>
                       <PRIVATE|PUBLIC|INTERFACE> <item>...
@@ -964,12 +963,12 @@ target_link_libraries(<target>
 2. 标识 PUBLIC 的Libraries and targets 会被链接到 link interface,并且成为link interface的一部分
 3. 标识 PRIVATE 的Libraries and targets 会被链接到 link interface,但是不会成为link interface的一部分
 4. 标识 INTERFACE 的 Libraries and targets 会被添附到 link interface,但是不用于链接<target>
-**** Libraries for both a Target and its Dependents
+** Libraries for both a Target and its Dependents
 #+BEGIN_SRC
 target_link_libraries(<target> <item>...)
 #+END_SRC
 说明： 从文档的说明中，该用法同 target_link_libraries(<target> LINK_PUBLIC <lib>...)貌似一致
-**** Libraries for a Target and/or its Dependents (Legacy)
+** Libraries for a Target and/or its Dependents (Legacy)
 #+BEGIN_SRC 
 target_link_libraries(<target>
                       <LINK_PRIVATE|LINK_PUBLIC> <lib>...
@@ -979,15 +978,15 @@ target_link_libraries(<target>
 2. 标识LINK_PUBLIC的Libraries and targets会被链接到 [[INTERFACE_LINK_LIBRARIES]] 并成为其中的一部分
 3. 标识LINK_PRIVATE的Libraries and targets会被链接到 [[INTERFACE_LINK_LIBRARIES]] 但是不会成为其中的一部分
 4. 如果 policy CMP0022 的值不是NEW,他们也会成为 [[LINK_INTERFACE_LIBRARIES]] 的一部份
-**** Libraries for Dependents Only (Legacy)
+** Libraries for Dependents Only (Legacy)
 #+BEGIN_SRC 
 target_link_libraries(<target> LINK_INTERFACE_LIBRARIES <item>...)
 #+END_SRC
 1. LINK_INTERFACE_LIBRARIES模式添加这个库到[[INTERFACE_LINK_LIBRARY]]属性，而不是使用这个库来进行链接
 2. 此用法仅用于兼容性，优先选择INTERFACE模式
-**** Cyclic Dependencies of Static Libraries
-**** Creating Relocatable Packages
-*** <<configure_file>>
+** Cyclic Dependencies of Static Libraries
+** Creating Relocatable Packages
+* <<configure_file>>
 #+BEGIN_SRC 
 configure_file(<input> <output>
                [COPYONLY] [ESCAPE_QUOTES] [@ONLY]

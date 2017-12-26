@@ -1,18 +1,17 @@
-* blogs-stm32f7-active
-** DONE [#C] Theme:stm32f7开发基础准备工作 		 :@Blog:@Stm32f7:
-   - State "DONE"       from "TODO"       [2017-09-04 一 23:01]
-*** MDK开发环境搭建
+* DONE [#C] Theme:stm32f7开发基础准备工作
+  - State "DONE"       from "TODO"       [2017-09-04 一 23:01]
+** MDK开发环境搭建
 --下载MDK软件：http://www.keil.com/download/product/
 --下载STM32Fxx的芯片支持包：http://www.keil.com/dd2/pack
 --注册MDK：默认情况下，MDK是试用版，只能编译不超过32K的代码，超过之后就需要注册才能使用，
 注册的教程：http://www.openedv.com/thread-69384-1-1.html
 --使用SWD来烧录程序时：晶振25MHZ，添加STM32F7xx 1MB Flash以及STM32F7xx 1MB Flash(TCM)
-*** 创建HAL库函数版的模板
+** 创建HAL库函数版的模板
 --下载HAL函数库包：http://www.st.com/content/st_com/en/products/ecosystems/stm32-open-development-environment/stm32cube.html?querycriteria=productId=SC2004
 --全局宏定义：USE_HAL_DRIVER,STM32F767xx
 --配置：stm32f7xx_hal_conf.h下面的HSE_VALUE为25
 --修改：stm32f7xx_hal.c下面的HAL_Init函数中的NVIC_PRIORITYGROUP_4为NVIC_PRIORITYGROUP_2
-*** 搭建环境中遇到的问题
+** 搭建环境中遇到的问题
 --烧录程序时出现一个错误：
 contents mismatch at:080000000H (flash=FFH Required=60H)!
 ......
@@ -33,13 +32,13 @@ target->read/only memory areas和read/write memory areas选项卡中配置了该
 (1)复选框勾选：IROM1和IRAM1,切记不能勾选IROM2(IRAM2可以勾选)
 (2)单选框Startup勾选IROM1
 Blog creation time:[2017-08-08 二 14:16]
-** DONE [#C] Theme:频率的含义 								 :@Blog:@Stm32f7:
+* DONE [#C] Theme:频率的含义
 	- State "DONE"       from "TODO"       [2017-09-04 一 23:01]
 	频率，物理定义为：单位时间内完成周期性变化的次数，标准单位是HZ，也常用秒分之一(s^-1)
 来描述频率,通俗理解，stm32f767的主频为216MHZ,即，晶振每秒钟完成了216M次周期性的振动，
 相当于每个周期振动花费的时间是1/216M秒，即(1/216)us
 Blog creation time:[2017-08-09 三 16:18]
-** DONE [#C] Theme:关于串口接收数据过程中丢包或覆盖缓冲区的思考 :@Blog:@Stm32f7:
+* DONE [#C] Theme:关于串口接收数据过程中丢包或覆盖缓冲区的思考
 	- State "DONE"       from "TODO"       [2017-09-04 一 23:01]
 	stm32f767的串口接收比起f4的来说，有点不一样，硬件的实现上，数据由字节构成，字节由
 bit位构成，bit位的表征高低两种状态，在波特率的控制下形成连续有序的波，有序是说高电平和
@@ -61,8 +60,8 @@ HAL_UART_Receive_IT中提供的用户外部缓冲区的大小为10字节，即�
 	第二，假设外部电路一次性给MUC的串口发送过来100字节数据
 
 Blog creation time:[2017-08-10 四 15:52]
-** WAITTING [#C] Theme:SD卡底层驱动函数失败 				 :@Blog:@Stm32f7:
-	- State "WAITTING"   from "TODO"       [2017-08-16 三 21:24] \\
+* WAITTING [#C] Theme:SD卡底层驱动函数失败
+	- State "WAITTING"   from "TODO"       [2017-08-16 三 21:24]
 	  等待正点原子更新sdmmc实验（更新hal库）
 	  移植STMCube_FW_F7_V1.7.0的HAL下面sdmmc例程时，出现错误，该hal库比起
 STMCube_FW_F7_V1.4.0来说，stm32f7xx_hal_sd.c从V1.1.1升级到了V1.2.2,所以hal库中sd的函数
@@ -73,7 +72,7 @@ HAL_SD_ReadBlock函数出现一个问题，调用SD_ReadDisk函数时，其第�
 	目前的解决方案是，将hal库回退回v1.4.0
 
 Blog creation time:[2017-08-16 三 21:22]
-** DONE [#C] Theme:定制MDK 									 :@Blog:@Stm32f7:
+* DONE [#C] Theme:定制MDK
 	- State "DONE"       from "TODO"       [2017-09-04 一 22:56]
 1.编码：GB2312
 2.number:(255,205,155) 
@@ -95,7 +94,7 @@ text selection:(0,255,0)
 5.comment:(227,242,140)
 6.
 Blog creation time:[2017-08-18 五 08:58]
-** DONE [#C] Theme:专题1：linux开发stm32之开发环境构成 		 :@Blog:@Stm32f7:
+* DONE [#C] theme:专题1：linux开发stm32之开发环境构成
    - State "DONE"       from "TODO"       [2017-09-04 一 22:57]
 >>kali:
 	其前身是 BackTrack（基于ubuntu），是一个基于 Debian 的 Linux 发行版，
@@ -118,7 +117,7 @@ Blog creation time:[2017-08-18 五 08:58]
 
 Blog creation time:[2017-08-28 一 08:27]
 
-** DONE [#C] Theme:linux下开发stm32之安装stlink				 :@Blog:@Stm32f7:
+* DONE [#C] theme:linux下开发stm32之安装stlink
 	- State "DONE"       from "TODO"       [2017-09-06 三 20:26]
 (0)教程：http://www.stmcu.org/module/forum/thread-603753-1-1.html
 (1)下载stlink的源代码: https://github.com/texane/stlink 
@@ -155,7 +154,7 @@ $ ./autogen.sh    $ ./configure    $sudo  make install
 安装完st-link之后，记得将他的路径添加到PATH中。具体的方法请参考Google。
 具体的使用方法，可以参阅 st-flash  --help。这个命令是下载使用的。如果想配合gdb调试使用，需要使用st-util
 Case creation time:[2017-09-06 三 16:57]
-** DONE [#C] Theme:linux下开发stm32之安装串口工具			 :@Blog:@Stm32f7:
+* DONE [#C] theme:linux下开发stm32之安装串口工具
 	- State "DONE"       from "TODO"       [2017-09-06 三 20:26]
 0)教程：http://www.stmcu.org/module/forum/thread-603753-1-1.html
 1.linux对串口的支持：(串口驱动)

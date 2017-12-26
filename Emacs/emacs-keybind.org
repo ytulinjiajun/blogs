@@ -1,0 +1,109 @@
+* DONE 我的快捷键：
+  CLOSED: [2017-12-26 二 15:22]
+1. 系统命令：
+	- emacs ~/.bashrc:添加别名alias em='emacs'  . ~/bashrc
+	- C-h C-h:help-for-help:查看所有的快捷键，函数，变量等.备注：下面的几个以C-h为前缀的命令均可以在该指令下找到
+	- M-x:customize-group:定制插件的属性
+	- M-x:package-list-packages:插件管理
+	- M-x:shell: 打开外部shell
+	- C-x e:计算某个变量以及函数的值，可以用eval-buffer来替代会更加高效
+	- C-h t:打开基础手册
+	- C-h i:阅读安装在系统里的软件包的使用手册
+	- C-h m:describe-mode:列出当前打开的所有minor-mode
+	- C-h w:where-is:对于一个给定的函数，列出所有关于它的调用者
+	- C-h c:decribe-key-briefly:查询快捷键绑定的函数
+	- C-h k:descrbie-key:查询快捷键绑定的函数的详细信息
+	- C-h f:decribe-function:查询函数
+	- C-h v:descrbie-variable:查询变量
+	- C-h e:view-echo-area-message: 开辟*message*缓冲区,实时显示操作信息
+	- C-h a xxx:搜索所有含有xxx关键字的命令
+
+2. 分屏：
+	- C-x 3:split-window-right:在右侧分屏
+	- C-x 2:split-window-bottom:在下面分屏
+	- C-x 1:delete-other-windows:关闭除当前光标所在窗口之外的所有窗口
+	- C-x 0:delete-window:关闭当前光标所在的窗口
+	- C-x o:other-window:将光标切换至下一个窗口（没有安装window-numbering这个插件时才使用，因为无法准确定位）
+	- M-1:select-window-1:将光标切换至编号为1的窗口（前提是安装了window-numbering这个插件）
+	- M-2:select-window-2:将光标切换至编号为2的窗口（前提是安装了window-numbering这个插件）
+
+3. 缓冲区操作：
+	- C-x b:switch-to-buffer:切换缓冲区
+	- C-x C-b:ibuffer:切换缓冲区(ibuffer)
+	- C-x k:kill-buffer:关闭当前缓冲区
+	- C-v:向下翻页
+	- M-v:向上翻页
+	- C-M-v:光标在当前窗口，为上一个缓冲区向下翻页
+	- C-M-S-v:光标在当前窗口，为上一个缓冲区向上翻页
+--C-l:将当前行重置中央
+--C-l C-l:将当前行重置屏幕最上方
+--C-p:向上移动一行
+--C-n:向下移动一行
+--C-f:向前移动一个字符
+--M-f:向前移动一个词
+--C-b:向后移动一个字符
+--M-b:向后移动一个词
+--C-a:移动光标到行首
+--M-m:移动光标至行首第一个字符
+--C-e:移动光标到行尾
+--M-a:移动光标到句首
+--M-e:移动光标到句尾
+--S-M-<:移动光标到文件首
+--S-M->:移动光标到文件尾
+--M-g g:goto-line:跳转光标到指定行
+--C-u 8 C-f:向前移动8个字符
+--C-u 8 C-v:向后移动8行（注意是8行不是8页，此处比较特殊）
+--C-r:backward-delete-char:删除光标后面1个字符
+--M-r:backward-kill-word:删除光标后面的1个单词
+--C-d:hungry-delete-forward:删除光标前面的1个字符
+--M-d:kill-word:删除光标前面的1个单词
+--C-M-d:kill-whole-line:删除光标所在行
+--C-x l:显示文件行数以及当前行
+--C-g:终止命令
+--C-c n:在光标所在行的前面一行插入一个空行
+
+编辑：
+--C-x C-f:打开/新建文件
+--C-x 4 C-f:在另外一个窗口中打开/新建文件  
+--C-Shift-@:set-mark-command:区域选择1
+--C-+/-:er/expand-region:区域选择2
+--C-x h:mark-whole-buffer:全选
+--C-w：kill-region:剪切
+--M-w:kill-ring-save:复制
+--C-y:org-yank:召回最近一次移除的项
+--M-y:召回之前移除过的项中的某一项，首先使用C-y召回最近一次移除的项，这不是我想召回的，所以
+使用M-y继续往移除历史记录的上沿查找
+--C-x u:undo:撤销
+--C-x C-s:save-buffer:保存当前
+--C-x s:save-some-buffers:保存所有
+--C-x C-w:write-file: 另存为
+--C-x C-c:save-buffers-kill-terminal:保存所有被修改的buffer并关闭emacs
+--C-s:搜索，再按C-s往前递推
+
+--<s-Tab:eclisp 宏（只能在org-mode中使用）
+--C-c ':在窗口的右边显示eclisp宏内的代码
+--Tab:收缩eclisp内部的宏代码
+
+排版与缩进：
+1. 排版:在加入定制的两个函数：indent-buffer以及indent-region-or-buffer之后，对当前buffer进行排版时，不用再选中，直接按TAB键即可
+2. 缩进：TAB q
+
+增强补全：M-/
+
+Ace跳转：M-SPC
+
+跳转到某一行：M-g M-g 
+Blog creation time:[2017-09-04 一 22:10]
+* DONE 快捷键操作
+  CLOSED: [2017-12-26 二 15:23]
+1. 解除快捷键: (global-unset-key "you key")
+2. 绑定快捷键
+   1. global-set-key
+	  1. 让emacs告诉你绑定的格式：
+	  	 我们经常需要绑定各种各样的快捷键，可是有的时候，我们不知道如何去绑定一些复杂的快捷键，比如f1的格式，比如shift怎么写，比如像 ‘ 之类的符号怎么描述，再比如像 \ 这个具有特殊意义的字符格式是怎样的，这里介绍一种万能的方法，让emacs告诉你这个绑定的代码是什么：
+ 	举个例子来说，我需要将M-S-<RET>绑定到(org-insert-todo-heading)这个函数:
+-->M-x global-set-key RET 
+-->在键盘上按下你打算绑定的按键组合(会在小缓冲区中实时显示)：Set key <M-s-return> to command:
+-->输入你想要绑定到该快捷键的命令：org-insert-todo-heading 回车
+-->查看绑定代码：C-x ESC ESC:(global-set-key [M-s-return] (quote org-insert-todo-heading))
+-->将这条源代码添加到自己的配置文件中去(不添加的话，刚刚绑定的快捷键只会在本次环境中生效)

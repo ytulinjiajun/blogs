@@ -1,25 +1,24 @@
-* WAITTING [#C] Theme:cmake-developer                                :@Cmake:
-** Introduction
-** Adding Compile Features
-** Help
-*** T Markup Constructs
-*** TCMake Domain
-*** TCross-References
-*** TStyle
-**** TStyle: Section Headers
-**** TStyle: Whitespace
-**** TStyle: Line Length
-**** TStyle: Prose
-**** TStyle: Starting Literal Blocks
-**** TStyle: CMake Command Signatures
-**** TStyle: Boolean Constants
-**** TStyle: Inline Literals
-**** TStyle: Cross-References
-**** TStyle: Referencing CMake Concepts
-**** TStyle: Referencing CMake Domain Objects
-** TModules
-*** Module Documentation
-*** TFind Modules
-**** TStandard Variable Names
-**** TA Sample Find Module
+* Introduction
+* Adding Compile Features
+* Help
+** T Markup Constructs
+** TCMake Domain
+** TCross-References
+** TStyle
+*** TStyle: Section Headers
+*** TStyle: Whitespace
+*** TStyle: Line Length
+*** TStyle: Prose
+*** TStyle: Starting Literal Blocks
+*** TStyle: CMake Command Signatures
+*** TStyle: Boolean Constants
+*** TStyle: Inline Literals
+*** TStyle: Cross-References
+*** TStyle: Referencing CMake Concepts
+*** TStyle: Referencing CMake Domain Objects
+* TModules
+** Module Documentation
+** TFind Modules
+*** TStandard Variable Names
+*** TA Sample Find Module
 

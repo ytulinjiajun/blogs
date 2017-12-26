@@ -1,4 +1,197 @@
-* blogs-linux-arch-part2 
+* DONE [#C] theme:我的工具网站 
+  CLOSED: [2017-12-26 二 14:42]
+--Linux内核官网：http://www.kernel.org
+--Linux官网：https://www.linux.org/
+--中国linux团队：http://www.linux.org.cn/
+--Fedora官方网站：http://getfedora.org
+--Linux U盘启动盘工具网站：http://rufus.akeo.ie/
+--GNU 官网 : http://gnu.org
+--Fedora中文社区软件源：https://repo.fdzh.org/
+--rpmfusion官网：https://rpmfusion.org/
+
+--Ken Thompson的个人网站：http://plan9.bell-labs.com/cm/cs/who/ken/index.html
+--Dennis Ritchie的个人网站：http://cm.bell-labs.com/cm/cs/who/dmr/
+--Richard Mathew Stallman的个人网站：http://www.stallman.org
+--Multics项目网站：http://www.multicians.org/
+--XFree86项目网站：http://www.xfree86.org/
+--IEEE POSIX标准: http://standards.ieee.org/regauth/posix/
+--GPL条款：http://www.gnu.org/licenses/licenses.html#GPL
+--BSD授权模式：http://en.wikipedia.org/wiki/BSD_licens
+--FHS标准：http://www.pathname.com/fhs/
+--LSB标准：http://www.linuxbase.org/
+--CLE项目：http://cle.linux.org.tw
+--Linux distributions:http://distrowatch.com/
+--酷学园：http://www.study-area.org/
+--鸟哥私房菜：http://linux.vbird.org/
+--蓝灯翻墙：https://github.com/getlantern/lantern
+
+--kali:
+--中文：https://www.hackfun.org/kali-tools/kali-tools-zh.html
+--英文：https://tools.kali.org/tools-listing
+--http://blog.csdn.net/u011596455/article/details/57125844
+--介绍查询系统信息的命令：http://www.cnblogs.com/losbyday/p/5842661.html
+
+ubuntu:
+--Emacs软件包下载地址：http://ftp.gnu.org/gnu/emacs
+--搜狗输入法官网：http://pinyin.sogou.com/
+
+Blog creation time:[2017-09-04 一 22:16]
+* DONE [#C] theme:安装Debian
+  CLOSED: [2017-12-26 二 14:37]
+	- State "DONE"       from "WAITTING"   [2017-09-15 五 10:24]
+(1)安装：
+--Debian官网:https://www.debian.org/
+--CD/USB ISO映像(在第三行第二列，比较小，仔细找)
+--选择：通过 BitTorrent 下载 CD/DVD 映像文件
+--选择：Official jigdo files for the stable release --->DVD amd64或者i386
+--选择：debian-9.1.0-amd64-DVD-1.iso.torrent   
+备注：还有debian-9.1.0-amd64-DVD-2.iso.torrent 和 debian-9.1.0-amd64-DVD-3.iso.torrent  
+这两个是软件包，可以自己下载
+--制作U盘启动盘，工具：rufus-2.16.exe(网址：http://rufus.akeo.ie/)
+--使用U盘安装
+
+(2)配置：
+--优化工具：下载扩展插件：workspace to dock
+Blog creation time:[2017-09-14 四 21:27]
+* DONE [#C] theme:将CAP键与CTRL键互换
+	- State "DONE"       from "TODO"       [2017-09-05 二 09:29]
+1.置换Ctrl键和Caps Lock: sudo vi /usr/share/X11/xkb/keycodes/evdev
+2.CTRL + SUPER ...
+Blog creation time:[2017-09-05 二 09:04]
+
+Archived entries from file /home/ljj/.my-agenda/Linux/linux.org
+* DONE [#C] theme:一键安装常用软件
+  CLOSED: [2017-12-26 二 14:38]
+	- State "DONE"       from "WAITTING"   [2017-09-07 四 10:49]
+	主题的名字可能不是特别的恰当，这里，重新描述一下这篇博客所实现的功能。你可能积累了很多的
+常用的软件，而每当你更换操作系统时，你不得不重新一个接着一个的去安装这些软件，显得特别的麻烦，
+这里提供一个解决方案，可以轻松实现一键安装：
+	首先：将你积累的这些软件全部下载下来（需要全部是.deb格式的）放到一个叫做apt_packs的目录下，
+然后，修改/etc/apt/sources.list文件，在下面新增加一行：
+deb		file:/xxx/apt_apcks/
+	最后，使用命令更新一下软件源：sudo apt-get update就能一键安装apt-packs目录下的所有
+软件了
+Blog creation time:[2017-09-07 四 10:37]
+
+* DONE [#C] theme:安装有道词典
+	- State "DONE"       from "TODO"       [2017-09-05 二 09:28]
+--http://cidian.youdao.com/index-linux.html
+--注意，一定要下载deep版本的才行，ubuntu的不行
+--第一次安装可能会提示缺少依赖包，输入：sudo apt-get -f install重新配置一下依赖关系
+--sudo dpkg -i youdao-dict_1.1.0-0-deepin_amd64.deb 安装
+--运行有道：youdao-dict
+Blog creation time:[2017-09-05 二 08:12]
+
+Archived entries from file /home/ljj/.my-agenda/Linux/linux.org
+* DONE [#C] theme:安装网易云音乐
+	- State "DONE"       from "TODO"       [2017-09-05 二 09:28]
+--网易云安装包：http://music.163.com/#/download
+--将源换成阿里源；
+--重新配置一下依赖关系：sudo apt-get -f install
+--安装：sudo dpkg -i netease-cloud-music_1.0.0-2_amd64_ubuntu16.04.deb
+--启动：netease-cloud-music
+Blog creation time:[2017-09-05 二 08:27]
+
+Archived entries from file /home/ljj/.my-agenda/Linux/linux.org
+
+* DONE [#C] theme:安装QQ
+ - State "DONE"       from "TODO"       [2017-09-05 二 09:28]
+使用的是longene TM2013
+下载地址（百度云）：http://pan.baidu.com/s/1dFx8azv
+安装：
+64位的需要安装32位依赖文件
+用这条命令
+apt-get install libgtk2.0-0:i386
+32位的直接安装就可以了
+dpkg -i WineTM2013-20131206-Longene.deb
+
+目前已知的bug：
+1.无法用物理键盘输入密码，所以只能用软件盘
+2.ibus输入法和wineqq2013有冲突—-（没有测试过）
+
+主要参考了两篇内容
+Kali-linux下安装使用QQ：
+http://xiao106347.blog.163.com/blog/static/215992078201311512333509/
+wine qq 2013 for linux Ubuntu 64位兼容：
+http://www.longene.org/forum/viewtopic.php?f=6&t=4700
+Blog creation time:[2017-09-05 二 08:28]
+
+Archived entries from file /home/ljj/.my-agenda/Linux/linux.org
+
+* DONE [#C] theme:安装flash插件
+ - State "DONE"       from "TODO"       [2017-09-05 二 09:29]
+步骤一：
+   下载：https://get.adobe.com/flashplayer/
+备注:下载的格式为：.tar.gz for linux,下载结果得到：flash_player_npapi_linux.x86_64.tar.gz 
+
+步骤二：
+   解压：tar -xzvf flash_player_npapi_linux.x86_64.tar.gz 
+
+步骤三：
+   拷贝动态链接库至浏览器所在目录:sudo cp libflashplayer.so /usr/lib/mozilla/plugins/
+
+步骤四：
+   修改执行权限：chmod 775 libflashplayer.so
+备注；这一步很重要，当时在调试事就是忘记了这一步，结果死活没用
+
+步骤五：重启linux
+备注：一定要重启或注销，否则没用
+
+步骤六：测试，在浏览器上打开一个视频
+Blog creation time:[2017-09-05 二 08:29]
+
+Archived entries from file /home/ljj/.my-agenda/Linux/linux.org
+
+* DONE [#C] theme:安装lantern
+	- State "DONE"       from "TODO"       [2017-09-05 二 09:29]
+下载： 
+--deb:https://github.com/getlantern/lantern
+--github:git clone https://github.com/getlantern/lantern.git
+备注：推荐使用第二种源码包，因为这里是lanten项目在github上托管的源码，这里下载的源码一定是最新的
+
+kali安装：
+--cd lantern
+--make lantern
+./lantern
+
+debian安装：
+--下载最新版本的.deb，ubuntu14.04
+--sudo dpkg -i xxx.deb
+--运行:lantern
+--出错，解决方案如下所示
+
+排错：
+运行时如果提示/.lantern/bin/lantern: error while loading shared libraries: libappindicator3.so.1: cannot open shared object file: No such file or directory 。
+则需要安装一个库：apt-get install libappindicator3-1。还可以配合Tor使用。
+Blog creation time:[2017-09-05 二 08:30]
+
+Archived entries from file /home/ljj/.my-agenda/Linux/linux.org
+
+* DONE [#C] theme:安装google浏览器
+	- State "DONE"       from "TODO"       [2017-09-05 二 09:29]
+--首先需要安装蓝灯能翻墙到google的官网下载.deb安装包
+--下载：http://www.google.cn/intl/zh-CN/chrome/browser/desktop/index.html
+--安装：
+-->sudo dpkg -i google-chrome-stable_current_amd64.deb
+-->解决依赖关系：sudo apt-get -f install
+-->再次安装：sudo dpkg -i google-chrome-stable_current_amd64.deb
+-->运行：google-chrome
+--添加快捷图标
+Blog creation time:[2017-09-05 二 08:32]
+
+Archived entries from file /home/ljj/.my-agenda/Linux/linux.org
+
+* DONE [#C] theme:安装 google 输入法
+  CLOSED: [2017-12-26 二 14:34]
+https://jingyan.baidu.com/article/eae0782743419c1fed548548.html
+
+* DONE [#C] theme:安装思维导图
+	- State "DONE"       from "TODO"       [2017-09-05 二 09:29]
+1.下载包:http://www.xmind.net/download/linux/
+2.解压包:unzip -d xmind xmind-8-update2-linux.zip
+3.安装依赖文件:sudo ./setup.h
+4.进入XMind_amd64,安装xmind思维导图:sudo ./XMind
+Blog creation time:[2017-09-05 二 09:10]
 ** DONE [#D] theme:FTP服务 									   :@Blog:@Linux:
 *** 安装
 --安装vsftpd:
@@ -636,4 +829,329 @@ vsftpd_log_file=/var/log/vsftpd.log
 	1. 命令: rsync -av -e ssh test@192.168.19.10:~ /tmp
 	2. 注意:该功能是将服务器上的~复制到本地客户端的/tmp中
 Blog creation time:[2017-09-05 二 09:06]
+** WAITTING [#D] theme:源码分析                               :@Blog:@Kernel:
+   all: vmlinux
+  
+   vmlinux: scripts/link-vmlinux.sh vmlinux_prereq $(vmlinux-deps) FORCE (999)
+   ----+$(call if_changed,link-vmlinux)
 
+ 备注:
+ 1. @@@@@表示已经追踪到文件真实路径的级别
+ 2. %%%%%表示已超出顶层Makefile文件
+ 3. ||||||||||表示分隔小节
+*** scripts/link-vmlinux.sh @@@@@
+*** vmlinux_prereq
+ 1. PHONY += vmlinux_prereq (975)
+ 2. vmlinux_prereq: $(vmlinux-deps) FORCE  (976)
+    1. ifdef CONFIG_HEADERS_CHECK
+    2. ----$(Q)$(MAKE) -f $(srctree)/Makefile headers_check
+    3. endif
+    4. 
+    5. $(srctree)
+	   1. # building in the source tree
+	   2. ifeq ($(KBUILD_SRC),)
+       3. ----srctree := .   (200)
+       4. else
+       5. ----ifeq ($(KBUILD_SRC)/,$(dir $(CURDIR)))
+       6. --------srctree := ..
+       7. ----else
+       8. -------srctree := $(KBUILD_SRC)  (206)
+       9. ---endif
+       10. endif
+	   11. 
+	   12. objtree		:= .   (209)
+	   13. src		:= $(srctree)
+	   14. obj		:= $(objtree)
+	   15. 
+	   16. VPATH		:= $(srctree)$(if $(KBUILD_EXTMOD),:$(KBUILD_EXTMOD))
+	   17. 
+	   18. export srctree objtree VPATH
+    6. 
+    7. headers_check
+	   1. PHONY += headers_check
+	   2. headers_check: headers_install
+	   3. ----$(Q)$(MAKE) $(hdr-inst)=include/uapi dst=include HDRCHECK=1
+	   4. ----$(Q)$(MAKE) $(hdr-inst)=arch/$(hdr-arch)/include/uapi $(hdr-dst) HDRCHECK=1
+	   5. 
+	   6. headers_install
+	      1. headers_install: __headers
+	      2. ----$(if $(wildcard $(srctree)/arch/$(hdr-arch)/include/uapi/asm/Kbuild),,  \
+	      3. $(error Headers not exportable for the $(SRCARCH) architecture))
+	      4. ----$(Q)$(MAKE) $(hdr-inst)=include/uapi dst=include
+	      5. ----$(Q)$(MAKE) $(hdr-inst)=arch/$(hdr-arch)/include/uapi $(hdr-dst)
+		  6. 
+		  7. __headers
+		     1. __headers: $(version_h) scripts_basic uapi-asm-generic archheaders archscripts
+	         2. ----$(Q)$(MAKE) $(build)=scripts build_unifdef
+			 3. 
+			 4. 
+			 5. PHONY += scripts_basic
+			 6. scripts_basic:
+	 	     7. ----$(Q)$(MAKE) $(build)=scripts/basic
+ 		 	 8. ----$(Q)rm -f .tmp_quiet_recordmcount
+			 6. 
+			 7. 
+		  8. 
+		  9. 
+    8. 
+    9. ||||||||||
+    10. ifdef CONFIG_GDB_SCRIPTS
+    11. ----$(Q)ln -fsn `cd $(srctree) && /bin/pwd`/scripts/gdb/vmlinux-gdb.py
+    12. endif
+    13. ||||||||||
+    14. ifdef CONFIG_TRIM_UNUSED_KSYMS
+    15. ----$(Q)$(CONFIG_SHELL) $(srctree)/scripts/adjust_autoksyms.sh \
+    16. "$(MAKE) -f $(srctree)/Makefile vmlinux"
+    17. endif
+*** $(vmlinux-deps)
+	 第970行: vmlinux-deps := $(KBUILD_LDS) $(KBUILD_VMLINUX_INIT) $(KBUILD_VMLINUX_MAIN) $(KBUILD_VMLINUX_LIBS)
+	 第1009行: $(sort $(vmlinux-deps)): $(vmlinux-dirs) ;		
+	
+ 1. vmlinux-deps 第970行
+    export KBUILD_LDS          := arch/$(SRCARCH)/kernel/vmlinux.lds	
+    export KBUILD_VMLINUX_INIT := $(head-y) $(init-y)
+    export KBUILD_VMLINUX_MAIN := $(core-y) $(libs-y2) $(drivers-y) $(net-y) $(virt-y)
+    export KBUILD_VMLINUX_LIBS := $(libs-y1)
+    --->vmlinux-deps := arch/$(SRCARCH)/kernel/vmlinux.lds $(head-y) $(init-y) $(core-y) $(libs-y2) $(drivers-y) $(net-y) $(virt-y) $(libs-y1)
+   
+ 2. vmlinux-dirs 第946行: 
+    vmlinux-dirs := $(patsubst %/,%,$(filter %/, $(init-y) $(init-m) \
+    $(core-y) $(core-m) $(drivers-y) $(drivers-m)
+    $(net-y) $(net-m) $(libs-y) $(libs-m) $(virt-y)))
+    --->vmlinux-dirs := init usr drivers sound firmware net lib virt    (未定义:init-m core-m dirvers-m net-m libs-m)
+   
+    1. init-y
+	   init-y := init/    (第564行)
+	   init-y		:= $(patsubst %/, %/built-in.o, $(init-y))   (第953行)
+	   ---> init-y := init/built-in.o
+    2. init-m  未定义      (第946行)
+    3. core-y
+	   core-y		:= usr/
+	   core-y		+= kernel/ certs/ mm/ fs/ ipc/ security/ crypto/ block/
+	   core-y		:= $(patsubst %/, %/built-in.o, $(core-y))
+	   ---> core-y := usr/built-in.o kernel/built-in.o certs/built-in.o mm/built-in.o         \
+	   fs/built-in.o ipc/built-in.o security/built-in.o crypto/built-in.o block/built-in.o
+    4. core-m  未定义
+    5. drivers-y
+	   drivers-y	:= drivers/ sound/ firmware/
+	   drivers-y	:= $(patsubst %/, %/built-in.o, $(drivers-y))
+	   ---> drivers-y := drivers/built-in.o sound/built-in.o firmware/built-in.o
+    6. drivers-m  未定义
+    7. net-y
+	   net-y		:= net/
+	   net-y		:= $(patsubst %/, %/built-in.o, $(net-y))
+	   ---> net-y := net/built-in.o
+    8. net-m  未定义
+    9. libs-y
+	   libs-y		:= lib/
+	   libs-y1		:= $(patsubst %/, %/lib.a, $(libs-y))
+	   libs-y2		:= $(filter-out %.a, $(patsubst %/, %/built-in.o, $(libs-y)))
+	   ---> libs-y1  := lib/lib.a
+       ---> libs-y2  := lib/built-in.o
+    10. libs-m  未定义
+    11. virt-y
+	    virt-y		:= virt/
+	    virt-y		:= $(patsubst %/, %/built-in.o, $(virt-y))	
+	    ---> virt-y  := virt/built-in.o
+
+ 3. $(vmlinux-dirs): prepare scripts   (第1018行)
+    1. $(vmlinux-dirs): prepare scripts   (第1018行)
+    2. ----$(Q)$(MAKE) $(build)=$@
+    3. 
+    4. ---> init usr drivers sound firmware net lib virt : prepare scripts
+    5. --------$(Q)$(MAKE) $(build)=$@
+    6. 
+    7. prepare: prepare0 prepare-objtool
+	   1. prepare0: archprepare gcc-plugins
+	   2. ----$(Q)$(MAKE) $(build)=.
+		  1. archprepare: archheaders archscripts prepare1 scripts_basic
+		  2. 
+		  3. include scripts/Makefile.gcc-plugins
+	   3. 
+	   4. prepare-objtool: $(objtool_target)
+    8. 
+    9. scripts:
+	   1. scripts: scripts_basic include/config/auto.conf include/config/tristate.conf asm-generic gcc-plugins
+	   2. ---$(Q)$(MAKE) $(build)=$(@)
+	   3. 
+	   4. scripts_basic:
+	   5. ----$(Q)$(MAKE) $(build)=scripts/basic
+	   6. ----$(Q)rm -f .tmp_quiet_recordmcount
+	   7. 
+	   8. -include include/config/auto.conf
+	   9. 
+	   10. include/config/auto.conf:
+	   11. $(Q)test -e include/generated/autoconf.h -a -e $@ || (		\
+	   12. echo >&2;
+	   13. echo >&2 "  ERROR: Kernel configuration is invalid.";
+	   14. echo >&2 "         include/generated/autoconf.h or $@ are
+	   15. echo >&2 "         Run 'make oldconfig && make prepare' on kernel src to fix it.";
+	   16. echo >&2 ;
+	   17. /bin/false)
+	   18. 
+	   19. include/config/tristate.conf
+	   20. 
+	   21. asm-generic: uapi-asm-generic
+	   22. $(Q)$(MAKE) -f $(srctree)/scripts/Makefile.asm-generic  \
+	   23. ----src=asm obj=arch/$(SRCARCH)/include/generated/asm
+	   24. 
+	   25. uapi-asm-generic:
+	   26. ----$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.asm-generic  \
+	   27. src=uapi/asm obj=arch/$(SRCARCH)/include/generated/uapi/asm
+	   28. 
+    10. 
+
+ 4. $(sort $(vmlinux-deps)): $(vmlinux-dirs)  第1009行
+    1. 第1003行: ifdef CONFIG_SAMPLES
+       vmlinux-dirs += samples
+       endif
+    2. arch/$(SRCARCH)/kernel/vmlinux.lds $(head-y) $(init-y) $(core-y) $(libs-y2) $(drivers-y) $(net-y) $(virt-y) $(libs-y1):  \
+    3. init usr drivers sound firmware net lib virt    (未定义:init-m core-m dirvers-m net-m libs-m)
+*** FORCE
+    PHONY += FORCE
+    FORCE:
+    .PHONY: $(PHONY)   
+*** +$(call if_changed,link-vmlinux) 
+ 3. call函数
+    1. make 内置的一个特殊的函数,它可以引用用户自己定义的带有参数的函数
+ 4. if_changed 变量
+    1. kbuild 定义的一个变量, 定义在 scripts/Kbuild.include 路径下
+    2. 变量原型:
+       if_changed = $(if $(strip $(any-prereq) $(arg-check)),                   \
+	   ----@set -e;                                                             \
+	   ----$(echo-cmd) $(cmd_$(1));                                             \
+	   ----printf '%s\n' 'cmd_$@ := $(make-cmd)' > $(dot-target).cmd, @:)
+    3. 该代码段包含的知识点有: if函数, "命令"的执行原理, strip函数(详情参见blog-makefile)
+    4. 重点: 该if函数中,没有给出第二个参数,所以,如果$(strip $(any-prereq) $(arg-check))的展开结果为空,则if_changed为空,否则,if_changed的值就是三个----开头的命令的计算结果
+    5. any-prereq
+       1. $(filter-out $(PHONY),$?) $(filter-out $(PHONY) $(wildcard $^),$^)
+	   2. 作用: any-prereq检查是否有依赖比目标新，或者依赖还没有创建
+    6. arg-check
+       1. ifneq ($(KBUILD_NOCMDDEP),1)
+	   2. arg-check = $(filter-out $(subst $(space),$(space_escape),$(strip $(cmd_$@))),$(subst $(space),$(space_escape),$(strip $(cmd_$1))))
+       3. else
+       4. arg-check = $(if $(strip $(cmd_$@)),,1)
+       5. endif
+	   6. 作用: 检查编译目标的命令相对上次是否发生变化
+    7. 传给if_changed的第一个实参是link-vmlinux，因此，cmd_$(1)展开后为cmd_link-vmlinux
+    8. 在"set -e"之后出现的代码，一旦出现了返回值为非零状态，整个脚本就会立即退出,这是出于保证代码安全性的考虑(命令返回0,说明运行正常)
+    9. if_changed核心功能就是当目标的依赖或者编译命令发生变化时，执行表达式“cmd_$(1)”展开后的值
+    10. 
+ 5. +$(call if_changed,link-vmlinux)
+ Blog creation time:[2017-11-02 四 16:51]
+
+ Archived entries from file /home/ljj/.my-agenda/Linux/linux-kernel.org
+
+** WAITTING [#D] theme:编译kernel                             :@Blog:@Kernel:
+ 1. 配置系统的基本结构:
+    1. Makefile：分布在 Linux 内核源代码根目录及各层目录中，定义 Linux 内核的编译规则；
+    2. 配置文件（config.in(2.4内核，2.6内核)）：给用户提供配置选择的功能；
+    3. 配置工具：包括配置命令解释器（对配置脚本中使用的配置命令进行解释）和配置用户界面（提供基于字符界面、基于 Ncurses 图形界面以及基于 Xwindows 图形界面的用户配置界面，各自对应于 Make config、Make menuconfig 和 make xconfig）,些配置工具都是使用脚本语言，如 Tcl/TK、Perl 编写的（也包含一些用 C 编写的代码）。本文并不是对配置系统本身进行分析，而是介绍如何使用配置系统。所以，除非是配置系统的维护者，一般的内核开发者无须了解它们的原理，只需要知道如何编写 Makefile 和配置文件就可以
+
+ 2. makefile menuconfig过程讲解:
+    1. make menuconfig提示'make menuconfig' requires the ncurses libraries解决方法:sudo apt-get install libncurses5-dev
+    2. 
+    3. 
+ 3. Linux内核的配置系统:
+    1. 
+ Blog creation time:[2017-11-02 四 16:53]
+
+** DONE [#D] theme:安装搜狗输入法                              :@Blog:@Linux:
+	 - State "DONE"       from "TODO"       [2017-09-05 二 09:28]
+ --在新出的Ubuntu 16.04上安装sogou输入法的时候，碰到了一些问题，
+ 主要还是依赖包没有正确安装，下面介绍正确的安装步骤；
+ --在sougou的官网上下载linux版本的安装包
+ --sudo apt install libopencc1 fcitx-libs fcitx-libs-qt fonts-droid-fallback 
+ --sudo dpkg -i sogoupinyin_2.0.0.0078_amd64.deb
+ --安装细胞词库：在官网上下载好词库（.scel）,复制到/home/ljj/.config/SogouPY/scd下面
+ --勾选安装的细胞词库
+ --小结：安装依赖需要一次安装完成，切勿单个安装，主要是由于包之间彼此会有一定的依赖关系，这个是你无法准确定位的，
+ 故在 一次安装动作中做完；
+ Blog creation time:[2017-09-05 二 08:09]
+
+* DONE [#C] theme:解决软件安装过程中的依赖关系的心得
+  CLOSED: [2017-12-26 二 14:58]
+(1)正常途径：
+>> dpkg -i xxx.deb
+>> apt -f install 
+>> dpkg -i xxx.deb
+	上面的三条指令几乎就是所有.deb类型的包安装的泛型，其原理如下：
+	一般情况下，拿到一个.deb的包之后，可以使用dpkg -i xxx.deb来安装，此时，有百分之90
+以上的情况都会提示说缺少依赖，但是呢，该软件xxx的状态信息已经存放在/var/lib/dpkg/status
+文件里面了，那紧接着使用apt -f install来强制安装，其原理是下面的包管理机制所述，apt去
+遍历分析整个/var/lib/dpkg/status的过程中自然会发现 xxx 这个软件的依赖中有软件包没有安装，
+自然会去安装这些检测到的包了
+	如此依赖，卸载命令sudo apt autoremove xxx --purge的原理也就很明了了，显然，系统会去
+将/var/lib/dpkg/status中软件xxx登记的信息给抹除掉，之后安装其他软件时才不会报错！
+
+(2)存放软件状态信息的文件：/var/lib/dpkg/status
+>> 当使用dpkg -s xxx时，该命令会从该文件中找到xxx这个软件，然后原封不动的将里面的信息
+输出到屏幕，使用该命令，不难发现会显示该软件xxx的所有依赖关系
+>> 这个文件很重要，因为每次使用apt安装软件时，apt会事先去遍历这个文件，分析文件中各个
+软件的依赖信息，这样做的原因不难猜测，你想啊，如果你现在安装的软件包当中依赖到了一个包，
+暂且记为pack.xx,而这个pack.xx在你过去某个时刻，安装某一个软件时作为依赖安装过一次，
+那么，现在你正在安装的这个软件用到这个包pack.xx的时候，你是再安装一遍呢，还是不要安装，
+答案是显然的，肯定是不用安装的，那么，apt又如何知道pack.xx以前安装过呢？
+
+(3)包管理机制：
+包管理器提供一种机制：每个软件在安装之后，都会在/var/lib/dpkg/status这个文件下登记状态，
+这里面记录了每个软件包的名称，大小，版本，依赖关系，描述信息等等，在安装一个软件之前，
+首先去遍历这个文件下所有软件的依赖关系这一部分，确定以前从没有安装过该软件以及其所依赖的包
+之后，才会去安装，否则就略过
+
+(3)缺什么补什么：
+	理想很丰满，现实很残酷，实际在安装过程中（1）所述的方法80%都会成功，有15%从原理上说
+压根就不可能（比如兼容性问题），有5%还是值得争取一下的，其失败的原因通常是因为源仓库
+里面无法满足待安装软件内部依赖包的版本，或者是源仓库里面没有某些依赖包等，针对后者，通常，
+可以想办法从外部获取缺少的依赖包进行安装即可。对于前者，得动一番手脚，下面以安装网易云音乐
+为例进行阐述：
+>> dpkg -i netease-cloud-music_1.0.0-2_amd64_Ubuntu16.04.deb
+备注：
+缺少几个依赖包，其中，有一个叫做libfontconfig1 (>=2.11.94)的比较特殊，该条目明确
+说明netease-cloud-music这个软件依赖于libfontconfig1 (>=2.11.94)，但是系统的源仓库中
+只有libfontconfig1 2.11.0-6.7+b1，原因已经告诉用户了，针对依赖包libfontconfig1，安装
+过程中需要其版本(>=2.11.94)，知道了原因，就好解决问题了
+
+>> 安装缺少的依赖：
+sudo aptitude install xxx yyy zzz ...  libfontconfig1
+备注：
+--在此处一定要使用aptitude,测试发现apt-get好像无法处理，至于原因嘛，查资料得知，aptitude 
+解决依赖关系比 apt-get 更智能，它有一个优点就是会自动记录哪些包是"自动安装"
+(即因依赖关系而安装)的, 总之，试一下就知道了
+--一个依赖可能会引出其他依赖，新出现的依赖也将其添加进来，知道不再有新的依赖时，就算完事了
+--这一步骤最后还是会显示上面说的那个比较特殊的libfontconfig1，版本太新，找不到，没关系，
+那安装时忽略版本就是了
+
+>> 解决 libfontconfig1 的版本问题
+sudo dpkg --ignore-depends=libfontconfig1 -i netease-cloud-music_1.0.0-2_amd64_Ubuntu16.04.deb
+
+>> 安装完成了吗？
+到目前为止，网易音乐安装并可以正常使用了，在终端下输入netease-cloud-music,就能启动网易音乐
+的界面并播放音乐，然而，事情真的结束了吗？你在使用apt install xxx安装另一个软件试试，会报告
+一个关于libfontconfig1的错，还是说版本不对，聪明的你大概已经想到了，我们前面说，apt以及
+aptitude在使用时，首先会去遍历/var/lib/dpkg/status这个文件中的依赖信息，OK，我们来理一下
+关于libfontconfig1的思路：
+第一个“>>”条目中，使用了dpkg安装网易音乐，结果，在/var/lib/dpkg/status中登记了该软件的
+信息，而信息中有个依赖信息中出现了libfontconfig1 (>=2.11.94)；
+第二个“>>”条目中，使用了aptitude安装缺少的依赖，其中，安装了libfontconfig1，不用说，安装的
+肯定是源仓库中唯一有的2.11.0-6.7+b1版本
+第三个“>>”条目中，使用 dpkg --ignore-depends=libfontconfig1 -i xxx在忽略libfontconfig1
+依赖问题的前提安装了网易音乐，之后就可以使用该软件了
+然而，矛盾在于：系统中实际安装了2.11.0-6.7+b1版本的libfontconfig1，而/var/lib/dpkg/status
+中登记的还是libfontconfig1 (>=2.11.94)，再次使用apt时，遍历/var/lib/dpkg/status的时候，
+apt是会发现这个问题的，所以就输出一条错误信息：
+netease-cloud-music：Depends:libfontconfig1 (>=2.11.94) but 2.11.0-6.7+b1 is 
+installed
+
+>> 修改依赖文件
+知道了问题的根源就在于/var/lib/dpkg/status中登记的还是libfontconfig1 (>=2.11.94)，
+那么，将 (>=2.11.94) 从该文件中去掉，问题就解决了，完毕！
+
+Blog creation time:[2017-09-15 五 16:37]
+* DONE [#C] theme:解决Debian使用apt安装软件时要求插入光盘的问题
+	- State "DONE"       from "WAITTING"   [2017-09-15 五 10:24]
+--原因：Debian安装后，/etc/apt/sources.list中开头几行默认优先从dvd光盘安装软件,而非从网上下载
+
+--解决方案：
+Debian系统自带一个叫做Software update的软件，专门用来管理源，打开该软件配置一下即可
+Blog creation time:[2017-09-15 五 09:10]

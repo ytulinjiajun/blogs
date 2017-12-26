@@ -1,1 +1,0 @@
-* WAITTING [#C] Theme:cmake-qt(7)                                    :@Cmake:

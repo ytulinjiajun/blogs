@@ -1,4 +1,3 @@
-* WAITTING [#C] Theme:cmake-variables                                :@Cmake:
 ** Variables that Provide Information
    1. <<CMAKE_CURRENT_LIST_DIR>>
       1. 含义: 当前正在处理的列表文件(CMakelists.txt)所在的目录路径

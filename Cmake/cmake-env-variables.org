@@ -1,4 +1,4 @@
-* WAITTING [#C] Theme:cmake-env-variables                            :@Cmake:
+* WAITTING [#C] theme:cmake-env-variables                            :@Cmake:
 1. 设置环境变量set(ENV{CMAKE_C_FLAGS} "-O3 -Wall")
 2. 查看环境变量message(STATUS "CMAKE_C_FLAGS: " $ENV{CMAKE_C_FLAGS})
 3. Environment Variables that Control the Build

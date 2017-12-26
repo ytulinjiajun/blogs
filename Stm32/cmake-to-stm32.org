@@ -1,11 +1,10 @@
-* blogs-cmake-to-stm32-active
-** DONE Theme:工具网站                                         :@CmakeStm32:
-   CLOSED: [2017-11-25 六 19:10]
+* DONE [#C] theme:工具网站
+  CLOSED: [2017-12-26 二 15:28]
 1. [[http:www.stmcu.org/module/forum/thread-603753-1-1.html][使用Makefile开发STM32的基础范例]] 
 2. [[https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads][arm-none-eabi-gcc 源码包]]
 3. [[https:www.vtk.org/Wiki/CMake_Cross_Compiling][CMake Cross Compiling of WiKi]]
  Blog creation time:[2017-11-23 四 11:19]
-** TODO [#C] Theme: CMake Cross Compiling                      :@CmakeStm32:
+* TODO [#C] theme: CMake Cross Compiling
 备注: 该章节的内容取自 https://www.vtk.org/Wiki/CMake_Cross_Compiling 
 1. CMake从 2.6.0 版本以后开始支持跨平台编译
 2. 跨平台编译意味着:
@@ -108,36 +107,36 @@
    2. 比如 CHECK_INCLUDE_FILES() or CHECK_C_SOURCE_RUNS(),大多数这些测试将在内部使用TRY_COMPILE（）或TRY_RUN（）CMake命令
    3. TRY_COMPILE（）命令在交叉编译时也可以正常工作，他们会尝试使用交叉编译工具链来编译这段代码，这会得到预期的结果
    4. 所有使用TRY_RUN（）的测试都无法运行，因为创建的可执行文件无法在构建主机系统上运行。起初，TRY_RUN（）试图编译软件，在交叉编译时它将以相同的方式工作。
-** TODO [#C] Theme: CMake Compiler 
-*** ASM
-*** C
-**** <<CMAKE_BUILD_TYPE>>   请设置
+* TODO [#C] theme: CMake Compiler 
+** ASM
+** C
+*** <<CMAKE_BUILD_TYPE>>   请设置
 1. 指定 在 single-configuration generators 上的 build type 
 2. 可能的值有: empty, Debug, Release, RelWithDebInfo, MinSizeRel
 3. 这个变量的值仅仅在 single-configuration generators(诸如: Makefile Generators and Ninja)上才有意义
 4. 在multi-config generators 上的配置参考 [[CMAKE_CONFIGURATION_TYPES]]
-**** <<CC>>
+*** <<CC>>
 1. 该变量是一个环境变量
 
 2. CMake在第一次配置时会使用它,在决定了编译器之后,将它的值作为 [[CMAKE_C_COMPILER]] 存储在高速缓存中
 
 3. 对于任何配置运行（包括第一个），如果定义了 CMAKE_C_COMPILER 变量，则该环境变量的默认值将被忽略
-**** <<CMAKE_C_COMPILER>>   请设置
+*** <<CMAKE_C_COMPILER>>   请设置
 1. c 编译器的全路径
 2. 这是用于设置 c 编译器的命令,一旦设置，你不能改变这个变量
-**** <<CMAKE_C_COMPILER_AR>>  请设置
+*** <<CMAKE_C_COMPILER_AR>>  请设置
 1. 设置创建静态库的工具,比如 arm-none-eabi-gcc-ar
 2. [[CMAKE_AR]] 记录了该信息
-**** <<CMAKE_AR>>
+*** <<CMAKE_AR>>
 1. 该变量提供了创建归档或静态库的程序的名称,供查询
 2. 配置在变量 [[CMAKE_C_COMPILER_AR]] 中完成
-**** <<CMAKE_C_COMPILER_RANLIB>>  请设置
+*** <<CMAKE_C_COMPILER_RANLIB>>  请设置
 1. 设置 ranlib 工具,比如 arm-none-eabi-gcc-ranlib
 2. [[CMAKE_RANLIB]] 记录了该信息
-**** <<CMAKE_RANLIB>>
+*** <<CMAKE_RANLIB>>
 1. 该变量提供了 randlib 程序的名称,供查询
 2. 配置在变量 [[CMAKE_C_COMPILER_RABLIB]] 中完成
-**** 不常用 
+*** 不常用 
 CMAKE_ <LANG>_CLANG_TIDY
 CMAKE_ <LANG> _COMPILER_LAUNCHER
 CMAKE_ <LANG> _CPPCHECK
@@ -186,412 +185,411 @@ CMAKE_ <LANG> _STANDARD_INCLUDE_DIRECTORIES
 CMAKE_ <LANG> _STANDARD_LIBRARIES
 CMAKE_Swift_LANGUAGE_VERSION
 CMAKE_USER_MAKE_RULES_OVERRIDE_ <LANG>
-*** C++
-*** C#
-*** Fortran
-** TODO [#C] Theme: CMake Flags 
-*** ASM
-**** ASM<DIALECT>
-**** ASM<DIALECT>FLAGS
-*** C 
-**** <<CFLAGS>>
- 1. 该变量是一个环境变量,CMake在第一次配置时才会使用它来确定 [[CC]] 默认的编译 flags，之后将 CFLAGS 的值作为 [[CMAKE_C_FLAGS]] 存储在高速缓存(CACHE)中
+** C++
+** C#
+** Fortran
+* TODO [#C] theme: CMake Flags 
+** ASM
+*** ASM<DIALECT>
+*** ASM<DIALECT>FLAGS
+** C 
+*** <<CFLAGS>>
+1. 该变量是一个环境变量,CMake在第一次配置时才会使用它来确定 [[CC]] 默认的编译 flags，之后将 CFLAGS 的值作为 [[CMAKE_C_FLAGS]] 存储在高速缓存(CACHE)中
 
- 2. 对于任何配置运行（包括第一个），如果定义了 CMAKE_C_FLAGS 变量，则环境变量将被忽略
+2. 对于任何配置运行（包括第一个），如果定义了 CMAKE_C_FLAGS 变量，则环境变量将被忽略
 
- 3. 显然,应当将 CMAKE_C_FLAGS  在 ToolChain.cmake 中进行显式定义来忽略掉该环境变量
-**** <<CMAKE_C_FLAGS_INIT>>   请配置
+3. 显然,应当将 CMAKE_C_FLAGS  在 ToolChain.cmake 中进行显式定义来忽略掉该环境变量
+*** <<CMAKE_C_FLAGS_INIT>>   请配置
 1. 第一次为语言C配置 build tree 时, 该变量的值用于初始化 [[CMAKE_C_FLAGS]] 高速缓存条目
 2. 这个变量可由工具链文件 toolchain 设置, CMake可以根据环境和目标平台向该变量预加或者附加内容
-**** <<CMAKE_C_FLAGS>>
+*** <<CMAKE_C_FLAGS>>
 1. 所有 build type 的 flags
 2. 不管 [[CMAKE_BUILD_TYPE]] 为何值, C flags 都会被使用,该变量的值被 [[CMAKE_C_FLAGS_INIT]] 在 toolchain 中初始化
 3. 汇编: ${CC} -c test.s ${CMAKE_C_FLAGS} -o test.o
 4. 这里的${CMAKE_C_FLAGS} = "-Wall -O2"
-**** <<CMAKE_C_FLAGS_RELEASE_INIT>>   请配置
+*** <<CMAKE_C_FLAGS_RELEASE_INIT>>   请配置
 1. 第一次为语言C配置 build tree 时, 该变量的值用于初始化 [[CMAKE_C_FLAGS_RELEASE]] 高速缓存条目
 2. 这个变量可由工具链文件 toolchain 设置, CMake可以根据环境和目标平台向该变量预加或者附加内容
-**** <<CMAKE_C_FLAGS_RELEASE>>
+*** <<CMAKE_C_FLAGS_RELEASE>>
 1. release build type 或 configuration 的标志
 2. 不同于 [[CMAKE_C_FLAGS]] 该变量的值只当 [[CMAKE_BUILD_TYPE]] 为 Release 时才会被使用
 3. 该变量的值被 [[CMAKE_C_FLAGS_RELEASE_INIT]] 在 toolchain中初始化
-**** <<CMAKE_C_GHS_KERNEL_FLAGS_RELEASE>>    不常用
+*** <<CMAKE_C_GHS_KERNEL_FLAGS_RELEASE>>    不常用
 1. release build type 或 configuration 的 GHS Kernel 标志
 2. 不同于 [[CMAKE_C_FLAGS]] 该变量的值只当 [[CMAKE_BUILD_TYPE]] 为 Release 时才会被使用
-**** <<CMAKE_C_FLAGS_DEBUG_INIT>>   请配置
+*** <<CMAKE_C_FLAGS_DEBUG_INIT>>   请配置
 1. 第一次为语言C配置 build tree 时, 该变量的值用于初始化 [[CMAKE_C_FLAGS_DEBUG]] 高速缓存条目
 2. 这个变量可由工具链文件 toolchain 设置, CMake可以根据环境和目标平台向该变量预加或者附加内容
-**** <<CMAKE_C_FLAGS_DEBUG>>
+*** <<CMAKE_C_FLAGS_DEBUG>>
 1. debug build type 或 configuration 的标志
 2. 不同于 [[CMAKE_C_FLAGS]] 该变量的值只当 [[CMAKE_BUILD_TYPE]] 为 Debug 时才会被使用
 3. 该变量的值被 [[CMAKE_C_FLAGS_DEBUG_INIT]] 在 toolchain中初始化
-**** <<CMAKE_C_GHS_KERNEL_FLAGS_DEBUG>>   不常用
+*** <<CMAKE_C_GHS_KERNEL_FLAGS_DEBUG>>   不常用
 1. debug build type 或 configuration 的 GHS Kernel 标志
 2. 不同于 [[CMAKE_C_FLAGS]] 该变量的值只当 [[CMAKE_BUILD_TYPE]] 为 Debug 时才会被使用
-**** <<CMAKE_C_FLAGS_MINSIZEREL_INIT>>  请配置
+*** <<CMAKE_C_FLAGS_MINSIZEREL_INIT>>  请配置
 1. 第一次为语言C配置 build tree 时, 该变量的值用于初始化 [[CMAKE_C_FLAGS_MINSIZEREL]] 高速缓存条目
 2. 这个变量可由工具链文件 toolchain 设置, CMake可以根据环境和目标平台向该变量预加或者附加内容
-**** <<CMAKE_C_FLAGS_MINSIZEREL>>
+*** <<CMAKE_C_FLAGS_MINSIZEREL>>
 1. MinSizeRel build tree 或 configuration 的标志
 2. 不同于 [[CMAKE_C_FLAGS]] 该变量的值只当 [[CMAKE_BUILD_TYPE]] 为 MinSizeRel(short for minimum size release,即最小尺寸发布) 时才会被使用
 3. 该变量的值被 [[CMAKE_C_FLAGS_MINSIZEREL_INIT]] 在 toolchain中初始化
-**** <<CMAKE_C_GHS_KERNEL_FLAGS_MINSIZEREL>>   不常用
+*** <<CMAKE_C_GHS_KERNEL_FLAGS_MINSIZEREL>>   不常用
 1. MinSizeRel type 或 configuration 的 GHS Kernel 标志
 2. 不同于 [[CMAKE_C_FLAGS]] 该变量的值只当 [[CMAKE_BUILD_TYPE]] 为 MinSizeRel 时才会被使用
-**** <<CMAKE_C_FLAGS_RELWITHDEBINFO_INIT>>   请配置
+*** <<CMAKE_C_FLAGS_RELWITHDEBINFO_INIT>>   请配置
 1. 第一次为语言C配置 build tree 时, 该变量的值用于初始化 [[CMAKE_C_FLAGS_RELWITHDEBINFO]] 高速缓存条目
 2. 这个变量可由工具链文件 toolchain 设置, CMake可以根据环境和目标平台向该变量预加或者附加内容
-**** <<CMAKE_C_FLAGS_RELWITHDEBINFO>>
+*** <<CMAKE_C_FLAGS_RELWITHDEBINFO>>
 1. RelWithDebInfo type 或 configuration 的标志
 2. 不同于 [[CMAKE_C_FLAGS]] 该变量的值只当 [[CMAKE_BUILD_TYPE]] 为 RelWithDebInfo (short for Release With Debug Information) 时才会被使用
 3. 该变量的值被 [[CMAKE_C_FLAGS_RELWITHDEBINFO_INIT]] 在 toolchain中初始化
-**** <<CMAKE_C GHS_KERNEL_FLAGS_RELWITHDEBINFO>>   不常用
+*** <<CMAKE_C GHS_KERNEL_FLAGS_RELWITHDEBINFO>>   不常用
 1. RelWithDebInfo build type 或 configuration 的 GHS Kernel 标志
 2. 不同于 [[CMAKE_C_FLAGS]] 该变量的值只当 [[CMAKE_BUILD_TYPE]] 为 RelWithDebInfo 时才会被使用
 
-**** <<LDFLAGS>>
- 1. 该变量是一个环境变量, CMake只在第一次配置时使用它来确定默认的链接器 flags, 之后将LDFLAGS的值作为
- [[CMAKE_EXE_LINKER_FLAGS_INIT]]，[[CMAKE_SHARED_LINKER_FLAGS_INIT]] 和 [[CMAKE_MODULE_LINKER_FLAGS_INIT]] 存储在高速缓存(CACHE)中
+*** <<LDFLAGS>>
+1. 该变量是一个环境变量, CMake只在第一次配置时使用它来确定默认的链接器 flags, 之后将LDFLAGS的值作为
+[[CMAKE_EXE_LINKER_FLAGS_INIT]]，[[CMAKE_SHARED_LINKER_FLAGS_INIT]] 和 [[CMAKE_MODULE_LINKER_FLAGS_INIT]] 存储在高速缓存(CACHE)中
 
- 2. 对于任何配置运行（包括第一个配置），如果定义了等效的 CMAKE_ <TYPE> _LINKER_FLAGS_INIT 变量(上面3个中的任意)，则该环境变量将被忽略
+2. 对于任何配置运行（包括第一个配置），如果定义了等效的 CMAKE_ <TYPE> _LINKER_FLAGS_INIT 变量(上面3个中的任意)，则该环境变量将被忽略
 
- 3. 显然,应当将 CMAKE_ <TYPE> _LINKER_FLAGS_INIT 在 ToolChain.cmake 中进行显式定义来忽略掉该环境变量
-**** <<CMAKE_EXE_LINKER_FLAGS_INIT>>  请配置
+3. 显然,应当将 CMAKE_ <TYPE> _LINKER_FLAGS_INIT 在 ToolChain.cmake 中进行显式定义来忽略掉该环境变量
+*** <<CMAKE_EXE_LINKER_FLAGS_INIT>>  请配置
 1. 第一次配置 build tree 时, 该变量的值用于初始化 [[CMAKE_EXE_LINKER_FLAGS]] 高速缓存条目
 2. 这个变量可由工具链文件 toolchain 设置, CMake可以根据环境和目标平台向该变量预加或者附加内容
-**** <<CMAKE_EXE_LINKER_FLAGS>>
+*** <<CMAKE_EXE_LINKER_FLAGS>>
 1. 当创建可执行文件时,该变量记录的 flags 会被链接器使用
 2. 链接: gcc test.o ${CMAKE_EXE_LINKER_FLAGS} -o test
-**** <<CMAKE_EXE_LINKER_FLAGS_RELEASE_INIT>>  请配置
-**** <<CMAKE_EXE_LINKER_FLAGS_RELEASE>>
-**** <<CMAKE_STATIC_LINKER_FLAGS_INIT>>   请配置
+*** <<CMAKE_EXE_LINKER_FLAGS_RELEASE_INIT>>  请配置
+*** <<CMAKE_EXE_LINKER_FLAGS_RELEASE>>
+*** <<CMAKE_STATIC_LINKER_FLAGS_INIT>>   请配置
 1. 第一次配置 build tree 时, 该变量的值用于初始化 [[CMAKE_STATIC_LINKER_FLAGS]] 高速缓存条目
 2. 这个变量可由工具链文件 toolchain 设置, CMake可以根据环境和目标平台向该变量预加或者附加内容
-**** <<CMAKE_STATIC_LINKER_FLAGS>>
+*** <<CMAKE_STATIC_LINKER_FLAGS>>
 1. 当创建静态库时,该变量记录的 flags 会被链接器使用
 2. 创建静态库: arr ${CMAKE_STATIC_LINKER_FLAGS} libmm.a tmp1.o tmp2.o     ----- 创建一个名为mm的静态库,并插入目标文件 tmp1.o, tmp2.o
 3. 这里的${CMAKE_STATIC_LINKER_FLAGS} = "-crs"
-**** <<CMAKE_STATIC_LINKER_FLAGS_RELEASE_INIT>>  请配置
+*** <<CMAKE_STATIC_LINKER_FLAGS_RELEASE_INIT>>  请配置
 备注: 对应于 [[CMAKE_BUILD_TYPE]] 的四种取值 empty, Debug, Release, RelWithDebInfo, MinSizeRel 中的 Release
-**** <<CMAKE_STATIC_LINKER_FLAGS_RELEASE>>
-**** <<CMAKE_SHARED_LINKER_FLAGS_INIT>>  请配置
+*** <<CMAKE_STATIC_LINKER_FLAGS_RELEASE>>
+*** <<CMAKE_SHARED_LINKER_FLAGS_INIT>>  请配置
 1. 第一次配置 build tree 时, 该变量的值用于初始化 [[CMAKE_SHARED_LINKER_FLAGS]] 高速缓存条目
 2. 这个变量可由工具链文件 toolchain 设置, CMake可以根据环境和目标平台向该变量预加或者附加内容
-**** <<CMAKE_SHARED_LINKER_FLAGS>>
+*** <<CMAKE_SHARED_LINKER_FLAGS>>
 1. 当创建共享库时,该变量记录的 flags 会被链接器使用
 2. ${CC} ${CMAKE_SHARED_LINKER_FLAGS} tmp1.o tmp2.o -o libnn.so
 2. 这里的 ${CMAKE_SHARED_LINKER_FLAGS} = "-fPIC -shared"
-**** <<CMAKE_SHARED_LINKER_FLAGS_RELEASE_INIT>>  请配置
+*** <<CMAKE_SHARED_LINKER_FLAGS_RELEASE_INIT>>  请配置
 备注: 对应于 [[CMAKE_BUILD_TYPE]] 的四种取值 empty, Debug, Release, RelWithDebInfo, MinSizeRel 中的 Release
-**** <<CMAKE_SHARED_LINKER_FLAGS_RELEASE>>
-**** <<CMAKE_MODULE_LINKER_FLAGS_INIT>>  请配置
+*** <<CMAKE_SHARED_LINKER_FLAGS_RELEASE>>
+*** <<CMAKE_MODULE_LINKER_FLAGS_INIT>>  请配置
 1. 第一次配置 build tree 时, 该变量的值用于初始化 [[CMAKE_MODULE_LINKER_FLAGS]] 高速缓存条目
 2. 这个变量可由工具链文件 toolchain 设置, CMake可以根据环境和目标平台向该变量预加或者附加内容
-**** <<CMAKE_MODULE_LINKER_FLAGS>>
-     当创建 MODULE 时,该变量记录的 flags 会被链接器使用
-**** <<CMAKE_MODULE_LINKER_FLAGS_RELEASE_INIT>> 请配置
+*** <<CMAKE_MODULE_LINKER_FLAGS>>
+    当创建 MODULE 时,该变量记录的 flags 会被链接器使用
+*** <<CMAKE_MODULE_LINKER_FLAGS_RELEASE_INIT>> 请配置
 备注: 对应于 [[CMAKE_BUILD_TYPE]] 的四种取值 empty, Debug, Release, RelWithDebInfo, MinSizeRel 中的 Release
-**** <<CMAKE_MODULE_LINKER_FLAGS_RELEASE>>
-**** <<CMAKE_LIBRARY_PATH_FLAG>>   请配置
+*** <<CMAKE_MODULE_LINKER_FLAGS_RELEASE>>
+*** <<CMAKE_LIBRARY_PATH_FLAG>>   请配置
 1. 该 flag 用于将库搜索路径添加到编译器
 2. 在大多数编译器上,该flag 的值是 -L
-**** <<CMAKE_LINK_LIBRARY_FLAG>>   请配置
+*** <<CMAKE_LINK_LIBRARY_FLAG>>   请配置
 1. 该 flag 用于指定将一个 library 链接进入一个可执行文件
 2. 在大多数编译器上,这个值是 -l
-**** <<CMAKE_LINK_DEF_FILE_FLAG>>    只用于windows
-**** <<CMAKE_LINK_LIBRARY_FILE_FLAG>>  只在很少的平台上使用
+*** <<CMAKE_LINK_DEF_FILE_FLAG>>    只用于windows
+*** <<CMAKE_LINK_LIBRARY_FILE_FLAG>>  只在很少的平台上使用
 1. 该 flag 用于链接一个由一个路径指定的 library 到它的文件
 2. 该 flag 在库文件路径被提供给链接器之前使用
-*** C++
-**** CXX
-**** CXXFLAGS
-*** C# 
-**** CSFLAGS
-*** Fortran 
-**** FC
-**** FFLAGS
-**** CMAKE_Fortran_MODDIR_FLAG
-**** CMAKE_Fortran_MODOUT_FLAG
-*** resource file
-**** RC
-**** RCFLAGS
+** C++
+*** CXX
+*** CXXFLAGS
+** C# 
+*** CSFLAGS
+** Fortran 
+*** FC
+*** FFLAGS
+*** CMAKE_Fortran_MODDIR_FLAG
+*** CMAKE_Fortran_MODOUT_FLAG
+** resource file
+*** RC
+*** RCFLAGS
 
-*** rare flags
-**** CMAKE_MFC_FLAG
+** rare flags
+*** CMAKE_MFC_FLAG
 1. 告诉cmake使用MFC的可执行文件或DLL,这用于Visual Studio项目文件
 2. 这可以在一个CMakeLists.txt文件中设置，并将在应用程序中启用MFC
 3. 它应该被设置1为静态MFC库和2 共享MFC库
-**** CMAKE_NOT_USING_CONFIG_FLAGS
+*** CMAKE_NOT_USING_CONFIG_FLAGS
 1. 该变量如果为 true, 则忽略 _BUILD_TYPE 
 2. 这是一个在CMake内部被 generators 使用的 flag, 用来告诉 CMAKE 忽略 _BUILD_TYPE
-** DONE [#C] Theme: arm-none-eabi-gcc                          :@CmakeStm32:
-*** 介绍
- 1. arm-none-eabi-gcc
-    1. 用于编译 ARM 架构的裸机系统（包括 ARM Linux 的 boot、kernel，不适用编译 Linux 应用 Application）
-    2. 一般适合ARM7、Cortex-M 和 Cortex-R 内核的芯片使用,所以不支持那些跟操作系统关系密切的函数，比如fork(2)
-    3. 他使用的是 newlib 这个专用于嵌入式系统的C库
- 2. arm-none-linux-gnueabi-gcc
-    1. 主要用于基于ARM架构的Linux系统，可用于编译 ARM 架构的 u-boot、Linux内核、linux应用等
-    2. arm-none-linux-gnueabi基于GCC，使用Glibc库，经过 Codesourcery 公司优化过推出的编译器
-    3. arm-none-linux-gnueabi-xxx 交叉编译工具的浮点运算非常优秀,一般ARM9、ARM11、Cortex-A 内核，带有 Linux 操作系统的会用到
- 3. armcc
-    1. ARM 公司推出的编译工具，功能和 arm-none-eabi 类似，可以编译裸机程序（u-boot、kernel），但是不能编译 Linux 应用程序
-    2. armcc一般和ARM开发工具一起，Keil MDK、ADS、RVDS和DS-5中的编译器都是armcc，所以 armcc 编译器都是收费的（爱国版除外，呵呵~~）
- 4. 由于stm32f7属于arm的cortex-m系列，所以使用arm-none-eabi-gcc作为gcc
-*** 使用方法
+* DONE [#C] theme: arm-none-eabi-gcc
+** 介绍
+1. arm-none-eabi-gcc
+   1. 用于编译 ARM 架构的裸机系统（包括 ARM Linux 的 boot、kernel，不适用编译 Linux 应用 Application）
+   2. 一般适合ARM7、Cortex-M 和 Cortex-R 内核的芯片使用,所以不支持那些跟操作系统关系密切的函数，比如fork(2)
+   3. 他使用的是 newlib 这个专用于嵌入式系统的C库
+2. arm-none-linux-gnueabi-gcc
+   1. 主要用于基于ARM架构的Linux系统，可用于编译 ARM 架构的 u-boot、Linux内核、linux应用等
+   2. arm-none-linux-gnueabi基于GCC，使用Glibc库，经过 Codesourcery 公司优化过推出的编译器
+   3. arm-none-linux-gnueabi-xxx 交叉编译工具的浮点运算非常优秀,一般ARM9、ARM11、Cortex-A 内核，带有 Linux 操作系统的会用到
+3. armcc
+   1. ARM 公司推出的编译工具，功能和 arm-none-eabi 类似，可以编译裸机程序（u-boot、kernel），但是不能编译 Linux 应用程序
+   2. armcc一般和ARM开发工具一起，Keil MDK、ADS、RVDS和DS-5中的编译器都是armcc，所以 armcc 编译器都是收费的（爱国版除外，呵呵~~）
+4. 由于stm32f7属于arm的cortex-m系列，所以使用arm-none-eabi-gcc作为gcc
+** 使用方法
 GNU Tools for ARM Embedded Processors
 Version: 5
 
-**** Installing executables on Linux *
-   Unpack the tarball to the install directory, like this:
-   $ cd $install_dir && tar xjf gcc-arm-none-eabi-*-yyyymmdd-linux.tar.bz2
+*** Installing executables on Linux *
+  Unpack the tarball to the install directory, like this:
+  $ cd $install_dir && tar xjf gcc-arm-none-eabi-*-yyyymmdd-linux.tar.bz2
 
-   For 64 bit system, 32 bit libc and libncurses are required to run the tools.
-   In addition, if you want to use gdb python build (arm-none-eabi-gdb-py), you'd
-   install 32 bit python2.7. Please refer
-   https://answers.launchpad.net/gcc-arm-embedded/+faq/2601
+  For 64 bit system, 32 bit libc and libncurses are required to run the tools.
+  In addition, if you want to use gdb python build (arm-none-eabi-gdb-py), you'd
+  install 32 bit python2.7. Please refer
+  https://answers.launchpad.net/gcc-arm-embedded/+faq/2601
 
-   For some Ubuntu releases, the toolchain can also be installed via
-   Launchpad PPA at https://launchpad.net/~team-gcc-arm-embedded/+archive/ubuntu/ppa.
+  For some Ubuntu releases, the toolchain can also be installed via
+  Launchpad PPA at https://launchpad.net/~team-gcc-arm-embedded/+archive/ubuntu/ppa.
 
-**** Installing executables on Mac OS X *
-   Unpack the tarball to the install directory, like this:
-   $ cd $install_dir && tar xjf gcc-arm-none-eabi-*-yyyymmdd-mac.tar.bz2
+*** Installing executables on Mac OS X *
+  Unpack the tarball to the install directory, like this:
+  $ cd $install_dir && tar xjf gcc-arm-none-eabi-*-yyyymmdd-mac.tar.bz2
 
-**** Installing executables on Windows *
-   Run the installer (gcc-arm-none-eabi-*-yyyymmdd-win32.exe) and follow the
-   instructions.
+*** Installing executables on Windows *
+  Run the installer (gcc-arm-none-eabi-*-yyyymmdd-win32.exe) and follow the
+  instructions.
 
-   The toolchain in windows zip package is a backup to windows installer for
-   those who cannot run installer.  We need decompress the zip package
-   in a proper place and then invoke it following instructions in next section.
+  The toolchain in windows zip package is a backup to windows installer for
+  those who cannot run installer.  We need decompress the zip package
+  in a proper place and then invoke it following instructions in next section.
 
-   To use gdb python build (arm-none-eabi-gdb-py), you need install 32 bit
-   python2.7 no matter 32 or 64 bit Windows. Please get the package from
-   https://www.python.org/download/.
+  To use gdb python build (arm-none-eabi-gdb-py), you need install 32 bit
+  python2.7 no matter 32 or 64 bit Windows. Please get the package from
+  https://www.python.org/download/.
 
-**** Invoking GCC *
-   On Linux and Mac OS X, either invoke with the complete path like this:
-   $ $install_dir/gcc-arm-none-eabi-*/bin/arm-none-eabi-gcc
+*** Invoking GCC *
+  On Linux and Mac OS X, either invoke with the complete path like this:
+  $ $install_dir/gcc-arm-none-eabi-*/bin/arm-none-eabi-gcc
 
-   Or set path like this:
-   $ export PATH=$PATH:$install_dir/gcc-arm-none-eabi-*/bin
-   $ arm-none-eabi-gcc
+  Or set path like this:
+  $ export PATH=$PATH:$install_dir/gcc-arm-none-eabi-*/bin
+  $ arm-none-eabi-gcc
 
-   On Windows (although the above approaches also work), it can be more
-   convenient to either have the installer register environment variables, or run
-   INSTALL_DIR\bin\gccvar.bat to set environment variables for the current cmd.
+  On Windows (although the above approaches also work), it can be more
+  convenient to either have the installer register environment variables, or run
+  INSTALL_DIR\bin\gccvar.bat to set environment variables for the current cmd.
 
-   For windows zip package, after decompression we can invoke toolchain either with
-   complete path like this:
-   TOOLCHAIN_UNZIP_DIR\bin\arm-none-eabi-gcc
-   or run TOOLCHAIN_UNZIP_DIR\bin\gccvar.bat to set environment variables for the
-   current cmd.
+  For windows zip package, after decompression we can invoke toolchain either with
+  complete path like this:
+  TOOLCHAIN_UNZIP_DIR\bin\arm-none-eabi-gcc
+  or run TOOLCHAIN_UNZIP_DIR\bin\gccvar.bat to set environment variables for the
+  current cmd.
 
-**** Architecture options usage *
+*** Architecture options usage *
 
-   This toolchain is built and optimized for Cortex-A/R/M bare metal development.
-   the following table shows how to invoke GCC/G++ with correct command line
-   options for variants of Cortex-A/R and Cortex-M architectures.
+  This toolchain is built and optimized for Cortex-A/R/M bare metal development.
+  the following table shows how to invoke GCC/G++ with correct command line
+  options for variants of Cortex-A/R and Cortex-M architectures.
 
-   --------------------------------------------------------------------------
-   |   ARM core | Command Line Options                       | multilib     |
-   | / ARM arch |                                            |              |
-   |------------|--------------------------------------------|--------------|
-   | Cortex-M0+ | -mthumb -mcpu=cortex-m0plus                | armv6-m      |
-   | Cortex-M0  | -mthumb -mcpu=cortex-m0                    |              |
-   | Cortex-M1  | -mthumb -mcpu=cortex-m1                    |              |
-   |            |--------------------------------------------|              |
-   |            | -mthumb -march=armv6-m                     |              |
-   |------------|--------------------------------------------|--------------|
-   | Cortex-M3  | -mthumb -mcpu=cortex-m3                    | armv7-m      |
-   |            |--------------------------------------------|              |
-   |            | -mthumb -march=armv7-m                     |              |
-   |------------|--------------------------------------------|--------------|
-   | Cortex-M4  | -mthumb -mcpu=cortex-m4                    | armv7e-m     |
-   | (No FP)    |--------------------------------------------|              |
-   |            | -mthumb -march=armv7e-m                    |              |
-   |------------|--------------------------------------------|--------------|
-   | Cortex-M4  | -mthumb -mcpu=cortex-m4 -mfloat-abi=softfp | armv7e-m     |
-   | (Soft FP)  | -mfpu=fpv4-sp-d16                          | /softfp      |
-   |            |--------------------------------------------|              |
-   |            | -mthumb -march=armv7e-m -mfloat-abi=softfp |              |
-   |            | -mfpu=fpv4-sp-d16                          |              |
-   |------------|--------------------------------------------|--------------|
-   | Cortex-M4  | -mthumb -mcpu=cortex-m4 -mfloat-abi=hard   | armv7e-m     |
-   | (Hard FP)  | -mfpu=fpv4-sp-d16                          | /fpu         |
-   |            |--------------------------------------------|              |
-   |            | -mthumb -march=armv7e-m -mfloat-abi=hard   |              |
-   |            | -mfpu=fpv4-sp-d16                          |              |
-   |------------|--------------------------------------------|--------------|
-   | Cortex-M7  | -mthumb -mcpu=cortex-m7                    | armv7e-m     |
-   | (No FP)    |--------------------------------------------|              |
-   |            | -mthumb -march=armv7e-m                    |              |
-   |------------|--------------------------------------------|--------------|
-   | Cortex-M7  | -mthumb -mcpu=cortex-m7 -mfloat-abi=softfp | armv7e-m     |
-   | (Soft FP)  | -mfpu=fpv5-sp-d16                          | /softfp      |
-   |            |--------------------------------------------| /fpv5-sp-d16 |
-   |            | -mthumb -march=armv7e-m -mfloat-abi=softfp |              |
-   |            | -mfpu=fpv5-sp-d16                          |              |
-   |            |--------------------------------------------|--------------|
-   |            | -mthumb -mcpu=cortex-m7 -mfloat-abi=softfp | armv7e-m     |
-   |            | -mfpu=fpv5-d16                             | /softfp      |
-   |            |--------------------------------------------| /fpv5-d16    |
-   |            | -mthumb -march=armv7e-m -mfloat-abi=softfp |              |
-   |            | -mfpu=fpv5-d16                             |              |
-   |------------|--------------------------------------------|--------------|
-   | Cortex-M7  | -mthumb -mcpu=cortex-m7 -mfloat-abi=hard   | armv7e-m     |
-   | (Hard FP)  | -mfpu=fpv5-sp-d16                          | /fpu         |
-   |            |--------------------------------------------| /fpv5-sp-d16 |
-   |            | -mthumb -march=armv7e-m -mfloat-abi=hard   |              |
-   |            | -mfpu=fpv5-sp-d16                          |              |
-   |            |--------------------------------------------|--------------|
-   |            | -mthumb -mcpu=cortex-m7 -mfloat-abi=hard   | armv7e-m     |
-   |            | -mfpu=fpv5-d16                             | /fpu         |
-   |            |--------------------------------------------| /fpv5-d16    |
-   |            | -mthumb -march=armv7e-m -mfloat-abi=hard   |              |
-   |            | -mfpu=fpv5-d16                             |              |
-   |------------|--------------------------------------------|--------------|
-   | ARMv8-M    | -mthumb -march=armv8-m.base                | armv8-m.base |
-   | Baseline   |                                            |              |
-   |------------|--------------------------------------------|--------------|
-   | ARMv8-M    | -mthumb -march=armv8-m.main                | armv8-m.main |
-   | Mainline   |                                            |              |
-   | (No FP)    |                                            |              |
-   |------------|--------------------------------------------|--------------|
-   | ARMv8-M    | -mthumb -march=armv8-m.main                | armv8-m.main |
-   | Mainline   | -mfloat-abi=softfp -mfpu=fpv5-sp-d16       | /softfp      |
-   | (Soft FP)  |                                            | /fpv5-sp-d16 |
-   |            |--------------------------------------------|--------------|
-   |            | -mthumb -march=armv8-m.main                | armv8-m.main |
-   |            | -mfloat-abi=softfp -mfpu=fpv5-d16          | /softfp      |
-   |            |                                            | /fpv5-d16    |
-   |------------|--------------------------------------------|--------------|
-   | ARMv8-M    | -mthumb -march=armv8-m.main                | armv8-m.main |
-   | Mainline   | -mfloat-abi=hard -mfpu=fpv5-sp-d16         | /fpu         |
-   | (Hard FP)  |                                            | /fpv5-sp-d16 |
-   |            |--------------------------------------------|--------------|
-   |            | -mthumb -march=armv8-m.main                | armv8-m.main |
-   |            | -mfloat-abi=hard -mfpu=fpv5-d16            | /fpu         |
-   |            |                                            | /fpv5-d16    |
-   |------------|--------------------------------------------|--------------|
-   | Cortex-R4  | [-mthumb] -march=armv7-r                   | armv7-ar     |
-   | Cortex-R5  |                                            | /thumb       |
-   | Cortex-R7  |                                            |              |
-   | Cortex-R8  |						  |		 |
-   | (No FP)    |                                            |              |
-   |------------|--------------------------------------------|--------------|
-   | Cortex-R4  | [-mthumb] -march=armv7-r -mfloat-abi=softfp| armv7-ar     |
-   | Cortex-R5  | -mfpu=vfpv3-d16                            | /thumb       |
-   | Cortex-R7  |                                            | /softfp      |
-   | Cortex-R8  |						  |		 |
-   | (Soft FP)  |                                            |              |
-   |------------|--------------------------------------------|--------------|
-   | Cortex-R4  | [-mthumb] -march=armv7-r -mfloat-abi=hard  | armv7-ar     |
-   | Cortex-R5  | -mfpu=vfpv3-d16                            | /thumb       |
-   | Cortex-R7  |                                            | /fpu         |
-   | Cortex-R8  |						  |		 |
-   | (Hard FP)  |                                            |              |
-   |------------|--------------------------------------------|--------------|
-   | Cortex-A*  | [-mthumb] -march=armv7-a                   | armv7-ar     |
-   | (No FP)    |                                            | /thumb       |
-   |------------|--------------------------------------------|--------------|
-   | Cortex-A*  | [-mthumb] -march=armv7-a -mfloat-abi=softfp| armv7-ar     |
-   | (Soft FP)  | -mfpu=vfpv3-d16                            | /thumb       |
-   |            |                                            | /softfp      |
-   |------------|--------------------------------------------|--------------|
-   | Cortex-A*  | [-mthumb] -march=armv7-a -mfloat-abi=hard  | armv7-ar     |
-   | (Hard FP)  | -mfpu=vfpv3-d16                            | /thumb       |
-   |            |                                            | /fpu         |
-   --------------------------------------------------------------------------
+  --------------------------------------------------------------------------
+  |   ARM core | Command Line Options                       | multilib     |
+  | / ARM arch |                                            |              |
+  |------------|--------------------------------------------|--------------|
+  | Cortex-M0+ | -mthumb -mcpu=cortex-m0plus                | armv6-m      |
+  | Cortex-M0  | -mthumb -mcpu=cortex-m0                    |              |
+  | Cortex-M1  | -mthumb -mcpu=cortex-m1                    |              |
+  |            |--------------------------------------------|              |
+  |            | -mthumb -march=armv6-m                     |              |
+  |------------|--------------------------------------------|--------------|
+  | Cortex-M3  | -mthumb -mcpu=cortex-m3                    | armv7-m      |
+  |            |--------------------------------------------|              |
+  |            | -mthumb -march=armv7-m                     |              |
+  |------------|--------------------------------------------|--------------|
+  | Cortex-M4  | -mthumb -mcpu=cortex-m4                    | armv7e-m     |
+  | (No FP)    |--------------------------------------------|              |
+  |            | -mthumb -march=armv7e-m                    |              |
+  |------------|--------------------------------------------|--------------|
+  | Cortex-M4  | -mthumb -mcpu=cortex-m4 -mfloat-abi=softfp | armv7e-m     |
+  | (Soft FP)  | -mfpu=fpv4-sp-d16                          | /softfp      |
+  |            |--------------------------------------------|              |
+  |            | -mthumb -march=armv7e-m -mfloat-abi=softfp |              |
+  |            | -mfpu=fpv4-sp-d16                          |              |
+  |------------|--------------------------------------------|--------------|
+  | Cortex-M4  | -mthumb -mcpu=cortex-m4 -mfloat-abi=hard   | armv7e-m     |
+  | (Hard FP)  | -mfpu=fpv4-sp-d16                          | /fpu         |
+  |            |--------------------------------------------|              |
+  |            | -mthumb -march=armv7e-m -mfloat-abi=hard   |              |
+  |            | -mfpu=fpv4-sp-d16                          |              |
+  |------------|--------------------------------------------|--------------|
+  | Cortex-M7  | -mthumb -mcpu=cortex-m7                    | armv7e-m     |
+  | (No FP)    |--------------------------------------------|              |
+  |            | -mthumb -march=armv7e-m                    |              |
+  |------------|--------------------------------------------|--------------|
+  | Cortex-M7  | -mthumb -mcpu=cortex-m7 -mfloat-abi=softfp | armv7e-m     |
+  | (Soft FP)  | -mfpu=fpv5-sp-d16                          | /softfp      |
+  |            |--------------------------------------------| /fpv5-sp-d16 |
+  |            | -mthumb -march=armv7e-m -mfloat-abi=softfp |              |
+  |            | -mfpu=fpv5-sp-d16                          |              |
+  |            |--------------------------------------------|--------------|
+  |            | -mthumb -mcpu=cortex-m7 -mfloat-abi=softfp | armv7e-m     |
+  |            | -mfpu=fpv5-d16                             | /softfp      |
+  |            |--------------------------------------------| /fpv5-d16    |
+  |            | -mthumb -march=armv7e-m -mfloat-abi=softfp |              |
+  |            | -mfpu=fpv5-d16                             |              |
+  |------------|--------------------------------------------|--------------|
+  | Cortex-M7  | -mthumb -mcpu=cortex-m7 -mfloat-abi=hard   | armv7e-m     |
+  | (Hard FP)  | -mfpu=fpv5-sp-d16                          | /fpu         |
+  |            |--------------------------------------------| /fpv5-sp-d16 |
+  |            | -mthumb -march=armv7e-m -mfloat-abi=hard   |              |
+  |            | -mfpu=fpv5-sp-d16                          |              |
+  |            |--------------------------------------------|--------------|
+  |            | -mthumb -mcpu=cortex-m7 -mfloat-abi=hard   | armv7e-m     |
+  |            | -mfpu=fpv5-d16                             | /fpu         |
+  |            |--------------------------------------------| /fpv5-d16    |
+  |            | -mthumb -march=armv7e-m -mfloat-abi=hard   |              |
+  |            | -mfpu=fpv5-d16                             |              |
+  |------------|--------------------------------------------|--------------|
+  | ARMv8-M    | -mthumb -march=armv8-m.base                | armv8-m.base |
+  | Baseline   |                                            |              |
+  |------------|--------------------------------------------|--------------|
+  | ARMv8-M    | -mthumb -march=armv8-m.main                | armv8-m.main |
+  | Mainline   |                                            |              |
+  | (No FP)    |                                            |              |
+  |------------|--------------------------------------------|--------------|
+  | ARMv8-M    | -mthumb -march=armv8-m.main                | armv8-m.main |
+  | Mainline   | -mfloat-abi=softfp -mfpu=fpv5-sp-d16       | /softfp      |
+  | (Soft FP)  |                                            | /fpv5-sp-d16 |
+  |            |--------------------------------------------|--------------|
+  |            | -mthumb -march=armv8-m.main                | armv8-m.main |
+  |            | -mfloat-abi=softfp -mfpu=fpv5-d16          | /softfp      |
+  |            |                                            | /fpv5-d16    |
+  |------------|--------------------------------------------|--------------|
+  | ARMv8-M    | -mthumb -march=armv8-m.main                | armv8-m.main |
+  | Mainline   | -mfloat-abi=hard -mfpu=fpv5-sp-d16         | /fpu         |
+  | (Hard FP)  |                                            | /fpv5-sp-d16 |
+  |            |--------------------------------------------|--------------|
+  |            | -mthumb -march=armv8-m.main                | armv8-m.main |
+  |            | -mfloat-abi=hard -mfpu=fpv5-d16            | /fpu         |
+  |            |                                            | /fpv5-d16    |
+  |------------|--------------------------------------------|--------------|
+  | Cortex-R4  | [-mthumb] -march=armv7-r                   | armv7-ar     |
+  | Cortex-R5  |                                            | /thumb       |
+  | Cortex-R7  |                                            |              |
+  | Cortex-R8  |						  |		 |
+  | (No FP)    |                                            |              |
+  |------------|--------------------------------------------|--------------|
+  | Cortex-R4  | [-mthumb] -march=armv7-r -mfloat-abi=softfp| armv7-ar     |
+  | Cortex-R5  | -mfpu=vfpv3-d16                            | /thumb       |
+  | Cortex-R7  |                                            | /softfp      |
+  | Cortex-R8  |						  |		 |
+  | (Soft FP)  |                                            |              |
+  |------------|--------------------------------------------|--------------|
+  | Cortex-R4  | [-mthumb] -march=armv7-r -mfloat-abi=hard  | armv7-ar     |
+  | Cortex-R5  | -mfpu=vfpv3-d16                            | /thumb       |
+  | Cortex-R7  |                                            | /fpu         |
+  | Cortex-R8  |						  |		 |
+  | (Hard FP)  |                                            |              |
+  |------------|--------------------------------------------|--------------|
+  | Cortex-A*  | [-mthumb] -march=armv7-a                   | armv7-ar     |
+  | (No FP)    |                                            | /thumb       |
+  |------------|--------------------------------------------|--------------|
+  | Cortex-A*  | [-mthumb] -march=armv7-a -mfloat-abi=softfp| armv7-ar     |
+  | (Soft FP)  | -mfpu=vfpv3-d16                            | /thumb       |
+  |            |                                            | /softfp      |
+  |------------|--------------------------------------------|--------------|
+  | Cortex-A*  | [-mthumb] -march=armv7-a -mfloat-abi=hard  | armv7-ar     |
+  | (Hard FP)  | -mfpu=vfpv3-d16                            | /thumb       |
+  |            |                                            | /fpu         |
+  --------------------------------------------------------------------------
 
-**** C Libraries usage *
+*** C Libraries usage *
 
-   This toolchain is released with two prebuilt C libraries based on newlib:
-   one is the standard newlib and the other is newlib-nano for code size.
-   To distinguish them, we rename the size optimized libraries as:
+  This toolchain is released with two prebuilt C libraries based on newlib:
+  one is the standard newlib and the other is newlib-nano for code size.
+  To distinguish them, we rename the size optimized libraries as:
 
-     libc.a --> libc_nano.a
-     libg.a --> libg_nano.a
+    libc.a --> libc_nano.a
+    libg.a --> libg_nano.a
 
-   To use newlib-nano, users should provide additional gcc compile and link time
-   option:
-    --specs=nano.specs
+  To use newlib-nano, users should provide additional gcc compile and link time
+  option:
+   --specs=nano.specs
 
-   At compile time, a 'newlib.h' header file especially configured for newlib-nano
-   will be used if --specs=nano.specs is passed to the compiler.
+  At compile time, a 'newlib.h' header file especially configured for newlib-nano
+  will be used if --specs=nano.specs is passed to the compiler.
 
-   Nano.specs also handles two additional gcc libraries: libstdc++_nano.a and
-   libsupc++_nano.a, which are optimized for code size.
+  Nano.specs also handles two additional gcc libraries: libstdc++_nano.a and
+  libsupc++_nano.a, which are optimized for code size.
 
-   For example:
-   $ arm-none-eabi-gcc src.c --specs=nano.specs $(OTHER_OPTIONS)
+  For example:
+  $ arm-none-eabi-gcc src.c --specs=nano.specs $(OTHER_OPTIONS)
 
-   This option can also work together with other specs options like
-   --specs=rdimon.specs
+  This option can also work together with other specs options like
+  --specs=rdimon.specs
 
-   Please note that, unlike previous versions of this toolchain, --specs=nano.specs
-   is now both a compiler and linker option.  Be sure to include in both compiler
-   and linker options if compiling and linking are separated.
+  Please note that, unlike previous versions of this toolchain, --specs=nano.specs
+  is now both a compiler and linker option.  Be sure to include in both compiler
+  and linker options if compiling and linking are separated.
 
-***** additional newlib-nano libraries usage
+**** additional newlib-nano libraries usage
 
-   Newlib-nano is different from newlib in addition to the libraries' name.
-   Formatted input/output of floating-point number are implemented as weak symbol.
-   If you want to use %f, you have to pull in the symbol by explicitly specifying
-   "-u" command option.
+  Newlib-nano is different from newlib in addition to the libraries' name.
+  Formatted input/output of floating-point number are implemented as weak symbol.
+  If you want to use %f, you have to pull in the symbol by explicitly specifying
+  "-u" command option.
 
-     -u _scanf_float
-     -u _printf_float
+    -u _scanf_float
+    -u _printf_float
 
-   e.g. to output a float, the command line is like:
-   $ arm-none-eabi-gcc --specs=nano.specs -u _printf_float $(OTHER_LINK_OPTIONS)
+  e.g. to output a float, the command line is like:
+  $ arm-none-eabi-gcc --specs=nano.specs -u _printf_float $(OTHER_LINK_OPTIONS)
 
-   For more about the difference and usage, please refer the README.nano in the
-   source package.
+  For more about the difference and usage, please refer the README.nano in the
+  source package.
 
-   Users can choose to use or not use semihosting by following instructions.
-***** semihosting
-   If you need semihosting, linking like:
-   $ arm-none-eabi-gcc --specs=rdimon.specs $(OTHER_LINK_OPTIONS)
+  Users can choose to use or not use semihosting by following instructions.
+**** semihosting
+  If you need semihosting, linking like:
+  $ arm-none-eabi-gcc --specs=rdimon.specs $(OTHER_LINK_OPTIONS)
 
-***** non-semihosting/retarget
-   If you are using retarget, linking like:
-   $ arm-none-eabi-gcc --specs=nosys.specs $(OTHER_LINK_OPTIONS)
+**** non-semihosting/retarget
+  If you are using retarget, linking like:
+  $ arm-none-eabi-gcc --specs=nosys.specs $(OTHER_LINK_OPTIONS)
 
-**** Linker scripts & startup code *
+*** Linker scripts & startup code *
 
-   Latest update of linker scripts template and startup code is available on
-   http://www.arm.com/cmsis
+  Latest update of linker scripts template and startup code is available on
+  http://www.arm.com/cmsis
 
-**** Samples *
-   Examples of all above usages are available at:
-   $install_dir/gcc-arm-none-eabi-*/share/gcc-arm-none-eabi/samples
+*** Samples *
+  Examples of all above usages are available at:
+  $install_dir/gcc-arm-none-eabi-*/share/gcc-arm-none-eabi/samples
 
-   Read readme.txt under it for further information.
+  Read readme.txt under it for further information.
 
-**** GDB Server for CMSIS-DAP based hardware debugger *
-   CMSIS-DAP is the interface firmware for a Debug Unit that connects
-   the Debug Port to USB.  More detailed information can be found at
-   http://www.keil.com/support/man/docs/dapdebug/.
+*** GDB Server for CMSIS-DAP based hardware debugger *
+  CMSIS-DAP is the interface firmware for a Debug Unit that connects
+  the Debug Port to USB.  More detailed information can be found at
+  http://www.keil.com/support/man/docs/dapdebug/.
 
-   A software GDB server is required for GDB to communicate with CMSIS-DAP based
-   hardware debugger.  The pyOCD is an implementation of such GDB server that is
-   written in Python and under Apache License.
+  A software GDB server is required for GDB to communicate with CMSIS-DAP based
+  hardware debugger.  The pyOCD is an implementation of such GDB server that is
+  written in Python and under Apache License.
 
-   For those who are using this toolchain and have board with CMSIS-DAP based
-   debugger, the pyOCD is our recommended gdb server.  More information can be
-   found at https://github.com/mbedmicro/pyOCD.
+  For those who are using this toolchain and have board with CMSIS-DAP based
+  debugger, the pyOCD is our recommended gdb server.  More information can be
+  found at https://github.com/mbedmicro/pyOCD.
 
-    Case creation time:[2017-09-06 三 17:00]
-*** 使用步骤
- 1. 下载  [[https:launchpad.net/gcc-arm-embedded/+download][arm-none-eabi-gcc 源码包]]  
- 2. 解压：tar -xjvf gcc-arm-none-eabi-5_4-2016q3-20160926-linux.tar.bz2
- 3. 根据上述"使用方法"中给出的方式进行配置
- 4. 在gcc和其他package里面的一些shell脚本与dash shell是不兼容的,而linux默认bin/sh就是指向dash,需要将其改变为指向 bash
- 5. 使用命令 sudo dpkg-reconfigure -plow dash 做出修改, 此时 ls -l /bin/sh 可以看到指向 bash
-** TODO [#C] Theme: STLink                                     :@CmakeStm32:
-*** Debian编译和安装
+   Case creation time:[2017-09-06 三 17:00]
+** 使用步骤
+1. 下载  [[https:launchpad.net/gcc-arm-embedded/+download][arm-none-eabi-gcc 源码包]]  
+2. 解压：tar -xjvf gcc-arm-none-eabi-5_4-2016q3-20160926-linux.tar.bz2
+3. 根据上述"使用方法"中给出的方式进行配置
+4. 在gcc和其他package里面的一些shell脚本与dash shell是不兼容的,而linux默认bin/sh就是指向dash,需要将其改变为指向 bash
+5. 使用命令 sudo dpkg-reconfigure -plow dash 做出修改, 此时 ls -l /bin/sh 可以看到指向 bash
+* TODO [#C] theme: STLink
 1. Debian 下安装stlink稍微显得有些麻烦,其根源在于 stlink 使用到了一个库 libusb 而且版本最低为 v1.0.9,然而debian
 对第三方软件的把关一向很苛刻,因此,系统中已存在的 libusb 版本只是 v1.0.0,所以,在编译 stlink 时必然出错
 
@@ -618,50 +616,21 @@ Version: 5
 (5*) 重新 make release, 没有任何错误 (注意,此处可能出现一个错误: Could not found PkgConfig, 需要安装 pkg-config这个软件 )
 (6) 安装stlink: cd build/Release && sudo make install
 (7) 注意: 有可能提示 libstlink-shared.so.1 找不到,可是该动态库确实在/usr/local/lib下面存在, 此时,需要调用 sudo ldconfig 来更新一下动态链接器 
-** TODO [#C] Theme: FAQ                                        :@CmakeStm32:
-*** arm-none-eabi-gcc is not able to compile a simple test program
-1. 引发错误的原因:
-   1. CMake可以跨平台,可是不同的平台使用不同的编译器,这意味着CMake需要识别编译器的标识
-   2. 当使用交叉编译时，如果没有 special flags 或者 custom linker scripts，则无法链接二进制文件
-   3. 基于上面两个原因,因此,在跨平台交叉编译环境下,CMake会去检查正在工作的编译器,当CMake不能自动的检测到该编译器标识时,就会产生该错误
-2. 解决错误的方法:
-   1. 一个已经丢弃的方法是引入模块 CMakeForceCompiler, 该模块会忽略CMake对工作编译器的检查 (该模块的详细用法参照官方文档的cmake-modules文档)
-   2. 一个 CMakeForceCompiler 的替代是变量 CMAKE_TRY_COMPILE_TARGET_TYPE, 该方案是目前CMake官方推荐的处理该错误的方案
-   3. CMAKE_TRY_COMPILE_TARGET_TYPE 介绍
-      1. 使用源文件签名为try_compile（）调用生成的目标类型
-      2. 该变量的有效值是: 
-         1. EXECUTABLE: 使用add_executable（）命名生成的项目中的源文件, 如果没有对该变量进行设置的话,该值是默认值
-         2. STATIC_LIBRARY: 使用add_library（）和STATIC选项来命名生成的项目中的源文件,这样可以避免运行链接器，在交叉编译时，也就解决了没有 special flags 或者 custom linker scripts 而无法链接二进制文件的情况
-      3. 细节: 在 toolchain file 中给出 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY) 
-*** sys.c:(.text+0x146): undefined reference to `HAL_RCC_OscConfig' 
-引发 undefined reference 错误的几种原因及解决方案:
-
-1. 原因一: 在链接时找不到函数 HAL_RCC_OscConfig() 的定义, 一个可能的原因是该函数所在的源文件未参与可执行文件的链接过程
-解决方案: 在 add_executable()时将该函数所在的源文件添加进来参与链接
-
-2. 原因二: 在链接时找不到函数 HAL_RCC_OscConfig() 的定义, 另一个可能的原因是该函数所在的源文件未参与库的创建,或者该参与创建了但是
-生成的库未参与可执行文件的链接过程
-解决方案: 在 add_library()时将该函数所在的源文件添加进来参与创建库,同时在使用target_link_directories()时将其加入到可执行文件的链接列表中
-
-3. 原因三: 多个库的链接顺序问题引起 (这是最常见且最隐蔽而不容易被发现的问题)
-   在库 BBB 里面的某个源文件中用到该函数,但是该函数却在另一个库 AAA 的某个源文件中定义,在 target_link_libraries命令中却是这样书写,
-target_link_libraries(EEE AAA BBB), 就会引发该错误,正确的写法是 target_link_libraries(EEE BBB AAA), 总结一下就是:
-依赖其他库的库一定要放到被依赖库的前面，这样才能真正避免undefined reference的错误，完成编译链接
-** TODO [#C] Theme: Tips 
-*** Multiple configurations
+* TODO [#C] theme: Tips 
+** Multiple configurations
     CMake 允许在同一个工程中同时拥有多份配置, 这样的一个重量级的功能能在实际工程中是十分有用的, 其功能与 git 中
 分支的作用基本一致, 同 git 中分支所不同的是, CMake 中的多配置有相应的命令或者内置变量来支持,比如, [[CMAKE_BUILD_TYPE]],
 以及一些个描述编译标志的如 [[CMAKE_EXE_LINK_FLAGS_RELEASE_INIT]] 等, 因此, 它比与工程的耦合性更加强一些, 相对与中小型工程,
  使用 CMake 自带的多配置功能还是挺不错的选择, 在大型工程中, git 做版本控制管理可能会比较好,因为它不至于让工程变得臃肿
-** TODO [#C] Theme: How to build packages such as rpms, debs, OSX packages, etc
+* TODO [#C] theme: How to build packages such as rpms, debs, OSX packages, etc
 link: https://github.com/jordansissel/fpm
-*** install
+** install
 1. apt-get install ruby ruby-dev rubygems build-essential
 
 2. gem install --no-ri --no-rdoc fpm
 
 3. fpm --version
-*** Single-file package
+** Single-file package
 #+BEGIN_SRC 
 NAME=jenkins
 VERSION=2.80
@@ -679,4 +648,33 @@ a python package (python), a php pear module (pear), etc.
 “Target type” is what your output package form should be. Most common are “rpm” and “deb” but others exist (solaris, etc)
 
 detail information: fpm -help
-*** multiple packages
+** multiple packages
+* TODO [#C] theme: FAQ
+** arm-none-eabi-gcc is not able to compile a simple test program
+1. 引发错误的原因:
+   1. CMake可以跨平台,可是不同的平台使用不同的编译器,这意味着CMake需要识别编译器的标识
+   2. 当使用交叉编译时，如果没有 special flags 或者 custom linker scripts，则无法链接二进制文件
+   3. 基于上面两个原因,因此,在跨平台交叉编译环境下,CMake会去检查正在工作的编译器,当CMake不能自动的检测到该编译器标识时,就会产生该错误
+2. 解决错误的方法:
+   1. 一个已经丢弃的方法是引入模块 CMakeForceCompiler, 该模块会忽略CMake对工作编译器的检查 (该模块的详细用法参照官方文档的cmake-modules文档)
+   2. 一个 CMakeForceCompiler 的替代是变量 CMAKE_TRY_COMPILE_TARGET_TYPE, 该方案是目前CMake官方推荐的处理该错误的方案
+   3. CMAKE_TRY_COMPILE_TARGET_TYPE 介绍
+      1. 使用源文件签名为try_compile（）调用生成的目标类型
+      2. 该变量的有效值是: 
+         1. EXECUTABLE: 使用add_executable（）命名生成的项目中的源文件, 如果没有对该变量进行设置的话,该值是默认值
+         2. STATIC_LIBRARY: 使用add_library（）和STATIC选项来命名生成的项目中的源文件,这样可以避免运行链接器，在交叉编译时，也就解决了没有 special flags 或者 custom linker scripts 而无法链接二进制文件的情况
+      3. 细节: 在 toolchain file 中给出 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY) 
+** sys.c:(.text+0x146): undefined reference to `HAL_RCC_OscConfig' 
+引发 undefined reference 错误的几种原因及解决方案:
+
+1. 原因一: 在链接时找不到函数 HAL_RCC_OscConfig() 的定义, 一个可能的原因是该函数所在的源文件未参与可执行文件的链接过程
+解决方案: 在 add_executable()时将该函数所在的源文件添加进来参与链接
+
+2. 原因二: 在链接时找不到函数 HAL_RCC_OscConfig() 的定义, 另一个可能的原因是该函数所在的源文件未参与库的创建,或者该参与创建了但是
+生成的库未参与可执行文件的链接过程
+解决方案: 在 add_library()时将该函数所在的源文件添加进来参与创建库,同时在使用target_link_directories()时将其加入到可执行文件的链接列表中
+
+3. 原因三: 多个库的链接顺序问题引起 (这是最常见且最隐蔽而不容易被发现的问题)
+   在库 BBB 里面的某个源文件中用到该函数,但是该函数却在另一个库 AAA 的某个源文件中定义,在 target_link_libraries命令中却是这样书写,
+target_link_libraries(EEE AAA BBB), 就会引发该错误,正确的写法是 target_link_libraries(EEE BBB AAA), 总结一下就是:
+依赖其他库的库一定要放到被依赖库的前面，这样才能真正避免undefined reference的错误，完成编译链接

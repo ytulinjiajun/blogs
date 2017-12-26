@@ -1,18 +1,17 @@
-* WAITTING [#C] Theme:cmake-language(7)                              :@Cmake:
-** Organization
-*** Directories
-*** Scripts
-*** Modules
-** Syntax
-*** Encoding
-*** Source Files
-*** Command Invocations
-*** Command Arguments
-**** Bracket Argument
-**** Quoted Argument
-**** Unquoted Argument
-*** Escape Sequences
-*** <<Variable References>>
+* Organization
+** Directories
+** Scripts
+** Modules
+* Syntax
+** Encoding
+** Source Files
+** Command Invocations
+** Command Arguments
+*** Bracket Argument
+*** Quoted Argument
+*** Unquoted Argument
+** Escape Sequences
+** <<Variable References>>
 - 变量引用的格式为$ {variable_name}，并在引用的参数或非引用的参数中进行评估
 
 - 变量引用被变量的值替换，或者如果变量未被设置，则由空字符串替换
@@ -20,14 +19,14 @@
 - 变量引用可嵌套，并从内向外进行计算，例如， ${outer_${inner_variable}_variable}
 
 - 环境变量引用的形式为$ENV {VAR}，并在与普通变量引用相同的上下文中进行计算
-*** Comments
-**** Bracket Comment
-**** Line Comment
-** Control Structures
-*** Conditional Blocks
-*** Loops
-*** Command Definitions
-** <<Variables>>
+** Comments
+*** Bracket Comment
+*** Line Comment
+* Control Structures
+** Conditional Blocks
+** Loops
+** Command Definitions
+* <<Variables>>
 1. 在 cmake 的语法中,变量是基本的存储单元
 2. 变量的值总是字符串类型
 3. [[set]]() 和 [[unset]]() 命令用于设置以及清除变量的值(当然了,也有其他的一些命令含有修改变量值的语义)
@@ -42,5 +41,5 @@
    1. 当计算 [[Variable References]] 时，CMake首先搜索函数调用堆栈（如果有的话）进行绑定，然后回退到当前目录范围中的绑定（如果有的话）
    2. 如果找到“set”绑定，则使用它的值。如果找到“unset”绑定，或者没有找到绑定，CMake就会搜索一个缓存条目
    3. 如果找到缓存条目，则使用其值。否则，变量引用计算为空字符串。
-** <<Lists>>
+* <<Lists>>
 

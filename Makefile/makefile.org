@@ -1,5 +1,4 @@
-* blogs-makefile-active
-** DONE [#D] Theme:静态库									:@Blog:@Makefile:
+* DONE [#D] theme:静态库
 	- State "DONE"       from "WAITTING"   [2017-11-10 五 16:07]
 1. 静态库的真实面目: 目标文件(.o)的集合(归档)
 2. 静态的含义: 生成的库被完全链接进运用程序,与运用程序"生死与共" 
@@ -34,7 +33,7 @@
    5. 备注:从3的描述中不难知道,可以将创建的静态库放到/usr/lib下面,就可以不指定-L,但是,这样会将自己的库和系统的库混合在一起,不建议这样干,还是使用-L指出路径比较好
    6. 运行: ./main
 Blog creation time:[2017-11-10 五 10:39]
-** DONE [#D] Theme:动态库									:@Blog:@Makefile:
+* DONE [#D] theme:动态库
 	- State "DONE"       from "WAITTING"   [2017-11-10 五 16:07]
 1. 动态的含义: 动态库被制作出来以后,存放在ROM中,外部程序只在运行时才将其加载进RAM
 2. 动态库的真实面目: 目标文件(.o)的集合(归档)
@@ -69,7 +68,7 @@ Blog creation time:[2017-11-10 五 10:39]
 	 2. 优点: 可以随意在任意路径下创建动态库,而且,在/etc/ld.so.conf.d下面还可以分类管理
    7. 当查找的库路径下存在同名的静态库和动态库时,优先使用动态库
 Blog creation time:[2017-11-10 五 10:40]
-** DONE [#D] Theme:gcc基础									:@Blog:@Makefile:
+* DONE [#D] theme:gcc基础
 	- State "DONE"       from "WAITTING"   [2017-11-10 五 16:08]
 1. 预处理:  		 gcc -E test.c -o test.i  				     ---->  完成头文件展开,宏替换等工作之后,将源文件生成预处理文件
 2. 编译:    	 gcc -S test.i -o test.s  				     ---->  编译预处理文件,生成汇编文件
@@ -84,7 +83,7 @@ Blog creation time:[2017-11-10 五 10:40]
 3. -l: 指明库的名字,全名应当是libstatic.a,但是由于lib和.a是linux默认识别的,所以只用写static即可,比如在使用到数学库的场合,加入-lm即可,表示加入libm.a这个静态数学库
 4. -L: 指明库的路径,详情参见上面的静态库和动态库章节
 Blog creation time:[2017-10-27 五 09:10]
-** WAITTING [#D] Theme: makefile基础 						:@Blog:@Makefile:
+* WAITTING [#D] theme: makefile基础
 1. makefile默认文件名: 
    1. 默认的情况下,make 会在工作目录(执行 make 的目录)下按照文件名顺序寻找makefile 文件读取并执行,查找的文件名顺序为:“GNUmakefile”、“makefile”、“Makefile”
    2. 当然了,也可以在命令行执行make时,加入路径参数,强制指定去make哪个路径下的makefile文件
@@ -157,7 +156,7 @@ Blog creation time:[2017-10-27 五 09:10]
 	2. 减号- : 该命令执行时候如果遇到错误,则忽略错误,继续向下执行
 	3. @: make 在执行命令行之前会把要执行的"命令"输出到标准输出设备,称之为命令的“回显”,如果"规则"的"命令"以字符“@”开始,则则不会回显
 	4. 加号+ : 使命令行可以通过指定 -n、-q 或 -t 选项来执行 
-** WAITTING [#D] Theme:make如何解析makefile文件的? 			:@Blog:@Makefile:
+* WAITTING [#D] theme:make如何解析makefile文件的?
 1. 第一阶段:
    1. 读取所有的 makefile 文件(包括“MAKIFILES”变量指定的、指示符“include”指定的、以及命令行选项“-f(--file)”指定的 makefile 文件)
    2. 内建所有的变量,显示规则,隐含规则
@@ -177,7 +176,7 @@ Blog creation time:[2017-10-27 五 09:10]
    2. 直到后续某些规则须要使用时或者在 make 处理的第二阶段它们才会被展开
    3. 当变量使用追加符(+=)时,如果此前这个变量是使用 = , ?= , define 定义的,则认为该变量是立即展开的
 Blog creation time:[2017-10-26 四 14:27]
-** WAITTING [#D] Theme:make执行过程						:@Blog:@Makefile:
+* WAITTING [#D] theme:make执行过程
 1. 依次读取变量“MAKEFILES”定义的 makefile 文件列表
 2. 读取工作目录下的 makefile 文件(根据命名的查找顺序“GNUmakefile”,“makefile”,“Makefile”,首先找到那个就读取那个)
 3. 依次读取工作目录 makefile 文件中使用指示符“include”包含的文件
@@ -187,13 +186,13 @@ Blog creation time:[2017-10-26 四 14:27]
 7. 执行除“终极目标”以外的所有的目标的规则(规则中如果依赖文件中任一个文件的时间戳比目标文件新,则使用规则所定义的命令重建目标文件)
 8. 执行“终极目标”所在的规则
 Blog creation time:[2017-10-27 五 15:38]
-** WAITTING [#D] Theme:规则执行过程						:@Blog:@Makefile:
+* WAITTING [#D] theme:规则执行过程
 1. 首先,构建出该规则的所有依赖文件,并建立所有目标和依赖之间的依赖关系结构链表
 2. 然后,根据已经建立的依赖关系结构链表决定哪些目标需要更新,即比较目标文件和所有的依赖文件的时间戳
 6. 如果目标的时间戳比所有依赖文件的时间戳更新,那么什么也不做
 7. 如果依赖文件中的某一个或者全部在上一次执行make后已经被修改过,规则所定义的重建目标的命令将会被执行
 Blog creation time:[2017-10-27 五 15:38]
-** WAITTING [#D] Theme:目录搜索							:@Blog:@Makefile:
+* WAITTING [#D] theme:目录搜索
 1. 搜索的第一步首先会关注"目标"和"依赖"在"规则"中给出的路径(以Makefile文件所在路径为根)
 2. 目录搜索示例的已知条件:
    1. test目录下存在 inc/, src/, obj/
@@ -276,7 +275,7 @@ Blog creation time:[2017-10-27 五 15:38]
 		  6. 由于../obj目录被放进了GPATH,"规则"的"目标"会使用全路径,此时,规则中"命令"$@变成../obj/test.o而不是test.o
 		  7. 之后对于test.o的更新实际上是更新../obj/test.o
 Blog creation time:[2017-10-28 六 19:31]
-** WAITTING [#D] Theme:显示规则							:@Blog:@Makefile:
+* WAITTING [#D] theme:显示规则
 1. 对"makefile文件"的重建: (该规则不是很常用,因为一般情况下都会明确的给出makefile文件)
    1. 通常接触的"重建"是"规则"中对目标的重建,在这里想说的是,makefile文件也能重建
    2. Makefile 可由其它文件生成,例如 RCS 或 SCCS 文件,此时,必然要用到makefile文件的重建机制,因为makefile文件不是固定的,而是由其他文件动态生成
@@ -421,7 +420,7 @@ Blog creation time:[2017-10-28 六 19:31]
 13. 静态模式规则
 14. 
 Blog creation time:[2017-10-27 五 09:04]
-** DONE [#D] Theme: 隐式规则								:@Blog:@Makefile:
+* DONE [#D] theme: 隐式规则
 1. c 的自动推导规则:
    1. 隐式: test.o: test.h defs.h
    2. 显式: test.o: test.c test.h defs.h
@@ -447,7 +446,7 @@ Blog creation time:[2017-10-27 五 09:04]
 	  1. make: *** No rule to make target ‘foo.o’. Stop.
    3. 如果直接使用命令“make”时,得到的提示信息如下:
 	  1. make: *** No targets specified and no makefile found. Stop.
-** WAITTING [#D] Theme:指示符								:@Blog:@Makefile:
+* WAITTING [#D] theme:指示符
 1. 作用: 指示符指明在 make 程序读取 makefile 文件过程中所要执行的一个动作
 2. makefile的指示符: "文件包含(include)", "条件执行(ifdef)", "多行定义(define)"
 3. "文件包含"指示符:include
@@ -535,7 +534,7 @@ Blog creation time:[2017-10-27 五 09:04]
    7. 在没有使用关键字“export”声明的变量,make 执行时它们不会被自动传递给子 make,因此下层 Makefile 中可以定义和上层同名的变量,不会引起变量定义冲突
    8. EXPORT_ALL_VARIABLES含义是将此 Makefile 中定义的所有变量传递给子 make 过程,如果不需要传递其中的某一个变量,可以单独使用指示符“unexport”来声明
 	  Blog creation time:[2017-10-27 五 08:53]
-** WAITTING [#D] Theme:变量								:@Blog:@Makefile:
+* WAITTING [#D] theme:变量
 1. makefile中变量的特征:
    1. 在make读取makefile文件时才进行展开(规则命令行中的变量除外),包括了使用“=”定义和使用指示符“define”定义的
    2. 可以表征任何事物
@@ -604,7 +603,7 @@ Blog creation time:[2017-10-27 五 09:04]
 据定义进行基于文本的展开,展开变量的过程不涉及到任何变量的具体含义和功能分
 析。
 Blog creation time:[2017-10-26 四 14:04]
-** WAITTING [#D] Theme:函数 								:@Blog:@Makefile:
+* WAITTING [#D] theme:函数
 1. makefile中函数的特征:
    1. 在make读取makefile文件时才进行展开(规则命令行中的函数除外)
 2. 函数的展开时机:
@@ -726,7 +725,7 @@ Blog creation time:[2017-10-26 四 14:04]
 22. 
 23. 
 Blog creation time:[2017-10-26 四 13:40]
-** WAITTING [#D] Theme:注释								:@Blog:@Makefile:
+* WAITTING [#D] theme:注释
 1. Makefile 中“#”字符后的内容被作为是注释内容
 2. 如果此行的第一个非空字符为“#”,那么此行为注释行
 3. 注释行的结尾如果存在反斜线(\),那么下一行也被作为注释行
@@ -734,7 +733,7 @@ Blog creation time:[2017-10-26 四 13:40]
 5. 需要使用字符“#”时,可以使用反斜线加“#”(\#)来实现
 6. Makefile 中第一个规则之后的所有以[Tab]字符开始的的行, make 程序都会将其交给系统 shell 程序去解释执行,以[Tab]字符开始的注释行也会被交给 shell 来处理
 Blog creation time:[2017-10-27 五 09:04]
-** WAITTING [#D] Theme:命令行参数							:@Blog:@Makefile:
+* WAITTING [#D] theme:命令行参数
 1. “-t”选项用来更新所有目标的时间戳,而不执行任何规则的命令
 
 
@@ -928,9 +927,9 @@ m（makefile）
 --warn-undefined-variables
 
 Blog creation time:[2017-10-27 五 11:28]
-** DONE [#D] theme:专题2:linux开发stm32之Makefile			:@Blog:@Makefile:
-   - State "DONE"       from "TODO"       [2017-09-04 一 23:00]
-*** 声明
+* DONE [#D] theme:专题2:linux开发stm32之Makefile
+  - State "DONE"       from "TODO"       [2017-09-04 一 23:00]
+** 声明
 >>规则 = 目标： 依赖
          <回车>命令
 备注：研究makefile实际就是研究：规则，目标，依赖，命令四者之间的关系
@@ -948,7 +947,7 @@ all的情况是个特例
 >>伪目标的特性：伪目标做为标签，在被执行之后不会生成文件，结合Makefile 中的第一个
 目标的特性：总是会被执行。结合这两个特性，能够产生一个十分不错且常规的
 功能：一口气生成多个目标
-*** 目录搜索：VPATH和vpath：
+** 目录搜索：VPATH和vpath：
 >>工程由文件组成，文件有不同种类(源代码.c,汇编.S,头文件.h,目标文件.o,二进制
 文件.hex),文件还被组织在不同的目录中，这些不同目录中不同种类的文件正是构成Makefile
 规则中的基本操作对象
@@ -969,7 +968,7 @@ VPATH和vpath指明的是“目标文件”和“依赖文件”的搜索路径�
 >>vpath是一个关键字，它的用法是：vpath %.c dir1 dir2,其工作的步骤是，首先在该Makefile
 文件所在的当前目录下搜索符合模式%.c的文件，如果找不到，就会到vpath所指明的dir1下面搜索，
 如果找不到，就到dir2目录下找如果始终没找到，就会报错！
-*** 伪目标
+** 伪目标
 >>伪目标不是一个文件，而是一个标签，所以伪目标在被执行之后不会生成文件
 
 >>伪目标的取名不能和文件名重名
@@ -1024,7 +1023,7 @@ cleandiff:
 原理：伪目标不能生成文件，外部调用cleanall时，会引起决议，伪目标后面带的依赖文件均会被
 作为入口，并发执行这些“入口”，所以，调用cleanall的结果是执行rm program，然后是rm *.o  
 最后是rm *.diff
-*** 自动变量
+** 自动变量
 >>$@:在具有模式规则(%.c)的条件下，表示规符合匹配要求的目标文件集合；而在普通情况下，
 表示目标文件集合
 
@@ -1043,8 +1042,8 @@ cleandiff:
 >>$*:在模式匹配中，$*表示%及其之前的部分，例如，目标的模式匹配为a.%.b,且目标是
 dir/a.foo.b,那么$*就是dir/a.foo,这个变量对于构造有关联的文件名是比较有用，
 如果目标中没有模式的定义,那么“$*”也就不能被推导出
-*** 模型推导
-**** 基础版本：
+** 模型推导
+*** 基础版本：
 edit: main.o kbd.o command.o display.o insert.o search.o files.o utils.o
 	cc -o edit main.o kbd.o command.o display.o insert.o search.o files.o utils.o
 main.o : main.c defs.h
@@ -1065,7 +1064,7 @@ utils.o : utils.c defs.h
 	cc -c utils.c
 clean :
 	rm edit $(objects)
-**** 改良版一：使用变量
+*** 改良版一：使用变量
 objects = main.o kbd.o command.o display.o \
 insert.o search.o files.o utils.o
 
@@ -1089,7 +1088,7 @@ utils.o : utils.c defs.h
 	cc -c utils.c
 clean :
 	rm edit $(objects)
-**** 改良版二：自动推导
+*** 改良版二：自动推导
 GNU 的 make 很强大,它可以自动推导文件以及文件依赖关系后面的命令，只要 make 看到
 一个.o 文件,它就会自动的把.c 文件加在依赖关系中,如果 make 找到一个 whatever.o,
 那么 whatever.c,就会是 whatever.o 的依赖文件。并且 cc -c whatever.c也会被推导
@@ -1115,7 +1114,7 @@ clean:
 第一：只要 make 看到一个.o 文件,它就会自动的把.c 文件加在依赖关系中
 第二：用 C 编译器“cc”编译.c：$(CC) –c $(CPPFLAGS) $(CFLAGS)
 总结：隐式规则使得我们可以做出以上简化而实际效果是同基础范式一样的
-**** 改良版三：使用多目标规则
+*** 改良版三：使用多目标规则
 objects = main.o kbd.o command.o display.o \
 insert.o search.o files.o utils.o
 
@@ -1128,7 +1127,7 @@ display.o insert.o search.o files.o: buffer.h
 clean:
 	rm edit $(objects)
 备注：该模式的与静态模式有莫大的渊源，应当弄清楚二者的区别与联系
-**** 改良版三(终极版)：使用静态模式
+*** 改良版三(终极版)：使用静态模式
 objects = foo.o bar.o
 all: $(objects)
 $(objects): %.o: %.c
@@ -1149,13 +1148,13 @@ bar.o: bar.c
 %.o: %.c
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
 表示将所有的%.c挨个取出来编译(-c),编译后的目标命名(-o)为%.o
-**** 简化终极版：自动生成依赖性
+*** 简化终极版：自动生成依赖性
 在Makefile中,我们的依赖关系可能会需要包含一系列的头文件，但是,如果是一个比较大型
 的工程,你必需清楚哪些 C 文件包含了哪些头文件,并且,你在加入或删除头文件时,也需要小心地修改 
 Makefile,这是一个很没有维护性的工作。为了避免这种繁重而又容易出错的事情,我们可以使用 
 C/C++ 编译的一个功能。大多数的 C/C++编译器都支持一个“-M”的选项,即自动找寻源文件中包含
 的头文件,并生成一个依赖关系
-*** 多目标以及多目标规则
+** 多目标以及多目标规则
 >>一个规则中可以有多个目标,规则所定义的命令对所有的目标有效，多目标规则意味着所有的目标
 具有相同的依赖文件
 例如：test1.o test2.o test3.o: command.h
@@ -1209,7 +1208,7 @@ $(objects): config.h
 >>多目标，很简单也很方便，对于一个大的工程来说,这样做的好处是显而易见的，在一个大的工程中,
 对于一个单独目录下的.o文件的依赖规则建议使用此方式。（我感觉，还有更好的方案？？）
 规则中头文件的依赖描述规则也可以使用gcc自动产生。可参考 4.14 自动产生依赖 一节
-*** 静态模式
+** 静态模式
 >>静态模式的规则:存在多个目标,并且不同的目标可以根据目标文件的名字来自动构造出依赖文件
 
 >>例子：
@@ -1231,7 +1230,7 @@ bar.o: bar.c
 静态模式规则比多目标规则更通用,它不需要多个
 目标具有相同的依赖。但是静态模式规则中的依赖文件必须是相类似的而不是完全相同
 的
-*** 自动生成依赖性
+** 自动生成依赖性
 >>目的：在Makefile中,我们的依赖关系可能会需要包含一系列的头文件，但是,如果是一个比较大型
 的工程,你必需清楚哪些 C 文件包含了哪些头文件,并且,你在加入或删除头文件时,也需要小心地修改 
 Makefile,这是一个很没有维护性的工作。为了避免这种繁重而又容易出错的事情,我们可以使用 
@@ -1276,9 +1275,9 @@ NAME.o NAME.d: NAME.c xxx.h,这样就将NAME.d 加入到了规则的目标中,�
 >>使用上例的规则就可以建立一个描述目标文件依赖关系的.d文件。我们可以在Makefile中使用
 include指示符将描述将这个文件包含进来。在执行make时,Makefile所包含的所有.d文件就会被
 自动创建或者更新,具体过程可参考 3.7 makefile文件的重建一节
-*** 隐式规则	
+** 隐式规则	
 Blog creation time:[2017-08-29 二 08:00]
-** DONE [#D] theme:makefile中vpath，规则中依赖部分.h，规则中recipe的命令中-I参数三者关系的认识 :@Blog:@Makefile:
+* DONE [#D] theme:makefile中vpath，规则中依赖部分.h，规则中recipe的命令中-I参数三者关系的认识
 	- State "DONE"       from "TODO"       [2017-09-04 一 23:00]
 	今天分析Makefile过程中，研究了关于头文件依赖问题，有以下认识：
 --vpath是一个关键字，定义了一组规则的依赖部分查找的路径，比如：
@@ -1314,7 +1313,7 @@ Makefile中文手册
 	一个Makefile中，应该使用自动依赖生成技术来解决头文件的依赖关系，所以呢，vpath中
 %.h应该是没有什么必要了
 Blog creation time:[2017-08-31 四 15:36]
-** DONE [#D] theme:makefile语法规则							:@Blog:@Makefile:
+* DONE [#D] theme:makefile语法规则
 	- State "DONE"       from "TODO"       [2017-09-05 二 09:30]
 用户自定义的隐含规则称模式规则，这些规则建议放到一个叫做BIN/rule.mk的Makefile文件中去，
 其他makefile使用include包含进来，应该是include而不是make -C rule.mk,所以，rule.mk
@@ -1324,9 +1323,9 @@ Blog creation time:[2017-08-31 四 15:36]
 make,遇到符合自己定义的模式规则模型的，就套用该模型，并调用其下面的命令
 
 Blog creation time:[2017-09-05 二 08:38]
-** DONE [#D] theme:linux-kernel 的makefile架构解析			:@Blog:@Makefile:
-	- State "DONE"       from "TODO"       [2017-09-04 一 22:40]
-**** 基本框架：
+* DONE [#D] theme:linux-kernel 的makefile架构解析
+ - State "DONE"       from "TODO"       [2017-09-04 一 22:40]
+*** 基本框架：
 -- 内核makefile.txt中将makefile分为5部分：Kernel Makefile、ARCH Makefile、KBuild Makefile、.config文件以及scripts/Makefile.*
 
 --kbuild将所有与编译过程相关的共用规则和变量都提取到scripts 目录下的Makefile.build中,具体的子目录下的 Makefile 文件则可以编写的非常简单与直接
@@ -1342,7 +1341,7 @@ Blog creation time:[2017-09-05 二 08:38]
 --kbuild makefile 可能列出文件用作built-in ，并且作为库的一部分。因此，同一个文件夹可能包含一个built-in.o 和lib.a 文件  
 
 --lib-y 的使用方法通常被限制在lib/ 和arc/*/lib 中
-**** Makefile
+*** Makefile
 --路径：位于linux kernel源码的顶层目录，该Makefile也就是顶层Makefile
 
 --顶层的Makefile也叫做Kernel Makefile
@@ -1358,31 +1357,31 @@ Blog creation time:[2017-09-05 二 08:38]
 --机器体系Makefile文件为顶层Makefile文件提供与机器相关的信息。
 
 --根据.config文件决定了内核根目录下那些文件、子目录被编译进内核
-**** ARCH/$(ARCH)/Makefile 
+*** ARCH/$(ARCH)/Makefile 
 --系统对应平台的Makefile
 
 --Makefile 会包含这个文件来指定平台相关信息
 
 --根据.config文件，决定了ARCH/$(ARCH) 目录下 那些文件、子目录被编译进内核
-**** scripts/Makefile.build: 
+*** scripts/Makefile.build: 
 --被顶层Makefile所调用
 
 --与各级子目录的Makefile合起来构成一个完整的Makefile文件，定义built-in.o、.lib以及目标文件.o的生成规则
 
 --这个Makefile文件生成了子目录的.lib、built-in.o以及目标文件.o
 
-**** scripts/Kbuild.include:
+*** scripts/Kbuild.include:
 --被Makefile.build所调用
 
 --定义了一些函数，如if_changed、if_changed_rule、echo-cmd
-**** scripts/Makefile.clean
+*** scripts/Makefile.clean
 --被顶层Makefile所调用
 
 --用来删除目标文件等
-**** scripts/Makefile.lib
+*** scripts/Makefile.lib
 --被Makefile.build所调用
 --主要是对一些变量的处理，比如说在obj-y前边加上obj目录
-**** .config
+*** .config
 --位于linux内核的根目录下
 
 --产生自来自配置过程
@@ -1392,7 +1391,7 @@ Blog creation time:[2017-09-05 二 08:38]
 --配置过程产生.config文件
 
 --.config又产生auto.conf以及autoconf.h文件
-**** KBuild Makefile
+*** KBuild Makefile
 --从Linux 内核2.6 开始，Linux 内核的编译采用Kbuild 系统 
 
 --大多的Kbuild 文件的名字都是Makefile 。为了与其他Makefile 文件相区别，你也可以指定Kbuild Makefile 的名字为 Kbuild
@@ -1419,11 +1418,11 @@ Blog creation time:[2017-09-05 二 08:38]
     isdn-objs := isdn_net_lib.o isdn_v110.o isdn_common.o
 由于obj-$(CONFIG_ISDN)是由isdn_net_lib.o isdn_v110.o isdn_common.o这三个目标文件编译而成的，所以，需要定义isdn-objs
 
-**** scripts/kconfig/Makefile
+*** scripts/kconfig/Makefile
 --顶层Makefile调用： include scripts/kconfig/Makefile ，用于指定目标
 
 --顶层Makefile调用： include scripts/kconfig/Makefile ，生成auto.conf autoconf.h auto.conf.cmd
-**** .config文件
+*** .config文件
 .config文件在进行内核编译时（make uImage）生成了include/config/auto.conf和include/linux/autoconf.h
 Linux的内核配置，就是为了生成.config文件。因为在编译时需要用.config文件生成其他相关配置文件。我们的配置项大多是例如CONFIG_XXXDRIVER，这里的XXXDRIVER指的是各种驱动。我们需要告诉内核，这些驱动是编译进内核，还是编译成模块。通过查找CONFIG_XXXDRIVER，我们可以发现，它出现在四个地方：
 
@@ -1447,7 +1446,7 @@ Linux的内核配置，就是为了生成.config文件。因为在编译时需�
 
 Blog creation time:[2017-09-04 一 15:17]
 
-*** 入口：
+** 入口：
 1.顶层Makefile---- 指定目标-----include scripts/kconfig/Makefile
 如在终端中执行配置命令make nitrogen6x_defconfig
 %config: scripts_basic outputmakefile FORCE
@@ -1480,19 +1479,19 @@ modules:$(module-dirs)
 scripts/Makefile.build
 $(subdir-ym):
     $(Q)$(MAKE)$(build)=$@
-*** 暂存
+** 暂存
 --
 
-*** 基本流程
+** 基本流程
 --在scripts/Kbuild.include中有一条规则：build := -f $(srctree)/scripts/Makefile.build obj
 
 --在scripts/Makefile.build中：
 
-*** 内核makefile源码分析
-**** 顶层makefile
-***** make参数信息:MAKEFLAGS
+** 内核makefile源码分析
+*** 顶层makefile
+**** make参数信息:MAKEFLAGS
 MAKEFLAGS += -rR --include-dir=$(CURDIR)
-****** 分析
+***** 分析
 (1) MAKEFLAGS：
 --该变量是一个系统级别的环境变量，包含了 make 的参数信息;
 --这个变量不管你是否export,其总是要传递到下层 Makefile 中;
@@ -1531,11 +1530,11 @@ MAKEFLAGS += -rR --include-dir=$(CURDIR)
 总结：该语句为存储make参数的专用系统环境变量MAKEFLAGS，追加了三个参数，不论用户传递任何参数进来，这三个参数都将作为MAKEFLAGS
 里面默许的，这三个参数宏观上取消了内嵌的隐含规则和隐含变量，使得编译器不能干涉用户的配置，然后指出Makefile文件的搜索路径，这一点
 在make -C $(subdir)时尤其重要，有了--include-dir=$(CURDIR)，用户不用再考虑编译器怎样寻找子目录下的Makefile文件的问题
-***** 从命令行传递参数
+**** 从命令行传递参数
 ifeq ("$(origin V)", "command line")
   KBUILD_VERBOSE = $(V)
 endif
-****** 分析
+***** 分析
 (1) V:一个来源尚不明确的变量
 
 (2) $(origin V): 函数，返回这个变量的来源，变量有以下几种来源：
@@ -1556,12 +1555,12 @@ endif
 --通常我们会使用它来判断一个变量的值是否为空(不是任何字符)
 --参数值可能是通过引用变量或者函数得到的,因而在展开过程中可能造成参数值中包含空字符(空格等)，
 一般在这种情况时我们使用make的“strip”函数来去除空字符
-***** 从MAKEFLAGS中找出
+**** 从MAKEFLAGS中找出
 ifneq ($(findstring s,$(filter-out --%,$(MAKEFLAGS))),)
   quiet=silent_
   tools_silent=s
 endif
-****** 分析
+***** 分析
 --首先过滤掉MAKEFLAGS中所有以--打头的单词(夹在两个空格之间的串称为一个单词，比如--include-dir就是一个单词)
 --在剩下的集合中再去查找含有字符s的单词，找到则返回字符s，找不到则返回空字符。(make -s时，-s中有s，所以返回s)
 --该语句的意思是，过滤掉MAKEFLAGS中以--打头的参数之后，查找MAKEFLAGS中有没有-s参数
@@ -1582,35 +1581,36 @@ make在执行规则的命令之前会做什么？
 在目录“/u/gnu/make”目录下执行“make -w”会有：make: Entering directory `/u/gnu/make'以及make: Leaving directory `/u/gnu/make'的提示
 2）通常,选项“-w”会被自动打开。在主控Makefile中当如果使用“-C”参数来为make指定一个目录或者使用“cd”进入一个目录时,“-w”选项会被自动打开
 3）那么，可以使用 -s 选项来禁止所有关于目录信息的打印
-** 模式规则
-   --Makefile中自己定义了一些隐含规则，但是有时候这些隐含规则不够我们使用，所以我们需要自己定义
-   一些隐含的规则，称用户自己定义的隐含规则为模式规则
+* 模式规则
+  --Makefile中自己定义了一些隐含规则，但是有时候这些隐含规则不够我们使用，所以我们需要自己定义
+  一些隐含的规则，称用户自己定义的隐含规则为模式规则
    
-   --模式规则的基本要求：模式规则的目标有且仅有一个%，用于匹配任意非空的字符串
+  --模式规则的基本要求：模式规则的目标有且仅有一个%，用于匹配任意非空的字符串
    
-   --定义一个自己的隐含规则：
-   %.o : %.c
-   $(CC) -c $(CFLAGS) $(CPPFLAGS) $^ -o $@
-   备注：如此，便定义了一个用户的隐含规则，make会把该规则加入到自己的隐含规则里面，该规则
-   表示把任意一个%.c的文件都使用该规则描述的命令编译成%.o文件
+  --定义一个自己的隐含规则：
+  %.o : %.c
+  $(CC) -c $(CFLAGS) $(CPPFLAGS) $^ -o $@
+  备注：如此，便定义了一个用户的隐含规则，make会把该规则加入到自己的隐含规则里面，该规则
+  表示把任意一个%.c的文件都使用该规则描述的命令编译成%.o文件
    
-   --任意模式匹配规则：
-   % ： %.c
-   touch $@
-   备注：该规则表示将任意一个目标都更新一下
-   任意模式匹配规则可以匹配任意一个target,但是，这种理解起来需要注意一点，比如:foo:foo.o bar.o,
-   由于默认隐含规则中指明foo.o是依赖于foo.c的，但是套用%：%.c得出的结果是foo.o:foo.o.c,这个就有问题，
-   在makefile中，有两种机制来解决这种问题的，第一种机制：先使用默认的隐含规则来寻找，找不到才会使用这种任意模式规则，
-   由于foo.o的默认隐含规则就匹配到foo.c了，所以，就不会再去理会用户自己定义的隐含规则：任意模式匹配规则，来解析
-   出foo.o.c这样的依赖；第二种机制：用户使用双冒号来定义任意模式规则而不是单冒号，称为terminal规则，如：
-   % :: %.c
-   touch $@
-   其中：双冒号对依赖进行了限制，只有依赖确实存在时，才会使用这种规则，比如，foo:foo.o,使用foo.o来套用这种
-   规则后是foo.o :: foo.o.c,双冒号规定了会对依赖文件的存在性进行检查，由于foo.o.c在当前目录下是找不到的，
-   所以，foo.o是不可以套用该规则的
+  --任意模式匹配规则：
+  % ： %.c
+  touch $@
+  备注：该规则表示将任意一个目标都更新一下
+  任意模式匹配规则可以匹配任意一个target,但是，这种理解起来需要注意一点，比如:foo:foo.o bar.o,
+  由于默认隐含规则中指明foo.o是依赖于foo.c的，但是套用%：%.c得出的结果是foo.o:foo.o.c,这个就有问题，
+  在makefile中，有两种机制来解决这种问题的，第一种机制：先使用默认的隐含规则来寻找，找不到才会使用这种任意模式规则，
+  由于foo.o的默认隐含规则就匹配到foo.c了，所以，就不会再去理会用户自己定义的隐含规则：任意模式匹配规则，来解析
+  出foo.o.c这样的依赖；第二种机制：用户使用双冒号来定义任意模式规则而不是单冒号，称为terminal规则，如：
+  % :: %.c
+  touch $@
+  其中：双冒号对依赖进行了限制，只有依赖确实存在时，才会使用这种规则，比如，foo:foo.o,使用foo.o来套用这种
+  规则后是foo.o :: foo.o.c,双冒号规定了会对依赖文件的存在性进行检查，由于foo.o.c在当前目录下是找不到的，
+  所以，foo.o是不可以套用该规则的
    
-   --取消隐含规则
-   有时候，我们会觉得makefile自带的隐含规则用不到，多余，或者对真实的情况造成麻烦，就需要取消这些隐含规则，
-   取消的方法就是重新定义来覆盖掉默认的隐含规则，其原理是，当用户自定义的目标和依赖同默认的隐含规则的相同时，
-   默认的隐含规则就会被覆盖
-   例如：使用%.o:%.s就可以将所有.s文件汇编成机器码.o的默认规则给取消掉
+  --取消隐含规则
+  有时候，我们会觉得makefile自带的隐含规则用不到，多余，或者对真实的情况造成麻烦，就需要取消这些隐含规则，
+  取消的方法就是重新定义来覆盖掉默认的隐含规则，其原理是，当用户自定义的目标和依赖同默认的隐含规则的相同时，
+  默认的隐含规则就会被覆盖
+  例如：使用%.o:%.s就可以将所有.s文件汇编成机器码.o的默认规则给取消掉
+ 

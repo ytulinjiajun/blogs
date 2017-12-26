@@ -1,0 +1,54 @@
+* DONE [#C] theme:在shell下开启emacs
+  CLOSED: [2017-12-26 二 15:17]
+1. 命令: emacs -nw
+2. 设置别名: vi ~/.bashrc   alias em='emacs -nw'  source .bashrc
+Blog creation time:[2017-11-13 一 08:54]
+* DONE [#C] theme:设置org-mode的文本的宽度，在超过宽度的位置自动换行
+  SCHEDULED:<2017-09-18 一>
+	- State "DONE"       from "WAITTING"   [2017-09-19 二 07:57]
+(global-set-key [f5] 'toggle-truncate-lines)
+Blog creation time:[2017-09-18 一 15:28]
+* DONE [#C] theme:解决apt-get安装emacs后使用C-h i发现文档不全的问题
+	使用apt-get来安装emacs,好像没有提供完整的info文档，因此，我们需要自己去gnu的官网上
+下载info.gz结尾的手册，将其放到/usr/share/info/emacs-25下面，打开emacs,C-h i,然后按
+g,在小缓冲区出现Go to node,切换到刚刚下载的那个手册即可
+	一般情况下，安装完毕emacs之后，都需要到官方网站(https://www.gnu.org/software/emacs/manual/)
+下载GNU Emacs manual,GNU Emacs Lisp reference manual,An Introduction to Programming in Emacs Lisp
+的info document，将其移动至/usr/share/info/emacs-25下面，以备实时查询
+	要经常使用g来切换node，而且在切换前应当C-x k 先将当前的info缓冲区给kill掉再重新打开进行切换
+Blog creation time:[2017-09-18 一 14:47]
+* WAITTING [#C] theme:搭建C/C++的IDE
+实现:
+-- 跳转至头文件
+-- 跳转至定义
+-- 语义补全
+-- 错误跟踪
+
+GNU Global
+1. 作用: GNU GLOBAL是一个源代码标记系统,在不同的环境下工作方式相同,如Emacs编辑器,Vi编辑器,Less查看器,Bash shell,各种网页浏览器等
+可以在源文件中找到各种对象,如函数,宏,结构体,类,并轻松移动到那里,它与ctags或etags类似,但有一点点上与它们不同:独立于任何编辑器
+2. 下载: 从下面给出的网址下载  global-6.6.1.tar.gz, 解压
+3. 安装: 在解压目录下面执行 sudo ./configure --disable-gtagscscope  && make && make install  
+3. 参考链接: https://www.gnu.org/software/global/global.html
+
+gtags:
+1. 作用: 实现定义跳转,参考跳转等
+2. 名称: counsel-gtags
+3. 前提: counsel, GNU Global
+4. 安装: 参考下面的链接
+5. 使用: 在指定工程目录下面先创建一个tags: counsel-gtags-create-tags, 然后根据链接给出的相应的函数来使用
+6. 参考链接: https://github.com/syohex/emacs-counel-gtags 
+
+ycmd:
+1. 作用: 精确补全
+2. 安装 ycmd 服务器:
+- 准备依赖: sudo apt-get install build-essential cmake python-dev
+- ycmd: 从 https://github.com/Valloric/ycmd#building 克隆到 ~/.spacemacs.d/layers/buzhetenghuisi-programming/local/ 下面
+- 进入克隆好的仓库目录执行: git submodule update --init --recursive
+- 编译: ./build.py --clang-completer
+3. 安装 emacs-ycmd 客户端: https://github.com/abingham/emacs-ycmd
+4. 生成 .ycm_extra_conf.py: https://github.com/rdnetto/YCM-Generator
+
+备注: 测试过程中遇到的问题请参考 FAQ
+
+Blog creation time:[2017-08-07 一 13:05]

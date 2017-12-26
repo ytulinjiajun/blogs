@@ -1,5 +1,4 @@
-* blogs-s3c2440-active
-** WAITTING Theme:学前知识								 :@Blog:@S3c2440:
+** WAITTING theme:学前知识
 --硬件：JZ2440V2
 
 --linux下JLINK驱动
@@ -8,7 +7,7 @@ http://www.segger.com/cms/jlink-software.html
 
 
 Blog creation time:[2017-09-06 三 20:52]
-** WAITTING Theme:Linux环境下使用J-Link 			 :@Blog:@S3c2440:
+** WAITTING theme:Linux环境下使用J-Link
 一、准备工作：
 1.物理机操作系统：kali
 2.开发板：s3c2440

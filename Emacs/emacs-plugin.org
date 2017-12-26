@@ -1,0 +1,382 @@
+* 安装与卸载插件:
+方案一：(推荐)
+安装：在配置源码的包管理器函数：linjiajun/package下面添加对应包的名字，重启emacs，即可自动安装
+卸载：在配置源码的包管理器函数：linjiajun/package下面去除对应包的名字，然后M-x:package-autoremove,即可卸载
+
+方案二：
+安装：M-x：package-install:xxx
+	 将xxx这个包写入包管理器函数linjiajun/package下面
+
+卸载：在配置源码的包管理器函数：linjiajun/package下面去除对应包的名字，然后M-x:package-autoremove,即可卸载
+
+方案二：
+安装：M-x:package-list-packages
+	 C-s:xxx :查找package
+	 i:标记安装 
+	 u:撤销标记
+	 x:执行
+	 U:更新所有包至最新
+	 将xxx这个包写入包管理器函数linjiajun/package下面
+卸载：在配置源码的包管理器函数：linjiajun/package下面去除对应包的名字，然后M-x:package-autoremove,即可卸载
+
+备注：http://melpa.org 该网站存放了emacs的plugin,用户从该网站下下载插件进行安装，该网站上的插件有最新版
+和稳定版之分，稳定版在Getting started下面有介绍，用户只需要将包管理器中的地址换成：
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'package-archives
+             '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+#+END_SRC
+注意：在windows下，https要换成http，否则会有问题
+Blog creation time:[2017-09-17 日 16:15]
+* monokai-theme
+--功能：一个经典的主题
+--相关快捷键：无
+* company
+--功能：补全代码
+--相关快捷键：C-n , C-p , C-f , C-b
+* hungry-delete
+功能：一次性删除从光标位置到字串之间的空格
+快捷键：backspace
+* swiper+counsel
+功能：在小缓冲区弹出可预览可供选择的窗口，提供更好的用户体验
+被改善的快捷键：
+--M-x:
+--C-s:
+--C-x C-f:
+--C-h f:
+--C-h v:
+--C-c g: 所有被git管理的文件都会在小缓冲区内显示出来
+--M-s i:
+* smartparens
+功能：当输入“ ’ （ { 等符号时，会自动补全 ” ‘ ） } 
+触发：输入符号
+* helm-ag
+1. 安装: linux用户需要安装 apt-get install silversearcher-ag,然后安装helm-ag插件
+
+2. 搜索:
+-- 基础搜索: helm-do-ag-project-root: init pack  (基于git仓库,搜索所有含有关键字init以及pack的行)
+-- 过滤搜索: helm-do-ag-project-root: init pack !set  (基于git仓库,搜索所有含有关键字init以及pack,但是不含有set的行)
+-- 编辑搜索结果: C-c C-e 进入 helm-ag-edit 模式, 结合 M-s e 的标记功能,可以进行批量修改
+* DONE [#D] theme:org-mode
+ - State "DONE"       from "TODO"       [2017-09-05 二 09:27]
+** org-mode快捷键
+--C-c a:org-agenda
+--C-c l:org-store-link
+--C-c c:capture
+--C-c b:org-iswitchb
+
+--全局大纲之间移动光标：C-c C-p/n
+--同级别大纲之间移动光标：C-c C-b/f
+--跳转到上一级大纲：C-c C-u
+--切换到大纲浏览状态：C-c C-j
+
+--M-<RET>:在光标位置插入一个同级标题
+--C-<RET>:在尾端 插入一个同级标题
+--M-S-<RET>:在光标位置插入一个同级TODO标题:(global-set-key [M-s-return] (quote org-insert-todo-heading))
+--C-S-<RET>:在尾端插入一个同级的TODO标题：(global-set-key [C-s-return] (quote org-insert-todo-heading-respect-content))
+--<TAB>:循环切换光标所在大纲的状态
+--M-LEFT/RIGHT:将当前标题升级/降级
+--M-S-LEFT/RIGHT:
+--M-UP/DOWN：将子树上升/下降
+
+++C-x C-f : open file;
+++C-x C-s : save file;
+++C-x C-c : close file;
+
+++C-h t : tutorials
+
+++C-h-f : find function
+++C-h f : describes function;
+
+++C-h-v : find variable
+++C-h v : describes variable
+
+++C-h-k : find bingdingkey
+++C-h k : describes bingdingkey
+
+--C-c C-e:导出pdf
+** org-mode基础
+--要使用org-mode buffer就需要将font-lock开启，emacs默认是开启的
+
+--在org-mode下面，需要重点关注这四个org命令：org-store-link;org-capture;org-agenda;org-iswitchb
+
+--org-mode主要使用三种类型的关键字：TODO keywords，tags, property name
+
+--常见的tags关键字：boss,
+
+--property name关键字：Release
+
+--可选关键字：
+--> #+TITLE:用于设置title
+--> #+BEGIN_HTML:用于开启一个HTML环境
+Blog creation time:[2017-09-05 二 08:40]
+** org-mode时间戳的组成
+一、时间戳
+	 时间戳由尖括号 <> 或方括号 [] 表示，前者为激活时间，后者为非激活时间（不加入日程
+表的时间）。括号内可以包括以下内容组成（按先后顺序）：
+	(1)日期，如 2013-6-1
+	(2)时间或时间范围，如 2:30pm 或 10:00-12:00
+	(3)表示周期重复的字符串，如 +1w 表示每周重复
+	(4)其他附加信息和特殊符号：
+		符号意义
+		+0 今天
+		. 今天
+		+4d 今天算起，第4天
+		+4 同上
+		+2w 今天算起，第2周
+		++5 默认日期开始，5天后
+		+2tue今天算起，第2个Tuesday
+注意“今天”和“默认日期”所表示的意义是不同的，例如：
+'2013-06-20 周四 .+1w' 表示这是一个周期性重复任务，每周四执行；但是如果某次任务的实
+际完成日期（ DONE 状态产生日期）是星期一，那么下一次任务就是一周后的星期一
+'2013-06-20 周四 ++1w' 同样表示一个周期性重复任务，每周四执行；但不管任务实际完成日
+期是星期几，下一次任务的时间都固定为下个星期四由两个断线“–”连接起来的两个时间戳表示时
+间段，如： '2013-06-25 周二'--'2013-06-26 周三'
+	除以上标准用法外，一些不规则时间戳可以使用Emacs日志风格的字符串表示，同样放在方括
+号或尖括号中。常用的有：
+周年纪念，如毛泽东诞辰： %%(diary-anniversary 12 26 1893)
+周期重复，如从6月1日开始每隔10天重复： %%(diary-cyclic 10 6 1 2013)
+某些日期，用于组合不同的月、日、年，例如每年的3-5月的10号可以这么表示（t表示所有数值，
+这里表示所有年度）： %%(diary-date '(3 4 5) 10 t)
+某月的第几个星期几，用浮动日期格式字符串 %%(diary-float month dayname index) 表
+示。其中 month 为表示月份的整数（同样可以使用t表示所有月份）， dayname 表示星期几（0为
+Sunday）， index 为正数表示从前往后数，复数则相反。如5月的最后一个星期三表示为： %%
+(diary-float 5 3 -1)
+
+二、 产生时间戳
+	时间戳可以直接输入，但最好使用快捷命令（期间要调用Emacs日历）产生：
+快捷命令动作
+C-c . 通过日历选择计划日期，如果在一个时间戳后面使用将产生一个日期段
+C-c ! 同上，但产生非激活日期
+C-u C c . 产生计划时间或时间段
+C-u C c ! 同上，但产生非激活日期
+C-c C-c 在时间戳上使用该命令将对该时间戳进行格式补全和校对
+C-c < 插入Emacs日历中光标所在处的日期（或当前日期）作为时间戳
+C-c > 访问Emacs日历上当前日期；如果光标处有时间戳就访问该日期
+C-c C-o 在日程表上访问光标时间戳表示的日期/时间
+S-UP/DOWN/LEFT/RIGHT前/后移日期或时间（小时/分），具体情况由光标所在位置而定
+
+三、预约任务时间
+3.1 安排开始时间（SCHEDUALED）
+	表示任务将在指定的时间开始。计划时间通过 C-c C-s 命令输入，例如
+SCHEDUsLED: '2013-06-25 周二'
+一个任务在计划时间到达时将在每天的日程表上出现，直到任务标记为 DONE 。也可以延迟计划任
+务在日程表上显示的时间，如延迟2天：
+SCHEDULsED: <2013-06-25 周二 -2d
+注意这里“计划时间”和通常所说的安排一个任务的时间不一样。如果要指定一个任务在确切的时间开
+始，直接输入时间戳就可以了。
+
+3.2 设定截止时间（DEADLINE）
+	任务应该设置完成的截止时间。截止时间通过 C-c C-d 命令输入，例如：
+DEADLIsNE: ’2013-06-26 周三 -5d‘
+日期后面的 -5d 表示截止时间前5天开始在 today 日程表上提醒。如果不设置提醒开始时间则按
+照 org-deadline-warning-days 的设置进行提醒。日程提醒将一直持续（即使任务过期），直
+到任务标记为 DONE 状态。如果一个任务既安排了开始时间又设定了截止时间，日程表上的提醒将
+有重复，可以选择显示哪个。忽略截止时间提醒的设置为：
+(setq org-agenda-skip-deadline-prewarning-if-scheduled t)
+忽略开始时间提醒的设置为：
+(setq org-agenda-skip-scheduled-delay-if-deadline t)
+
+3.3 安排周期重复任务的时间
+	和前面的重复任务时间戳没什么不同，只不过要注意表示重复和表示提醒安排的字符串的顺序，
+表示重复的在前，如：
+DEADsLINE: '2013-11-01 周五 ++1w -3d'
+** org-mode实现gtd管理
+*** 研究在org-mode下如何实现gtd管理的文档搬家
+	 org-mode做为gtd时，有一个好用的功能，可以实现将一个TODO条目转移到gtd管理的任意文档下面，不过需要做
+一些配置，其主要起作用的是一个变量：org-refile-target,可以对该变量进行定制，当定制完毕之后，一般会绑定
+到一个快捷键：C-c w,就能实现将该条目移动至指定的文档下面
+*** 关于如何调整agenda的默认显示窗口为全屏
+	修改agenda默认显示窗口为全屏，需要customize-group变量org-agenda-windows中
+Org Agenda Window Setup:current window即可
+*** 关于删除一个被收录的条目的思考
+	 理论上，一个idear被收录后，说明它曾经是有一定价值的，所以，即使后来不想去完成这个任务了
+也应当留有痕迹，以便在以后需要时能随时找到，最好的方法是将其设置为Abort状态，应当给出终止的原
+因，以后如果又觉得该任务又有价值了，可以将其设置为TODO并修改时间戳,然后该任务就能在日程表中出
+现了，此时，可以去完成该任务！
+	然而，有时我们可能因为某些原因添加了一个事项，然后突然发现该事项写错了或者重复了，此时，
+我们需要真正的去删除该任务，将光标移动到该条目，使用快捷键C-k就能将该条目从源文件中移除，
+注意了，是从xxx.org文件中删除，一旦删除之后你就再也找不回来了！
+*** 解决emacs重启后无法加载到gtd所管理的文档的问题
+今天注定难忘的一天，因为在折腾了一个周之后，终于成功的用上了emacs的gtd功能，有点
+小激动。这是我的第一个博客，为了纪念这一天，就描述一个我在hack我的emacs的gtd工具过程中
+遇到的一个困扰我长时间让我即将崩溃的问题吧！
+     变量org-agenda-files配置了关于我所有被gtd管理的文件，在init-org-mode.el中配置
+好以后，发现每次关闭emacs重启后C-c C-a快捷键对应的agenda-mode竟然找不到文件路径，总是
+为空，必须使用eval-buffer之后才能找到文件的路径，我是用list函数来包含目录下的所有org
+文件的，这有些说不通，我甚至用了eval-after-load函数来包裹我的代码都不行，我一度怀疑是
+不是这个list函数有bug，后来证明还是我的问题，解决方案如下：
+    需要C-h v一下org-agenda-files变量，最后一行有一个customize,点击进去之后配置该
+变量的文件加载路径添加，保存之后会在custom-set-variables函数下面生成该语句
+'(org-agenda-files (quote ("~/my-agenda")))，之后每次启动emacs，路径就能生效了！
+如此，问题得到完美解决，my-agenda目录下的所有org文件都能被gtd访问到了
+	总结：曾几度因为我自己配置的代码访问不了my-agenda目录下所有的org文件而放弃org
+模式下这么好用的gtd工具，好在最终折腾许久，终于在手册中找到了解决方案，所以说，多研究
+emacs的说明手册，是很重要的！
+*** 创建归档文件
+	 当我们使用gtd工具管理日程安排时，随着时间的推移，记录越来越多，相关的文件会越来越大，同时，
+这些陈旧的记录干扰我们的视线，删除它们是不大合适的，因为以后我们可能还会去查询这些记录，所以，
+我们需要将这些陈旧的日程安排归档到其他文件中去，可以通过命令：C-C C-x a 实现，调用该命令之后，
+光标所在的条目将会被移至以该条目所在文件的文件名为前缀，加上archievd的文件中去，该文件不是.org
+结尾，所以，在即使在gtd目录下，但我们使用org-agenda进行查询时，不会去遍历里面的内容，这就有效
+的屏蔽了这些陈旧记录的干扰，同时还保留下了它们！
+*** 如何创建和使用周期性任务
+	 (1)每天的某个时间段重复：在添加的时间段的SCHEDULED<>最后添加++1d
+	 (2)每周的某天的某个时间段重复：在添加的时间段的SCHEDULED<>最后添加++1w
+Case creation time:[2017-08-07 一 14:06]
+*** 如何打印将日程表打印成PDF
+命令：C-x C-w
+** org-mode实现排版
+1. 支持的列表符号: * - + 1. 
+2. 示例
+   1. 标题一
+	  1. 条目一
+		 - 事项1
+		 - 事项2
+		 - 事项3
+	  2. 条目二
+		 - 事项1
+		 - 事项2
+		   - 事项3
+	  3. 条目三
+		 - 事项1
+		 - 事项2
+		 - 事项3
+   2. 标题二
+	  1. 条目一
+		 - 事项1
+		 - 事项2
+		 - 事项3
+	  2. 条目二
+		 - 事项1
+		 - 事项2
+		 - 事项3
+	  3. 条目三
+		 - 事项1
+		 - 事项2
+		 - 事项3
+3. 快捷键：
+   1. 排版：M-TAB
+   2. 对齐：TAB
+   3. 缩进：TAB q
+** org-mode表格
+1. 名词解释:
+   1. field: 指代单元格
+   2. row: 行
+2. 基础操作:
+   1. 创建一个m列n行的表格: C-c |  mxn : org-table-create-or-convert-from-region
+   2. 表格对齐: C-c C-c: org-table-align: 光标保持在该单元格内,但是会移动到该单元格内容的首部
+   3. 将光标所在列向左边移动: M-righ
+   4. 将光标所在列向右边移动: M-left
+   5. 将光标所在行向上面移动: M-up
+   6. 将光标所在行向下面移动: M-down
+
+   7. 光标向右边移动一个单元格: <tab>: org-table-next-field: 移动到最后一列边界时,自动跳转至下一行的行首单元格;移动到表格的最后一个单元格时,新建一行,光标定位至该新行首
+   8. 光标向左边移动一个单元格: S-<tab>: org-table-previous-field: 移动到第一列列边界时,自动跳转至上一行的行尾单元格;移动到表格的第一个单元格时,终止移动
+   9. 在光标所在行的下面新建一行: RET: org-table-next-row: 创建新行并将光标跳转至其正下方
+
+   10. 在光标所在行的下面一行插入分隔线: C-c -: org-table-insert-hline
+   11. 在光标所在行的下面插入一个新行: C-c <RET>: org-table-hline-and-move
+   12. 在光标所在行的上面插入一个新行: M-S-<up>: org-table-insert-row
+   13. 在光标所在行的左边插入一个新列: M-S-<left>: org-table-insert-column
+   14. 删除光标所在行: M-S-<down>: org-table-kill-row
+   15. 删除光标所在列: M-S-<right>: org-table-delete-column
+* DONE [#D] theme:abbrev-mode
+	- State "DONE"       from "WAITTING"   [2017-09-19 二 11:27]
+1. 功能：定制缩略词
+2. 使用方法：缩略词+空格
+Blog creation time:[2017-09-19 二 10:49]
+* WAITTING [#D] theme:evil-mode
+** vim基本概念
+1. vim的作者Bram Moolenaar
+2. vim是在vi的基础上改进，以及增加很多特性之后，发展而来的一个文本编辑器
+3. vim的四种模式
+   1. 正常模式 (Normal-mode)
+	  - 按ESC从任意模式切换至该模式
+	  - 该模式是vim启动后的默认模式
+   2. 插入模式 (Insert-mode)
+	  - i：insert,插入(前),在方形光标，标记字符的前面插入
+	  - a: append,追加(后)，在方形光标，标记字符的后面追加
+	  - I: 在方形光标，所在行的行首插入
+	  - A: 在方形光标，所在行的行尾插入
+   3. 命令模式 (Command-mode)：
+	  - 按‘：’会进入该模式
+	  - 可以执行一些输入并执行一些vim或插件提供的指令
+	  - 这些指令包括设置环境、文件操作、调用某个功能等
+   4. 可视模式 (Visual-mode)：
+	  - 在正常模式中按v会进入该模式,光标经过的地方会被选中
+	  - 在正常模式中按V会进入该模式，光标经过的行都会被选中
+	  - 在正常模式中按C-v进入该模式,光标定位的一个矩形区块会被选中
+      - 备注：可以用i来阻止空格
+4. vim的设计理念：命令的组合，该组合基本模型为：光标初始位置+操作+光标终止位置，其中光标初始位置可以缺省，缺省之后，光标的初始位置就是光标的当前位置
+5. vim中最重要的概念：motion，译为“跨过”,指光标从初始位置移动到结束位置，这两个位置之间的选区称为一个motion，就实际运用而言，这个选区的有效范围还是取决于“光标初始位置+操作+光标终止位置”模型中的操作，比如，d表示删除行，
+6. motion之所以重要，是因为vim的设计理念是命令组合,看下面的例子：
+   - d: 删除, j: 移动到下一行，所以，dj: 删除前行和下一行
+   - d: 删除, dd: 删除当前行，2: 两次 >> 2dd: 连续两次删除当前行（效果同dj）
+   - d: 删除， $: 行尾 >> d$: 删除光标到行尾部之间的内容
+   - d: 删除， G：文件尾部 >> dG: 删除光标位置
+   - gg: 文件首部，y: 拷贝，G: 文件尾部 >> ggyG:先移动到文件首部，紧接着执行拷贝命令，再移动到文件尾部，所以拷贝的内容就是光标两次移动的motion，即拷贝整个文件
+** vim命令
+1. cmd{motion}中的cmd
+   - d: 触发剪切这个动作
+	 例：dd: 两个d的含义是不一样的，第一个d是cmd,含义是触发剪切这个动作，第二个d是motion，含义是，跨过当前行），组合起来就是剪切当前行的内容到剪切板
+   - c：触发剪切这个动作，并进入插入模式
+	 例：cw: 剪切光标后面的一个单词到剪切板
+   - y： 触发拷贝这个动作
+	 例：yw: 拷贝光标后面的一个单词到剪切板
+   - 备注：这三个命令都有的一个特点是，命令输入之后，方形光标的变成一个矮方形的模样，这意味着需要用户继续给出一个motion
+2. normal-mode：ESC
+3. insert-mode：i
+4. command-mode: ':'
+5. 显示行号: :set number
+6. 向前移动一个字符：l
+7. 向后移动一个字符：h
+8. 向上移动一行：k
+9. 向下移动一行：j
+10. 行首：^
+11. 行末尾：$
+12. 文件首：gg
+13. 文件尾部：G
+14. 移动到第88行：88G
+15. 向后移动一个词： w
+16. 向前移动一个词： b
+17. 向下翻页：C-f
+18. 向下翻半页：C-d
+19. 向上翻页：C-b
+20. 向上翻半页：C-u
+21. 剪切： d
+22. 拷贝： y
+23. 剪切字符： x
+24. 选区：在normal-mode下按v或者V
+25. 删除选区之间的内容：选中，d
+26. 向后删除一个字符：x
+27. 向前删除一个字符：X
+28. 向后删除一个单词：dw (diw，保留待删除的单词后面的空格)
+29. 向前删除一个单词：db
+30. 删除光标到行首之间的内容：d^
+31. 删除光标到行尾部之间的内容: d$
+32. 删除当前行：dd
+33. 全选：ggVG
+34. 黏贴： p
+35. 撤销上一步：u
+36. 恢复上一步撤销：C-r
+37. fx:向后查找，最近的一个x字符，并移动光标到x的前面
+38. Fz:向前查找，最近的一个z字符,并移动光标到z的前面
+39. /:查找，n查找下一个
+40. 剪切板:
+    1. 说明: Vim 有12个粘贴板依次编号为：0, 1, 2, ... 9, a, ", +, 其中 + 号为系统粘贴板, ” 为临时粘贴板
+	2. "nyw: 复制当前单词到 n 号剪切板
+	3. "np : 粘贴 n 号剪切板内容到当前位置
+	4. "+Y : 复制当前行到系统剪切板
+	5. "+ny: 复制当前行加下面 n 行到系统剪切板
+	6. "+p : 粘贴系统剪切板内容到当前位置后
+Blog creation time:[2017-09-22 五 07:46]
+** evil的基本概念
+1. evil的6种模式：
+   1. evil-normal-state
+   2. evil-insert-state
+   3. evil-visual-state
+   4. evil-motion-state
+   5. evil-emacs-state
+	  - 在正常模式中按C-z会进入到该模式
+	  - 再次按C-z会进入到normal-mode 
+   6. evil-operator-state

@@ -1,11 +1,10 @@
-* WAITTING [#C] Theme:cmake-generators(7)                            :@Cmake:
-** Introduction
-** CMake Generators
-*** Command-Line Build Tool Generators
-**** Makefile Generators
-**** Ninja Generator
-*** IDE Build Tool Generators
-**** Visual Studio Generators
-**** Other Generators
-** TExtra Generators
+* Introduction
+* CMake Generators
+** Command-Line Build Tool Generators
+*** Makefile Generators
+*** Ninja Generator
+** IDE Build Tool Generators
+*** Visual Studio Generators
+*** Other Generators
+* TExtra Generators
 

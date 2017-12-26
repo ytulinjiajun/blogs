@@ -1,10 +1,9 @@
-* blogs-qt-active
-** DONE [#D] theme:qt相关网址									  :@Blog:@Qt:
+** DONE [#D] theme:qt相关网址
 	- State "DONE"       from "TODO"       [2017-09-05 二 09:30]
 --软件下载:https://download.qt.io/official_releases/qt/
 --文档:https://doc.qt.io
 Blog creation time:[2017-09-05 二 08:41]
-** DONE [#D] theme:宏观概述qt									  :@Blog:@Qt:
+** DONE [#D] theme:宏观概述qt
 	- State "DONE"       from "TODO"       [2017-09-05 二 09:30]
 *** 历史
 --qt是1991年奇趣科技开发的跨平台C++图形用户界面运用程序开发框架
@@ -46,14 +45,14 @@ Blog creation time:[2017-09-05 二 08:41]
 -->TAB顺序编辑模式
 -->后面的几个用来实现添加布局管理器以及调整大小等功能
 Blog creation time:[2017-09-05 二 08:43]
-** DONE [#D] theme:常用快捷键									  :@Blog:@Qt:
+** DONE [#D] theme:常用快捷键
 	- State "DONE"       from "TODO"       [2017-09-05 二 09:30]
 --水平布局:C + H
 --垂直布局:C + L
 --预览:shift + alt + r
 --多选:按住CTRL不放,点选对象 
 Blog creation time:[2017-09-05 二 08:43]
-** DONE [#D] theme:窗口部件学习									  :@Blog:@Qt:
+** DONE [#D] theme:窗口部件学习
 	- State "DONE"       from "TODO"       [2017-09-05 二 09:30]
 *** 选项卡:QTabWidget
 --一个tab widget由一个tab bar和page area组成
@@ -71,7 +70,7 @@ Blog creation time:[2017-09-05 二 08:43]
 *** 水平布局:QHBoxLayout
 *** 垂直布局:QVBoxLayout
 Blog creation time:[2017-09-05 二 08:44]
-** DONE [#D] theme:qt安装与卸载									  :@Blog:@Qt:
+** DONE [#D] theme:qt安装与卸载
 	- State "DONE"       from "TODO"       [2017-09-05 二 09:30]
 --操作系统:Ubuntu16.04  64位
 --QT版本号:最新版,5.9.1(2017-6-30)

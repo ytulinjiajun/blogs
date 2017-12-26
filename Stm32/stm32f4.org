@@ -1,5 +1,4 @@
-* blogs-stm32f4-active
-** DONE [#D] theme:我的工具网站								 :@Blog:@Stm32f4:
+* DONE [#D] theme:我的工具网站
 	- State "DONE"       from "TODO"       [2017-09-05 二 09:30]
 --Java运行环境JRE：http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html
 --交叉编译链arm-none-eabi-gcc:https://launchpad.net/gcc-arm-embedded/+download
@@ -12,9 +11,9 @@
 --STM32Cubemx学习1：http://blog.csdn.net/ybhuangfugui/article/list/3
 --STM32Cubemx学习2:http://www.waveshare.net/study/article-629-1.html
 Blog creation time:[2017-09-05 二 08:46]
-** DONE [#D] theme:linux平台搭建stm32开发环境				 :@Blog:@Stm32f4:
-	- State "DONE"       from "TODO"       [2017-09-05 二 09:30]
-*** 搭建开发平台预览：
+* DONE [#D] theme:linux平台搭建stm32开发环境
+ - State "DONE"       from "TODO"       [2017-09-05 二 09:30]
+** 搭建开发平台预览：
 0、安装java运行平台：JRE
 
 1、安装eclipse IDE for C/C++ developers：sw4stm32+stlink
@@ -34,7 +33,7 @@ Blog creation time:[2017-09-05 二 08:46]
 备注：Eclipse只是来调用交叉编译链，再调用之前还需要安装“GNU ARM Eclipse插件”
 
 
-*** 安装JRE
+** 安装JRE
 1.相比Fedora,ubuntu上安装jre显得更加麻烦一些，原因是JRE只提供了RPM包和Tar.gzip格式的安装包，
 Ubuntu是不支持RPM包的，当然，可以用alien将rpm转换为deb格式的包然后使用dpkg -i xxx.deb来安装，
 不过这个转换不是所有情况下都能转换成功的，比如JRE我亲测就不可以，所以只能把苗头对准.tar.gzip包了;
@@ -57,7 +56,7 @@ sudo update-alternatives --config java
 7.根据提示，选择刚刚安装的JRE作为默认的JRE，至此，Ubuntu安装JRE成功
 
 
-*** 安装sw4stm32:
+** 安装sw4stm32:
 1.到上面的官方网站上下载最新版的sw4stm32的linux版本：install_sw4stm32_linux_64bits-latest.run 
 2.在合适的位置新建一个安装路径：/home/ljj/stm32/sw4stm32/sw4stm32-workbench-install-soft
 3.更改权限：chmod +x
@@ -65,7 +64,7 @@ sudo update-alternatives --config java
 5.依照提示输入指令即可
 备注：必须使用sudo；必须加-f后缀；安装路径不要有中文;
 
-*** 安装stm32cubemx
+** 安装stm32cubemx
 1.到上面的官方网站上下载最新版的stm32cubemx:en.stm32cubemx.zip；
 2.安装zip解压程序：apt install unzip
 3.解压stm32cubemx.zip：unzip en.stm32cubemx.zip;
@@ -74,12 +73,12 @@ sudo update-alternatives --config java
 6.运行：java -jar STM32CubeMX -i
 
 Blog creation time:[2017-09-05 二 08:47]
-** DONE [#D] theme:windows平台搭建stm32开发环境				 :@Blog:@Stm32f4:
+* DONE [#D] theme:windows平台搭建stm32开发环境
 	- State "DONE"       from "TODO"       [2017-09-05 二 09:30]
 1.一定要将字符编码改为gb2312;
 2.一定添加下面给出的注释模板;
 Blog creation time:[2017-09-05 二 08:49]
-** DONE [#D] theme:问题收集									 :@Blog:@Stm32f4:
+* DONE [#D] theme:问题收集
 	- State "DONE"       from "TODO"       [2017-09-05 二 09:30]
 1.2017年6月28号下午3点15分,在组织带UCOSIII任务处理框架时,遇到一个关于条件编译的问题,折腾了两个小时没有找出原因,即将绝望想要放弃该框架时
 突然发现问题所在,特记录在案,问题描述如下:
@@ -87,9 +86,9 @@ Blog creation time:[2017-09-05 二 08:49]
 --B文件中使用条件编译:#if a ... #endif
 如上两点所述,编译没有错误,但是B中...代码无法访问,谜底是,需要在B中将A文件include进来
 Blog creation time:[2017-09-05 二 08:50]
-** DONE [#D] theme:关于时钟树								 :@Blog:@Stm32f4:
-	- State "DONE"       from "TODO"       [2017-09-05 二 09:32]
-*** 时钟源：
+* DONE [#D] theme:关于时钟树
+ - State "DONE"       from "TODO"       [2017-09-05 二 09:32]
+** 时钟源：
 1-1.LSI：
 --内部低速时钟;
 --32kHZ;
@@ -124,7 +123,7 @@ Blog creation time:[2017-09-05 二 08:50]
 --用于SYSCLOCK;用作PPL的输入源;
 --用于RTCCLOCK;
 
-*** 几个重要时钟:
+** 几个重要时钟:
 1.PPLCLK：（默认选HSE的8MHZ作为输入）
 --主PPL锁向环倍频输出时钟P相关;
 --来源：HSI(16MHZ)或者HSE(8MHZ)，记为input;
@@ -152,7 +151,7 @@ Blog creation time:[2017-09-05 二 08:50]
 5-1.APB1：
 5-2.APB2：
 5-3.APB3：
-*** 时钟树相关的配置文件：
+** 时钟树相关的配置文件：
 1.startup_stm32f40_41xxx.s：
 --该文件是系统上电后第一个被加载的启动文件;
 --在第179行，Reset hander部分，进入main入口之前，调用了SystemInit函数;
@@ -184,7 +183,7 @@ Blog creation time:[2017-09-05 二 08:50]
 --文件system_stm32f4xx.c是系统最重要的配置文件，里面涉及整个系统时钟树的所有参数，但是
 很多配置选择默认配置即可，我们主要关注主PPL锁向环倍频器的分频因子的设置即可;
 Blog creation time:[2017-09-05 二 08:50]
-** DONE [#D] theme:注释模板									 :@Blog:@Stm32f4:
+* DONE [#D] theme:注释模板
 	- State "DONE"       from "TODO"       [2017-09-05 二 09:32]
 --Edit-->Configuration-->Text Completion;
 --new 一个comment-template
@@ -231,15 +230,15 @@ Blog creation time:[2017-09-05 二 08:50]
 这是因为stm32cubemx是32位的程序，解决方法，dnf install glibc.i686,如果还有如下错误：...:libsrdc++.so.6...
 则，dnf install libstdc++.so.6;
 Blog creation time:[2017-09-05 二 08:51]
-** DONE [#D] theme:关于MDK编码问题							 :@Blog:@Stm32f4:
+* DONE [#D] theme:关于MDK编码问题
 	- State "DONE"       from "TODO"       [2017-09-05 二 09:32]
 1.在MDK23上测试，转换为UTF-8在编辑代码时虽然能友好显示汉字，但是烧录到stm32后出现乱码;
 2.建议使用GB2312编码，该编码虽然字符比较丑陋，但是，适当设置选择字体（比如仿宋，10号，加粗）;
 3.我的工具里面收录一个编码转码软件;
 Blog creation time:[2017-09-05 二 08:52]
-** DONE [#D] theme:DMA库函数研究							 :@Blog:@Stm32f4:
-	- State "DONE"       from "TODO"       [2017-09-05 二 09:32]
-*** DMA本质抽象：
+* DONE [#D] theme:DMA库函数研究
+ - State "DONE"       from "TODO"       [2017-09-05 二 09:32]
+** DMA本质抽象：
 1.存储器：源或者目的;
 --我们希望实现从存储器到外设的自主传输，存储器是源;
 --我们希望实现从外设到存储器的自主传输，存储器是目的;
@@ -271,13 +270,13 @@ Blog creation time:[2017-09-05 二 08:52]
 --仲裁器仲裁的对象是通道请求，仲裁的结果是挂载在流上的所有外设当中，哪个外设有权利享用这个流;
 --仲裁器的输入是通道请求，每个流每次只能配置一个通道请求，一个DMA有8个流，所以仲裁器至多需要仲裁8个通道请求;
 
-*** 资源分析：
+** 资源分析：
 --有2个DMA控制器;
 --每个DMA控制器有8个数据流;
 --每个数据流享有一个FIFO;
 --每个DMA控制器有1个仲裁器;
 --每个仲裁器最多接受8个通道请求;
-*** 工作原理
+** 工作原理
 --自动封装解封字节序的概念：当PSIZE和MSIZE的宽度不相等时，由FIFO来实现自动封装解封操作
 
 --双缓冲模式：DMA_SxCR的DBM位置1将使能双缓冲模式，使能双缓冲模式后将自动使能循环模式（此时与DMA_SxCR的CIRC的配置无关），双缓冲模式下，每次事物结束后，交换存储器指针。
@@ -314,25 +313,25 @@ Blog creation time:[2017-09-05 二 08:52]
 备注：
 
 --一旦在AHB目标端口上传输了一半的数据，传输一半的标志（HTIF）便会置1，如果使能了半传输中断标志位（HTIE），还会 产生中断；
-*** DMA初始化：DMA_Init()
-**** （1）DMA1和DMA2共用该初始化函数
+** DMA初始化：DMA_Init()
+*** （1）DMA1和DMA2共用该初始化函数
 --有2个DMA控制器;
 --每个DMA控制器有8个数据流;
 --通过参数DMAx_Streamy(x=1,2 y=0~7)来确定是哪个DMA的哪个数据流；
-**** （2）确定哪个数据流:DMAy_Streamx
+*** （2）确定哪个数据流:DMAy_Streamx
 --有2个DMA控制器;
 --每个DMA控制器有8个数据流;
 --通过参数DMAx_Streamy(x=1,2 y=0~7)来确定是哪个DMA的哪个数据流；
-**** （3）确定哪个通道请求:DMA_Channel
+*** （3）确定哪个通道请求:DMA_Channel
 --配置8个通道中的哪个通道请求将被选中，送给仲裁器，确认挂载在流上面的所有外设，哪个可以使用这个流：DMA_SxCR的CHSEL[2:0];
 --由于映射表的存在，所以当配置了数据流和通道后，哪个外设被挂载到该数据流上就已经确定下来了；
-**** （4）确定外设的基地址:DMA_PeripheralBaseAddr
+*** （4）确定外设的基地址:DMA_PeripheralBaseAddr
 --在（2）和（3）的配置之后就唯一确定了当前数据流上挂载的外设；
 --我是的目的是实现外设和存储器之间数据的传输，所以有必要告知DMA控制器双方数据存储的首地址；
-****  (5) 确定存储器的基地址:DMA_Memory0BaseAddr
+***  (5) 确定存储器的基地址:DMA_Memory0BaseAddr
 --在（2）和（3）的配置之后就唯一确定了当前数据流上挂载的外设；
 --我是的目的是实现外设和存储器之间数据的传输，所以有必要告知DMA控制器双方数据存储的首地址；
-****  (6)确定传输方向:DMA_DIR 
+***  (6)确定传输方向:DMA_DIR 
 --外设到存储器，存储器到外设，存储器到存储器：DMA_SxCR的DIR[1:0];
 --源地址和目标地址的选择：
 DMA_SxCR的DIR[1:0]	方向		源地址		目标地址
@@ -340,41 +339,41 @@ DMA_SxCR的DIR[1:0]	方向		源地址		目标地址
 01			存储器到外设	DMA_SxM0AR	DMA_SxPAR
 10			存储器到存储器	DMA_SxPAR	DMA_SxM0AR
 11			保留		--		--
-****  (7)确定单次传输数据的数量:DMA_BufferSize
+***  (7)确定单次传输数据的数量:DMA_BufferSize
 --数据传输的量,由DMA流控值制器和外设流控制器配置，要传输数据的数量必须在使能数据流之前，写入到DMA_SxNDTR中;
-****  (8)确定外设的地址是否递增:DMA_PeripheralInc
+***  (8)确定外设的地址是否递增:DMA_PeripheralInc
 --指针自增：外设和存储器都各自有一个指针，在每次传输之后可以设置让其自动向后递增或者保持常量;
 --通过DMA_SxCR的PINC和MINC进行设置，如果使能了递增模式，根据PSIZE和MSIZE设置的数据宽度，下一次数据传输的地址递增1；
 --通过单个寄存器访问外设或目标数据时，禁止递增模式十分有用；
-****  (9)确定存储器的地址是否递增:DMA_MemoryInc
+***  (9)确定存储器的地址是否递增:DMA_MemoryInc
 --指针自增：外设和存储器都各自有一个指针，在每次传输之后可以设置让其自动向后递增或者保持常量;
 --通过DMA_SxCR的PINC和MINC进行设置，如果使能了递增模式，根据PSIZE和MSIZE设置的数据宽度，下一次数据传输的地址递增1；
 --通过单个寄存器访问外设或目标数据时，禁止递增模式十分有用；
-****  (10)确定外设数据宽度:DMA_PeripheralDataSize
+***  (10)确定外设数据宽度:DMA_PeripheralDataSize
 --数据传输宽度：使用FIFO时，源和目标的数据宽度通过DMA_SxCR的PSIZE和MIZE设置8,16,32位位宽;
 --当PSIZE和MSIZE的宽度不相等时，由FIFO来实现自动封装解封操作;
-****  (11)确定存储器数据宽度:DMA_MemoryDataSize
+***  (11)确定存储器数据宽度:DMA_MemoryDataSize
 --数据传输宽度：使用FIFO时，源和目标的数据宽度通过DMA_SxCR的PSIZE和MIZE设置8,16,32位位宽;
 --当PSIZE和MSIZE的宽度不相等时，由FIFO来实现自动封装解封操作;
-****  (12)确定是否开始循环模式:DMA_Mode
+***  (12)确定是否开始循环模式:DMA_Mode
 --循环模式：可以用来处理连续数据流，由DMA_SxCR的CIRC配置，当数据传输完毕后，DMA_SxNDTR会减到0，此时该寄存器会自动加载初始时刻设置的值并继续响应DMA请求；
-****  (13)确定通道的优先级:DMA_Priority_Medium
+***  (13)确定通道的优先级:DMA_Priority_Medium
 --每个仲裁器最多接受8个通道请求;
 --仲裁器优先级配置：DMA_SxCR的PL[1:0],非常高，高，中，低：DMA_SxCR,大于4个流同时工作时4个优先级不够用，会有重复，此时硬件优先级起作用，
 如果软件优先级相同，则看流的编号，数据流0的优先级高于数据流1的优先级;
 --只有赢得数据流的仲裁后，通道请求才有权访问AHB，DMA_SxCR的PL[1:0]为每个数据流定义优先级执行仲裁;
-****  (14)确定是否开始FIFO模式:DMA_FIFOMode
+***  (14)确定是否开始FIFO模式:DMA_FIFOMode
 --每个数据流享有一个FIFO;
 --每个FIFO有4个字8个字节，阀值可由软件设置为1/4、1/2、3/4、满，需要DMA_SxFCR的DMMIS置1来使能FIFO阀值级别;
 --刷新FIFO：当复位禁止DMA_SxCR的EN位时以及配置数据流后，需要刷新FIFO，将之前存储在FIFO之中的数据清理干净后，再开启DMA_SxCR的EN位使能FIFO;
 --默认情况下，FIFO以直接模式进行操作，不使用FIFO阀值;
-****  (15)设置FIFO的阀值:DMA_FIFOThreshold
+***  (15)设置FIFO的阀值:DMA_FIFOThreshold
 --默认情况下，FIFO以直接模式进行操作，不使用FIFO阀值;
 --每个FIFO有4个字8个字节，阀值可由软件设置为1/4、1/2、3/4、满，需要DMA_SxFCR的DMMIS置1来使能FIFO阀值级别;
-****  (16)配置存储器突发传输的突发增量:DMA_MemoryBurst
+***  (16)配置存储器突发传输的突发增量:DMA_MemoryBurst
 --单次传输：根据DMA_SxCR的PSIZE[1:0]位的值，每个DMA请求产生一次字节，半字，或字的传输;
 --突发传输：根据DMA_SxCR的PBUSH[1:0]和PSIZE[1:0]的值，每个DMA的请求相应的生成4个，8个或是16节拍的字节，半字，或字的传输;
-****  (17)配置外设突发传输的突发增量：DMA_PeripheralBurst
+***  (17)配置外设突发传输的突发增量：DMA_PeripheralBurst
 --单次传输：根据DMA_SxCR的PSIZE[1:0]位的值，每个DMA请求产生一次字节，半字，或字的传输;
 --突发传输：根据DMA_SxCR的PBUSH[1:0]和PSIZE[1:0]的值，每个DMA的请求相应的生成4个，8个或是16节拍的字节，半字，或字的传输;
 
@@ -390,12 +389,12 @@ DMA_SxCR的DIR[1:0]	方向		源地址		目标地址
 --当DMA_SxFCR寄存器中的DMDIS值为0时，能控制不使用FIFO的阀值控制，此时，每完成一次外设到FIFO的数据传输后，
 相应的数据立即被移出并存储在存储器内;
 
-**** 存储器到外设：
-**** 存储器到存储器:
-*** DMA使能：DMA_Cmd()
-**** DMA开始传输：
+*** 存储器到外设：
+*** 存储器到存储器:
+** DMA使能：DMA_Cmd()
+*** DMA开始传输：
 --一旦使能了数据流，就可以响应连接到数据流的外设发出的任何DMA请求；
-**** DMA传输完成：
+*** DMA传输完成：
 1.在DMA流控制模式下：
 --存储器到外设时，若DMA_SxNDTR计数器达到0;
 --传输结束前数据流使能位EN被清零,并且（除存储器到存储器）所有剩余数据已从FIFO传输到存储器；
@@ -405,27 +404,27 @@ DMA_SxCR的DIR[1:0]	方向		源地址		目标地址
 备注：该模式下，传输完成取决于FIFO中要传输到存储器的剩余数据；如果在非循环模式下配置数据流，当要传输的数据的数目达到0，
 除非软件对数据流进行重新编程，并重新使能数据流，否则DMA会停止传输并且不再影响任何DMA请求。
 3.一旦传输结束时，传输完成标志（TCIF）便会置1，如果使能了传输完成中断（TCIE），还会产生中断；
-**** DMA传输暂停：
+*** DMA传输暂停：
 1.可以随时暂停DMA传输以供稍后重新开始，也可以再DMA传输结束前明确禁止此功能
 2.直接禁止数据流的传输，以后不从停止点重新开始：只需将数据流使能位EN清零即可，此时可以查看DMA_SxNDTR中所记录的数据流停止时
 剩余数据项的数目以确定禁止数据流之前已经传输了多少数据；
 3.数据流在DMA_SxNDTR中要传输的剩余数据的项数目达到0之前暂停传输，以后要从该停止点开始传输：首先将数据流的使能位EN清零，然后读取
 DMA_SxNDTR中所记录的数据流数目，然后更新外设或存储器地址以调整地址指针，然后使用刚刚读到的DMA_SxNDTR中的值来跟新DMA_SxNDTR寄存器
 然后重新使能数据流就能从停止点开始传输；
-**** DMA禁止传输：
+*** DMA禁止传输：
 --安全禁止外设的方法：首先关闭外设连接的数据流，然后等待EN位0；
-*** 获取当前还剩多少没传输的数据：DMA_GetCurrDataCounter()
+** 获取当前还剩多少没传输的数据：DMA_GetCurrDataCounter()
 --数据传输的量,由DMA流控值制器和外设流控制器配置，要传输数据的数量必须在使能数据流之前，写入到DMA_SxNDTR中;
 --存储器到外设时，若DMA_SxNDTR计数器达到0，则传输完成；
-*** 设置当前还剩多少没有传输的数据:DMA_SetCurrDataCounter()
+** 设置当前还剩多少没有传输的数据:DMA_SetCurrDataCounter()
 --数据传输的量,由DMA流控值制器和外设流控制器配置，要传输数据的数量必须在使能数据流之前，写入到DMA_SxNDTR中;
 --存储器到外设时，若DMA_SxNDTR计数器达到0，则传输完成;
-*** 双缓冲模式设置：
+** 双缓冲模式设置：
 --DMA_DoubleBufferModeConfig()
 --DMA_DoublebuffermodeCmd()
 --DMA_MemoryTargetConfig()
 --DMA_GetCurrentMemoryTarget()
-*** DMA中断配置配置
+** DMA中断配置配置
 DMA_GetCmdStatus()
 DMA_GetFIFOSStatus()
 DMA_GetFlagStatus()
@@ -433,17 +432,17 @@ DMA_ClearFlag()
 DMA_ITConfig
 DMA_GetITStatus()
 DMA_ClearITPendingBit()
-*** 实践DMA处理串口数据：
+** 实践DMA处理串口数据：
 1.当需要向RS232接口的传感器索要数据时，由CPU（可以用UCOSIII的任务实现）通
 Blog creation time:[2017-09-05 二 08:52]
-** DONE [#D] theme:定时器									 :@Blog:@Stm32f4:
-	- State "DONE"       from "TODO"       [2017-09-05 二 09:32]
-*** 基研本究对象
+* DONE [#D] theme:定时器
+ - State "DONE"       from "TODO"       [2017-09-05 二 09:32]
+** 基研本究对象
 1.计数器：CNT   
 2.自动重装载寄存器:TIMx_ARR
 3.定时器预分频器:TIMx_PSC (寄存器) 
 备注:计数器始终以自动重装载寄存器的值作为参考起点或终点,在定时器预分频器分频后的时钟CK_CNT的控制下,自动加1或减一;
-*** 所有可能的时钟来源（查照定时器框图来理解）
+** 所有可能的时钟来源（查照定时器框图来理解）
 1.内部RCC的APBx ----*2----> CK_INT ；(常规选择)
 --当TIMx_SMCR中的SMS=000,且TIMx_CR1的CEN写1时,定时器预分频器的时钟就由CK_INT提供;
 2.外部时钟模式1:外部输入引脚TIx;
@@ -456,14 +455,14 @@ Blog creation time:[2017-09-05 二 08:52]
 4.内部触发输入:ITRx(x=0,1,2,3)
 --略
 备注:由于在SystemInit里面初始化APB1时钟的分频因子为4,APB2时钟的分频因子为2,所以APB1的时钟为168/4=42MHZ,所以APB2的时钟为168/2=84MHZ
-*** 基本定时器:TIM6,TIM7
-**** 时钟来源:暂且只讨论来自APBx
+** 基本定时器:TIM6,TIM7
+*** 时钟来源:暂且只讨论来自APBx
 0.基本思路:APB1 ------*2---> CK_INT ----/TIM_ClockDivision-----> CK_PSC ----/(PSC[15:0]+1)-------> CK_CNT(计数器时钟频率)
 1.基本定时器的时钟来自APB1 = 42MHZ;
 2.内部时钟源时钟频率:CK_INT = APB1*2 = 42MHZ*2 = 84MHZ
 3.计数器预分频器时钟频率:CK_PSC = CK_INT / TIM_ClockDivision(默认为1分频,其他分频在捕获模式中使用)
 4.计数器时钟频率:CK_CNT = CK_PSC / (PSC[15:0]+1),其中,PSC[15:0]是预分频寄存器TIMx_PSC的预分频值,他作为计数器时钟频率的分频因子
-**** 定时溢出时间计算公式解析
+*** 定时溢出时间计算公式解析
 0.计数器溢出时间 = 计数器时钟周期 * 计数器预装载值;
 1.公式:溢出时间:Tout = ARR * T(ck_psc) =  (arr+1) * ((psc+1)/CK_PSC) 
 2.解析:(以向上计数为参考,向下计数同理)
@@ -477,12 +476,12 @@ Blog creation time:[2017-09-05 二 08:52]
 公式得证!  
 
 备注:在基于固件库开发的定时器初始化函数中,arr的值就是传给TIMx_ARR寄存器,psc的值就是传给TIMx_PSC寄存器
-**** 计数模式:
+*** 计数模式:
 1.向上计数:计数器CNT在CK_CNT时钟的控制下从0计数到ARR,然后重新从0开始计数并产生一个计数器溢出事件;
 2.向下计数:计数器CNT在CK_CNT时钟的控制下从ARR计数到0,然后重新从ARR开始计数并产生一个计数器溢出事件;
 3.向上/向下计数:计数器CNT在CK_CNT时钟的控制下从0计数到ARR-1,产生一个计数器溢出事件,然后ARR开始计数到1,产生溢出事件,然后再从0计数;
-*** 通用定时器:TIM2--TIM5;TIM9--TIM14
-**** 时钟来源:暂且只讨论来自APBx
+** 通用定时器:TIM2--TIM5;TIM9--TIM14
+*** 时钟来源:暂且只讨论来自APBx
 --TIM2--TIM5 和 TIM12--TIM14:
 0.基本思路:APB1 ------*2---> CK_INT ----/TIM_ClockDivision-----> CK_PSC ----/(PSC[15:0]+1)-------> CK_CNT(计数器时钟频率)
 1.时钟源来自APB1 = 42MHZ;
@@ -496,7 +495,7 @@ Blog creation time:[2017-09-05 二 08:52]
 2.内部时钟源时钟频率:CK_INT = APB2*2 = 84MHZ*2 = 168MHZ;
 3.计数器预分频器时钟频率:CK_PSC = CK_INT / TIM_ClockDivision(默认为1分频,其他分频在捕获模式中使用);
 4.计数器时钟频率:CK_CNT = CK_PSC / (PSC[15:0]+1),其中,PSC[15:0]是预分频寄存器TIMx_PSC的预分频值,他作为计数器时钟频率的分频因子
-**** 定时溢出时间计算公式解析
+*** 定时溢出时间计算公式解析
 0.计数器溢出时间 = 计数器时钟周期 * 计数器预装载值;
 1.公式:溢出时间:Tout = ARR * T(ck_psc) =  (arr+1) * ((psc+1)/CK_PSC) 
 2.解析:(以向上计数为参考,向下计数同理)
@@ -512,18 +511,18 @@ Blog creation time:[2017-09-05 二 08:52]
 备注:
 --CK_CNT = CK_PSC / (PSC[15:0] + 1)  <====>   ((psc+1)/CK_PSC)有着明确的意义,叫做计数器频率,其倒数称为计数器周期
 --在基于固件库开发的定时器初始化函数中,arr的值就是传给TIMx_ARR寄存器,psc的值就是传给TIMx_PSC寄存器;
-**** 计数模式:
+*** 计数模式:
 1.向上计数:计数器CNT在CK_CNT时钟的控制下从0计数到ARR,然后重新从0开始计数并产生一个计数器溢出事件;
 2.向下计数:计数器CNT在CK_CNT时钟的控制下从ARR计数到0,然后重新从ARR开始计数并产生一个计数器溢出事件;
 3.向上/向下计数:计数器CNT在CK_CNT时钟的控制下从0计数到ARR-1,产生一个计数器溢出事件,然后ARR开始计数到1,产生溢出事件,然后再从0计数;
-*** 高级定时器:TIM1,TIM8
-**** 时钟来源:暂且只讨论来自APBx
+** 高级定时器:TIM1,TIM8
+*** 时钟来源:暂且只讨论来自APBx
 0.基本思路:APB2 ------*2---> CK_INT ----/TIM_ClockDivision-----> CK_PSC ----/(PSC[15:0]+1)-------> CK_CNT(计数器时钟频率)
 1.高级定时器的时钟来自APB2 = 84MHZ;
 2.内部时钟源:CK_INT = APB2*2 = 84MHZ*2 = 168MHZ;
 3.计数器预分频器时钟频率:CK_PSC = CK_INT / TIM_ClockDivision(默认为1分频,其他分频在捕获模式中使用);
 4.计数器时钟频率:CK_CNT = CK_PSC / (PSC[15:0]+1),其中,PSC[15:0]是预分频寄存器TIMx_PSC的预分频值,他作为计数器时钟频率的分频因子
-**** 定时溢出时间计算公式解析
+*** 定时溢出时间计算公式解析
 0.计数器溢出时间 = 计数器时钟周期 * 计数器预装载值;
 1.公式:溢出时间:Tout = ARR * T(ck_psc) =  (arr+1) * ((psc+1)/CK_PSC) 
 2.解析:(以向上计数为参考,向下计数同理)
@@ -537,13 +536,13 @@ Blog creation time:[2017-09-05 二 08:52]
 公式得证!  
 
 备注:在基于固件库开发的定时器初始化函数中,arr的值就是传给TIMx_ARR寄存器,psc的值就是传给TIMx_PSC寄存器
-**** 计数模式:
+*** 计数模式:
 1.向上计数:计数器CNT在CK_CNT时钟的控制下从0计数到ARR,然后重新从0开始计数并产生一个计数器溢出事件;
 2.向下计数:计数器CNT在CK_CNT时钟的控制下从ARR计数到0,然后重新从ARR开始计数并产生一个计数器溢出事件;
 3.向上/向下计数:计数器CNT在CK_CNT时钟的控制下从0计数到ARR-1,产生一个计数器溢出事件,然后ARR开始计数到1,产生溢出事件,然后再从0计数;
 
 Blog creation time:[2017-09-05 二 08:53]
-** WAITTING [#D] Theme:将linux-kernel架构移植stm32上		  :@Blog:@Kernel:
+* WAITTING [#D] theme:将linux-kernel架构移植stm32上
 1. 基本要求:
    1. 精简
    2. 提供裁剪功能的实现机制
@@ -572,7 +571,7 @@ Blog creation time:[2017-09-05 二 08:53]
       2. ----@rm -f $(OBJS) blink.bin blink.elf
 Blog creation time:[2017-10-26 四 08:37]
 
-** WAITTING [#D] Theme:内核目录架构							  :@Blog:@Kernel:
+* WAITTING [#D] theme:内核目录架构
 1. 顶层Makefile: torvalds-linux/linux/Makefile
    1. 决定torvalds-linux/linux/下面,哪些子目录被编译进内核
 2. 体系结构相关的Makefile: torvalds-linux/linux/$(ARCH)/Makefile
@@ -599,7 +598,7 @@ Blog creation time:[2017-10-25 三 16:53]
 --kbuild makefile 可能列出文件用作built-in ，并且作为库的一部分。因此，同一个文件夹可能包含一个built-in.o 和lib.a 文件  
 
 --lib-y 的使用方法通常被限制在lib/ 和arc/*/lib 中
-**** Makefile
+*** Makefile
 --路径：位于linux kernel源码的顶层目录，该Makefile也就是顶层Makefile
 
 --顶层的Makefile也叫做Kernel Makefile
@@ -615,31 +614,31 @@ Blog creation time:[2017-10-25 三 16:53]
 --机器体系Makefile文件为顶层Makefile文件提供与机器相关的信息。
 
 --根据.config文件决定了内核根目录下那些文件、子目录被编译进内核
-**** ARCH/$(ARCH)/Makefile 
+*** ARCH/$(ARCH)/Makefile 
 --系统对应平台的Makefile
 
 --Makefile 会包含这个文件来指定平台相关信息
 
 --根据.config文件，决定了ARCH/$(ARCH) 目录下 那些文件、子目录被编译进内核
-**** scripts/Makefile.build: 
+*** scripts/Makefile.build: 
 --被顶层Makefile所调用
 
 --与各级子目录的Makefile合起来构成一个完整的Makefile文件，定义built-in.o、.lib以及目标文件.o的生成规则
 
 --这个Makefile文件生成了子目录的.lib、built-in.o以及目标文件.o
 
-**** scripts/Kbuild.include:
+*** scripts/Kbuild.include:
 --被Makefile.build所调用
 
 --定义了一些函数，如if_changed、if_changed_rule、echo-cmd
-**** scripts/Makefile.clean
+*** scripts/Makefile.clean
 --被顶层Makefile所调用
 
 --用来删除目标文件等
-**** scripts/Makefile.lib
+*** scripts/Makefile.lib
 --被Makefile.build所调用
 --主要是对一些变量的处理，比如说在obj-y前边加上obj目录
-**** .config
+*** .config
 --位于linux内核的根目录下
 
 --产生自来自配置过程
@@ -649,7 +648,7 @@ Blog creation time:[2017-10-25 三 16:53]
 --配置过程产生.config文件
 
 --.config又产生auto.conf以及autoconf.h文件
-**** KBuild Makefile
+*** KBuild Makefile
 --从Linux 内核2.6 开始，Linux 内核的编译采用Kbuild 系统 
 
 --大多的Kbuild 文件的名字都是Makefile 。为了与其他Makefile 文件相区别，你也可以指定Kbuild Makefile 的名字为 Kbuild
@@ -676,11 +675,11 @@ Blog creation time:[2017-10-25 三 16:53]
     isdn-objs := isdn_net_lib.o isdn_v110.o isdn_common.o
 由于obj-$(CONFIG_ISDN)是由isdn_net_lib.o isdn_v110.o isdn_common.o这三个目标文件编译而成的，所以，需要定义isdn-objs
 
-**** scripts/kconfig/Makefile
+*** scripts/kconfig/Makefile
 --顶层Makefile调用： include scripts/kconfig/Makefile ，用于指定目标
 
 --顶层Makefile调用： include scripts/kconfig/Makefile ，生成auto.conf autoconf.h auto.conf.cmd
-**** .config文件
+*** .config文件
 .config文件在进行内核编译时（make uImage）生成了include/config/auto.conf和include/linux/autoconf.h
 Linux的内核配置，就是为了生成.config文件。因为在编译时需要用.config文件生成其他相关配置文件。我们的配置项大多是例如CONFIG_XXXDRIVER，这里的XXXDRIVER指的是各种驱动。我们需要告诉内核，这些驱动是编译进内核，还是编译成模块。通过查找CONFIG_XXXDRIVER，我们可以发现，它出现在四个地方：
 
@@ -704,7 +703,7 @@ Linux的内核配置，就是为了生成.config文件。因为在编译时需�
 
 Blog creation time:[2017-09-04 一 15:17]
 
-*** 入口：
+** 入口：
 1.顶层Makefile---- 指定目标-----include scripts/kconfig/Makefile
 如在终端中执行配置命令make nitrogen6x_defconfig
 %config: scripts_basic outputmakefile FORCE
@@ -737,10 +736,10 @@ modules:$(module-dirs)
 scripts/Makefile.build
 $(subdir-ym):
     $(Q)$(MAKE)$(build)=$@
-*** 暂存
+** 暂存
 --
 
-*** 基本流程
+** 基本流程
 --在scripts/Kbuild.include中有一条规则：build := -f $(srctree)/scripts/Makefile.build obj
 
 --在scripts/Makefile.build中：

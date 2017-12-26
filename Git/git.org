@@ -1,5 +1,4 @@
-* blogs-git-active
-** 精华
+* 精华
 1. 提交总是找HEAD!
 2. git checkout ref
    1. 检出新分支
@@ -9,12 +8,12 @@
 4. 让分支的分支指针头(master)指向其他分支(游离分支)的技巧:
    1. 首先,使用checkout命令,切换至master分支(让HEAD指向master)
    2. 然后,使用reset命令,让HEAD指向另一分支(游离分支)的某个提交
-** DONE [#D] theme:我的工具网站									 :@Blog:@Git:
+* DONE [#D] theme:我的工具网站
 	- State "DONE"       from "TODO"       [2017-09-05 二 09:28]
 1. git 官方网站：http://git-scm.com
 2. 廖雪锋：http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000
    Blog creation time:[2017-09-05 二 08:01]
-** WAITTING [#D] Theme:基本概念								 :@Blog:@Git:
+* WAITTING [#D] theme:基本概念
 1. 工作区：一个等待进行版本控制的目标目录
 2. 版本库：当使用git init对一个工作区进行初始化之后，在工作区下产生一个名为.git的文件夹，该文件夹就称为版本库
 3. 正确使用版本控制系统的方法是：一次提交只完成一件事
@@ -48,7 +47,7 @@
 	  5. 项目的发起者自己想要开发,也需要以master创建一个自己的分支,比如master-manager,只有它才有权限在master生成根
 	  6. 每个参与者在自己的分支上做属于自己模块的开发,然后不断向master-manager分支合并,master-manger认为开发的差不多了,可以生成第二个版本(根)的 时候,他会向master合并
 Blog creation time:[2017-09-23 六 22:36]
-** WAITTING [#D] Theme:对象库解析 								 :@Blog:@Git:
+* WAITTING [#D] theme:对象库解析
 1. index:
    1. 该文件是一个二进制文件,本质上，是一个包含文件索引的目录树
    2. 使用git add xx-file之后，xx-file这个文件的文件名将会挂接在index这个文件的目录树上
@@ -97,12 +96,12 @@ Blog creation time:[2017-09-23 六 22:36]
 	   4. 当且仅当存在master分支时，HAED自然就指向master
 	   5. HEAD～n,指向当前分支，最新提交的第n个父提交，HEAD~1 等价于 HEAD^
 Blog creation time:[2017-09-26 二 08:42]
-** DONE [#D] Theme:安装 										 :@Blog:@Git:
+* DONE [#D] theme:安装
 1. 检查是否安装：dpkg -s git
 2. 安装： sudo apt-get install git
 3. 查看版本： git --version
 Blog creation time:[2017-09-05 二 08:03]
-** DONE [#D] Theme:配置 										 :@Blog:@Git:
+* DONE [#D] theme:配置
 1. 本地配置：　git config -e
    1. 配置文件路径：workspace/.git/config
    2. 作用域：该文件下的配置，只在该workspace／中有效
@@ -124,7 +123,7 @@ Blog creation time:[2017-09-05 二 08:03]
 5. 更改配置：　git config --system alias.co checkout
 6. 删除配置：　git config --unset core.bare
 7. 备注： 建议将配置文件上传到github,用到时直接clone到指定路径即可！
-** DONE [#D] Theme:SSH											  :Blog:@Git:
+* DONE [#D] theme:SSH
 1. 生成SSH秘钥： ssh-keygen -t rsa -C "ytulinjiajun@163.com"
    1. -t  用于指定加密类型，常见的有RSA和DSA加密方式，默认是DSA;
    2. -C 作为批注
@@ -137,7 +136,7 @@ Blog creation time:[2017-09-05 二 08:03]
 6. 关联远程库： git rmt git@github.com:ytulinjiajun/GitHub-Lin.git
 6. 从github克隆一个版本库验证SSH配置是否成功：git clone git@github.com:ytulinjiajun/GitHub-Lin.git
 Blog creation time:[2017-09-05 二 08:04]
-** WAITTING [#D] Theme:搭建git服务器 							 :@Blog:@Git:
+* WAITTING [#D] theme:搭建git服务器
 1. 基于标准的SSH搭建git服务器
    1. 服务器管理员在服务器上创建一个账号:git-server,专门用于git开发
    2. 客户端用户自己生成公钥和私钥: ssh-keygen -t rsa -C "ytulinjiajun@163.com" -f ~/.ssh/github
@@ -424,13 +423,13 @@ Blog creation time:[2017-09-05 二 08:04]
 |--------+--------+-------+-------+-------+-------------+--------------+---------------+--------------|
 备注: {@权限字符}	表示在这一列是yes或no由该权限字符说了算; - 表示去除用户的写权限,即让用户拥有只读权限(如何让用户连读的权限都木有呢?? 答案是:删除用户)
 Blog creation time:[2017-10-09 一 15:13]
-** DONE [#D] Theme:创建版本库　									   :Blog:@Git:
+* DONE [#D] theme:创建版本库
 1. git init: 其结果是在工作区中生成版本库：.git/
 2. git rev-parse --git-dir: 该操作可以在工作区的任何子目录下执行，其结果是显示该工作区的版本库的路径
 3. git rev-parse --show-toplevel: 该操作可以在工作区的任何子目录下执行，其结果是显示该版本控制系统的根路径
 4. git rev_parse --show-prefix: 该操作可以在工作区的任何子目录下执行，其结果是显示相对于该版本控制系统的根路径的相对目录
 5. git rev_parse --show-cdup: 该操作可以在工作区的任何子目录下执行，其结果是显示当前目录回退到版本控制系统根的深度
-** DONE [#D] Theme:查看状态										 :@Blog:@Git:
+* DONE [#D] theme:查看状态
 	- State "DONE"       from "WAITTING"   [2017-10-05 四 21:45]
 1. 常规：git status
 2. 精简(推荐)：git status -sb
@@ -443,7 +442,7 @@ Blog creation time:[2017-10-09 一 15:13]
    7. D: 表示该文件被删除(红色和绿色均可能)
 3. 原则: 使用该操作,只要有输出, 那就表明工作区,暂存区,最新提交三者之间文件内容不一致
 Blog creation time:[2017-10-05 四 21:41]
-** DONE [#D] Theme:里程碑										 :@Blog:@Git:
+* DONE [#D] theme:里程碑
 1. 显示里程碑: git tag -n<num> 
 2. 创建里程碑: git tag -m "注释" tag-name commit-ID
 3. 删除本地里程碑: git tag -d tag-name  
@@ -468,7 +467,7 @@ Blog creation time:[2017-10-05 四 21:41]
    4. 正式版之后的升级以及修正版本通过最后一位数字来体现: v2.6.36.1
 9. 说明: 里程碑是个非常好的功能,建议经常使用它
 Blog creation time:[2017-10-07 六 21:13]
-** DONE [#D] Theme:浏览											 :@Blog:@Git:
+* DONE [#D] theme:浏览
 1. 浏览文件内容
    1. 浏览工作区中的文件内容：　less a.txt
    2. 浏览暂存区中的文件内容：　git diff
@@ -503,20 +502,20 @@ Blog creation time:[2017-10-07 六 21:13]
 	   1. 其效果与 git cat-file blob commit-ID:<tab补全>一致
 	   2. 解引用的结果: 可以查看tree-ID下面所有blob-ID指向的文件的真正内容
 Blog creation time:[2017-10-05 四 21:46]
-** DONE [#D] Theme:添加至暂存区									 :@Blog:@Git:
+* DONE [#D] theme:添加至暂存区
 	- State "DONE"       from "WAITTING"   [2017-10-06 五 10:28]
 1. 添加单个文件： git add a.txt
 2. 添加所有文件： git add -A
 3. 所有文件中，添加已经被跟踪过的文件： git add -u
 4. 选择性添加: git add -i (当文件特别多,且需要仔细考虑添加哪些文件时,该操作以交互的方式,给出一个更直观的操作)
 Blog creation time:[2017-10-06 五 10:26]
-** DONE [#D] Theme:撤销出暂存区									 :@Blog:@Git:
+* DONE [#D] theme:撤销出暂存区
 	- State "DONE"       from "WAITTING"   [2017-10-06 五 10:30]
 1. 撤销单个文件的add： git reset -- a.txt
 2. 撤销所有文件的add: git reset -- .
 3. 该操作是add的逆,所以，对暂存区和对象库无任何影响
 Blog creation time:[2017-10-06 五 10:28]
-** DONE [#D] Theme: commit 										 :@Blog:@Git:
+* DONE [#D] theme: commit
 1. 命令： git commit -m "Initialized"
 2. 重用提交说明: git commit -C commit-ID: 将commit-ID的提交说明作为本地次提交的提交说明
 3. 底层: 事实上执行add操作的时候,工作区中的文件就已经加入到了对象库中,暂存区的目录树索引和对象库tree-ID下的目录树索引同时指向对象库中真实的文件
@@ -524,12 +523,12 @@ Blog creation time:[2017-10-06 五 10:28]
 5. 提交到哪里: 提交永远都是HEAD的“跟屁虫”，只会盯着HEAD,HEAD在哪个分支，该提交就挂接在这个分支最新提交的后面成为最新提交
 6. 结果:该命令执行之后，暂存区和最新提交就有了相同的目录树索引，均指向版本库的.git/object/下的文件,因此,使用git diff HEAD比价暂存区和最新提交时返回无差异
 Blog creation time:[2017-10-06 五 10:32]
-** DONE [#D] Theme:撤销提交										 :@Blog:@Git:
+* DONE [#D] theme:撤销提交
 	- State "DONE"       from "WAITTING"   [2017-10-06 五 10:49]
 1. 命令： git reset --soft HEAD^
 2. 说明: 该操作是commit的逆，对暂存区和工作区文件的内容没有任何影响，主要用于想要重新书写提交说明时使用
 Blog creation time:[2017-10-06 五 10:46]
-** DONE [#D] Theme:修补提交 								 :@Blog:@Git:
+* DONE [#D] theme:修补提交
 	- State "DONE"       from "WAITTING"   [2017-10-06 五 10:51]
 1. 修补最新提交的说明： git commit --amend -m "重新注释"
 2. 该命令本质上相当这两条命令的组合：
@@ -537,7 +536,7 @@ Blog creation time:[2017-10-06 五 10:46]
    2. git commit -e -F .git/COMMIT_EDITMSG(保存了上次的提交日志)  
 3. 修补任意提交的说明: 
 Blog creation time:[2017-10-06 五 10:50]
-** DONE [#D] Theme:diff详解(生成补丁文件)					   :@Blog:@Linux:
+* DONE [#D] theme:diff详解(生成补丁文件)
    - State "DONE"       from "WAITTING"   [2017-10-01 日 18:14]
 1. 基础框架
    1. 范式：diff OPTIONS... TAG1  TAG2
@@ -710,7 +709,7 @@ Blog creation time:[2017-10-06 五 10:50]
 	  4. -N: 在比较目录时，若文件A仅出现在某个目录中，预设会显示：Only in目录，文件A 若使用-N参数，则diff会将文件A 与一个空白的文件比较；该选项能确保补丁文件能正确地处理已经创建或删除文件的情况
    3. 生成补丁文件的最终命令： diff -u -Nr old-package/ new-package/ 
 Blog creation time:[2017-10-01 日 08:48]
-** DONE [#D] Theme:比较差异										 :@Blog:@Git:
+* DONE [#D] theme:比较差异
 1. 暂存区与工作区
    1. 比较暂存区与工作区的差异：git diff (原始对象是暂存区)
    2. 比较暂存区与工作区指定文件的差异：git diff -- a.txt
@@ -734,7 +733,7 @@ Blog creation time:[2017-10-01 日 08:48]
    3. 比较里程碑A与里程碑B: git diff A B
    4. 比较里程碑A与里程碑B中指定文件: git diff A B -- a.txt
 Blog creation time:[2017-10-06 五 10:52]
-** DONE [#D] Theme:patch详解(打补丁)						   :@Blog:@Linux:
+* DONE [#D] theme:patch详解(打补丁)
    - State "DONE"       from "WAITTING"   [2017-10-01 日 18:13]
 1. 当patch的对象是一个文件
    1. 打补丁命令，版本升级：patch old-version.txt <diff.patch  
@@ -795,12 +794,12 @@ Blog creation time:[2017-10-06 五 10:52]
 	  2. -R: 给新对象打补丁，将其还原为旧对象
 	  3. -E: 如果发现空文件，就删除它
 Blog creation time:[2017-10-01 日 09:46]
-** WAITTING [#D] Theme:补丁交互 								 :@Blog:@Git:
+* WAITTING [#D] theme:补丁交互
 1. 通常push和pull是常见的交互模式,但是,在一些大型项目中,通常会使用补丁交互,如,自己不具有linux内核的push权限,但是可以补丁代码通过邮件发送给linus让他来修补bug
 2. 使用补丁交互可以提高参与度,任何人都可以参与项目的开发,因为只要将提交转换为补丁,会发送邮件即可
 3. 批量创建补丁: git formate-patch -s HEAD~3 HEAD
 Blog creation time:[2017-10-24 二 15:30]
-** DONE [#D] Theme:检出 										 :@Blog:@Git:
+* DONE [#D] theme:检出
 1. 从暂存区检出至工作区
    1. 回滚单个文件： git checkout -- a.txt
    2. 回滚所有文件： git checkout .
@@ -833,7 +832,7 @@ Blog creation time:[2017-10-24 二 15:30]
       2. 那些只在工作区下或者暂存区下才有的而commit-ID这个提交中没有的文件，依旧保持其该有的状态以及内容
    6. 后果：工作区中未add的改动以及暂存区中未commit的改动，如果发生改动的文件在commit-ID这个提交下存在，那么，这些改动会被commit-ID下的文件内容覆盖
 Blog creation time:[2017-10-06 五 10:58]
-** DONE [#D] Theme:重置											 :@Blog:@Git:
+* DONE [#D] theme:重置
 1. 软重置
    1. 基础命令: git reset --soft commit-ID
    2. 常用命令: git reset --soft tag-name (里程碑真的很好用,建议多用!)
@@ -860,7 +859,7 @@ Blog creation time:[2017-10-06 五 10:58]
 	  3. 由于该日志是将最新的改变放在前面，因此，这一行的下面一行就是重置前的commit，假设为master@{2}所在行
 	  4. 再次重置：git reset --hard master@{2}
 Blog creation time:[2017-10-06 五 11:12]
-** DONE [#D] Theme:删除											 :@Blog:@Git:
+* DONE [#D] theme:删除
 	- State "DONE"       from "WAITTING"   [2017-10-06 五 15:41]
 1. 删除工作区尚未追踪的文件 
    1. 删除尚未追踪的指定文件: git clean -fd a.txt
@@ -878,17 +877,17 @@ Blog creation time:[2017-10-06 五 11:12]
    1. 命令: git reset --soft commit-ID
    2. 说明: 对象库中的提交是版本库这个大链表上的一些个节点,删除某个节点破坏了版本控制系统连续记录的原则,因此,该操作会将最新提交到该commit-ID之间的提交都删除掉
 Blog creation time:[2017-10-06 五 14:17]
-** DONE [#D] Theme:恢复删除										 :@Blog:@Git:
+* DONE [#D] theme:恢复删除
 	- State "DONE"       from "WAITTING"   [2017-10-06 五 15:41]
 1. 命令: git checkout HEAD~1 -- a.txt
 2. 说明: 如果a.txt使用git rm -rf a.txt删除了工作区和暂存区中的a.txt并进行了提交,如果想要找回a.txt,可以在HEAD^这个提交下面找回 
 Blog creation time:[2017-10-06 五 15:27]
-** DONE [#D] Theme:更改文件名字									 :@Blog:@Git:
+* DONE [#D] theme:更改文件名字
 	- State "DONE"       from "WAITTING"   [2017-10-06 五 22:25]
 1. 命令: git mv a.txt aa.txt
 2. 说明: 该操作可以同时更改工作区和暂存区中的中的a.txt的名字为aa.txt
 Blog creation time:[2017-10-06 五 15:42]
-** DONE [#D] Theme:保存工作进度									 :@Blog:@Git:
+* DONE [#D] theme:保存工作进度
    - State "DONE"       from "WAITTING"   [2017-10-06 五 22:25]
 1. 保存进度的原理:
    1. 调用进度保存指令git stash save "注释",触发下面的步骤
@@ -917,7 +916,7 @@ Blog creation time:[2017-10-06 五 15:42]
 7. 删除所有进度: git stash clear
 8. 查看进度保存日志: git log --graph --pretty=raw refs/stash -2
 Blog creation time:[2017-10-06 五 14:17]
-** DONE [#D] Theme:文件追溯										 :@Blog:@Git:
+* DONE [#D] theme:文件追溯
 	- State "DONE"       from "WAITTING"   [2017-10-09 一 10:08]
 1. 追溯a.txt中的所有行: git blame a.txt
 2. 追溯a.txt中第2行开始的3行内容: git blame -L 2,+3 a.txt
@@ -926,7 +925,7 @@ Blog creation time:[2017-10-06 五 14:17]
 5. 使用场合: 在开发过程中发现bug时,定位到具体的源文件之后,可以使用该命令追溯该bug是由谁在什么时候的哪个commit中引入
 6. 使用前提: 该操作是建立在bug已经定位到源代码的基础之上,然后才能定位到bug行的提交者,进行打板子教育
 Blog creation time:[2017-10-09 一 09:29]
-** DONE [#D] Theme:忽略文件										 :@Blog:@Git:
+* DONE [#D] theme:忽略文件
 	- State "DONE"       from "WAITTING"   [2017-10-07 六 22:23]
 1. 共享式忽略
    1. 一个文件的文件名如果被添加进workspace/.gitignore,则该文件不会被版本库管理
@@ -938,19 +937,19 @@ Blog creation time:[2017-10-09 一 09:29]
    3. 设置全局独享忽略: git config --global core.excludesfile /home/ljj/.gitconfig
    4. 独享的含义: 当其他人clone,pull该版本库时,该忽略文件不会被传递给该用户
 Blog creation time:[2017-10-07 六 22:01]
-** DONE [#D] Theme:文件归档										 :@Blog:@Git:
+* DONE [#D] theme:文件归档
 	- State "DONE"       from "WAITTING"   [2017-10-07 六 22:45]
 1. 基于提交创建归档: git archive -o lastest.zip commit-ID
 2. 基于提交中的指定目录创建归档: git archive -o lastest.tar commit-ID -- subdir1 subdir2
 3. 基于里程碑linux_1.0创建归档,并将归档中的所有文件都添加kernal/n前缀: git archive --format=tar --prefix=kernel/ linux_1.0 | gzip > linux_1.0-3-g5ea60ef.tar.gz
 Blog creation time:[2017-10-07 六 22:27]
-** DONE [#D] Theme:gitg											 :@Blog:@Git:
+* DONE [#D] theme:gitg
 	- State "DONE"       from "WAITTING"   [2017-10-08 日 08:53]
 1. gitg 是使用GTK+图形库实现的一个git版本库浏览器软件
 2. gitg不仅可以实现gitk的全部功能(浏览历史和文件),还能帮助执行提交
 3. 安装gitg: sudo aptitude install gitg
 Blog creation time:[2017-10-07 六 22:52]
-** WAITTING [#D] Theme:底层命令								 :@Blog:@Git:
+* WAITTING [#D] theme:底层命令
 1. git 的命令中,一部分是使用ID作为参数,一部分则使用范围作为参数,下面的两个底层命令中rev-parse就是负责ID相关,rev-list负责范围相关
 2. git rev-parse
    1. 该底层命令功能非常丰富和杂乱,很多的git脚本或者工具都会用到这条命令
@@ -972,12 +971,12 @@ Blog creation time:[2017-10-07 六 22:52]
    5. 显示,所有与版本A关联的历史提交中排除掉与D,F关联的历史提交之后剩下的提交: git rev-list --oneline B ^D ^F
    6. 显示,所有B,C的历史提交 中,排除B,C的交集之后,剩余的所有历史提交: git rev-list --oneline B...C
 Blog creation time:[2017-10-08 日 08:54]
-** WAITTING [#D] Theme:开发模型 								 :@Blog:@Git:
-*** 金字塔式协同模型
+* WAITTING [#D] theme:开发模型
+** 金字塔式协同模型
 1. linux社区就是使用的金字塔协同模型
 2. 特点:
    1. 只有核心开发者develop才具备向master推送的权限,任何开发者都具备读master的权限(这意味着需要搭建一个只读的Git服务器)
-*** Android式多版本协同模型(重点)	
+** Android式多版本协同模型(重点)	
 1. 单人工作模型
 2. 团队工作模型
 2-1 金字塔版本控制模型：发布Linux
@@ -1023,12 +1022,12 @@ slaver分支合并代码；
 分支主要用于三个方面：向上级分支推送代码，接受别人代码的合并，接受自己在slaver分支
 上的代码的合并
 Blog creation time:[2017-09-05 二 08:07]
-** DONE [#D] Theme:反转提交										 :@Blog:@Git:
+* DONE [#D] theme:反转提交
 1. 命令: git revert HEAD
 2. 作用: 将 HEAD^ 重新提交一次,成为最新的提交
 3. 用途: 在不具备reset权限的前提下,该命令可以将一个错误提交的前面那个提交回滚至工作区,暂存区,以及最新提交处
 Blog creation time:[2017-10-20 五 10:34]
-** DONE [#D] Theme:丢弃历史提交									 :@Blog:@Git:
+* DONE [#D] theme:丢弃历史提交
 	- State "DONE"       from "WAITTING"   [2017-10-25 三 15:54]
 1. 当一件事变得完美时，历史可能成为一种负担，或许我们需要一个精简的版本，或许我们需要丢弃一些很久很久以前的历史，此时，就需要本节介绍的命令
 2. 操作步骤：
@@ -1036,11 +1035,11 @@ Blog creation time:[2017-10-20 五 10:34]
    2. 创建根: echo "root-commit from tree of tag A" | git commit-tree A^{tree}, 会生成一个根提交,比如ID为 59fd58e
    3. 将 A 之后的所有提交变基到根上: git rebase --onto 59fd58e A master
 Blog creation time:[2017-10-25 三 15:02]
-** WAITTING [#D] Theme: clone 									 :@Blog:@Git:
+* WAITTING [#D] theme: clone
 1. 必要性: 再健壮的版本库设计,也抵挡不了存储介质的崩溃,因此,不要将鸡蛋装在同一个篮子里
 2. 
 Blog creation time:[2017-10-09 一 14:50]
-** WAITTING [#D] Theme: blog 									 :@Blog:@Git:
+* WAITTING [#D] theme: blog
 3. 日志
    1. 在执行commit命令之后，就会在log中产生一条提交信息
    2. git log --stat
@@ -1089,7 +1088,7 @@ Blog creation time:[2017-10-09 一 14:50]
 	  915cd2a2564a5b8a942301de31b993d0f6ec2636 -----
    5. git log -l --pretty=raw
 Blog creation time:[2017-10-06 五 14:21]
-** WAITTING [#D] Theme: cherry-pick 							 :@Blog:@Git:
+* WAITTING [#D] theme: cherry-pick
 1. 作用: 将指定的一个提交挑拣出来,与HEAD指向的提交合并,生成一个新的提交,并让HEAD指向它
 2. 运用:
    1. 剔除分支develop中某次糟糕的提交(tag为v1.4):
@@ -1111,7 +1110,7 @@ Blog creation time:[2017-10-06 五 14:21]
 		 2. 让git reset --hard 423af2f
 3. 备注: 本质上挑拣操作只挑拣一个commit-ID嫁接在HEAD处,那想要挑拣一段范围内的提交嫁接在任意提交处,该怎么办呢? 那就得使用强大的变基操作
 Blog creation time:[2017-10-09 一 10:30]
-** WAITTING [#D] Theme:rebase									 :@Blog:@Git:
+* WAITTING [#D] theme:rebase
 1. 命令: git rebase --onto taget-commit <start> <end>
    1. 范围: (start end],即该集合左开右闭
    2. 缺省命令: git rebase --onto target-commit <start> ,表示对(start HEAD]之间的提交执行变基操作
@@ -1145,7 +1144,7 @@ Blog creation time:[2017-10-09 一 10:30]
 	  7. 检查当前分支是develop还是"游离分支": git br -v,如果是develop,检查HEAD是否指向master,如果是,则完成任务
 	  8. 如果是"游离分支",则执行"分支叛变"操作,将develop指向游离分支: git co develop; git reset --hard 23ef46,完成任务
 Blog creation time:[2017-10-25 三 13:12]
-** WAITTING [#D] Theme: remote 									 :@Blog:@Git:
+* WAITTING [#D] theme: remote
 1. 注册前的推送git push git@server:shared-repo/CREATOR/test.git master
 2. 注册远程信息: git remote add origin git@server:shared-repo/CREATOR/test.git
 3. 修改注册路径: git remote set-url origin git@server:personal-repo/CREATOR/hello.git
@@ -1157,11 +1156,11 @@ Blog creation time:[2017-10-25 三 13:12]
 9. 查看远程版本库的分支信息: git ls-remote origin
 10. 
 Blog creation time:[2017-10-20 五 10:48]
-** WAITTING [#D] Theme: clone 									 :@Blog:@Git:
+* WAITTING [#D] theme: clone
 1. 克隆裸版本库(无工作区): git clone --mirror git-ljj:repo/ljj/test.git
 2. 克隆对等版本库(有工作区): git clone  git-ljj:repo/ljj/test.git
 Blog creation time:[2017-10-24 二 13:29]
-** WAITTING [#D] Theme: push 									 :@Blog:@Git:
+* WAITTING [#D] theme: push
 1. 命令: git push origin develop
 2. 命令: git push origin master
 3. 背景:
@@ -1201,13 +1200,13 @@ Blog creation time:[2017-10-24 二 13:29]
    2. 初始状时,用户1和用户2本地的最新提交一致,用户1发生了一次push,此时用户2再进行push时,对于用户2而言,构成了非快进式推送的条件,用户2将无法push
 	  1. 该问题是团队合作过程中的家常便饭,处理的方法基本就是使用pull或者fetch
 Blog creation time:[2017-10-20 五 13:18]
-** WAITTING [#D] Theme: fetch 									 :@Blog:@Git:
+* WAITTING [#D] theme: fetch
 1. 拉取所有分支: git fetch origin: 将远程refs/head/目录下的所有分支拉取到本地的refs/remotes/origin/下面
 2. 拉取指定分支: git fetch origin feature-led: 将远程refs/head/feature-led分支拉取到本地的refs/remotes/origin下面
 3. 访问之前fetch的分支: 从远程fetch到本地的分支,要用"远程主机/分支名"的形式读取,如: git merge --no-ff -m "---" origin/feature-led
 4. 备注: fetch 远程分支到本地和fetch 远程提交到本地是有差别的,拉取分支时,是将整个分支全部拉取下来
 Blog creation time:[2017-10-23 一 09:54]
-** DONE [#D] Theme: merge 										 :@Blog:@Git:
+* DONE [#D] theme: merge
    - State "DONE"       from "WAITTING"   [2017-10-24 二 13:26]
 1. 命令: git merge --no-ff commit-ID
 2. 常用命令: git merge --no-ff -m branch
@@ -1241,7 +1240,7 @@ Blog creation time:[2017-10-23 一 09:54]
 		 5. 添加文件: git add api.h
 		 6. 提交冲突解决的版本: git ci -m "fix-rename conflict" 
 Blog creation time:[2017-10-23 一 09:55]
-** WAITTING [#D] Theme: pull (fetch+merge) 						 :@Blog:@Git:
+* WAITTING [#D] theme: pull (fetch+merge)
 1. 介绍: 相当于 fetch 和 merge 的结合体
 2. 作用: 该命令之后,本地的最新提交就会远程的最新提交合并,在本地生成合并后的提交,如此,本地的这个合并后的提交便有了两个父提交,其中一个是远程的最新提交,这样便解除了非快进式推送的条件,在次推送时,就是非快进式推送了
 3. 使用场合:
@@ -1253,7 +1252,7 @@ Blog creation time:[2017-10-23 一 09:55]
 5. 冲突:
    1. pull命令不可能总会那么一帆风顺,其根本原因在于,pull命令会将远程的最新提交和本地的最新提交进行合并,只要有合并的地方,就无可避免的会发生冲突
 Blog creation time:[2017-10-23 一 08:58]
-** WAITTING [#D] Theme: refs 									 :@Blog:@Git:
+* WAITTING [#D] theme: refs
 1. 查看所有引用:  git show-ref
 2. 查看指定引用: git show-ref master
 3. 以refs/heads/开头的是分支指针头
@@ -1264,7 +1263,7 @@ Blog creation time:[2017-10-23 一 08:58]
 8. stash
 9. tag-name: .git/refs/tags/tag-name 
 Blog creation time:[2017-10-07 六 21:16]
-** WAITTING [#D] Theme: branches 									 :@Blog:@Git:
+* WAITTING [#D] theme: branches
 1. 分支的基础知识
    1. 分支的祖先起点：主分支上的第一次提交，是任意分支的祖先起点
    2. 分支的起点： 每个分支，都有一个分支起点。任意分支上的任意提交，都可以是某指定分支的起点
@@ -1448,6 +1447,3 @@ Blog creation time:[2017-10-07 六 21:16]
 		 12. 完成合并之后,删除该紧急修复分支: git branch -d hotfix-1.2
 		 13. 备注: 紧急修复分支同发布分支最大的区别在于,紧急修复分支主要针对master分支修复,而发布分支主要针对develop分支修复,其次,紧急修复分支必须同时向master分支以及develop分支合并,而发布分支向master的合并是可选的
 Blog creation time:[2017-10-06 五 14:21]
-** WAITTING [#D] Theme:郑亚军学linux							 :@Blog:@Git:
-
-Blog creation time:[2017-10-31 二 18:58]
