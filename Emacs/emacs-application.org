@@ -17,7 +17,8 @@ g,在小缓冲区出现Go to node,切换到刚刚下载的那个手册即可
 的info document，将其移动至/usr/share/info/emacs-25下面，以备实时查询
 	要经常使用g来切换node，而且在切换前应当C-x k 先将当前的info缓冲区给kill掉再重新打开进行切换
 Blog creation time:[2017-09-18 一 14:47]
-* WAITTING [#C] theme:搭建C/C++的IDE
+* ABORT [#C] theme:搭建C/C++的IDE
+  CLOSED: [2017-12-27 三 10:14]
 实现:
 -- 跳转至头文件
 -- 跳转至定义
@@ -52,3 +53,72 @@ ycmd:
 备注: 测试过程中遇到的问题请参考 FAQ
 
 Blog creation time:[2017-08-07 一 13:05]
+* theme: 使用 rtags 进行语义补全以及实现跳转
+** 为什么要使用 rtags 
+	 之前一直使用 ycmd + gtags 的方案进行语义补全和跳转（前者是语义补全，后者跳转），但是，ycmd 的补全有个最大的毛病就是需要使用另一个
+ 插件 YCM-Generator来手动生成 .ycm_extra_conf.py ,并且 这个 YCM-Generator 的使用要求显得有些苛刻，比如在 CMAKE 中一些与硬编码相关的参数
+ 不允许在CmakeLists.txt中显示定义，需要在命令行或脚本中以参数的形式传递进去，它干预到了工程，这是不合理的。然后就是，每次
+ 都更改源代码后编译时都需要重新手动生成 .ycm_extra_conf.py, 还要求你的 CMAKE 工程在正确编译的条件下才能有效的生成它。
+ 上面所述的关于ycmd 的弊端导致我不得不转向了口碑较好的 rtags。 哦，对了，还没有说 gtags 的弊端呢， 一句话，当工程文件个数
+ 超过 40万 时，等待查找的时间在10s左右，这是我不能忍受的。
+		 好了，说完了 ycmd + gtags 的缺点，那说一下 rtags 的优点，据说是读写Mongodb数据库，采用服务器客户端的模式，一句话描述：
+ 跳转速度快速，还能进行语义补全
+** 安装 rtags
+官方链接：https://github.com/Andersbakken/rtags
+中文参考链接： https://github.com/ytulinjiajun/emacs-document/blob/master/emacs-common/%E5%9C%A8spacemacs%E4%B8%AD%E4%BD%BF%E7%94%A8rtags.org
+*** 安装依赖：
+ LLVM/Clang >= 3.3
+ GCC/Clang >= 4.7/3.2
+ cmake >= 2.8
+ emacs >= 24.3 
+ pkg-config （可选）
+ bash-completion （可选）
+ lua version >= 5.3  （可选）
+ ZLIB (可选)
+ OpenSSL  （可选）
+
+ -- sudo apt install -y clang libclang-dev cmake pkg-config bash-completion lua5.3
+*** 下载-构建-安装：
+ git clone --recursive git@github.com:Andersbakken/rtags.git
+ cd rtags
+ cmake -H. -B_builds
+ cd _builds
+ make -j8
+ sudo make install
+
+ 3. 配置服务器：
+ mkdir -p ~/.config/systemd/user
+
+ 创建RTags daemon socket service配置文件:
+ Add the following to ~/.config/systemd/user/rdm.socket:
+ #+BEGIN_SRC 
+ [Unit]
+ Description=RTags daemon socket
+
+ [Socket]
+ ListenStream=%h/.rdm
+
+ [Install]
+ WantedBy=multi-user.target
+ #+END_SRC
+
+ 创建 the RTags daemon service配置文件：
+ Add the following to ~/.config/systemd/user/rdm.service:
+ #+BEGIN_SRC 
+ [Unit]
+ Description=RTags daemon
+
+ Requires=rdm.socketp
+
+ [Service]
+ Type=simple
+ ExecStart=/usr/local/bin/rdm --log-file=%h/.rtags/rdm.log --data-dir=%h/.rtags/rtags-cache --verbose --inactivity-timeout 300
+ #+END_SRC
+ 启用socket service: systemctl --user enable rdm.socket   systemctl --user start rdm.socket
+*** 为工程构建一个RTags数据库(cmake项目)
+1. 在脚本中给出 -DCMAKE_EXPORT_COMPILE_COMMANDS=1 或者在命令行使用 cmake -H. -B_builds -DCMAKE_EXPORT_COMPILE_COMMANDS=1
+
+2. 用RTags来为代码生成索引: rc -J ./compile_commands.json，创建该索引需要一点时间，可以查看日志文件来了解进度： tail -f ~/.rtags/rdm.log
+这个索引一旦生成，以后就会自动由 Cmake 和 RTags 交互，每次编译总能自动生成 compile_commands.json 文件，而不用用户去手动操作
+
+3. 在 Spacemacs 中写一个层 rtags 进行配置，以便让 emacs 支持 rtags

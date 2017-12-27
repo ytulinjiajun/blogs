@@ -23,8 +23,8 @@
 Blog creation time:[2017-09-04 一 22:04]
 ** DONE [#D] theme:spacemacs相关网站
 	- State "DONE"       from "TODO"       [2017-09-05 二 09:27]
-1. 官网：http://spacemacs.org
-2. github:https://github.com/syl20bnr/spacemacs
+  - 官网：http://spacemacs.org
+  - github:https://github.com/syl20bnr/spacemacs 
 Blog creation time:[2017-09-05 二 08:46]
 ** DONE [#D] theme:安装emacs
 	- State "DONE"       from "TODO"       [2017-09-04 一 22:53]
