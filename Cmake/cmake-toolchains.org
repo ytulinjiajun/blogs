@@ -1,37 +1,38 @@
-* <<Introduction>>
-  1. CMake使用工具链来进行编译,链接库,创建归档，以及使用一些任务去进行构建
-  2. 命令[[project]]()以及 [[enable_language]]()中给出的语言决定了采用何种工具链工具
-  3. 在常规构建中，CMake基于系统自检和缺省自动为宿主构建决定工具链
-  4. 在交叉编译的情况下，可以通过相关的编译器和工具路径来指定工具链文件
-* <<Languages>>
-  1. 在使用[[project]]()命令时,如果设置了LANGUAGE参数,或者使用[[enable_language]](),则内置变量[[CMAKE_C_COMPILER]]就会被设置为指定的语言,如果没有做出任何设置,则会默认隐式使用缺省的C以及CXX
-  2. 采用的语言决定了一些信息，如编译器的供应商和版本，目标架构和位宽，相应工具的位置等
-  3. 当语言被确定好以后，相应的就确定了使用 何种编译器,链接器
-  4. 全局属性[[ENABLED_LANGUAGES]]包含当前启用的语言
-  5. 通过目标中源文件的语言来计算采用的链接器,在静态库的情况下，也通过依赖库的语言来计算,CMake做出的选择可能被目标属性 [[LINKER_LANGUAGE]] 重写
-* <<Variables and Properties>>
-  1. 几个关于工具链的语言组件变量会被使用
-  2. [[CMAKE_TOOLCHIAIN_FILE]] 提供一个交叉编译的脚本
-  3. [[CMAKE_SYSTEM_NAME]] 目标机上运行的操作系统的名称
-  4. [[CMAKE_SYSTEM_PROCESSOR]] 目标机的硬件架构，例如ARM，X86
-  5. [[CMAKE_C_COMPILER]] 指明了<LANG>语言的编译器所在的路径
-  6. [[CMAKE_C_COMPILER_ID]] 作为编译器的标识
-  7. [[CMAKE_C_COMPILER_VERSION]] 标识编译器的版本
-  8. [[CMAKE_C_FLAGS]] 当编译一个特定语言的文件时,该变量中给出的选项将会被作为编译时的选项
-  9. [[CMAKE_FIND_ROOT_PATH]] 搜索路径
-  10. [[CMAKE_SYSROOT]]  搜索路径
-* Toolchain Features
-* Cross Compiling
-   1. <<CMAKE_TOOLCHIAIN_FILE>> 这应当是CMake交叉编译中最重要的概念了,CMake不知道你的目标平台是什么、用什么编译器、如何编译等等，所以你需要提供预设一些变量到CMake
-   2. 其中最为方便的一个方法就是将相关的变量设置都放进一个文件(cmake脚本)中去，然后将该文件通过CMAKE_TOOLCHIAIN_FILE传递给CMake 
-   3. 传递交叉编译脚本的方法: cmake -D CMAKE_TOOLCHIAIN_FILE="/path/to/my-cmake-toolchain-file" ..   (当然,也可以在CMakeList.txt中直接给出)
-   4. <<目标机>>: 运行代码的实体机,比如stm32f407zgt6 
-   5. <<宿主即>>: 也叫开发平台,比如linux,windows
-   6. 交叉编译: 在宿主机上开发程序,烧录到目标机上运行
-   7. cmake是无法自动判断出目标机的上运行的系统的,因此必须需要我们通过变量 [[CMAKE_SYSTEM_NAME]] 指定
-   8. 在宿主机上交叉编译出来的可执行文件通常不能直接运行在宿主机上
-   9. 交叉编译过程中不能使用宿主机上的原生头文件和库，而是需要用到一套专门针对目标机的头文件和库,如embi-arm-linux-xx
-   10. 在交叉编译时(即指定了[[CMAKE_SYSTEM_NAME]]), [[CMAKE_CROSSCOMPILING]]变量将被设置为真值
-   11. 稍微大一点的项目都会用到一些外部依赖库或者tool,CMake提供了 [[find_library]]() [[find_package]]() [[find_file]]() [[find_program]]() [[find_path]]()来进行外部依赖的搜索查找
-   12. 变量[[CMAKE_FIND_ROOT_PATH]] 和 [[CMAKE_SYSROOT]] 指明了外部依赖的搜索路径,即所有find_*将在这两个变量指定的路径路径,以及宿主机相关的路径下搜索,当然了,可以限制只在某一路径下搜索,详情参考CMAKE_FIND_ROOT_PATH
-Blog creation time:[2017-11-08 三 09:40]
+* cmake-toolchains(7)
+** Introduction
+   1. CMake使用工具链来进行编译,链接库,创建归档，以及使用一些任务去进行构建
+   2. 命令[[project]]()以及 [[enable_language]]()中给出的语言决定了采用何种工具链工具
+   3. 在常规构建中，CMake基于系统自检和缺省自动为宿主构建决定工具链
+   4. 在交叉编译的情况下，可以通过相关的编译器和工具路径来指定工具链文件
+** Languages
+   1. 在使用[[project]]()命令时,如果设置了LANGUAGE参数,或者使用[[enable_language]](),则内置变量[[CMAKE_C_COMPILER]]就会被设置为指定的语言,如果没有做出任何设置,则会默认隐式使用缺省的C以及CXX
+   2. 采用的语言决定了一些信息，如编译器的供应商和版本，目标架构和位宽，相应工具的位置等
+   3. 当语言被确定好以后，相应的就确定了使用 何种编译器,链接器
+   4. 全局属性[[ENABLED_LANGUAGES]]包含当前启用的语言
+   5. 通过目标中源文件的语言来计算采用的链接器,在静态库的情况下，也通过依赖库的语言来计算,CMake做出的选择可能被目标属性 [[LINKER_LANGUAGE]] 重写
+** Variables and Properties
+   1. 几个关于工具链的语言组件变量会被使用
+   2. [[CMAKE_TOOLCHIAIN_FILE]] 提供一个交叉编译的脚本
+   3. [[CMAKE_SYSTEM_NAME]] 目标机上运行的操作系统的名称
+   4. [[CMAKE_SYSTEM_PROCESSOR]] 目标机的硬件架构，例如ARM，X86
+   5. [[CMAKE_C_COMPILER]] 指明了<LANG>语言的编译器所在的路径
+   6. [[CMAKE_C_COMPILER_ID]] 作为编译器的标识
+   7. [[CMAKE_C_COMPILER_VERSION]] 标识编译器的版本
+   8. [[CMAKE_C_FLAGS]] 当编译一个特定语言的文件时,该变量中给出的选项将会被作为编译时的选项
+   9. [[CMAKE_FIND_ROOT_PATH]] 搜索路径
+   10. [[CMAKE_SYSROOT]]  搜索路径
+** Toolchain Features
+** Cross Compiling
+    1. <<CMAKE_TOOLCHIAIN_FILE>> 这应当是CMake交叉编译中最重要的概念了,CMake不知道你的目标平台是什么、用什么编译器、如何编译等等，所以你需要提供预设一些变量到CMake
+    2. 其中最为方便的一个方法就是将相关的变量设置都放进一个文件(cmake脚本)中去，然后将该文件通过CMAKE_TOOLCHIAIN_FILE传递给CMake 
+    3. 传递交叉编译脚本的方法: cmake -D CMAKE_TOOLCHIAIN_FILE="/path/to/my-cmake-toolchain-file" ..   (当然,也可以在CMakeList.txt中直接给出)
+    4. <<目标机>>: 运行代码的实体机,比如stm32f407zgt6 
+    5. <<宿主即>>: 也叫开发平台,比如linux,windows
+    6. 交叉编译: 在宿主机上开发程序,烧录到目标机上运行
+    7. cmake是无法自动判断出目标机的上运行的系统的,因此必须需要我们通过变量 [[CMAKE_SYSTEM_NAME]] 指定
+    8. 在宿主机上交叉编译出来的可执行文件通常不能直接运行在宿主机上
+    9. 交叉编译过程中不能使用宿主机上的原生头文件和库，而是需要用到一套专门针对目标机的头文件和库,如embi-arm-linux-xx
+    10. 在交叉编译时(即指定了[[CMAKE_SYSTEM_NAME]]), [[CMAKE_CROSSCOMPILING]]变量将被设置为真值
+    11. 稍微大一点的项目都会用到一些外部依赖库或者tool,CMake提供了 [[find_library]]() [[find_package]]() [[find_file]]() [[find_program]]() [[find_path]]()来进行外部依赖的搜索查找
+    12. 变量[[CMAKE_FIND_ROOT_PATH]] 和 [[CMAKE_SYSROOT]] 指明了外部依赖的搜索路径,即所有find_*将在这两个变量指定的路径路径,以及宿主机相关的路径下搜索,当然了,可以限制只在某一路径下搜索,详情参考CMAKE_FIND_ROOT_PATH
+ Blog creation time:[2017-11-08 三 09:40]

@@ -323,7 +323,7 @@ CMAKE_USER_MAKE_RULES_OVERRIDE_ <LANG>
 *** CMAKE_NOT_USING_CONFIG_FLAGS
 1. 该变量如果为 true, 则忽略 _BUILD_TYPE 
 2. 这是一个在CMake内部被 generators 使用的 flag, 用来告诉 CMAKE 忽略 _BUILD_TYPE
-* DONE [#C] theme: arm-none-eabi-gcc
+* DONE [#C] theme: 配置 arm-none-eabi-gcc 
 ** 介绍
 1. arm-none-eabi-gcc
    1. 用于编译 ARM 架构的裸机系统（包括 ARM Linux 的 boot、kernel，不适用编译 Linux 应用 Application）
@@ -589,7 +589,8 @@ Version: 5
 3. 根据上述"使用方法"中给出的方式进行配置
 4. 在gcc和其他package里面的一些shell脚本与dash shell是不兼容的,而linux默认bin/sh就是指向dash,需要将其改变为指向 bash
 5. 使用命令 sudo dpkg-reconfigure -plow dash 做出修改, 此时 ls -l /bin/sh 可以看到指向 bash
-* TODO [#C] theme: STLink
+* DONE [#C] theme: 配置 stink
+  CLOSED: [2017-12-27 三 15:57]
 1. Debian 下安装stlink稍微显得有些麻烦,其根源在于 stlink 使用到了一个库 libusb 而且版本最低为 v1.0.9,然而debian
 对第三方软件的把关一向很苛刻,因此,系统中已存在的 libusb 版本只是 v1.0.0,所以,在编译 stlink 时必然出错
 
@@ -616,13 +617,8 @@ Version: 5
 (5*) 重新 make release, 没有任何错误 (注意,此处可能出现一个错误: Could not found PkgConfig, 需要安装 pkg-config这个软件 )
 (6) 安装stlink: cd build/Release && sudo make install
 (7) 注意: 有可能提示 libstlink-shared.so.1 找不到,可是该动态库确实在/usr/local/lib下面存在, 此时,需要调用 sudo ldconfig 来更新一下动态链接器 
-* TODO [#C] theme: Tips 
-** Multiple configurations
-    CMake 允许在同一个工程中同时拥有多份配置, 这样的一个重量级的功能能在实际工程中是十分有用的, 其功能与 git 中
-分支的作用基本一致, 同 git 中分支所不同的是, CMake 中的多配置有相应的命令或者内置变量来支持,比如, [[CMAKE_BUILD_TYPE]],
-以及一些个描述编译标志的如 [[CMAKE_EXE_LINK_FLAGS_RELEASE_INIT]] 等, 因此, 它比与工程的耦合性更加强一些, 相对与中小型工程,
- 使用 CMake 自带的多配置功能还是挺不错的选择, 在大型工程中, git 做版本控制管理可能会比较好,因为它不至于让工程变得臃肿
-* TODO [#C] theme: How to build packages such as rpms, debs, OSX packages, etc
+* DONE [#C] theme: How to build packages such as rpms, debs, OSX packages, etc :@deb:
+  CLOSED: [2018-01-03 三 13:31]
 link: https://github.com/jordansissel/fpm
 ** install
 1. apt-get install ruby ruby-dev rubygems build-essential
@@ -649,32 +645,129 @@ a python package (python), a php pear module (pear), etc.
 
 detail information: fpm -help
 ** multiple packages
-* TODO [#C] theme: FAQ
-** arm-none-eabi-gcc is not able to compile a simple test program
-1. 引发错误的原因:
-   1. CMake可以跨平台,可是不同的平台使用不同的编译器,这意味着CMake需要识别编译器的标识
-   2. 当使用交叉编译时，如果没有 special flags 或者 custom linker scripts，则无法链接二进制文件
-   3. 基于上面两个原因,因此,在跨平台交叉编译环境下,CMake会去检查正在工作的编译器,当CMake不能自动的检测到该编译器标识时,就会产生该错误
-2. 解决错误的方法:
-   1. 一个已经丢弃的方法是引入模块 CMakeForceCompiler, 该模块会忽略CMake对工作编译器的检查 (该模块的详细用法参照官方文档的cmake-modules文档)
-   2. 一个 CMakeForceCompiler 的替代是变量 CMAKE_TRY_COMPILE_TARGET_TYPE, 该方案是目前CMake官方推荐的处理该错误的方案
-   3. CMAKE_TRY_COMPILE_TARGET_TYPE 介绍
-      1. 使用源文件签名为try_compile（）调用生成的目标类型
-      2. 该变量的有效值是: 
-         1. EXECUTABLE: 使用add_executable（）命名生成的项目中的源文件, 如果没有对该变量进行设置的话,该值是默认值
-         2. STATIC_LIBRARY: 使用add_library（）和STATIC选项来命名生成的项目中的源文件,这样可以避免运行链接器，在交叉编译时，也就解决了没有 special flags 或者 custom linker scripts 而无法链接二进制文件的情况
-      3. 细节: 在 toolchain file 中给出 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY) 
-** sys.c:(.text+0x146): undefined reference to `HAL_RCC_OscConfig' 
-引发 undefined reference 错误的几种原因及解决方案:
+* theme: 配置串口调试助手
+1. linux下自带虚拟串口的驱动，不需要手动安装
 
-1. 原因一: 在链接时找不到函数 HAL_RCC_OscConfig() 的定义, 一个可能的原因是该函数所在的源文件未参与可执行文件的链接过程
-解决方案: 在 add_executable()时将该函数所在的源文件添加进来参与链接
+2. linux对串口的命名不同于windows，在Windows下的命名是CP2102之类的，在linux下是ttyUSBx，虚拟串口是ttyACMx
 
-2. 原因二: 在链接时找不到函数 HAL_RCC_OscConfig() 的定义, 另一个可能的原因是该函数所在的源文件未参与库的创建,或者该参与创建了但是
-生成的库未参与可执行文件的链接过程
-解决方案: 在 add_library()时将该函数所在的源文件添加进来参与创建库,同时在使用target_link_directories()时将其加入到可执行文件的链接列表中
+3. 先来找一下串口的编号，所有的设备都在/dev目录下，那么插Nucleo前后/dev中的新增项就是Nucleo的串口
+在未插Nucleo之前，保存所有的设备名字到before.txt---->ls /dev >before.txt
+在插上Nucleo之后，保存所有的设备名字到after.txt------>ls /dev >after.txt
+使用diff查看改动--->diff before.txt after.txt
+看到新增项，ttyACM0就是我们Nucleo的串口编号
 
-3. 原因三: 多个库的链接顺序问题引起 (这是最常见且最隐蔽而不容易被发现的问题)
-   在库 BBB 里面的某个源文件中用到该函数,但是该函数却在另一个库 AAA 的某个源文件中定义,在 target_link_libraries命令中却是这样书写,
-target_link_libraries(EEE AAA BBB), 就会引发该错误,正确的写法是 target_link_libraries(EEE BBB AAA), 总结一下就是:
-依赖其他库的库一定要放到被依赖库的前面，这样才能真正避免undefined reference的错误，完成编译链接
+4. 常用的串口软件：
+   在linux下工作，串口软件我更喜欢minicom, 他小巧，使用控制台窗口,有多种模式可以选择,当然，putty也是一个不错的选择
+安装minicom： sudo apt-get install minicom
+或者安装putty:   sudo apt-get install putty
+安装完minicom之后，需要简单的配置一下。比如串口号，波特率，通信协议等等。可以
+使用sudo minicom -s 进行配置。
+
+5. kmsg： 
+	用于检索用 printk 生成的内核消息,任何时刻只能有一个具有超级用户权限的进程可以读取这个文件,也可以用系统调用 syslog 检索这些消息,
+通常使用工具 dmesg 或守护进程 klogd 检索这些消息, proc 是一个内存文件系统 , 每次读文件 kmsg 实际是内核内部的循环缓冲区 , 每读过后 ,
+ 循环缓冲区的东西就被认为已经处理过了 ( 也就是变成无效内容 ), 所以你再次读为空是很正常的 为什么会这样处理呢 , 循环缓冲区大小有限 , 
+内核又随时可能往里面写东西 , 所以这样处理很正常 . 你去查一下 /proc/kmsg 的信息有没有跟系统日志关联 , 如果有的话 , 你就可以读日志文件
+
+6. dmsg:
+	dmesg 用来显示开机信息， kernel 会将开机信息存储在 ring buffer 中。您若是开机时来不及查看信息，可利用 dmesg 来查看。 
+dmesg 是 kernel 的 log ，凡是跟 kernel 相关的，比如 driver 出了问题（相机，蓝牙， usb ，启动，等等）开机信息亦保存在 /var/log 目录中，名称为 dmesg 的文件里。 
+more /var/log/dmesg
+* 使用 arm-none-eabi-gdb 进行调试                                      :@gdb:
+** 准备工作
+1. 已经安装 stlink
+2. 已经准备好了 arm-none-eabi 套件
+3. 一个工作正常的 cmake 维护的工程
+** 基础知识
+1. st-util: 与 STM32 设备进行交互的一个 GDB 服务器，运行该命令之后就会开启一个 GDB 服务器， 默认的监听端口号是 4242
+2. arm-none-eabi-gdb: 一款基于 GNU Debugger 的调试器
+3. gdb 命令的特点：
+- 总是以一个单行作为一条输入命令，这个单行的长度没有限制
+- 以一个命令名开头，其后面经跟着的是参数，例如：step 5, 其中， step 是命令，表示单步执行， 5 是参数， 表示单步执行5次，当然了，也可以不要参数，有的命令甚至没有参数
+- GDB 命令允许以一个截断后的清晰的缩写来替代完整的名字，比如 (gdb) target extended-remote :4242 可以写为 (gdb) tar extended-remote :4242; 另外，还有一些内置
+了的缩写，比如 step 可以用 s 来替换，尽管有很多以 s 开头的命令，但是这写是约定好了的， 你可以使用 help s 来测试 s 是否是一个合法的内置缩写，测试的结果是 Usage: step [N]
+- 以一个空白行键入回车，意味着重复上一次的命令
+- 任何以 # 开头的命令都会被注释掉，这个特性在 命令文件 里面可能是有用的
+** 调试步骤
+1. 开启 gdb 服务器： st-util
+2. 启动 Debugger 调试器： arm-none-eabi-gdb STM32F407ZGT6.elf
+3. 远程连接到 gdb 服务器： (gdb) target extended-remote :4242
+4. 复位： (gdb) monitor reset
+5. 停止 MCU： (gdb) monitor halt
+6. 将 STM32F407ZGT6.elf 加载至 MCU：(gdb) load
+7. 列出当前执行的源代码：(gdb) list
+至此，如果列出了源代码，那么说明所有的 gdb连接 的初始化操作完成了，剩下的就是对 arm-none-eabi-gdb 指令的运用，
+如果，出现 No symbol table is loaded. Use the "file" command 的语句，那么请参考 [[file:FAQ.org][No symbol table is loaded. Use the "file" command]]
+** arm-none-eabi-gdb 常用指令
+*** - (减号)
+[[file:image/gdb-gui.png]]
+*** list <---> l
+*** info <---> i
+**** 显示断点信息：info breakpoints
+ [[file:image/gdb-info-breakpoints.png]]
+**** 显示程序当前状态：info program
+ [[file:image/gdb-info-program.png]]
+**** 显示寄存器当前信息：info registers
+ [[file:image/gdb-info-registers.png]]
+**** 显示所有寄存器的信息： info all-registers
+[[file:image/gdb-info-all-registers1.png]]
+
+file:image/gdb-info-all-registers2.png
+**** 显示所有函数： info functions
+[[file:image/gdb-info-function.png]]
+**** 显示当前所在行: info line 
+**** 显示本地变量的值： info locals
+**** 显示存储管理器信息： info mem
+**** 显示当前源文件： info source
+**** 查看涉及的所有源文件： info sources
+**** 查看所有定义的数据类型： info type
+**** 查看所有已经定义的变量： info variables
+**** 查看观测点： info watchpoints
+*** run <---> r
+该命令执行之后，在 gdb 下开始执行程序
+*** break <---> b
+**** break LOCATION
+     作用： 在 LOCATION 的位置设置一个断点
+     参数 LOCATION 可能的取值：函数名， 行号， 指令的地址 
+     示例：
+     - 在将要被执行的下一条指令的位置设置一个断点： b
+     - 在第126行插入一个断点： b 126
+     - 在main函数处插入一个断点：b main
+     - 当 i==1 时，停止运行： b i=1
+     - 显示当前设置的断点信息：i b
+**** d breakpoints NUM
+     作用： 删除断点
+     示例：
+     - 删除序号为2的断点： d breakpoints 2
+     - 删除所有断点： d breakpoints
+*** setp <---> s
+作用： 会进入子函数的单步调试
+*** next <---> n
+作用： 会跳过子函数的单步调试
+*** until <---> u
+命令： u 21
+作用： 运行到第21行
+*** finsh
+作用： 完成并跳出当前子函数
+*** print <---> p
+命令： p tmp 
+作用：用来显示变量 tmp 的数值
+*** display 
+命令： display tmp
+作用： 用来跟踪变量 tmp 的数值，每次执行行下来的时候都会自动显示变量的数值
+*** bt
+命令： 查看堆栈
+*** quit <---> q
+作用： 正常退出 GDB
+备注：等价于快捷键 C-d
+
+
+ 4. run
+ 6. print
+ 7. c
+ 9. edit
+ 11. help
+
+在这里我们通过 -c gdb_port pipe来快速启动OpenOCD并与GDB连接，同时在main函数打断点并执行到main处。
+具体这里的参数输入的方式和意义大家可以查询GDB的说明书，这里就不做太多的解释了，大家想要改写为自己的应用时只需要将其中和工程相关的参数 elf 文件，
+的名称修改就可以了，（这里-iex 参数前缀是GDB的指令，意为在执行GDB本体调试程序前先执行-iex 后引号中的外部指令）。

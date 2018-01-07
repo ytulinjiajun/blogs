@@ -1,0 +1,80 @@
+* DONE 在 cmake 中移植 arm-none-eabi-gcc 时无法通过编译              :@Cmake:
+  CLOSED: [2017-12-28 四 11:04]
+问题描述： arm-none-eabi-gcc is not able to compile a simple test program
+
+1. 引发错误的原因:
+   1. CMake可以跨平台,可是不同的平台使用不同的编译器,这意味着CMake需要识别编译器的标识
+   2. 当使用交叉编译时，如果没有 special flags 或者 custom linker scripts，则无法链接二进制文件
+   3. 基于上面两个原因,因此,在跨平台交叉编译环境下,CMake会去检查正在工作的编译器,当CMake不能自动的检测到该编译器标识时,就会产生该错误
+2. 解决错误的方法:
+   1. 一个已经丢弃的方法是引入模块 CMakeForceCompiler, 该模块会忽略CMake对工作编译器的检查 (该模块的详细用法参照官方文档的cmake-modules文档)
+   2. 一个 CMakeForceCompiler 的替代是变量 CMAKE_TRY_COMPILE_TARGET_TYPE, 该方案是目前CMake官方推荐的处理该错误的方案
+   3. CMAKE_TRY_COMPILE_TARGET_TYPE 介绍
+      1. 使用源文件签名为try_compile（）调用生成的目标类型
+      2. 该变量的有效值是: 
+         1. EXECUTABLE: 使用add_executable（）命名生成的项目中的源文件, 如果没有对该变量进行设置的话,该值是默认值
+         2. STATIC_LIBRARY: 使用add_library（）和STATIC选项来命名生成的项目中的源文件,这样可以避免运行链接器，在交叉编译时，也就解决了没有 special flags 或者 custom linker scripts 而无法链接二进制文件的情况
+      3. 细节: 在 toolchain file 中给出 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY) 
+* DONE cmake 在链接期间由于链接顺序引起链接失败                      :@Cmake:
+  CLOSED: [2017-12-28 四 11:04]
+问题描述： sys.c:(.text+0x146): undefined reference to `HAL_RCC_OscConfig'
+
+引发 undefined reference 错误的几种原因及解决方案:
+
+1. 原因一: 在链接时找不到函数 HAL_RCC_OscConfig() 的定义, 一个可能的原因是该函数所在的源文件未参与可执行文件的链接过程
+解决方案: 在 add_executable()时将该函数所在的源文件添加进来参与链接
+
+2. 原因二: 在链接时找不到函数 HAL_RCC_OscConfig() 的定义, 另一个可能的原因是该函数所在的源文件未参与库的创建,或者该参与创建了但是
+生成的库未参与可执行文件的链接过程
+解决方案: 在 add_library()时将该函数所在的源文件添加进来参与创建库,同时在使用target_link_directories()时将其加入到可执行文件的链接列表中
+
+3. 原因三: 多个库的链接顺序问题引起 (这是最常见且最隐蔽而不容易被发现的问题)
+   在库 BBB 里面的某个源文件中用到该函数,但是该函数却在另一个库 AAA 的某个源文件中定义,在 target_link_libraries命令中却是这样书写,
+target_link_libraries(EEE AAA BBB), 就会引发该错误,正确的写法是 target_link_libraries(EEE BBB AAA), 总结一下就是:
+依赖其他库的库一定要放到被依赖库的前面，这样才能真正避免undefined reference的错误，完成编译链接
+* DONE DoST 中移植printf函数时出错                     :@Cmake:@DoST:@printf:
+  CLOSED: [2017-12-28 四 11:04]
+1. 问题描述： 在 DoST 中移植printf函数时，arm-none-eabi-gcc在链接期间显示如下错误
+arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/softfp/libc.a(lib_a-sbrkr.o): In function `_sbrk_r': sbrkr.c:(.text._sbrk_r+0xc): undefined reference to `_sbrk'
+
+
+I've looked at the toolkit you linked, just to read the following in the readme.txt:
+
+This toolchain is built and optimized for Cortex-R/M bare metal development.
+
+In other words, this toolchain is specifically configured for embedded systems, perhaps with no operating system running at all. In such case, there's no system to provide e.g. standard output where printf() is supposed to write, there's no file system, etc. - you have to link against some library providing these basic services, if you want to use them.
+
+That said, your toolkit provides librdimon.a library which provides all those basic services. This library is actually a part of libgloss compilation. If you want to link against it, try the following command:
+
+arm-none-eabi-gcc --specs=rdimon.specs   -Wl,--start-group -lgcc -lc -lm -lrdimon -Wl,--end-group -o test test.c
+This links fine on my PC, but whether it's what you really want is another story (where do you expect to see printf() output, anyway?).
+
+For you chip you should probably look for a library which redirects the standard output to serial port or provides debug output over JTAG. Alternatively, you can use your custom function e.g. sending debug output to serial console instead of printf() - it's up to you. If you decide on using printf() I suggest reading libgloss documentation.
+
+Also, I suggest looking around for a toolchain which is specifically bundled for STM32 family. Properly configuring all this basic stuff (C library, linker script, etc.) requires a bit of experience.
+
+Edit: Many embedded systems doesn't really use standard C library, starting pretty much from scratch. If you want to go this way, you should pass -nostdlib to your gcc invocation. Of course, you'll no longer have things like printf() available.
+
+Edit 2: Another way is to use standard library (newlib, I mean) without libgloss and provide appropriate stubs for things you do not need. You might want to follow this tutorial, where _read and _write is implemented over the serial port, and everything else is stubbed. This is most likely what you really want.
+* DONE 串口测试程序中文部分显示乱码                         :@stm32f407:@HAL:
+  CLOSED: [2017-12-28 四 11:04]
+现象： 汉字显示时部分汉字为乱码
+原因： 在 stm32f4xx_hal_conf.h 中 HSE_VALUE 默认为25000000, 根据时钟树的知识，应当将其设置为8000000
+* DONE linux 接收 串口printf的汉字时，不支持汉字字符编码，只支持字母 :@stm32f407:@Code:
+  CLOSED: [2018-01-03 三 11:32]
+现象：英文正常显示，中文乱码
+解决方案： 确保代码 printf("你好");  中的 "你好" 是 UTF-8编码，然后 linux 中 echo $LANG 显示的也是 UTF-8 编码
+* DONE bind: Address already in use                                :@st_util:
+  CLOSED: [2018-01-03 三 11:32]
+问题描述：在使用 stlink-v2 + arm-none-eabi-gdb 调试stm32开发板程序的过程中，启动 st-util 时，发生此错误
+
+原因： 当客户端保持着与服务器端的连接，这时服务器端断开，再开启服务器时会出现： Address already in usr
+
+解决方案： sudo netstat -tlnp |grep st-util 找到该进程的PID，然后使用 kill -9 PID 将该进程 kill 掉即可
+* DONE No symbol table is loaded. Use the "file" command         :@gdb:@list:
+  CLOSED: [2018-01-03 三 13:30]
+问题描述：在使用 gdb 的 list 指令时，显示该错误
+
+原因： CMakeLists.txt 中 CFLAGS 没有添加 -g 选项
+
+解决方案： add_compile_options(-g)

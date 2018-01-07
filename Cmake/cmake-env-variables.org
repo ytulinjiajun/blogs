@@ -1,13 +1,13 @@
-* WAITTING [#C] theme:cmake-env-variables                            :@Cmake:
-1. 设置环境变量set(ENV{CMAKE_C_FLAGS} "-O3 -Wall")
-2. 查看环境变量message(STATUS "CMAKE_C_FLAGS: " $ENV{CMAKE_C_FLAGS})
-3. Environment Variables that Control the Build
-   1. CMAKE_CONFIG_TYPE
-   2. CMAKE_MSVCIDE_RUN_PATH
-   3. CMAKE_OSX_ARCHITECTURES
-   4. LDFLAGS
-   5. MACOSX_DEPLOYMENT_TARGET
-4. Environment Variables for Languages
+* cmake-env-variables(7)
+** Environment Variables that Control the Build
+1. CMAKE_CONFIG_TYPE
+2. CMAKE_MSVCIDE_RUN_PATH
+3. CMAKE_OSX_ARCHITECTURES
+4. LDFLAGS
+5. MACOSX_DEPLOYMENT_TARGET
+6. 设置环境变量set(ENV{CMAKE_C_FLAGS} "-O3 -Wall")
+7. 查看环境变量message(STATUS "CMAKE_C_FLAGS: " $ENV{CMAKE_C_FLAGS})
+** Environment Variables for Languages
    1. ASM<DIALECT>
    2. ASM<DIALECT>FLAGS
    3. CC
@@ -25,11 +25,11 @@
    12. FFLAGS
    13. RC
    14. RCFLAGS
-5. Environment Variables for CTest
+** Environment Variables for CTest
    1. CMAKE_CONFIG_TYPE
    2. CTEST_INTERACTIVE_DEBUG_MODE
    3. CTEST_OUTPUT_ON_FAILURE
    4. CTEST_PARALLEL_LEVEL
    5. CTEST_USE_LAUNCHERS_DEFAULT
    6. DASHBOARD_TEST_FROM_CTEST
-Blog creation time:[2017-11-08 三 09:39]
+

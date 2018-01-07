@@ -1,25 +1,26 @@
-* Introduction
-* Binary Executables
-* Binary Targets
-* Binary Library Types
-* Normal Libraries
-* Alias Targets
-* Interface Libraries
-* Apple Frameworks
-* Object Libraries
-* Build Specification and Usage Requirements
-* Target Properties
-* Transitive Usage Requirements
-* Compatible Interface Properties
-* Property Origin Debugging
-* Build Specification with Generator Expressions
-* Include Directories and Usage Requirements
-* Link Libraries and Generator Expressions
-* Output Artifacts
-* Runtime Output Artifacts
-* Library Output Artifacts
-* Archive Output Artifacts
-* Directory-Scoped Commands
-* Pseudo Targets
-* Imported Targets
+* cmake-buildsystem(7)
+** Introduction
+** Binary Executables
+** Binary Targets
+** Binary Library Types
+** Normal Libraries
+** Alias Targets
+** Interface Libraries
+** Apple Frameworks
+** Object Libraries
+** Build Specification and Usage Requirements
+** Target Properties
+** Transitive Usage Requirements
+** Compatible Interface Properties
+** Property Origin Debugging
+** Build Specification with Generator Expressions
+** Include Directories and Usage Requirements
+** Link Libraries and Generator Expressions
+** Output Artifacts
+** Runtime Output Artifacts
+** Library Output Artifacts
+** Archive Output Artifacts
+** Directory-Scoped Commands
+** Pseudo Targets
+** Imported Targets
 

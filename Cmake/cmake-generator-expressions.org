@@ -1,5 +1,6 @@
-* Introduction
-* Logical Expressions
-* Informational Expressions
-* Output Expressions
+* cmake-generator-expressions(7)
+** Introduction
+** Logical Expressions
+** Informational Expressions
+** Output Expressions
 

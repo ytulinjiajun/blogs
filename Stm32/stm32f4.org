@@ -743,3 +743,4 @@ $(subdir-ym):
 --在scripts/Kbuild.include中有一条规则：build := -f $(srctree)/scripts/Makefile.build obj
 
 --在scripts/Makefile.build中：
+* theme: 数据流重定向到printf 

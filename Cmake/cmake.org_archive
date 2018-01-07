@@ -333,16 +333,7 @@ Archived entries from file /home/ljj/.my-agenda/blogs-cmake-active.org
 	        5. SEND_ERROR     = CMake Error, continue processing,but skip generation
 	        6. FATAL_ERROR    = CMake Error, stop processing and generation
 	        7. DEPRECATION    = CMake Deprecation Error or Warning if variable CMAKE_ERROR_DEPRECATED or CMAKE_WARN_DEPRECATED is enabled, respectively, else no message
-   29. <<option>>
-       1. 泛型: option(<option_variable> "help string describing option" [initial value])
-       2. 示例:
-          1. option(FOO_ENABLE "Enable Foo" ON)
-	        2. if(FOO_ENABLE)
-	        3. set(FOO_STRING "foo")
-	        4. message(STATUS "${FOO_STRING}")
-	        5. endif()
-       3. 作用: 开关控制
-       4. [initial value]: ON, OFF
+
    30. <<set_property>>
        1) 泛型:
           1) set_property(
@@ -398,19 +389,6 @@ Archived entries from file /home/ljj/.my-agenda/blogs-cmake-active.org
        4. while 中 condition 的语法参考 [[if]]()命令
        5. 另一个常用的循环命令是 [[foreach]]()
    35. Project Commands:
-       1. <<add_compile_options>>
-          1. 泛型: add_compile_options(-std=c++11)
-          2. 备注: 该令添加的编译选项是针对所有编译器的(包括c和c++编译器)，而set命令设置[[CMAKE_C_FLAGS]]或[[CMAKE_CXX_FLAGS]]变量则是分别只针对c和c++编译器的
-          3. 使用set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")比使用add_compile_option好,因为set只针对CMAKE_CXX_FLAGS配置,而不会对CMKAE_C_FLAGS配置
-          4. 建议使用set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -Wall")这种方式将CMAKE_C_FLAGS 设置为 -O3 -Wall (注意不是追加)
-          5. 查阅 [[COMPILE_OPTIONS]]
-       2. <<add_definitions>>
-          1. 泛型:add_definitions(-DFOO -DBAR ...)
-          2. 作用: 该命令可以用来增加任何flags,但是,主要是用它来增加预处理定义,增加其他flag的命令为 [[add_compile_options]]()
-          3. 那些以-D或/D开头的、看起来像预处理器定义的flag，会被自动加到当前路径的[[COMPILE_DEFINITIONS]]属性中
-          4. FOO以及BAR可以在源文件中使用,如ifdef FOO ...... endif
-          5. 备注: 该命令是针对所有编译器的
-          6. 参考 [[configure_file]]()
        3. <<add_executable>>
           1. 泛型1: add_executable(<name> [WIN32] [MACOSX_BUNDLE] [EXCLUDE_FROM_ALL] source1 [source2 ...])
              1. 作用: 使用源文件列表中指定的源文件来构建可执行目标<name>

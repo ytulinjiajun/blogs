@@ -1,10 +1,11 @@
-* Introduction
-* CMake Generators
-** Command-Line Build Tool Generators
-*** Makefile Generators
-*** Ninja Generator
-** IDE Build Tool Generators
-*** Visual Studio Generators
-*** Other Generators
-* TExtra Generators
+* cmake-generators(7)
+** Introduction
+** CMake Generators
+*** Command-Line Build Tool Generators
+**** Makefile Generators
+**** Ninja Generator
+*** IDE Build Tool Generators
+**** Visual Studio Generators
+**** Other Generators
+** TExtra Generators
 
