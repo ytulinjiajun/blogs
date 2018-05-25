@@ -25,7 +25,7 @@ Blog creation time:[2017-09-04 一 22:04]
 	- State "DONE"       from "TODO"       [2017-09-05 二 09:27]
   - 官网：http://spacemacs.org
   - github:https://github.com/syl20bnr/spacemacs 
-Blog creation time:[2017-09-05 二 08:46]
+Blog creation time:[2017-09-05 二 08: 
 ** DONE [#D] theme:安装emacs
 	- State "DONE"       from "TODO"       [2017-09-04 一 22:53]
 1. ubuntu16.04使用apt install emacs安装的emacs是emacs24,而我希望能使用emacs25,因为里面有一些高级的函数可以实现，所以采用下面的方式来安装emacs25.2
@@ -41,6 +41,13 @@ Blog creation time:[2017-09-05 二 08:46]
 6. 安装emacs：make && make install
 7. 运行emacs
 Blog creation time:[2017-09-04 一 22:05]
+** DONE [#C] theme:安装spacemacs
+1. 安装emacs;
+2. git clone https://github.com/ytulinjiajun/spacemacs ~/.emacs.d
+3. git clone https://github.com/ytulinjiajun/spacemacs-private ~/.spacemacs.d
+4. 启动emacs: emacs 
+5. 完毕！
+    CLOSED: [2018-05-25 五 12:39]
 ** DONE [#D] theme:emacs启动流程
 	- State "DONE"       from "WAITTING"   [2017-09-20 三 10:51]
 	Link position:[[info:elisp.info.gz#Startup%20Summary][Operating System Interface (emacs lisp 38)]]
